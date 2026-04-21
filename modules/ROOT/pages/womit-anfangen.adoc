@@ -13,15 +13,15 @@ Asterisk-Anfänger"]-Pfad beherzigen.
 
 Für den absoluten Asterisk-Anfänger ist es am einfachsten, systematisch
 das Buch durchzulesen, da die meisten Kapitel aufeinander aufbauen. Sie
-können also einfach bei xref:hello-world.adoc[Kapitel 2, _„Hello
-World"_] anfangen und das Buch bis zum Ende durcharbeiten. Ich empfehle,
-auf jeden Fall xref:hello-world.adoc[Kapitel 2, _„Hello World"_]
-und xref:dialplan-programmieren.adoc[Kapitel _Programmieren im Dialplan_]
-durchzuarbeiten. Danach sind Sie schon in der Lage, komplexere
-Telefonanlagen mit Asterisk aufzusetzen. Wenn Sie schon
-Programmiererfahrung haben, dann können Sie mit
-xref:dialplan-programmieren-howto.adoc[„Kleines Programmierer-Howto"] einen
-Jump-Start wagen.
+können einfach beim xref:hello-world.adoc[Hello-World-Kapitel]
+anfangen und das Buch bis zum Ende durcharbeiten. Auf jeden Fall
+sollten Sie das xref:hello-world.adoc[Hello-World-Kapitel] und das
+Kapitel xref:dialplan-programmieren.adoc[Programmieren im Dialplan]
+durchgearbeitet haben — danach sind Sie schon in der Lage, komplexere
+Telefonanlagen mit Asterisk aufzusetzen. Wenn Sie bereits
+Programmiererfahrung mitbringen, können Sie mit dem
+xref:dialplan-programmieren-howto.adoc[Kleinen Programmierer-Howto]
+einen Jump-Start wagen.
 
 [[howto-anfaenger-faq]]
 === Die Anfänger-FAQ
@@ -46,7 +46,7 @@ nicht gestoßen ist.
 
 Wenn Sie aus der `chan_sip`-Ära kommen und seit Jahren nicht mehr mit
 Asterisk gearbeitet haben: Starten Sie unbedingt mit
-xref:hello-world.adoc[Kapitel 2, _„Hello World"_]. `pjsip.conf`
+xref:hello-world.adoc[Hello-World-Kapitel]. `pjsip.conf`
 sieht anders aus als `sip.conf`, und das Mindset
 (Endpoint/AOR/Auth/Transport statt `peer`/`user`/`friend`) ist ein
 anderes. Danach lohnt sich ein Blick in
@@ -56,7 +56,7 @@ gegeben und ist das, was modernes Asterisk-Tooling antreibt.
 [[profi-howto]]
 == Der Asterisk-Profi
 
-Sie können xref:hello-world.adoc[Kapitel 2, _„Hello World"_]
+Sie können xref:hello-world.adoc[Hello-World-Kapitel]
 überspringen und einfach auf Entdeckungstour gehen. Besonders
 empfehlenswert sind die Kapitel zu xref:ari.adoc[ARI],
 xref:webrtc.adoc[WebRTC] und xref:sicherheit.adoc[Sicherheit]

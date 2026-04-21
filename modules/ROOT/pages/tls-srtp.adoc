@@ -30,8 +30,8 @@ auflösbar sein):
 cert.pem  chain.pem  fullchain.pem  privkey.pem
 ----
 
-Oder mit einer eigenen CA für geschlossene Netze (OpenSSL, PKCSS,
-step-ca — das ist ein OS-Thema, kein Asterisk-Thema).
+Oder mit einer eigenen CA für geschlossene Netze (OpenSSL, step-ca,
+cfssl — das ist ein OS-Thema, kein Asterisk-Thema).
 
 == TLS-Transport in pjsip.conf
 
@@ -88,7 +88,7 @@ muss Asterisk das neue Zertifikat aktivieren:
 
 [source,shell]
 ----
-# certbot renew --deploy-hook "asterisk -rx 'module reload res_pjsip.so'"
+# certbot renew --deploy-hook "asterisk -rx 'pjsip reload'"
 ----
 
 Der Reload lädt die Transport-Konfiguration neu und zieht das neue

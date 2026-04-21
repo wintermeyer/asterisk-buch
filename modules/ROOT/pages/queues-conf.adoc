@@ -13,7 +13,7 @@ die Agenten automatisch wieder in ihre Schlangen aufgenommen
 werden.
 
 Jede Warteschleife stellt einen eigenen Abschnitt dar. Wir legen
-bespielsweise eine Warteschlange im Abschnitt `[support]` an.
+beispielsweise eine Warteschlange im Abschnitt `[support]` an.
 Folgende Parameter stehen zur Verfügung:
 
 [[queues.conf-musiconhold]]
@@ -295,40 +295,50 @@ https://docs.asterisk.org.
 [[queues.conf-joinempty]]
 == `joinempty`
 
-Legt fest, ob Anrufer in eine Warteschleife ohne Agenten
-eingereiht werden.
+Legt fest, ob ein Anrufer in eine Warteschleife eingereiht wird, wenn
+dort keine Agenten verfügbar sind.
 
-`yes`:: Anrufer können in eine Schleife ohne Agenten oder von nur nicht-verfügbaren Agenten eingereiht werden.
-`no`:: Anrufer können nicht in eine Schleife ohne Agenten eingereiht werden.
-`strict`:: Anrufer können nicht in eine Schleife ohne Agenten eingereiht werden (aber in eine Warteschlange mit nur nicht-verfügbaren Agenten).
-+
-"Nicht-verfügbar" ist nicht zu verwechseln mit "im
-Gespräch" (_busy_). Ein Agent ist nicht
-verfügbar, wenn er zwar der Warteschlange zugewiesen, aber
-tatsächlich nicht am System registriert ist (siehe auch xref:queues-conf.adoc#queues.conf-member[„`member`“]). Achtung: Statisch definierte
-Mitglieder (siehe xref:queues-conf.adoc#queues.conf-member[„`member`“]) gelten
-immer als verfügbar!
+Moderner Asterisk erwartet als Wert eine kommagetrennte Liste von
+Faktoren, die einen Member *unverfügbar* machen (z. B.
+`paused,invalid,unavailable`). Trifft einer der Faktoren zu, gilt
+der Member als nicht verfügbar. Gibt es keinen verfügbaren Member
+mehr, wird der Anrufer nicht aufgenommen — die `Queue()`-Applikation
+endet sofort, und der Dialplan läuft hinter ihr weiter.
 
-Sollte ein Anrufer nicht in eine Warteschlange
-aufgenommen werden, ist die `Queue()`-Applikation beendet,
-und der Dialplan wird fortgesetzt.
+Verfügbare Faktoren (Auszug): `paused`, `penalty`, `invalid`,
+`inuse`, `ringing`, `wrapup`, `unavailable`, `unknown`.
+
+Aus Kompatibilitätsgründen gibt es daneben die klassischen
+Schlüsselwörter:
+
+`yes`:: entspricht *leerer* Liste — jeder kommt rein.
+`no`:: entspricht `penalty,paused,invalid` — der Default-Fall.
+`strict`:: `penalty,paused,invalid,unavailable`.
+`loose`:: `penalty,invalid`.
+
+Achtung: Statisch in der `queues.conf` definierte Mitglieder (siehe
+xref:queues-conf.adoc#queues.conf-member[`member`]) gelten immer als
+erreichbar, auch wenn sie in Wirklichkeit nicht an ihrem Apparat
+sind.
 
 [source]
 ----
-joinempty = no  ; wir wollen unsere Anrufer nicht unnötig warten lassen
+joinempty = paused,invalid,unavailable
 ----
 
 [[queues.conf-leavewhenempty]]
 == `leavewhenempty`
 
-Legt fest, ob Anrufer aus einer Warteschlange entfernt werden,
-sobald sich alle Agenten ausgeloggt haben. Zu den möglichen Werten siehe
-`joinempty`. Nach dem Verlassen der Warteschlange wird der
-Dialplan fortgesetzt.
+Legt fest, wann Anrufer aus einer laufenden Warteschlange *entfernt*
+werden. Die Werte sind dieselben wie bei `joinempty` (modern:
+kommagetrennte Liste von Faktoren; alt: `yes` / `no` / `strict` /
+`loose`). Die Liste wird regelmäßig geprüft; sobald kein Member
+mehr verfügbar ist, verlässt der Anrufer die Queue und der Dialplan
+läuft hinter der `Queue()`-Applikation weiter.
 
 [source]
 ----
-leavewhenempty = strict  ; Anrufer nicht unnötig warten lassen
+leavewhenempty = paused,invalid,unavailable
 ----
 
 [[queues.conf-eventwhencalled]]
@@ -428,7 +438,7 @@ Form
 member => Technologie/Ressource[,Malus]
 ----
 
-– also z. B. `member => Zap/2` – anzulegen
+– also z. B. `member => PJSIP/1001` – anzulegen
 (darf mehrmals verwendet werden, siehe
 `queues.conf`). Das kann jedoch zu Problemen mit
 `joinempty` und `leavewhenempty` führen, da diese

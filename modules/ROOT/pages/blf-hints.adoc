@@ -23,7 +23,7 @@ traditioneller Telefonanlagen. Dabei handelt es sich um LEDs oder
 LCD-Anzeigen und zugehörige Tasten am Telefon, mit denen die Nebenstellen
 von einzelnen Kollegen oder ganzen Gruppen überwacht (im Sinne von
 „beobachtet“) werden. Klingelt ein überwachtes Telefon, dann
-blinkt am eigenen Apparat die entsprechende LED.footnote:[Bei einigen Anlagen sieht man sogar die Rufnummer des Anrufers. Dies ist jedoch -- so viel sei vorab gesagt – bei Asterisk nicht möglich bzw. nur mit einem Patch möglich (siehe u. a. http://bugs.digium.com/view.php?id=5014[_Asterisk Bug 5014_\]).] Ist der überwachte Teilnehmer im Gespräch, so leuchtet die
+blinkt am eigenen Apparat die entsprechende LED.footnote:[Bei einigen klassischen Anlagen sieht man sogar die Rufnummer des Anrufers. Bei Asterisk lässt sich das nur mit erheblichem Zusatzaufwand (eigener ARI-Code oder Telefon-seitige Tricks) nachbauen.] Ist der überwachte Teilnehmer im Gespräch, so leuchtet die
 LED am überwachenden Gerät dauerhaft. Ansonsten ist die LED aus.footnote:[Daneben gibt es je nach Anlage noch weitere "Blink-Kadenzen", z. B. ein langsameres Blinken, wenn der andere Teilnehmer sein Gespräch auf "Halten" gestellt hat.]Was das Drücken der Taste bewirkt, hängt vom Status des
 anderen Teilnehmers ab. Ist der Kollege frei, so wird ein normaler Anruf
 aufgebaut. Wenn aber sein Telefon klingelt (eigene LED blinkt), so kann

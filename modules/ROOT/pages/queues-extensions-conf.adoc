@@ -2,7 +2,7 @@
 = `extensions.conf`
 :description: Warteschlangen im Dialplan: Queue(), AddQueueMember() und Agent-Login.
 
-Im Dialplan (xref:dialplan-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_]) können sich
+Im Dialplan (xref:dialplan-programmieren.adoc[Programmieren im Dialplan]) können sich
 zum einen die Agenten über eine bestimmte Extension in die Warteschleife
 einloggen, zum anderen werden Anrufe mit der Applikation
 `Queue()` in eine Warteschlange eingereiht.
@@ -56,12 +56,11 @@ exten => 20,n(q-FULL),Busy(5)
 exten => 20,n,Hangup()
 ----
 
-Wenn wir diese Extension anrufen,
-werden wir, da keine Agenten angemeldet sind, die Ansage hören, dass zur
-Zeit[xref:queues-conf.adoc#ftn.footnote-zurzeit[85]] niemand unseren Anruf
-entgegennehmen kann. (Wenn Sie das verschleiern wollen, setzen Sie in der
-`queues.conf` die Parameter `joinempty=yes`
-und `leaveempty=no`.)
+Wenn wir diese Extension anrufen, werden wir — da keine Agenten
+angemeldet sind — die Ansage hören, dass zurzeit niemand unseren
+Anruf entgegennehmen kann. (Wenn Sie das vermeiden wollen, setzen Sie
+in der `queues.conf` die Parameter `joinempty=yes` und
+`leavewhenempty=no`.)
 
 Es fehlt also noch eine Extension, unter der sich die Agenten
 einloggen, d. h. als anwesend melden:

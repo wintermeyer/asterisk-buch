@@ -272,9 +272,9 @@ Die jeweils aktuelle, vollständige Liste aller vordefinierten
 Channel-Variablen steht in der offiziellen Dokumentation unter
 https://docs.asterisk.org. Die hier aufgeführten Variablen sind der
 kleinste gemeinsame Nenner, mit dem Sie über viele Versionen hinweg
-arbeiten können. Deprecated-Variablen wie `$\{CALLERIDNUM}` sind hier
-bewusst nicht aufgeführt — benutzen Sie stattdessen die Funktion
-`$\{CALLERID(num)}`.
+arbeiten können. Alte Legacy-Namen wie `$\{CALLERIDNUM}` (ohne
+Klammern) gibt es in modernen Asterisk-Versionen nicht mehr —
+benutzen Sie die Funktion `$\{CALLERID(num)}`.
 ====
 
 Die für das jeweilige Thema relevanten Variablen werden aber
@@ -384,7 +384,7 @@ exten => _0X.,1,Set(VORWAHL=${EXTEN:1:3})
 
 Diese
 Zeile geht davon aus, dass die Vorwahl 3-stellig ist, und speichert
-sie in der Variable `$\{VORWAHL}`.footnote:[Leider macht diese Variante in Deutschland wenig Sinn, da es unterschiedlich lange Vorwahlen gibt. Mehr Informationen zur deutschen Vorwahl finden Sie unter http://de.wikipedia.org/wiki/Telefonvorwahl_%28Deutschland%29.]
+sie in der Variable `$\{VORWAHL}`.footnote:[Leider macht diese Variante in Deutschland wenig Sinn, da es unterschiedlich lange Vorwahlen gibt. Mehr Informationen zur deutschen Vorwahl finden Sie unter https://de.wikipedia.org/wiki/Telefonvorwahl_(Deutschland).]
 
 Nehmen wir an, wir möchten bei Telefonaten zur Nummer
 `00012024562121` nach Amerika die einzelnen Bestandteile

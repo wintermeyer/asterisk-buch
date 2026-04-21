@@ -34,49 +34,64 @@ genutzten Funktionen als Orientierungshilfe.
 ====
 
 == Anrufer-/Channel-Informationen
-`CALLERID()`, `CALLERPRES()`, `CHANNEL()`, `CHANNELS()`,
-`CDR()`, `HINT()`, `DEVICE_STATE()`, `EXTENSION_STATE()`,
-`DIALPLAN_EXISTS()`.
+`CALLERID()` (inklusive `CALLERID(pres)` für die Presentation),
+`CONNECTEDLINE()`, `CHANNEL()`, `CHANNELS()`, `CDR()`, `CDR_PROP()`,
+`HINT()`, `DEVICE_STATE()`, `EXTENSION_STATE()`, `DIALPLAN_EXISTS()`,
+`MASTER_CHANNEL()`.
 
 == Strings / Formatierung
-`LEN()`, `REGEX()`, `REPLACE()`, `TOLOWER()`, `TOUPPER()`,
-`CUT()`, `FIELDQTY()`, `FILTER()`, `QUOTE()`, `SPRINTF()`,
-`MD5()`, `SHA1()`, `BASE64_ENCODE()`, `BASE64_DECODE()`,
-`URIDECODE()`, `URIENCODE()`, `KEYPADHASH()`.
+`LEN()`, `REGEX()`, `REPLACE()`, `STRREPLACE()`, `TOLOWER()`,
+`TOUPPER()`, `CUT()`, `FIELDQTY()`, `FILTER()`, `QUOTE()`,
+`SPRINTF()`, `MD5()`, `SHA1()`, `BASE64_ENCODE()`, `BASE64_DECODE()`,
+`URIDECODE()`, `URIENCODE()`, `KEYPADHASH()`, `PASSTHRU()`.
 
 == Rechnen, Zeit, Zufall
-`MATH()`, `IF()`, `ISNULL()`, `EXISTS()`, `RAND()`,
-`STRFTIME()`, `STRPTIME()`, `TIMEOUT()`, `LOCK()`, `TRYLOCK()`,
-`UNLOCK()`.
+`MATH()`, `INC()`, `DEC()`, `IF()`, `IFTIME()`, `ISNULL()`, `EXISTS()`,
+`RAND()`, `STRFTIME()`, `STRPTIME()`, `TIMEOUT()`, `LOCK()`,
+`TRYLOCK()`, `UNLOCK()`.
 
 == Variablen-Management
-`GLOBAL()`, `LOCAL()`, `HASH()`, `HASHKEYS()`, `ARRAY()`, `SHARED()`,
-`IMPORT()`, `SET()`.
+`GLOBAL()`, `LOCAL()`, `LOCAL_PEEK()`, `HASH()`, `HASHKEYS()`,
+`ARRAY()`, `SHARED()`, `IMPORT()`, `SET()`.
 
-== AstDB und Datenbank
+== AstDB und Realtime
 `DB()`, `DB_EXISTS()`, `DB_DELETE()`, `DB_KEYS()`, `REALTIME()`,
-`REALTIME_STORE()`, `REALTIME_DESTROY()`, `SQL_ESC()`.
+`REALTIME_FIELD()`, `REALTIME_HASH()`, `REALTIME_STORE()`,
+`REALTIME_DESTROY()`, `SQL_ESC()`.
 
 == Dateien und Shell
-`FILE()`, `SHELL()`, `ENV()`, `STAT()`, `SYSINFO()`.
+`FILE()`, `FILE_COUNT_LINE()`, `STAT()`, `SHELL()`, `ENV()`,
+`SYSINFO()`.
 
 == PJSIP-spezifisch
-`PJSIP_HEADER()`, `PJSIP_DIAL_CONTACTS()`, `PJSIP_ENDPOINT()`,
-`PJSIP_AOR()`, `PJSIP_CONTACT()`, `PJSIP_MEDIA_OFFER()`.
+`PJSIP_HEADER()`, `PJSIP_HEADERS()`, `PJSIP_RESPONSE_HEADERS()`,
+`PJSIP_DIAL_CONTACTS()`, `PJSIP_PARSE_URI()`, `PJSIP_SEND_SESSION_REFRESH()`,
+`PJSIP_MEDIA_OFFER()`, `PJSIP_DTMF_MODE()`.
 
 == Queue- und ConfBridge-Informationen
 `QUEUE_MEMBER()`, `QUEUE_MEMBER_COUNT()`, `QUEUE_MEMBER_LIST()`,
 `QUEUE_MEMBER_PENALTY()`, `QUEUE_VARIABLES()`, `QUEUE_WAITING_COUNT()`,
-`CONFBRIDGE_INFO()`.
+`QUEUE_GET_CHANNEL()`, `CONFBRIDGE()`, `CONFBRIDGE_INFO()`,
+`CONFBRIDGE_CHANNELS()`.
 
-== Caller-ID / Telefonbuch
-`VALID_EXTEN()`, `VMCOUNT()`, `MAILBOX_EXISTS()`, `TXTCIDNAME()`.
+== Voicemail
+`VM_INFO()`, `VMCOUNT()`.
 
-== Als entfernt / deprecated geltend
-`JABBER_STATUS()`, `MEETME_INFO()` (durch `CONFBRIDGE_INFO()`
-ersetzt), `SIP_HEADER()` / `SIPPEER()` / `SIPCHANINFO()` (chan_sip —
-für PJSIP die `PJSIP_*`-Funktionen), `ODBC_ANTIGF()`, `AGC()`,
-`DENOISE()`, `IAXPEER()` in älteren Formen.
+[NOTE]
+====
+`MAILBOX_EXISTS()` ist ab Asterisk 22 *entfernt*. Benutzen Sie
+stattdessen `$\{VM_INFO(<mailbox>,exists)}` — das liefert `1`, wenn
+die Mailbox in `voicemail.conf` existiert, sonst `0`.
+====
+
+== Entfernt / deprecated
+`CALLERPRES()` ist entfernt; die gleiche Information erreichen Sie
+über `CALLERID(pres)`. `JABBER_STATUS()`, `MEETME_INFO()`
+(→ `CONFBRIDGE_INFO()`), `SIP_HEADER()` / `SIPPEER()` /
+`SIPCHANINFO()` (chan_sip — für PJSIP die `PJSIP_*`-Funktionen),
+`ODBC_ANTIGF()`, `AGC()`, `DENOISE()` und viele der alten
+`IAXPEER`-Formen sind entweder ganz entfernt oder nur noch in
+Nischen-Installationen relevant.
 
 [TIP]
 ====

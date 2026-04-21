@@ -2,17 +2,59 @@
 = Backup der Datenbank
 :description: AstDB sichern und wiederherstellen — SQLite3-Backup-Strategien.
 
-Die Asterisk-Datenbank wird standardmäßig als SQLite3-Datei unter
-`/var/lib/asterisk/astdb.sqlite3` abgelegt. Sobald Asterisk
-gestoppt ist, kann man die Datei einfach kopieren.
+Die Asterisk-Datenbank ist eine SQLite3-Datei unter
+`/var/lib/asterisk/astdb.sqlite3`. Für ein Backup haben Sie drei
+Wege, mit unterschiedlichem Aufwand und unterschiedlicher
+Wiederherstellungs-Ergonomie.
 
-Ein Backup im laufenden Betrieb kann auch von der Shell durch
-folgenden Befehl
+== Offline-Backup
 
-[source]
+Am einfachsten und garantiert konsistent: Asterisk anhalten, die
+Datei kopieren, Asterisk wieder starten.
+
+[source,shell]
 ----
-asterisk -rx "database show" > /tmp/backup-asterisk-database.txt
+# systemctl stop asterisk
+# cp /var/lib/asterisk/astdb.sqlite3 /backup/astdb-$(date +%F).sqlite3
+# systemctl start asterisk
 ----
 
-durchgeführt werden. Allerdings ist das Restore dann etwas
-aufwendiger.
+Geeignet für kleine Anlagen oder einen nächtlichen Cron-Job mit
+kurzem Wartungsfenster.
+
+== Online-Backup per SQLite
+
+SQLite kann eine laufende Datenbank atomisch in eine Backup-Datei
+kopieren — ohne Asterisk anzuhalten:
+
+[source,shell]
+----
+# sqlite3 /var/lib/asterisk/astdb.sqlite3 ".backup '/backup/astdb-$(date +%F).sqlite3'"
+----
+
+Das ist in der Regel die beste Wahl für produktive Anlagen: kein
+Ausfall, und die Backup-Datei lässt sich durch einfaches Überkopieren
+wieder einspielen (Asterisk einmal stoppen, Datei ersetzen, Asterisk
+wieder starten).
+
+== Text-Dump über das CLI
+
+Wer nur den Inhalt als Textdump sichern möchte (z. B. zum
+Versionieren in git oder für einen Side-by-Side-Diff):
+
+[source,shell]
+----
+# asterisk -rx "database show" > /backup/astdb-$(date +%F).txt
+----
+
+Der Restore aus einem solchen Dump ist umständlicher — Sie müssen
+pro Zeile einen `database put`-Aufruf machen. Für sporadische
+Kontrollen ist das aber eine bequeme Form.
+
+[TIP]
+====
+Wenn Ihre AstDB sehr klein ist (z. B. nur ein paar Call-Forwarding-
+und Feature-Flag-Einträge), können Sie den Text-Dump per
+Cron-Job in ein Git-Repository schreiben — dann haben Sie gratis
+eine lückenlose Änderungs-Historie.
+====

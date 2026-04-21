@@ -7,9 +7,9 @@ JavaScript-Bibliotheken:
 
 * *JsSIP* (https://jssip.net/) — klassischer SIP-Client im Browser,
   sehr etabliert, gut dokumentiert.
-* *sip.js* (https://sipjs.com/) — moderne Alternative mit
-  TypeScript-Typings.
-* *WebPhone von BrightPattern*, *OnSIP SIP.js-Fork*, u. a.
+* *SIP.js* (https://sipjs.com/) — moderne Alternative mit
+  TypeScript-Typings, aktiv gepflegt.
+* *sipml5* und ähnliche Frameworks — für speziellere Anforderungen.
 
 Ein Minimal-Beispiel mit JsSIP, das eine Registrierung als
 `bob@pbx.example.com` aufbaut und eine Extension anruft:

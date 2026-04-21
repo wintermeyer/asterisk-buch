@@ -12,10 +12,17 @@ Unter ConfBridge ist die Teilnehmerzahl nicht über eine
 exten => 5555,1,Answer()
  same => n,Wait(1)
  same => n,Set(TEILNEHMER=${CONFBRIDGE_INFO(parties,team)})
+ same => n,Playback(conf-thereare)
  same => n,SayNumber(${TEILNEHMER})
- same => n,Playback(conf-thereare&conf-peopleinconf)
+ same => n,Playback(confbridge-participants)
  same => n,Hangup()
 ----
+
+Die verketteten `conf-thereare` ("There are") und
+`confbridge-participants` ("participants") sind in den mitgelieferten
+_core-sounds-en_ enthalten. Für eine deutsche Ansage sollten Sie eigene
+Prompts (aus xref:tts-text-to-speech.adoc[TTS] oder fertig
+eingesprochen) hinterlegen.
 
 `CONFBRIDGE_INFO(type,conference)` liefert je nach `type` verschiedene
 Zahlen:

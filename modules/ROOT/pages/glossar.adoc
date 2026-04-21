@@ -24,9 +24,9 @@ CDR:: Call Detail Record oder Call Data Record, auf Deutsch auch _Kommunikations
 ----
 acct code, src, dst, dst context, cid, chan, dst channel, last app, last app args, start time, answer time, end time, dur, billable secs, disposition, ama flags, unique id
 ----
-Channel:: So werden in Asterisk Verbindungen oder Verbindungsdefinitionen zu Teilnehmern (users) oder anderen Telefonanlagen (peers) bezeichnet. Es gibt mehrere mögliche Übertragungsprotokolle, u. a. IAX (xref:glossar.adoc#glossar-iax[IAX]), SIP (xref:glossar.adoc#glossar-sip[SIP]), H.323, CAPI etc., die in xref:protokolle.adoc[Kapitel 8, _Protokolle_] vorgestellt und beschrieben werden.
+Channel:: So werden in Asterisk Verbindungen oder Verbindungsdefinitionen zu Teilnehmern (users) oder anderen Telefonanlagen (peers) bezeichnet. Es gibt mehrere mögliche Übertragungsprotokolle, u. a. IAX (xref:glossar.adoc#glossar-iax[IAX]), SIP (xref:glossar.adoc#glossar-sip[SIP]) etc., die im xref:protokolle.adoc[Protokolle-Kapitel] vorgestellt und beschrieben werden.
 Codec:: So bezeichnet man Verfahren zur Kodierung und Dekodierung von Datenströmen, hier von Audiodaten. Das sind z. B. GSM, WAV oder das bekannte MP3. Meist ist auch immer ein entsprechendes Dateiformat gemeint.
-Context:: So wird in Asterisk ein Bereich oder Abschnitt in der `extensions.conf` oder `voicemail.conf` genannt, der z. B. Telefonnummern einer Firma zu einer Abteilung gruppiert. Man muss unterscheiden zwischen Dialplan-Contexten und Voicemail-Contexten. Siehe xref:dialplan-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_] und xref:voicemail-conf.adoc[Abschnitt 13.4, „`voicemail.conf` “].
+Context:: So wird in Asterisk ein Bereich oder Abschnitt in der `extensions.conf` oder `voicemail.conf` genannt, der z. B. Telefonnummern einer Firma zu einer Abteilung gruppiert. Man muss unterscheiden zwischen Dialplan-Contexten und Voicemail-Contexten. Siehe xref:dialplan-programmieren.adoc[Programmieren im Dialplan] und xref:voicemail-conf.adoc[voicemail.conf].
 DAHDI:: Digium Asterisk Hardware Device Interface. Seit 2008 der Nachfolger von Zaptel. Kernel-Modul und User-Space-Tools für ISDN-/Analog-Karten, die heute fast ausschließlich in Legacy-Installationen relevant sind.
 Dialplan:: Im Asterisk-Umfeld: die in der Datei `extensions.conf` festgelegten Abläufe, die aufgerufen werden, sobald eine Extension (xref:glossar.adoc#glossar-extension[Extension]) gewählt wird.
 Digium:: Von Mark Spencer 1999 gegründete Firma, die Asterisk entwickelt und vertrieben hat. 2018 von Sangoma übernommen; die aktive Asterisk-Entwicklung hat seitdem https://www.sangoma.com/[Sangoma] übernommen.
@@ -58,7 +58,7 @@ Standard-Einstellung ist BE (_Best Effort_), die
 normale (niedrigste) Priorität.
 DTMF:: Dual-Tone Multi-Frequency. Wähltöne beim Mehrfrequenz-Wählverfahren (MFV, auch Tonwahlverfahren oder _Touch Tone_), das von den meisten analogen Telefonen benutzt wird. Im Gegensatz zum älteren Impuls-Wählverfahren (IWV), _Pulse dialing_. Die meisten Telefone lassen sich bei abgenommenem Hörer vorübergehend mit der Tastenfolge `Set` `*` `Set` zwischen den beiden Verfahren umstellen (`Set` ist die Taste mit einem Pfeil nach rechts mit Karo). Mit DTMF sind außer den Ziffern `0`-`9` die Symbole `*` und `#` sowie die Buchstaben `A`-`D` (kaum verwendet) möglich.
 DUNDi:: Distributed Universal Number Discovery. Ein von Mark Spencer entwickeltes Peer-to-Peer-System, um Gateways zu Telefondiensten zu finden. Im Gegensatz zu ENUM (xref:glossar.adoc#glossar-enum[ENUM]) arbeitet DUNDi dezentral. Praktisch eingesetzt wird es heute kaum noch.
-E.164:: Die Richtlinie E.164 _The international public telecommunication numbering plan_ der ITU-T regelt international die Adressierung der Telefonnetze. In E.164 ist festgelegt, aus welchen Bestandteilen eine Telefonnummer besteht und wie viele Stellen sie enthalten darf. Weiterhin sind die internationalen Vorwahlen (wie 43 für Österreich, 49 für Deutschland und 41 für die Schweiz) festgelegt. --_http://de.wikipedia.org/wiki/E.164_
+E.164:: Die Richtlinie E.164 _The international public telecommunication numbering plan_ der ITU-T regelt international die Adressierung der Telefonnetze. In E.164 ist festgelegt, aus welchen Bestandteilen eine Telefonnummer besteht und wie viele Stellen sie enthalten darf. Weiterhin sind die internationalen Vorwahlen (wie 43 für Österreich, 49 für Deutschland und 41 für die Schweiz) festgelegt. --_https://de.wikipedia.org/wiki/E.164_
 ENUM:: E.164 number and DNS. Ein Verfahren, um DNS (xref:glossar.adoc#glossar-dns[DNS]) zur Auflösung von E.164-Telefonnummern (xref:glossar.adoc#glossar-e.164[E.164]) zu benutzen. In Deutschland wurde der öffentliche ENUM-Dienst unter `e164.arpa` 2019 abgeschaltet. Siehe RFC 6116footnote:[https://datatracker.ietf.org/doc/html/rfc6116].
 Expression:: Eine _Expression_ (ein Ausdruck) besteht aus Variablen, Operatoren und Werten, die zusammen zu einem Ergebnis ausgewertet werden. Ein Ausdruck kann z. B. Werte vergleichen oder mathematische Berechnungen durchführen. Ausdrücke haben in Asterisk ein Dollar-Zeichen („`$`“) am Anfang und werden in eckige Klammern („`[` _`...`_ `]`“) eingeschlossen.
 +
@@ -88,10 +88,9 @@ dem Ausdruck ein Fehler auf.
 Die Besonderheiten bei Ausdrücken in der _Asterisk Extensions Language_
 AEL werden im Legacy-Kapitel xref:ael-legacy.adoc[_AEL_] behandelt.
 +
-Weitere Informationen über Ausdrücke finden Sie im
-Source-Verzeichnis von Asterisk
-(+/usr/src/asterisk-_`...`_/+)
-in `doc/channelvariables.txt`footnote:[bzw. http://svn.digium.com/svn/asterisk/branches/1.4/doc/channelvariables.txt oder http://www.asterisk.org/doxygen/1.4/AstVar.html]footnote:[oder auch auf http://www.voip-info.org/wiki/view/Asterisk+Expressions].
+Weitere Informationen über Ausdrücke finden Sie in der offiziellen
+Dokumentation unter https://docs.asterisk.org (Abschnitt
+_Dialplan → Expressions_).
 Extension:: Die deutsche Übersetzung für _Extension_ ist _Durchwahl-Nummer_, und das ist auch die grundlegende Bedeutung. In dieser Verwendung besteht eine Extension nur aus Ziffern (obwohl theoretisch auch die Symbole `*` und `#` und sogar Buchstaben möglich wären, die sich aber auf einem normalen Telefon nicht wählen lassen).
 +
 In Asterisk gibt es allerdings zusätzlich noch spezielle
@@ -144,7 +143,7 @@ Kommando:: In Bezug auf den Dialplan siehe xref:glossar.adoc#glossar-applikation
 Context:: Siehe xref:glossar.adoc#glossar-context[Context].
 Latenz:: (engl. _latency_) Die auch _Delay_ genannte Verzögerung oder Übertragungsdauer von IP-Paketen (xref:glossar.adoc#glossar-ip[IP]). Gerade für Echtzeitkommunikation (Telefongespräche) ist eine niedrige Latenz wünschenswert.
 MAC-Adresse:: Media Access Control-Adresse. Die feste, weltweit einmalige Hardware-Adresse (auch Ethernet-ID genannt) eines Netzwerk-Interfaces (Netzwerkkarte). (Sie kann nicht physikalisch, aber unter Umständen durch Software geändert werden.) Nicht zu verwechseln mit der IP-Adresse.footnote:[Oder den bekannten Computern :-)].
-MOH:: Music on Hold. Warteschleifenmusik. Bitte beachten Sie, dass Sie entgegen der verbreiteten Meinung keine „kommerziellen“ CDs oder MP3s abspielen dürfen; hierfür fallen gegebenenfalls GEMA-Gebühren an (http://www.gema.de/). Wenn Sie selbst ein Volkslied singen, sind Sie auf der sicheren Seite. :-)
+MOH:: Music on Hold. Warteschleifenmusik. Bitte beachten Sie, dass Sie entgegen der verbreiteten Meinung keine „kommerziellen“ CDs oder MP3s abspielen dürfen; hierfür fallen gegebenenfalls GEMA-Gebühren an (https://www.gema.de/). Wenn Sie selbst ein Volkslied singen, sind Sie auf der sicheren Seite. :-)
 MySQL:: Die MySQL-Datenbank (https://www.mysql.com/). In vielen modernen Linux-Distributionen ist der kompatible MariaDB-Fork (https://mariadb.org/) der Default.
 NTP:: Network Time Protocol. Ein standardisiertes Protokoll (und entsprechende Algorithmen), mit dem sich die Uhr eines Rechners auf Millisekunden genau automatisch mit einem Zeit-Server synchronisieren lässt.
 Pattern:: Siehe xref:glossar.adoc#glossar-regularexpression[Regular Expression].
@@ -162,7 +161,7 @@ Regular Expression:: Ein „regulärer Ausdruck“. Im Falle des Dialplans (xref
 Beispiel: `_2[3-6]X`
 +
 RegExe sind in Asterisk nicht die aus Perl bekannten PCREs.
-Eine ausführliche Erklärung finden Sie in xref:pattern-matching.adoc[Abschnitt 3.3, „Pattern Matching“].
+Eine ausführliche Erklärung finden Sie in xref:pattern-matching.adoc[Pattern Matching].
 SIP:: Session Initiation Protocol (eigentlich eine Sammlung von Protokollen), in Asterisk ein Channel (xref:glossar.adoc#glossar-channel[Channel]).
 TCP:: Transmission Control Protocol. Eine Protokollschicht über IP (xref:glossar.adoc#glossar-ip[IP]), die sicherstellt, dass bei der Übertragung keine IP-Pakete verloren gehen, was z. B. für HTTP wichtig ist, damit eine vollständige Übertragung gewährleistet ist.
 ToS:: Type of Service. Eine Form von Traffic Shaping. Manche Router beachten solche Flags in IP-Paketen (xref:glossar.adoc#glossar-ip[IP]), die dazu dienen, bestimmten Diensten (z. B. Telefongesprächen) Priorität gegenüber anderen (z. B. Dateiübertragungen) zu geben und damit die QoS (xref:glossar.adoc#glossar-qos[QoS]) zu verbessern. Kann in Asterisk bei einigen Channels (xref:glossar.adoc#glossar-channel[Channel]) eingestellt werden.

@@ -27,17 +27,17 @@ callback = _`[Context]`_:: Legt einen Context fest, der für Rückrufe aus dem S
 Beispiel:
 +
 `callback = intern`
-charset = _`[Zeichensatz]`_:: Gibt den Zeichensatz (Charset) vor, in dem die E-Mails vom Voicemail-System kodiert werden.
+charset = _`[Zeichensatz]`_:: Gibt den Zeichensatz (Charset) vor, in dem die E-Mails vom Voicemail-System kodiert werden. Default ist der UTF-8-Zeichensatz.
 +
 Beispiel:
 +
-`charset = ISO-8859-1`
+`charset = UTF-8`
 delete = _`[yes|no]`_:: Definiert, ob eine Sprachnachricht nach dem Versenden per E-Mail automatisch gelöscht werden soll. Dies spart Festplattenplatz auf dem Server, falls man Sprachnachrichten nur per E-Mail empfangen will.
 +
 Beispiel:
 +
 `delete = yes`
-directoryintro = _`[Dateiname]`_:: Definiert eine Sprachdatei innerhalb des Default-Verzeichnisses `/var/lib/asterisk/sounds/`, die anstatt der normalen Datei für das Dial-by-Name-System abgespielt wird (siehe xref:voicemail-dial-by-name.adoc[Abschnitt 13.5, „Telefonbuch (Dial-by-Name)“]).
+directoryintro = _`[Dateiname]`_:: Definiert eine Sprachdatei innerhalb des Default-Verzeichnisses `/var/lib/asterisk/sounds/`, die anstatt der normalen Datei für das Dial-by-Name-System abgespielt wird (siehe xref:voicemail-dial-by-name.adoc[Telefonbuch (Dial-by-Name)]).
 +
 Beispiel:
 +

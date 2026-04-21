@@ -48,14 +48,15 @@ Die Sprache wird je Endpoint (oder global) gesetzt. In `pjsip.conf`:
 
 [source]
 ----
+; Globaler Default — gilt für jeden Endpoint, der keine eigene Sprache setzt:
 [global]
 type=global
-default_outbound_endpoint=default_endpoint
-language=de             ; <-- globaler Default
+language=de
 
+; Oder pro Endpoint:
 [2000]
 type=endpoint
-language=de             ; <-- oder pro Endpoint
+language=de
 ; ...
 ----
 

@@ -2,12 +2,60 @@
 = Aufruf eines AGI-Skripts im Dialplan
 :description: Ein AGI-Skript im Asterisk-Dialplan aufrufen: AGI(), FastAGI und AsyncAGI.
 
-Ein AGI-Skript wird im Dialplan über die Applikation
-`agi` aufgerufen. Die kann wie folgt aussehen:
+Ein AGI-Skript wird im Dialplan über die Applikation `AGI()`
+aufgerufen. Das sieht so aus:
 
 [source]
 ----
 exten => 1234,1,Answer()
-exten => 1234,2,AGI(mein-agi-programm.php)
-exten => 1234,3,Hangup()
+ same => n,AGI(mein-skript.py)
+ same => n,Hangup()
 ----
+
+Asterisk sucht das Skript im Default-Verzeichnis
+`/var/lib/asterisk/agi-bin/`. Wenn Sie einen absoluten Pfad angeben,
+wird der benutzt:
+
+[source]
+----
+exten => 1234,1,AGI(/opt/tools/mein-skript.py,${CALLERID(num)},${EXTEN})
+----
+
+Alle zusätzlichen Kommagetrennten Parameter erreichen das Skript
+über `argv` (im Beispiel: Caller-ID und Extension).
+
+== Varianten
+
+Neben dem klassischen `AGI()` gibt es drei Varianten:
+
+`EAGI()`:: Wie `AGI()`, stellt dem Skript aber zusätzlich den
+Audio-Stream des Channels auf Dateideskriptor 3 zur Verfügung —
+nützlich, wenn das Skript z. B. Spracherkennung selbst machen will.
+
+`DeadAGI()`:: Für Skripte, die auf einem bereits aufgelegten Channel
+laufen — etwa aus der `h`-Extension heraus. Ab Asterisk 12 ist
+`DeadAGI` ein Alias von `AGI`, das mit toten Channels umgehen kann.
+
+`FastAGI`:: Statt ein Skript lokal pro Anruf zu starten, öffnet
+Asterisk eine TCP-Verbindung zu einem AGI-Server:
++
+[source]
+----
+exten => 1234,1,AGI(agi://127.0.0.1:4573/mein-handler)
+----
++
+Der Server läuft als dauerhafter Prozess und bekommt bei jedem Anruf
+eine neue Verbindung — kein Fork pro Anruf, deutlich geringere
+Latenz, bessere Skalierung. Für produktive AGI-Anwendungen fast
+immer die bessere Wahl.
+
+[TIP]
+====
+Wenn Sie eine komplexere Event-getriebene Anwendung bauen (eine IVR,
+die aus dem CRM gespeist wird; eine Call-Center-Logik; ein
+Click-to-Call-Portal), lohnt sich der Sprung zu
+xref:ari.adoc[ARI]. AGI ist ideal für „schnell mal eine
+Datenbank befragen, ein Ergebnis zurückgeben" — für alles, was
+länger am Channel hängt und mehrere parallele Gespräche koordinieren
+muss, ist ARI der modernere Weg.
+====

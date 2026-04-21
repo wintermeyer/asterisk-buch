@@ -80,7 +80,7 @@ Event-getriebene Anwendung: Channels anlegen und verbinden (externe
 Rückrufe starten), Bridges für Konferenzen (bridge type=mixing),
 Recording starten/stoppen, DTMF empfangen, externe Medienquellen
 (Stream) einspielen. Die volle API-Liste steht unter
-https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/Asterisk_REST_Interface/.
+https://docs.asterisk.org/Latest_API/API_Documentation/Asterisk_REST_Interface/.
 
 Für Projekte, die eine komfortable Abstraktion wollen, lohnt sich
 ein Blick auf:

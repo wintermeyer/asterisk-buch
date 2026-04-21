@@ -65,4 +65,4 @@ debian*CLI> manager show command <Action>  ; Details einer Action
 ----
 
 Für die AMI-Spec siehe auch
-https://docs.asterisk.org/API_Documentation/Manager_Interface/.
+https://docs.asterisk.org/Latest_API/API_Documentation/AMI_Actions/.

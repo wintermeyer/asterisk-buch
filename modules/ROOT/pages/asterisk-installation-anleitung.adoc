@@ -166,7 +166,7 @@ Ein Asterisk-Server braucht in der Firewall ein paar geöffnete Ports:
 | 10000–20000 | UDP | RTP (Audio), Bereich in `rtp.conf` einstellbar
 | 4569 | UDP | IAX2 — nur öffnen, wenn IAX wirklich benötigt wird
 | 5038 | TCP | AMI — nur intern öffnen, niemals ins Internet
-| 8088 | TCP | ARI HTTP / AMI-HTTP — nur intern (TLS über 8089)
+| 8088 | TCP | ARI HTTP — nur intern (TLS lieber über 8089)
 |===
 
 [WARNING]
@@ -189,8 +189,11 @@ xref:sicherheit.adoc[Sicherheit].
   `dialplan reload`. Für andere Konfigurationsdateien gibt es jeweils
   passende Reload-Befehle (`pjsip reload`, `voicemail reload`,
   `module reload res_parking.so`, …).
-* *Logdatei:* `/var/log/asterisk/full` und
-  `/var/log/asterisk/messages`. Konfigurierbar in `logger.conf`.
+* *Logdatei:* Per Default schreibt Asterisk die wichtigen Meldungen
+  nach `/var/log/asterisk/messages.log`. Weitere Log-Kanäle (z. B.
+  `full.log` mit Verbose-/Debug-Meldungen, `security.log` für
+  Security-Events) lassen sich in `logger.conf` einrichten und mit
+  `logger reload` aktivieren.
 * *`fail2ban`:* Mit dem Filter `asterisk` sperrt es IPs, die im
   Security-Log mit fehlgeschlagenen Logins auffallen. Siehe
   xref:fail2ban.adoc[Fail2ban einrichten].

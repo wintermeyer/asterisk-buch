@@ -33,5 +33,5 @@ die einfach ein Event abgreifen wollen.
 
 Die jeweils aktuelle Liste aller AMI-Actions und -Events steht in der
 offiziellen Dokumentation unter
-https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/AMI_Actions/
+https://docs.asterisk.org/Latest_API/API_Documentation/AMI_Actions/
 und im CLI über `manager show commands` bzw. `manager show events`.

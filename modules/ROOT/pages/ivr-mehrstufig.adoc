@@ -40,41 +40,36 @@ folgendermaßen aus:
 ----
 [beispiel-ivr]
 ; Das Menü wird ständig wiederholt.
-;
 exten => 30,1,Answer()
-exten => 30,2,Background(grundmenue)
-exten => 30,3,Background(silence/3)
-exten => 30,4,Goto(2)
+ same => n(loop),Background(grundmenue)
+ same => n,Background(silence/3)
+ same => n,Goto(loop)
 
 exten => 1,1,Dial(PJSIP/100)
 
 exten => 2,1,Dial(PJSIP/150)
 
-; Goto() springt in einen anderen 
-; Context ([kantine])
-;
+; Goto() springt in einen anderen Context ([kantine])
 exten => 3,1,Goto(kantine,100,1)
 
-exten => i,1,Goto(30,2)
+; Falscheingaben: zurück ins Menü
+exten => i,1,Goto(30,loop)
 
 [kantine]
 exten => 100,1,Background(kantine)
-exten => 100,2,Background(silence/3)
-exten => 100,3,Goto(1)
+ same => n(loop),Background(silence/3)
+ same => n,Goto(loop)
 
 exten => 1,1,Playback(essensplan-diese-woche)
-exten => 1,2,Wait(2)
-exten => 1,3,Goto(1)
+ same => n,Wait(2)
+ same => n,Goto(100,loop)
 
 exten => 2,1,Playback(essensplan-naechste-woche)
-exten => 2,2,Wait(2)
-exten => 2,3,Goto(1)
+ same => n,Wait(2)
+ same => n,Goto(100,loop)
 
-; Bei einer Falscheingabe wird 
-; wieder in das Start-Menü 
-; gesprungen.
-;
-exten => i,1,Goto(beispiel-ivr,30,2)
+; Falscheingabe: zurück ins Hauptmenü
+exten => i,1,Goto(beispiel-ivr,30,loop)
 ----
 
 [[ivr-tiefe]]

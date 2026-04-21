@@ -45,12 +45,21 @@ Vorbereitung: Piper plus ein deutsches Modell installieren und in
 ----
 exten => 1234,1,Answer()
  same => n,Set(TEXT=Willkommen bei der Apfelmus GmbH.)
- same => n,Set(TMPFILE=/tmp/tts-${UNIQUEID}.wav)
- same => n,System(echo "${TEXT}" | /usr/local/bin/piper-de.sh > ${TMPFILE})
- same => n,Playback(${TMPFILE:0:${LEN(${TMPFILE})-4}})
- same => n,System(rm -f ${TMPFILE})
+ same => n,Set(TMPBASE=/tmp/tts-${UNIQUEID})
+ same => n,System(echo "${TEXT}" | /usr/local/bin/piper-de.sh > ${TMPBASE}.wav)
+ same => n,Playback(${TMPBASE})
+ same => n,System(rm -f ${TMPBASE}.wav)
  same => n,Hangup()
 ----
+
+[TIP]
+====
+`Playback()` bekommt den Pfad *ohne* Dateiendung; Asterisk hängt
+selbst die passende Endung (`.wav`, `.gsm`, `.ulaw`, …) an — je
+nachdem, was im Channel-Codec gerade aktiv ist und welche Formate
+neben der Datei liegen. Deshalb trennen wir den Basisnamen
+(`TMPBASE`) vom Schreib-/Löschpfad (`TMPBASE.wav`).
+====
 
 === Beispiel mit Amazon Polly
 

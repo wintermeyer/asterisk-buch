@@ -77,8 +77,8 @@ Klingeltöne, BLF-Tasten, Kurzwahl-Tasten, Speed-Dials — alles ist
 herstellerspezifisch. Asterisk liefert dafür die Grundlage:
 
 * *BLF* (Busy Lamp Field) — wird über SIP SUBSCRIBE ausgehandelt und
-  von Asterisk per `hint =>`-Einträgen im Dialplan bereitgestellt.
-  Details in xref:blf-hints.adoc[BLF, Hints, Pickup].
+  von Asterisk per `exten => ...,hint,...`-Einträgen im Dialplan
+  bereitgestellt. Details in xref:blf-hints.adoc[BLF, Hints, Pickup].
 * *Message-Retrieve-Taste* — Jedes Telefon bietet eine "Message"-
   oder "Voicemail"-Taste. Meist wird dafür ein dedizierter Code
   (z. B. `*97`) gewählt. In der `extensions.conf`:

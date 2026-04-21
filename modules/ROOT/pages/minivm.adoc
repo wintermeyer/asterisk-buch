@@ -52,8 +52,8 @@ Asterisk-Konfigurationsdateien, die Sprache nicht als 2-Buchstaben-Code
 sondern im Format
 +_`Sprache`___`Land`_+
 footnote:[nach RFC 3066, http://tools.ietf.org/html/rfc3066, allerdings mit `_` (Unterstrich) statt mit `-` (Bindestrich)]. Dabei ist _`Sprache`_ ein
-2-buchstabiger Code nach ISO 639-1footnote:[http://de.wikipedia.org/wiki/ISO_639#ISO_639-1, http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes] und _`Land`_ ein 2-buchstabiger
-Code nach ISO 3166-1 alpha-2footnote:[http://de.wikipedia.org/wiki/ISO-3166-1-Kodierliste, http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2].
+2-buchstabiger Code nach ISO 639-1footnote:[https://de.wikipedia.org/wiki/ISO_639#ISO_639-1, https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes] und _`Land`_ ein 2-buchstabiger
+Code nach ISO 3166-1 alpha-2footnote:[https://de.wikipedia.org/wiki/ISO-3166-1-Kodierliste, https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2].
 Beispiele: `de_DE` (Deutsch, Deutschland),
 `de_AT` (Deutsch, Österreich), `de_CH`
 (Deutsch, Schweiz), `fr_CH` (Französisch, Schweiz),

@@ -3,8 +3,9 @@
 :description: Voicemail-Beispielkonfigurationen für Familie und Firma in Asterisk.
 
 Die folgenden Beispiele geben einen schnellen Überblick über
-typische Konstellationen. Anschließend (in xref:voicemail-applikationen.adoc[Abschnitt 13.3, „Applikationen“]) gehen wir auf die Besonderheiten und
-Möglichkeiten von Voicemail-Systemen unter Asterisk ein.
+typische Konstellationen. Anschließend gehen wir in
+xref:voicemail-applikationen.adoc[Applikationen] auf die Besonderheiten
+und Möglichkeiten von Voicemail-Systemen unter Asterisk ein.
 
 [[voicemail-beispiele-meier]]
 == Die Voicemailbox der Familie Meier
@@ -73,7 +74,7 @@ exten => 250,1,VoiceMailMain(${CALLERID(num)})
 ----
 
 Schöner wäre es mit einem `Gosub()`-Unterprogramm statt der
-klassischen (deprecated) `Macro()`-Applikation:
+früheren — inzwischen aus Asterisk *entfernten* — `Macro()`-Applikation:
 
 [source]
 ----
@@ -100,7 +101,7 @@ exten => _s-.,1,Goto(s-NOANSWER,1)                  ; alles andere wie "nicht er
 [[voicemail-beispiele-firma]]
 == Die Apfelmus GmbH
 
-Die in xref:case-study.adoc[Kapitel 5, _Case-Study einer Beispielfirma_] vorgestellte Apfelmus GmbH
+Die in der xref:case-study.adoc[Case-Study] vorgestellte Apfelmus GmbH
 benötigt ein umfangreicheres Voicemail-System. Wir bedienen uns dieses
 Szenarios, um die Möglichkeiten des Voicemail-Systems näher zu
 erläutern.

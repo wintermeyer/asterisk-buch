@@ -84,12 +84,13 @@ Flag in den meisten Fällen.
 
 == DTLS-Material
 
-Standardmäßig erzeugt `webrtc=yes` eine DTLS-Verbindung mit den in
-`/var/lib/asterisk/keys/` abgelegten Zertifikaten. Für eine
-Produktivumgebung sollten Sie eigene Schlüssel erzeugen:
+Für DTLS-SRTP brauchen Sie ein Zertifikat und einen privaten
+Schlüssel. `webrtc=yes` liest die Dateien standardmäßig aus
+`/etc/asterisk/keys/`. Einmalig erzeugen:
 
 [source,shell]
 ----
+# mkdir -p /etc/asterisk/keys
 # cd /etc/asterisk/keys
 # openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 \
       -subj "/CN=pbx.example.com" \
@@ -104,10 +105,10 @@ Anschließend im Endpoint-Template ergänzen:
 ----
 [webrtc-endpoint](!)
 ...
-dtls_ca_file=
+dtls_ca_file=                                  ; leer = keine CA-Prüfung (Fingerprint reicht)
 dtls_cert_file=/etc/asterisk/keys/asterisk.crt
 dtls_private_key=/etc/asterisk/keys/asterisk.key
-dtls_verify=fingerprint
+dtls_verify=fingerprint                        ; Gegenseite per SDP-Fingerprint verifizieren
 ----
 
 == ICE/STUN
@@ -118,9 +119,11 @@ STUN-Server (für das reine Herausfinden der öffentlichen IP) oder
 einen TURN-Server (als Media-Relay, wenn UDP blockiert ist).
 
 Beliebte Wahl für eigene Installationen: *coturn*
-(https://github.com/coturn/coturn). In der `pjsip.conf` hinterlegen
-Sie den STUN-Server z. B. per `ice_host_candidates` / externe Adresse
-am Transport — Details dazu in der offiziellen Asterisk-Doku.
+(https://github.com/coturn/coturn). Den STUN-Server konfigurieren Sie
+in `res_stun_monitor.conf`; die von STUN ermittelte öffentliche IP
+setzen Sie am Transport als `external_media_address` und
+`external_signaling_address` — siehe auch
+xref:pjsip-konfiguration.adoc#sip-nat-problem[Das SIP-NAT-Problem].
 
 == Reload
 

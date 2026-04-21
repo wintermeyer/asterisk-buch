@@ -15,11 +15,12 @@ folgendermaßen aus:
 
 [source]
 ----
-agi_request: programmname.php
-agi_channel: Zap/1-2
+agi_request: mein-skript.py
+agi_channel: PJSIP/2000-00000001
 agi_language: de
-agi_callerid: Hans Beispiel
-agi_context: extern
+agi_callerid: 2000
+agi_calleridname: Hans Beispiel
+agi_context: intern
 agi_extension: 1234
 agi_priority: 2
 ----
@@ -74,7 +75,8 @@ Name aus der Caller-ID (z. B. `Hans
 Meier`)
 * `agi_callingpres`
 +
-Die Caller-ID im ZAP-Channel
+Presentation-Indicator der Caller-ID (z. B. `allowed_not_screened`,
+`prohib`), steuert die Anzeige beim Angerufenen
 
 [[agi-stdout]]
 == STDOUT

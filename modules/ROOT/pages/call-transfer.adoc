@@ -21,22 +21,20 @@ exten => _2XXX,1,Dial(PJSIP/${EXTEN},30,tT)
 [[blind-transfer]]
 == Blind Transfer
 
-Der Begriff „Blind Transfer“ wird für Transfers
-benutzt, die von einem Teilnehmer ohne Rückfrage zu einem anderen
-Teilnehmer gemacht werden. Diese werden per Default vom Telefonbenutzer
-durch die Eingabe von `#1` und der Zielrufnummer
-eingeleitet. Wenn Sie also das aktuelle Gespräch zum Telefon mit der
-Nummer 2323 weiterleiten wollen, können Sie dies durch die Eingabe von
-`#12323` erreichen.
+Der Begriff „Blind Transfer" wird für Transfers benutzt, die von
+einem Teilnehmer ohne Rückfrage zu einem anderen Teilnehmer gemacht
+werden. Der Default-Trigger ist die Raute-Taste (`#`), gefolgt von
+der Zielrufnummer. Um ein Gespräch also zum Telefon `2323`
+weiterzuleiten, drücken Sie `#2323`.
 
-In der Datei `/etc/asterisk/features.conf` kann
-man im Context `[featuremap]` die Ziffernkombination für das
-Einleiten eines Blind Transfers anpassen:
+In der Datei `/etc/asterisk/features.conf` lässt sich diese
+Ziffernkombination im Context `[featuremap]` anpassen — hier z. B. auf
+die längere Variante `#1`:
 
 [source]
 ----
 [featuremap]
-blindxfer => #1         ; Blind transfer
+blindxfer => #1         ; Blind transfer (Default: #)
 ----
 
 [[attended-transfer]]

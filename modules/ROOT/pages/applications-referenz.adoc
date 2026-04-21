@@ -26,101 +26,142 @@ Applikationen, gruppiert nach Einsatzzweck:
 == Anruf-Verwaltung
 `Answer()`, `Hangup()`, `Busy()`, `Congestion()`, `Ringing()`,
 `Dial()`, `RetryDial()`, `ChannelRedirect()`, `Transfer()`,
-`Park()`, `Pickup()`, `FollowMe()`, `ChanIsAvail()`, `Page()`.
+`Park()`, `ParkedCall()`, `Pickup()`, `PickupChan()`,
+`FollowMe()`, `ChanIsAvail()`, `Page()`.
 
 == Flusskontrolle
 `Goto()`, `GotoIf()`, `GotoIfTime()`, `Gosub()`, `GosubIf()`,
-`Return()`, `While()`, `EndWhile()`, `ExitWhile()`, `ContinueWhile()`,
-`ExecIf()`, `ExecIfTime()`, `Random()`.
+`Return()`, `StackPop()`, `While()`, `EndWhile()`, `ExitWhile()`,
+`ContinueWhile()`, `ExecIf()`, `ExecIfTime()`.
 
 [NOTE]
 ====
 `Macro()`, `MacroExclusive()`, `MacroIf()`, `MacroExit()` sind
-deprecated — benutzen Sie stattdessen `Gosub()` und `GosubIf()`.
-Details in xref:macro-gosub.adoc[_Makros — und warum heute Gosub() benutzt wird_].
+entfernt — benutzen Sie `Gosub()` und `GosubIf()`. Siehe
+xref:macro-gosub.adoc[_Makros — und warum heute Gosub() benutzt wird_].
+Auch `Random()` ist nicht mehr im Core enthalten; werfen Sie einen
+gewichteten „Münzwurf" im Dialplan statt mit `$\{RAND()}` und
+`GotoIf()`.
 ====
 
-== Variablen
-`Set()`, `MSet()`, `SetGlobalVar()`, `ImportVar()`, `Read()`,
-`ReadFile()`, `RealTime()`, `RealTimeUpdate()`.
+== Variablen und Ein-/Ausgabe
+`Set()`, `MSet()`, `Read()`, `SendDTMF()`, `SendText()`, `MessageSend()`.
+
+[NOTE]
+====
+`SetVar()` ist seit langem ein Alias für `Set()`. `SetGlobalVar()`,
+`ImportVar()`, `ReadFile()` sind als Applikationen entfernt — globale
+Variablen setzen Sie mit `Set(GLOBAL(NAME)=wert)`, vererbte
+Channel-Variablen mit Unterstrich-Präfix (`__NAME`) in `Set()`, und
+Dateien lesen Sie über die Funktion `$\{FILE(pfad,…)}`.
+====
 
 == Musik-/Sprachausgabe
 `Playback()`, `Background()`, `ControlPlayback()`, `BackgroundDetect()`,
-`Festival()`, `MusicOnHold()`, `StartMusicOnHold()`, `StopMusicOnHold()`,
+`MusicOnHold()`, `StartMusicOnHold()`, `StopMusicOnHold()`,
 `WaitMusicOnHold()`, `Playtones()`, `StopPlaytones()`, `MP3Player()`,
 `Echo()`, `SayAlpha()`, `SayDigits()`, `SayNumber()`, `SayPhonetic()`,
 `SayUnixTime()`.
 
 == Aufzeichnen
-`MixMonitor()`, `StopMixMonitor()`, `ChanSpy()`, `ExtenSpy()`,
-`Record()`, `Dictate()`.
+`MixMonitor()`, `StopMixMonitor()`, `Monitor()`, `StopMonitor()`,
+`ChanSpy()`, `ExtenSpy()`, `Record()`, `Dictate()`.
 
 [NOTE]
 ====
-Die alte `Monitor()`-Applikation ist größtenteils durch `MixMonitor()`
-abgelöst worden; `MixMonitor()` schreibt eine einzelne gemischte
-Audiodatei, was in 99 % der Fälle gewünscht ist.
+Die alte `Monitor()`-Applikation gibt es weiterhin, wird aber
+größtenteils durch `MixMonitor()` ersetzt; `MixMonitor()` schreibt
+eine einzelne gemischte Audiodatei, was in 99 % der Fälle gewünscht
+ist.
 ====
 
 == Voicemail
-`VoiceMail()`, `VoiceMailMain()`, `Directory()`, `MailboxExists()`,
-`VMAuthenticate()`.
-
-== Konferenzen (ConfBridge)
-`ConfBridge()`, `ConfBridgeAdmin()`, `ConfBridgeInfo()`.
+`VoiceMail()`, `VoiceMailMain()`, `VoiceMailPlayMsg()`,
+`Directory()`, `VMAuthenticate()`.
 
 [NOTE]
 ====
-`MeetMe()`, `MeetMeAdmin()`, `MeetMeCount()`, `MeetMeChannelAdmin()`
-sind als _deprecated_ markiert und benötigen DAHDI. Benutzen Sie
-`ConfBridge()` — siehe xref:konferenzen.adoc[Telefonkonferenzen].
+`MailboxExists()` und `MailboxCount()` sind keine Applikationen mehr.
+Benutzen Sie die Dialplan-*Funktionen* `$\{VM_INFO(mailbox,exists)}`
+bzw. `$\{VMCOUNT(mailbox,folder)}` — siehe
+xref:functions-referenz.adoc[Funktionen].
+====
+
+== Konferenzen (ConfBridge)
+`ConfBridge()`, `ConfKick()`.
+
+[NOTE]
+====
+`ConfBridgeAdmin()` und `ConfBridgeInfo()` gibt es *nicht* als
+eigenständige Applikationen. Administrator-Funktionen sind Menü-Einträge
+im ConfBridge-User-Profil (siehe xref:confbridge-konfiguration.adoc[`confbridge.conf`]),
+und Informationen liest der Dialplan über die Funktion
+`$\{CONFBRIDGE_INFO(...)}` aus. Die Aufzeichnung einer Konferenz
+aktivieren Sie im Bridge-Profil (`record_conference=yes`) oder
+starten/stoppen sie pro Session über das DTMF-Menü. `MeetMe()`,
+`MeetMeAdmin()`, `MeetMeCount()`, `MeetMeChannelAdmin()` sind
+_deprecated_ und benötigen DAHDI — benutzen Sie `ConfBridge()`.
 ====
 
 == Warteschlangen, Call-Center
 `Queue()`, `QueueLog()`, `AddQueueMember()`, `RemoveQueueMember()`,
-`PauseQueueMember()`, `UnpauseQueueMember()`, `AgentLogin()`.
+`PauseQueueMember()`, `UnpauseQueueMember()`, `QueueUpdate()`,
+`AgentLogin()`, `AgentRequest()`.
 
 [NOTE]
 ====
-`AgentCallbackLogin()`, `AgentMonitorOutgoing()` sind entfernt.
+`AgentCallbackLogin()` und `AgentMonitorOutgoing()` sind entfernt —
+benutzen Sie `AddQueueMember()` im Dialplan, um einen Agent einer
+Queue hinzuzufügen (siehe
+xref:queues-extensions-conf.adoc[extensions.conf]).
 ====
 
 == Externe Skripte / Steuerung
 `AGI()`, `EAGI()`, `DeadAGI()`, `System()`, `TrySystem()`, `Exec()`,
 `TryExec()`, `UserEvent()`, `Log()`, `Verbose()`, `NoOp()`,
-`DumpChan()`.
+`DumpChan()`, `Stasis()`.
 
 [TIP]
 ====
-Für komplexere externe Steuerung (Call-Control, persistente Apps) ist
-*xref:ari.adoc[ARI]* der moderne Weg — die klassischen
-AGI-/AMI-Pfade bleiben aber voll funktional.
+`Stasis(<app>)` ist der Einsprungpunkt in eine
+xref:ari.adoc[ARI-Anwendung] — der moderne Weg für komplexere
+externe Call-Control. Die klassischen AGI-/AMI-Pfade bleiben für
+einfachere Aufgaben voll funktional.
 ====
 
 == Authentifizierung, Kennung, Sicherheit
 `Authenticate()`, `VMAuthenticate()`, `PrivacyManager()`,
-`SetCallerPres()`, `SoftHangup()`.
-
-== CDR / Abrechnung
-`NoCDR()`, `ForkCDR()`, `ResetCDR()`, `SetAMAFlags()`.
-
-== SIP / PJSIP-spezifisch
-`PJSIP_HEADER`-Funktionen (nicht Applikationen — siehe
-xref:functions-referenz.adoc[Funktionen]) sowie `PJSIPNotify()`.
+`SoftHangup()`.
 
 [NOTE]
 ====
-Die alten chan_sip-spezifischen Applikationen (`SIPAddHeader()`,
-`SIPdtmfMode()`, `SIPGetHeader()`) gibt es nur mit `chan_sip` — der
-ist entfernt. Für PJSIP benutzen Sie die `PJSIP_*`-Dialplan-Funktionen
-(siehe Doku).
+`SetCallerPres()` ist entfernt — die Caller-ID-Presentation steuern
+Sie heute über die Funktion `Set(CALLERID(pres)=prohib)` o. ä.
 ====
 
-== Zapateller und Co. — entfernt / deprecated
-`Zapateller()`, `ZapBarge()`, `ZapRAS()`, `ZapScan()`,
-`ZapSendKeypadFacility()`, `SMS()`, `ICES()`, `NBScat()`,
-`AlarmReceiver()`, `Morsecode()` — für diese exotischen Befehle
-konsultieren Sie im Einzelfall die Upstream-Doku.
+== CDR / CEL / Abrechnung
+`ResetCDR()`, `ForkCDR()`, `CELGenUserEvent()`.
+
+[NOTE]
+====
+`NoCDR()` und `SetAMAFlags()` sind entfernt — statt `NoCDR()` setzen
+Sie `Set(CDR_PROP(disable)=1)`, statt `SetAMAFlags()` schreiben Sie
+`Set(CDR(amaflags)=<flag>)` bzw. nutzen den `CDR(accountcode)`/
+`CDR(amaflags)`-Accessor.
+====
+
+== SIP / PJSIP-spezifisch
+`PJSIPNotify()`, `PJSIPHangup()`.
+
+[NOTE]
+====
+Die chan_sip-spezifischen Applikationen (`SIPAddHeader()`,
+`SIPdtmfMode()`, `SIPGetHeader()`) sind mit `chan_sip` entfernt.
+Header greifen Sie bei PJSIP über die Dialplan-Funktion
+`$\{PJSIP_HEADER(...)}` ab, Ziel-Kontakte über
+`$\{PJSIP_DIAL_CONTACTS(...)}` — siehe
+xref:functions-referenz.adoc[Funktionen].
+====
 
 [[applications-reference]]
 == Referenz

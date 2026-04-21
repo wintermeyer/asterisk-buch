@@ -29,7 +29,7 @@ exten => _88XXX.,1,Answer()
 ;
 exten => _99.,1,GotoIf($[${DB(CallingCard/${CALLERID(num)})} > 0]?dial:leer)
  same => n(dial),Set(DB(CallingCard/${CALLERID(num)})=$[${DB(CallingCard/${CALLERID(num)})} - 1])
- same => n,Dial(Local/${EXTEN:2})
+ same => n,Dial(Local/${EXTEN:2}@from-intern)
  same => n,GotoIf($["${DIALSTATUS}" = "ANSWER"]?ende:refund)
  same => n(refund),Set(DB(CallingCard/${CALLERID(num)})=$[${DB(CallingCard/${CALLERID(num)})} + 1])
  same => n,Goto(ende)

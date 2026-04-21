@@ -25,7 +25,7 @@ gleichen Verbindung eine ISDN-Sprachqualität bekommen, können wir unter
 Einsatz von Trunking und dem G.726-Codec immer noch 44 simultane Gespräche
 führen.
 
-Trunking wird nur im IAX2-Protokoll (siehe xref:iax-protokoll.adoc[Abschnitt 8.7, „IAX“])
+Trunking wird nur im IAX2-Protokoll (siehe xref:iax-protokoll.adoc[IAX])
 angeboten und sollte nur bei Verbindungen mit mindestens 2 simultanen
 Verbindungen benutzt werden, da der Overhead bei einer Verbindung
 geringfügig höher ist als ohne Trunking.

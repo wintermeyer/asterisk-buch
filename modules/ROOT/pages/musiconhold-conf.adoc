@@ -2,106 +2,113 @@
 = `musiconhold.conf`
 :description: Die musiconhold.conf in Asterisk: Wartemusik-Klassen konfigurieren.
 
-Beginnen wir mit dem Einfachsten, der Festlegung der Wartemusik
-(Music on Hold).
+Wartemusik (_Music on Hold_) wird in `/etc/asterisk/musiconhold.conf`
+konfiguriert. Jede Musikklasse ist ein eigener Abschnitt; der Name
+`default` wird überall dort verwendet, wo keine andere Klasse
+angegeben ist.
 
 [WARNING]
 ====
 Für das Abspielen von Musik können Gebühren an die
-https://www.gema.de/[_GEMA_] anfallen. Freie klassische Werke finden
-Sie unter anderem auf https://www.classiccat.net/ zum Download, oder
-Sie verwenden die drei mitgelieferten Stücke.
+https://www.gema.de/[_GEMA_] anfallen. Frei verwendbare klassische
+Werke finden Sie z. B. auf https://www.classiccat.net/. Asterisk
+bringt außerdem drei kurze Musikstücke mit, die Sie lizenzfrei
+nutzen dürfen.
 ====
 
-Die Einstellmöglichkeiten werden in der Datei
-`musiconhold.conf` beschrieben. Ein paar Informationen
-zur MP3-Unterstützung durch das Programm `mpg123` stehen
-in `doc/README.mp3` (1.2) /
-`doc/mp3.txt` (1.4). Die optimale Abtastrate für die
-MP3s ist 8000 Hz, mono.
+[[moh-files-mode]]
+== Einfachste Konfiguration
 
-Die einfachste (Default-)Konfiguration mit nur einer Musikklasse
-(`default`) sieht so aus:
+Die Default-Installation kommt bereits mit einer funktionierenden
+Konfiguration:
 
 [source]
 ----
 [default]
-mode=quietmp3
-directory=/var/lib/asterisk/mohmp3
+mode=files
+directory=/var/lib/asterisk/moh
 ----
 
-Jetzt stoppen und starten
-wir Asterisk, z. B. mit `asterisk -rx "stop now"` und
-`asterisk`, um die neue Extension und die Streams zu
-aktivieren (ein Reload reicht nicht aus). Wenn Sie jetzt die Extension
-`222` (wie oben definiert) anrufen, sollten Sie Wartemusik
-hören (im oben genannten Verzeichnis werden bereits 3 Dateien
-mitgeliefert).
+Asterisk erwartet dort Audiodateien in einem der nativ unterstützten
+Formate (`.gsm`, `.ulaw`, `.alaw`, `.sln16`, `.wav` mit 8 kHz mono
+o. ä.). Die Datei-Endung lassen Sie beim Ablegen weg oder benutzen
+mehrere Formate nebeneinander — Asterisk wählt automatisch das
+Format, das am wenigsten CPU kostet (also keine Transkodierung
+braucht).
 
-Besser ist aber folgende Konfiguration, für die wir ein Verzeichnis
-`moh-native` in `/var/lib/asterisk/`
-anlegen:
+Mehrere Dateien im Verzeichnis werden der Reihe nach abgespielt; mit
+`sort=random` in zufälliger Reihenfolge:
 
 [source]
 ----
 [default]
-mode=files       ; Dateien direkt in einem Asterisk-kompatiblen Format lesen
-directory=/var/lib/asterisk/moh-native
-sort=random      ; Dateien in zufälliger Reihenfolge abspielen
+mode=files
+directory=/var/lib/asterisk/moh
+sort=random
 ----
 
-Es
-ist dazu notwendig, die MP3-Dateien in ein Asterisk-kompatibles Format zu
-konvertieren, was z. B. mit den Programmen `sox`footnote:[`sox` (http://sox.sourceforge.net/) gibt es als Debian-Paket, also:$ *`apt-get install sox`*] und `lame`footnote:[Für MacOS X gibt es ein Paket über Darwinports (siehe die Beschreibung zu `sox`):$ *`port install lame`* oder über Fink (http://fink.sourceforge.net/):$ *`fink install lame`*Natürlich geht das auch über den FinkCommander mit grafischem Interface.] so geht:
+[[moh-eigene-musik]]
+== Eigene Musik einspielen
+
+Sie können WAV-, FLAC- oder MP3-Dateien mit `sox` in die Zielformate
+konvertieren:
 
 [source,shell]
 ----
-$  lame --decode musik.mp3 musik.wav
-$  sox -V musik.wav -r 8000 -c 1 -w musik.raw
-$  sox -V musik.wav -r 8000 -c 1 -w musik.gsm
+# apt install -y sox libsox-fmt-all
+# cd /var/lib/asterisk/moh
+# sox musik.mp3 -r 8000 -c 1 -b 16 musik.wav
+# sox musik.mp3 -r 8000 -c 1 musik.gsm
+# chown asterisk:asterisk musik.*
 ----
 
-Damit
-haben wir eine fiktive Datei `musik.mp3` in das
-WAV-Format und dann in die Formate RAW und GSM konvertiert (mit einer
-Abtastrate von 8 kHz). Wir können in unserem Verzeichnis auch Formate wie
-alaw und ulaw (Dateiendungen für `sox`:
-`.al` und `.ul`) ablegen –
-Asterisk wird automatisch das am wenigsten CPU-intensive wählen. Wichtig
-ist, dass die Abtastrate immer 8000 Hz beträgt.
+Wichtig: Samplerate `8000` Hz mono, sonst klingt es falsch (oder
+Asterisk muss transkodieren, was CPU kostet).
 
-[IMPORTANT]
-====
-Wenn Sie in der `modules.conf` nicht
-`autoload` benutzen, müssen Sie sicherstellen, dass die
-Module für die Formate, die Sie hier verwenden wollen,
-_vor_ `res_musiconhold` geladen
-werden.
-====
-
-In unserem Test haben wir die im Verzeichnis
-`moh/` mitgelieferten WAV-Dateien in unser Verzeichnis
-`moh-native/` kopiert, mit `sox` nach
-RAW und GSM umkodiert und dann die WAV-Dateien, die Probleme bereiteten,
-aus dem Verzeichnis gelöscht:
+Mehrere Klassen, z. B. je nach Kontext:
 
 [source]
 ----
-$  cd /var/lib/asterisk/moh-native/
-$  for i in *.wav; do \
-sox $i -r 8000 -c 1 $(basename $i .wav).raw; \
-sox $i -r 8000 -c 1 $(basename $i .wav).gsm; \
-done
-$  rm *.wav
+[default]
+mode=files
+directory=/var/lib/asterisk/moh
+
+[klassik]
+mode=files
+directory=/var/lib/asterisk/moh/klassik
+sort=random
 ----
 
-Für CPU-kritische Anwendungen (große Installationen) sollten Sie
-einen Blick auf die Beschreibung in
-`contrib/utils/README.rawplayer` im ursprünglichen
-Asterisk-Verzeichnis werfen.
+Im Dialplan setzen Sie die Klasse pro Kanal:
 
-Weitere Musikklassen lassen sich definieren, indem man außer dem
-`[default]`-Abschnitt noch weitere Abschnitte, z. B.
-`[rock]` anlegt, dort ein anderes Verzeichnis, z. B. ein
-Unterverzeichnis, angibt und die Musikdateien in dieses Verzeichnis legt.
-Reload nicht vergessen!
+[source]
+----
+exten => 222,1,Answer()
+ same => n,Set(CHANNEL(musicclass)=klassik)
+ same => n,WaitMusicOnHold(30)
+ same => n,Hangup()
+----
+
+[[moh-reload]]
+== Reload
+
+Nach Änderungen an `musiconhold.conf` oder nach dem Hinzufügen neuer
+Dateien reicht meist:
+
+[source,shell]
+----
+# asterisk -rx "moh reload"
+----
+
+Falls das in Ihrer Version nicht zieht, hilft
+`module reload res_musiconhold.so` oder — im Zweifel — ein
+`systemctl restart asterisk`.
+
+[[moh-cpu]]
+== CPU-Hinweis
+
+Wenn Ihr MoH-Verzeichnis nur WAV-48-kHz-Dateien enthält, transkodiert
+Asterisk pro Gespräch nach alaw/ulaw/gsm. Bei 100 gleichzeitig
+wartenden Anrufern summiert sich das spürbar. Legen Sie deshalb
+direkt die Zielformate (`.gsm`, `.ulaw`, `.alaw`) ins
+MoH-Verzeichnis — so läuft der Stream ohne Transkodierung.

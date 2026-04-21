@@ -30,6 +30,20 @@ exten => 999,1,Answer()
  same => n,Hangup()
 ----
 
+[NOTE]
+====
+Das Zielverzeichnis `/var/spool/asterisk/fax/` ist in der
+Grundinstallation *nicht* angelegt. Erstellen Sie es einmalig und
+setzen Sie Besitzer und Rechte so, dass der Asterisk-Benutzer
+schreiben darf:
+
+[source,shell]
+----
+# mkdir -p /var/spool/asterisk/fax
+# chown asterisk:asterisk /var/spool/asterisk/fax
+----
+====
+
 [[faxserver-hylafax]]
 == Historische Variante: IAXmodem + HylaFax
 

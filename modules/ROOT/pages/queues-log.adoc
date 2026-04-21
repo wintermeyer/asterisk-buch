@@ -53,13 +53,13 @@ Dokumentation unter https://docs.asterisk.org beschrieben.
 Leider kann Asterisk derzeit das Queue-Log noch nicht direkt in
 eine SQL-Datenbank-Tabelle schreiben. Dass die Daten in einer
 SQL-Datenbank liegen, ist aber für alle bekannten Statistik-Tools eine
-Grundvoraussetzung. Zu diesem Zweck existieren verschiedene
-Skriptefootnote:[siehe http://www.voip-info.org/wiki/view/Asterisk+queue_log+on+MySQL] (meist in Perl) bzw. werden mit den Tools mitgeliefert.
-Sie alle gehen den Weg, der im unten angefügten Skript beschrieben ist,
-die Datei `queue_log` durch eine Named-Pipe (FIFO) zu
-ersetzen. Das Skript öffnet die FIFO zum Lesen, und sobald Asterisk eine
-Log-Meldung hineinschreibt, wird diese in die Datenbank
-eingetragen.
+Grundvoraussetzung. Zu diesem Zweck existieren verschiedene Skripte (meist in Perl) bzw.
+werden mit den Tools mitgeliefert. Die klassische Methode: Die Datei
+`queue_log` durch eine Named-Pipe (FIFO) ersetzen, ein Skript lauscht
+auf der FIFO und schreibt alle Zeilen in die Datenbank. Modern
+setzen viele Installationen stattdessen auf `cel_odbc` (CEL-Events
+direkt in die Datenbank) oder auf eine periodische Auswertung des
+`queue_log` per Cron-Job.
 
 [WARNING]
 ====
@@ -72,10 +72,7 @@ Asterisk beim Versuch, zu schreiben, ein
 bringen würde!
 ====
 
-Da aber ohne Unterstützung durch Asterisk keine wirkliche
-Alternative besteht, soll hier trotz der Gefahr, die theoretisch
-besteht, ein Perl-Skript von William Lloyd den Ansatz
-beschreibenfootnote:[wlloyd at slap.net, veröffentlicht auf der Digium-Mailingliste `asterisk-users`, siehe: http://lists.digium.com/pipermail/asterisk-users/2005-July/109892.html]:
+Das folgende Perl-Skript von William Lloyd zeigt den Ansatz:
 
 [source]
 ----
@@ -184,6 +181,6 @@ Bei QueueMetrics (kostenlose Demo-Version) wird ebenfalls ein
 Perl-Skript namens `queueLoader.pl` mitgeliefert
 (siehe aber die Warnung oben!).
 
-Alternativ dazu kann man die Datei auch regelmäßig (z. B.
-minütlich per Cron-Job) rotieren und in die Datenbank einlesen.
-footnote:[Einen ähnlichen Ansatz findet man bei dem Hilfsprogramm `asterisk-qsync` von André Herrmann: http://fisi-itse.de/index.php?option=com_content&task=view&id=24&Itemid=3]
+Alternativ dazu kann man die Datei auch regelmäßig (z. B. minütlich
+per Cron-Job) rotieren und in die Datenbank einlesen — das ist
+weniger elegant, aber deutlich robuster gegen Skript-Abstürze.

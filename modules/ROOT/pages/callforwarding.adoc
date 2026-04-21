@@ -48,7 +48,7 @@ exten => _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
 exten => _X.,n,GotoIf($[foo${DB(CF/${EXTEN})} != foo]?forward:normal)
 exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
 exten => _X.,n(forward),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
-exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})}@from-intern)
 ----
 
 [[komplexes-callforwarding]]
@@ -104,7 +104,7 @@ exten => _X.,n,GotoIf($[foo${DB(CF/anlage)} != foo]?cfanlage:zweiteregel)
 exten => _X.,n(zweiteregel),GotoIf($[foo${DB(CF/${EXTEN})} != foo]?cfnormal:normal)
 exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
 exten => _X.,n(cfnormal),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
-exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})}@from-intern)
 exten => _X.,n(cfanlage),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/anlage)})
-exten => _X.,n,Dial(Local/${DB(CF/anlage)})
+exten => _X.,n,Dial(Local/${DB(CF/anlage)}@from-intern)
 ----

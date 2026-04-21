@@ -39,7 +39,7 @@ Asterisk 20 LTS) gibt es `chan_sip` noch als "deprecated" im Baum —
 neu aufsetzen sollten Sie trotzdem mit PJSIP.
 ====
 
-`chan_pjsip` basiert auf der PJProject-Bibliothek (http://www.pjsip.org/)
+`chan_pjsip` basiert auf der PJProject-Bibliothek (https://www.pjsip.org/)
 und ist gegenüber `chan_sip` in praktisch jedem Aspekt besser:
 mehrere Transports gleichzeitig (UDP + TCP + TLS + WSS), saubere
 NAT-Behandlung, Unterstützung für moderne Features wie WebRTC,
@@ -66,9 +66,10 @@ Adresse und erreicht niemanden.
 In der Praxis ist das Problem mit zwei Zutaten in `pjsip.conf`
 abgefangen:
 
-* Dem Transport sagen Sie, welche öffentliche Adresse er "außen"
-  hat — `external_media_address` und `external_signaling_address`
-  (oder `external_signaling_address` + DNS):
+* Dem Transport sagen Sie, welche öffentliche Adresse er "außen" hat:
+  `external_media_address` für RTP/Medien und `external_signaling_address`
+  für die SIP-Signalisierung. Beide akzeptieren wahlweise eine
+  IP-Adresse oder einen DNS-Namen:
 +
 [source]
 ----

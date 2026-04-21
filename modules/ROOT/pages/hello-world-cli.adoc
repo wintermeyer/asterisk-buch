@@ -73,14 +73,17 @@ ohne Telefon, über den Dummy-Kanal `Local`:
 debian*CLI> channel originate Local/1001@default application Wait 5
     -- Executing [1001@default:1] Answer("Local/1001@default-00000000;2", "") in new stack
     -- Executing [1001@default:2] Playback("Local/1001@default-00000000;2", "hello-world") in new stack
-    -- <Local/1001@default-00000000;2> Playing 'hello-world.ulaw' (language 'en')
+    -- <Local/1001@default-00000000;2> Playing 'hello-world.gsm' (language 'en')
     -- Executing [1001@default:3] Hangup("Local/1001@default-00000000;2", "") in new stack
   == Spawn extension (default, 1001, 3) exited non-zero on 'Local/1001@default-00000000;2'
 ----
 
 Damit haben wir gezeigt, dass der Dialplan funktioniert. Asterisk hat
 die drei Prioritäten der Extension 1001 ausgeführt: abgehoben, die Datei
-`hello-world.ulaw` abgespielt, aufgelegt.
+`hello-world.gsm` abgespielt, aufgelegt. Welches Format Asterisk
+tatsächlich benutzt (`.gsm`, `.ulaw`, `.alaw`, `.wav`, ...), hängt
+davon ab, was im Sounds-Verzeichnis liegt und welchen Codec der Channel
+spricht — Asterisk wählt das verlustärmste verfügbare Format.
 
 [NOTE]
 ====

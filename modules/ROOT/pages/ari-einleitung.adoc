@@ -17,7 +17,7 @@ funktionieren weiterhin, haben aber Grenzen:
 *ARI* löst diese Probleme. Die API ist in Swagger/OpenAPI dokumentiert,
 antwortet mit JSON und spricht Events über eine WebSocket-Verbindung.
 Die offizielle, jeweils aktuelle Spec liegt unter
-https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/Asterisk_REST_Interface/.
+https://docs.asterisk.org/Latest_API/API_Documentation/Asterisk_REST_Interface/.
 
 == Wann ARI, wann AMI/AGI?
 

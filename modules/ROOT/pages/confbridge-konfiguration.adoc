@@ -3,15 +3,19 @@
 :description: confbridge.conf: Bridge-Profile und User-Profile für Asterisk-Konferenzen.
 
 Die zentrale Datei ist `/etc/asterisk/confbridge.conf`. Sie kennt
-vier Arten von Blöcken:
+drei Block-Typen:
 
 [cols="1,3"]
 |===
 | `type=bridge`    | Eigenschaften einer Konferenz (Sprache, Musik on Hold, maximale Teilnehmerzahl, ob Video erlaubt ist).
 | `type=user`      | Eigenschaften eines Teilnehmers (darf stummgeschaltet werden, Admin-Rechte, Menü-Zugang, Kanalansage bei Eintritt).
-| `type=menu`      | DTMF-Menüs für Teilnehmer.
-| `default_bridge` / `default_user` | Default-Profile, wenn beim Aufruf nichts angegeben wurde.
+| `type=menu`      | DTMF-Menüs für Teilnehmer (was passiert bei welcher Tasten-Eingabe während der Konferenz).
 |===
+
+Die beiden Block-Namen `[default_bridge]` und `[default_user]` werden
+von Asterisk automatisch verwendet, wenn beim `ConfBridge()`-Aufruf
+kein Profil angegeben wird — das sind also keine eigenen Typen,
+sondern speziell benannte Profile.
 
 == Ein minimales Profil-Set
 
