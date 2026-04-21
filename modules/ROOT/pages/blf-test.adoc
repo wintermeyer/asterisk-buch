@@ -22,8 +22,8 @@ noch nicht am Asterisk-Server angemeldet sind
 Telefon den Status dieser Extensions abonniert (0
 `Watchers`). Letzteres wird auch durch die Auflistung der
 aktiven _Subscriptions_ bestätigt,
-die durch das Kommando +`sip show
-subscriptions`+ ausgegeben wird:footnote:[Die Ausgabe wurde hier aus Platzgründen etwas verkürzt.]
+die durch das Kommando +`pjsip show subscriptions inbound`+
+ausgegeben wird:footnote:[Die Ausgabe wurde hier aus Platzgründen etwas verkürzt.]
 
 [source,shell]
 ----

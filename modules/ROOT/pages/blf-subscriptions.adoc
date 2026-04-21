@@ -12,8 +12,8 @@ springen.
 
 Es gibt in SIP mehrere Verfahren, wie man den Status einer
 Nebenstelle "abonnieren" kann. Der De-facto-Standard heute ist das
-https://tools.ietf.org/html/rfc4235[_Dialog Event Package_ (RFC 4235)],
-das auf https://tools.ietf.org/html/rfc6665[_SIP Event Notification_ (RFC 6665, ersetzt RFC 3265)]
+https://datatracker.ietf.org/doc/html/rfc4235[_Dialog Event Package_ (RFC 4235)],
+das auf https://datatracker.ietf.org/doc/html/rfc6665[_SIP Event Notification_ (RFC 6665, ersetzt RFC 3265)]
 aufbaut. Das Telefon schickt für jede zu überwachende Nebenstelle ein
 `SUBSCRIBE` an Asterisk und erhält bei jeder Status-Änderung ein
 `NOTIFY`.
@@ -25,8 +25,8 @@ sind:
 |===
 | Spezifikation | MIME-Typ | Geräte
 
-| http://tools.ietf.org/html/rfc4235[__SIP Dialog Event Package__ (RFC 4235)] | `application/dialog-info+xml` | Snom, Linksys, Aastra, Polycom, Grandstream, Thomson, ...
-| http://tools.ietf.org/html/rfc3863[__Presence Information Data Format (PIDF)__ (RFC 3863)] | `application/pidf+xml` | CounterPathfootnote:[früher Xten] http://www.counterpath.net/eyebeam.html[EyeBeam] etc., Cisco
+| https://datatracker.ietf.org/doc/html/rfc4235[__SIP Dialog Event Package__ (RFC 4235)] | `application/dialog-info+xml` | Snom, Linksys, Aastra, Polycom, Grandstream, Thomson, ...
+| https://datatracker.ietf.org/doc/html/rfc3863[__Presence Information Data Format (PIDF)__ (RFC 3863)] | `application/pidf+xml` | CounterPathfootnote:[früher Xten] http://www.counterpath.net/eyebeam.html[EyeBeam] etc., Cisco
 | Vor-Version von RFC 3863 (PIDF, s. o.), XPIDF, CPIM mit Microsoft-Ergänzungfootnote:[http://msdn.microsoft.com/en-us/library/cc246193.aspx[__XPIDF Presence Format Example__\], http://msdn.microsoft.com/en-us/library/cc246202.aspx[__XPIDF Presence Document Format__\], http://softlab-pro-web.technion.ac.il/projects/WatchMe/documents/RTC.doc[__Microsoft Real Time Communication (RTC) Client__\]] | `application/xpidf+xml` | Microsoft RTC/LCS, MSN Messenger, Polycom
 | Vor-Version von RFC 3863 (PIDF, s. o.), XPIDF, CPIM | `application/cpim-pidf+xml` | ?
 |===

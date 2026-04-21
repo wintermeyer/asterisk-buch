@@ -1,32 +1,37 @@
 [[ami-manager-interface]]
-= Asterisk fernsteuern
+= Asterisk Manager Interface (AMI)
 :description: Das Asterisk Manager Interface (AMI) als TCP-Protokoll für Monitoring und Steuerung.
 
 In diesem Kapitel:
 
-* xref:asterisk-rx-befehle.adoc[asterisk -rx "_`Befehl`_"]
-** xref:asterisk-rx-befehle.adoc#asterisk-rx-beispiel[Beispiel]
-* xref:call-files.adoc[Call Files]
-** xref:call-files.adoc#call-file-parameter[Parameter]
-** xref:call-files.adoc#call-file-zukunft[Call Files in der Zukunft aufrufen]
-** xref:call-files.adoc#call-file-weckruf[Beispiel Weckruf]
 * xref:ami-konfiguration.adoc[Das Manager-Interface (AMI)]
 * xref:ajam-deprecated.adoc[AJAM — und warum es durch ARI ersetzt wurde]
 
-Es gibt verschiedene Möglichkeiten, eine Asterisk-Anlage extern zu
-steuern. Von der einfachsten zur mächtigsten:
+Das *Asterisk Manager Interface* (AMI) ist ein klassisches TCP-Protokoll
+auf Port 5038. Ein externes Programm verbindet sich, meldet sich mit
+Benutzername und Passwort an und kann ab dann:
 
-1. *`asterisk -rx "<befehl>"`* — schnelle CLI-Befehle aus einem Skript
-   heraus.
-2. *Call Files* — eine Textdatei ins Spool-Verzeichnis schreiben, um
-   einen Anruf zu initiieren. Simpel, Fire-and-forget, kein Code.
-3. *AMI (Manager-Interface)* — TCP-Protokoll für Monitoring,
-   Event-Handling und Originate.
-4. *xref:ari.adoc[ARI (REST Interface)]* — die aktuelle
-   Empfehlung für neue Anwendungen. REST + WebSocket, volle
-   Call-Control.
+* *Actions* senden — z. B. `Originate`, `Hangup`, `Redirect`,
+  `MailboxCount`, `Command` (CLI-Befehl ausführen). Asterisk antwortet
+  synchron mit einer `Response`.
+* *Events* empfangen — ungefragt, asynchron: jeder neue Channel,
+  jeder Bridge-Vorgang, jeder Hangup, jede Registrierung löst ein
+  Event aus.
 
-Für neue Entwicklungen empfehlen wir klar *ARI*. AMI bleibt für
-bestehende Anwendungen und einfache Monitoring-Skripte relevant. AJAM
-(der alte HTTP-Wrapper um AMI) ist deprecated und wird nicht mehr
-empfohlen.
+Das Protokoll ist zeilenbasiert mit `Key: Value`-Paaren, getrennt
+durch CR/LF, ein Paket endet mit einer Leerzeile. Für
+Monitoring-Skripte und Integrations-Werkzeuge reicht das völlig.
+
+[NOTE]
+====
+Für neue Anwendungen, die Gespräche aktiv steuern sollen, empfehlen
+wir heute xref:ari.adoc[ARI]: REST-API plus WebSocket-Event-Stream,
+JSON statt zeilenbasiertem Text, sauberes Call-Control-Modell. AMI
+bleibt relevant für Monitoring, Alt-Anwendungen und kleine Werkzeuge,
+die einfach ein Event abgreifen wollen.
+====
+
+Die jeweils aktuelle Liste aller AMI-Actions und -Events steht in der
+offiziellen Dokumentation unter
+https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/AMI_Actions/
+und im CLI über `manager show commands` bzw. `manager show events`.

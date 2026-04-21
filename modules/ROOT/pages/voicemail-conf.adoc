@@ -154,11 +154,11 @@ maxsecs = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Sprachn
 Beispiel:
 +
 `maxsecs = 120`
-minmessage = _`[Länge in Sekunden]`_:: Definiert die minimale Länge einer Sprachnachricht in Sekunden. Default: `0`.
+minsecs = _`[Länge in Sekunden]`_:: Definiert die minimale Länge einer Sprachnachricht in Sekunden. Default: `0`. Das frühere Schlüsselwort `minmessage` ist ebenfalls deprecated.
 +
 Beispiel:
 +
-`minmessage = 5`
+`minsecs = 5`
 maxgreet = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Begrüßungsnachricht in Sekunden. Default: unendlich.
 +
 Beispiel:

@@ -6,9 +6,9 @@ Mit dem Befehl `core show translation` bekommen Sie eine Liste der in
 Ihrem System verfügbaren Codecs und der möglichen Transkodierungen.
 Die heute in Asterisk-Installationen gebräuchlichsten Codecs:
 
-* *G.711* (`alaw`/`ulaw`, im CLI als `g711a` / `g711u`)
+* *G.711* (im CLI und in `allow=`/`disallow=` als `alaw` bzw. `ulaw`)
 +
-Der Klassiker. Sehr gute Sprachqualität, unverschlüsselt 64 Kbit/s.
+Der Klassiker. Sehr gute Sprachqualität, unkomprimiert 64 Kbit/s.
 In Europa dominiert `alaw`, in Nordamerika `ulaw`. Läuft überall,
 kostet keine CPU und braucht keine Lizenzen. Default für fast alles.
 

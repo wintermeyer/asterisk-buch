@@ -1,174 +1,102 @@
 [[blf-device-state]]
 = Gezielte Ansteuerung der LEDs
 :description: Gezielte LED-Ansteuerung in Asterisk über DEVICE_STATE() und Custom-States.
-_DEVICE_STATE()_
 
-Wie man über Hints Extensions mit dem Status von SIP-Benutzern
-verknüpfen kann, haben Sie schon gelernt. Zur Erinnerung:
+Bisher haben wir Hints mit konkreten Geräten wie `PJSIP/21` verbunden
+— die LED reagiert dann auf den Status dieses Telefons. Oft möchte
+man aber eine LED *willkürlich* steuern, zum Beispiel um anzuzeigen,
+ob der Weihnachtsbetrieb läuft, ob man in einer Queue eingeloggt ist
+oder ob der Rasensprenger aktiv ist.
 
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
+Dafür gibt es in Asterisk _Custom Device States_: virtuelle Geräte,
+deren Zustand Sie selbst setzen.
 
-| exten => 21,*hint,PJSIP/21* | *hint(PJSIP/21)* 21 => {}
-|===
+== Hint auf ein Custom-Device
 
-+
-
-Seit Asterisk 1.6 kann man über Hints aber Extensions auch mit dem
-Status von `MeetMe`-Konferenzräumen verbinden:
-
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
-
-| exten => 881,*hint,MeetMe:885* exten => 881,1,MeetMe(885) | *hint(MeetMe:885)* 881 => { MeetMe(885); }
-|===
-
-+
-
-Der Hint im Beispiel oben schafft die Verknüpfung zwischen der
-Extension `881` mit dem Status des
-`MeetMe`-Konferenzraums `885`. Die Nummern
-sind hier mit Absicht unterschiedlich gewählt; in Wirklichkeit werden sie
-häufig gleich sein. Man könnte jetzt am Telefon eine Taste mit der
-Nebenstelle `881` belegen. Dann würde die LED den Status des
-Konferenzraums anzeigen.
-
-Das aber nur als kleiner Exkurs, da es gerade thematisch passt. Noch
-interessanter ist, dass man ab Asterisk 1.6 über Hints Extensions auch mit
-eigenen, „virtuellen Geräten“ assoziieren kann. Die
-Schreibweise ist fast genauso:
-
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
-
-| exten => 99,*hint,Custom:mein-status* | *hint(Custom:mein-status)* 99 => {}
-|===
-
-+
-
-Den Status dieser „_Custom
-Devices_“ kann man ganz frei mit der Funktion
-`DEVICE_STATE()`footnote:[Die Funktion hieß zeitweilig `DEVSTATE()`. Damit ist ebenfalls `DEVICE_STATE()` gemeint. Sie darf allerdings nicht verwechselt werden mit der Applikation `DevState()` oder anderen Funktionen oder Applikationen ähnlichen Namens, die in den diversen Internet-Foren usw. herumgeistern, auch wenn sie ungefähr das Gleiche bewirken.] von einer beliebigen anderen Stelle im Dialplan aus
-festlegen.
+Ein Hint kann neben `PJSIP/...`, `IAX2/...` oder `ConfBridge:...` auch
+auf ein frei gewähltes `Custom:...` zeigen:
 
 [source]
 ----
-Set(DEVICE_STATE(Custom:mein-status)=INUSE);
+[interne-benutzer]
+exten => 99,hint,Custom:mein-status
 ----
 
-An ein Telefon, das den Status der Extension abonniert hat, wird
-dann die jeweilige Benachrichtigung geschickt. Die möglichen Werte und die
-übliche Anzeige am Telefon sind:
+Ein Telefon, das `99@interne-benutzer` abonniert (über eine BLF-Taste
+auf `99`), bekommt fortan den Zustand von `Custom:mein-status`
+angezeigt.
 
-[cols="3*"]
-|===
-| Wert | Bedeutung | LEDfootnote:[Die Anzeige hängt vom jeweiligen Endgerät ab.]
+== Den Zustand setzen
 
-| `UNKNOWN` | unbekannt, nicht angemeldet | aus
-| `UNAVAILABLE` | nicht erreichbar | aus
-| `NOT_INUSE` | frei | aus
-| `INUSE` | im Gespräch | leuchtet dauerhaft
-| `BUSY` | im Gespräch bzw. besetzt | leuchtet dauerhaft
-| `RINGING` | klingelt | blinkt
-| `RINGINUSE` | im Gespräch und klingelt (anklopfen) | blinkt
-| `ONHOLD` | auf „halten“ | blinkt langsam
-| `INVALID` | ungültig | aus
-|===
+Geschrieben wird der Zustand mit der Funktion `DEVICE_STATE()`, entweder
+im Dialplan oder direkt auf dem CLI.
 
-+
-
-Nach einem Restart von Asterisk, wenn der Status eines
-`Custom`-_Devices_ noch
-nicht gesetzt wurde, hat das _Device_ initial den
-Status `UNKNOWN`.
-
-Nachdem ein Telefon über die obige beispielhafte Extension
-`99` den Status von `Custom:mein-status` abonniert
-hat, kann man, um die Funktionsweise zu testen, den Wählplan z. B. um
-folgenden Code erweitern:
+Im Dialplan:
 
 [source]
 ----
-hint(Custom:mein-status) 99 => {}
+exten => *91,1,Set(DEVICE_STATE(Custom:mein-status)=RINGING)
+ same => n,Hangup()
 
-*91 => {
-  Set(DEVICE_STATE(Custom:mein-status)=RINGING);
-}
-*92 => {
-  Set(DEVICE_STATE(Custom:mein-status)=INUSE);
-}
-*93 => {
-  Set(DEVICE_STATE(Custom:mein-status)=NOT_INUSE);
-}
-*94 => {
-  if ("${DEVICE_STATE(Custom:mein-status)}" = "INUSE") {
-    Set(DEVICE_STATE(Custom:mein-status)=NOT_INUSE);
-  }
-  else {
-    Set(DEVICE_STATE(Custom:mein-status)=INUSE);
-  }
-}
+exten => *92,1,Set(DEVICE_STATE(Custom:mein-status)=INUSE)
+ same => n,Hangup()
+
+exten => *93,1,Set(DEVICE_STATE(Custom:mein-status)=NOT_INUSE)
+ same => n,Hangup()
 ----
 
-Nun können die verschiedenen Device-States getestet werden, z. B.
-kann man die LED mit `*91` blinken oder mit `*92`
-dauerhaft leuchten lassen sowie mit `*93` wieder deaktivieren
-oder mit `*94` abwechselnd an- und ausschalten. Ist die
-Funktionsweise einmal sichergestellt, sind der sinnvollen (oder
-unsinnigen) Anwendung dieses Features keine Grenzen mehr gesetzt; man
-könnte damit z. B. anzeigen, ob man gerade als Mitglied in eine Queue
-eingeloggt ist oder ob der Rasensprenger gerade läuft.
+Auf dem CLI:
 
-Natürlich taucht der Hint auch in der Ausgabe von
-+`core show hints`+ zusammen mit den
-anderen Hints auf:
-
-[source]
-----
-*CLI> core show hints 
-    -= Registered Asterisk Dial Plan Hints =-
-  99@test              : Custom:mein-status  State:InUse         Watchers  0
-  21@interne-benutzer  : PJSIP/21              State:Unavailable   Watchers  0
-  22@interne-benutzer  : PJSIP/22              State:Unavailable   Watchers  0
-----------------
-- 1 hints registered
-----
-
-Hilfreich ist auch der CLI-Befehl +`devstate
-list`+, mit dem man den Status aller gesetzten
-`Custom`-Hints ausgeben kann:
-
-[source]
-----
-*CLI> devstate list 
----------------------------------------------------------------------
---- Custom Device States --------------------------------------------
----------------------------------------------------------------------
----
---- Name: 'Custom:mein-status'  State: 'INUSE'
----
----------------------------------------------------------------------
----------------------------------------------------------------------
-----
-
-Mit +`devstate change`_`device`_
-_`state`_+ lässt sich der Status vom CLI
-aus setzen:
-
-[source]
+[source,shell]
 ----
 *CLI> devstate change Custom:mein-status RINGING
 Changing mein-status to RINGING
+
 *CLI> devstate list
----------------------------------------------------------------------
---- Custom Device States -------------------------------------------
----------------------------------------------------------------------
----
---- Name: 'Custom:mein-status' State: 'RINGING'
----
----------------------------------------------------------------------
----------------------------------------------------------------------
+--- Custom Device States --------------------------------------------
+--- Name: 'Custom:mein-status'  State: 'RINGING'
 ----
+
+== Zustandswerte und LED-Anzeige
+
+[cols="1,1,2"]
+|===
+| Wert | Bedeutung | Typische Anzeige am Telefonfootnote:[Die Anzeige hängt vom Endgerät ab.]
+
+| `UNKNOWN`     | unbekannt, noch nie gesetzt        | aus
+| `UNAVAILABLE` | nicht erreichbar                   | aus
+| `NOT_INUSE`   | frei                               | aus
+| `INUSE`       | im Gespräch                        | leuchtet dauerhaft
+| `BUSY`        | besetzt                            | leuchtet dauerhaft
+| `RINGING`     | klingelt                           | blinkt
+| `RINGINUSE`   | klingelt *und* im Gespräch         | blinkt
+| `ONHOLD`      | in der Warteschleife               | blinkt (langsam)
+| `INVALID`     | ungültig                           | aus
+|===
+
+Direkt nach einem Asterisk-Neustart, bevor `DEVICE_STATE()` das erste
+Mal gesetzt wurde, hat ein Custom-Device den Status `UNKNOWN`.
+
+== Kontrolle im CLI
+
+[source,shell]
+----
+*CLI> core show hints
+  99@interne-benutzer    : Custom:mein-status      State:Ringing   Watchers 0
+
+*CLI> devstate list
+--- Name: 'Custom:mein-status'  State: 'RINGING'
+----
+
+== Typische Einsatzfälle
+
+* *Queue-Login-Anzeige:* Beim Einloggen in eine Queue setzt man
+  `DEVICE_STATE(Custom:agent-<nst>)=INUSE`, beim Ausloggen
+  `NOT_INUSE`. Eine BLF-Taste zeigt dem Supervisor sofort, wer
+  gerade eingeloggt ist.
+* *Manuelle Statusanzeige:* Ein Mitarbeiter drückt eine Taste, die
+  per Kurzwahl eine DTMF-Extension anruft, die dann
+  `Custom:praesenz-<user>` toggelt.
+* *Alarme:* Ein externes Skript setzt per `asterisk -rx "devstate
+  change Custom:alarm RINGING"` eine blinkende LED, sobald
+  das Monitoring einen Fehler meldet.

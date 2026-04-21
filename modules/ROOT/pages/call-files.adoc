@@ -37,7 +37,7 @@ Inhalt:
 
 [source]
 ----
-Channel: SIP/2000
+Channel: PJSIP/2000
 MaxRetries: 2
 RetryTime: 60
 WaitTime: 30
@@ -56,7 +56,7 @@ root@molokai:~> mv /tmp/ein-test.call /var/spool/asterisk/outgoing/
 Jetzt passiert Folgendes:
 
 * Asterisk überprüft ständig, ob sich im Verzeichnis `/var/spool/asterisk/outgoing/` ein Call File befindet, und arbeitet dieses ab, sobald es da ist.
-* Asterisk öffnet eine Verbindung zum Telefon `SIP/2000`. Wenn das Telefon besetzt sein oder den Anruf nicht annehmen sollte, dann versucht Asterisk das Gleiche noch zweimal (siehe _`MaxRetries`_).
+* Asterisk öffnet eine Verbindung zum Telefon `PJSIP/2000`. Wenn das Telefon besetzt sein oder den Anruf nicht annehmen sollte, dann versucht Asterisk das Gleiche noch zweimal (siehe _`MaxRetries`_).
 * Nimmt der Benutzer des Telefons 2000 den Anruf entgegen, dann startet Asterisk im Context _`[call-file-test]`_ die Abarbeitung der Extension `10`. Es wird also der Sprachbaustein `hello-world` abgespielt.
 
 [[call-file-parameter]]
@@ -65,7 +65,7 @@ Jetzt passiert Folgendes:
 Im Call File können folgende Parameter angegeben
 werden:
 
-`Channel: <channel>`:: Der zu benutzende Channel. Dabei gilt die gleiche Syntax wie beim `Dial()`-Befehl (siehe Abschnitt C.38, „`Dial()`“).
+`Channel: <channel>`:: Der zu benutzende Channel. Dabei gilt die gleiche Syntax wie beim `Dial()`-Befehl.
 `Callerid: <callerid>`:: Die zu benutzende Caller-ID
 `WaitTime: <number>`:: Die Anzahl an Sekunden, die das System auf die Annahme des Anrufs warten soll. Wird der Wert nicht angegeben, dann ist der Default 45 Sekunden.
 `MaxRetries: <number>`:: Die Anzahl der weiteren Wählversuche (falls besetzt oder nicht erreichbar). Wird dieser Parameter nicht angegeben, ist der Defaultwert 0 (es wird also nur einmal versucht, den Channel aufzubauen).
@@ -102,25 +102,34 @@ Datum und die Weckuhrzeit gewählt werden.
 ----
 [hotel-intern]
 exten => _*77*XXXXXXXXXXXX,1,Answer()
-exten => _*77*XXXXXXXXXXXX,n,Set(Jahr=${EXTEN:4:4})
-exten => _*77*XXXXXXXXXXXX,n,Set(Monat=${EXTEN:8:2})
-exten => _*77*XXXXXXXXXXXX,n,Set(Tag=${EXTEN:10:2})
-exten => _*77*XXXXXXXXXXXX,n,Set(Stunden=${EXTEN:12:2})
-exten => _*77*XXXXXXXXXXXX,n,Set(Minuten=${EXTEN:14:2})
-exten => _*77*XXXXXXXXXXXX,n,NoOp(Weckruf soll fuer die Rufnummer ${CALLERID(num)} soll um ${Stunden}:${Minuten} Uhr am ${Tag}.${Monat}.${Jahr} erfolgen.)
-exten => _*77*XXXXXXXXXXXX,n,System(echo -e "Channel: SIP/${CALLERID(num)}\\nContext: Weckruf\\nExtension: 23" > /tmp/${UNIQUEID}.call)
-exten => _*77*XXXXXXXXXXXX,n,System(touch -t ${Jahr}${Monat}${Tag}${Stunden}${Minuten} /tmp/${UNIQUEID}.call)
-exten => _*77*XXXXXXXXXXXX,n,System(mv /tmp/${UNIQUEID}.call /var/spool/asterisk/outgoing/)
-exten => _*77*XXXXXXXXXXXX,n,Playback(rqsted-wakeup-for)
-exten => _*77*XXXXXXXXXXXX,n,SayNumber(${Stunden})
-exten => _*77*XXXXXXXXXXXX,n,SayNumber(${Minuten})
-exten => _*77*XXXXXXXXXXXX,n,Playback(digits/oclock)
-exten => _*77*XXXXXXXXXXXX,n,Hangup()
+ same => n,Set(Jahr=${EXTEN:4:4})
+ same => n,Set(Monat=${EXTEN:8:2})
+ same => n,Set(Tag=${EXTEN:10:2})
+ same => n,Set(Stunden=${EXTEN:12:2})
+ same => n,Set(Minuten=${EXTEN:14:2})
+ same => n,NoOp(Weckruf fuer ${CALLERID(num)} um ${Stunden}:${Minuten} am ${Tag}.${Monat}.${Jahr})
+ same => n,System(echo -e "Channel: PJSIP/${CALLERID(num)}\nContext: Weckruf\nExtension: 23" > /tmp/${UNIQUEID}.call)
+ same => n,System(touch -t ${Jahr}${Monat}${Tag}${Stunden}${Minuten} /tmp/${UNIQUEID}.call)
+ same => n,System(mv /tmp/${UNIQUEID}.call /var/spool/asterisk/outgoing/)
+ same => n,Playback(auth-thankyou)
+ same => n,SayNumber(${Stunden})
+ same => n,Playback(digits/oclock)
+ same => n,SayNumber(${Minuten})
+ same => n,Hangup()
 
 [Weckruf]
 exten => 23,1,Answer()
-exten => 23,n,Wait(1)
-exten => 23,n,Playback(this-is-yr-wakeup-call)
-exten => 23,n,Wait(1)
-exten => 23,n,Hangup()
+ same => n,Wait(1)
+ same => n,Playback(hello-world)
+ same => n,Wait(1)
+ same => n,Hangup()
 ----
+
+[NOTE]
+====
+Die historischen Sprachbausteine `rqsted-wakeup-for` und
+`this-is-yr-wakeup-call` sind im aktuellen _core-sounds-en_-Paket
+nicht mehr enthalten — hier im Beispiel ersetzt durch `auth-thankyou`
+und `hello-world`. Für einen produktiven Weckruf nehmen Sie natürlich
+eine eigene Ansage (etwa per xref:tts-text-to-speech.adoc[TTS] erzeugt).
+====

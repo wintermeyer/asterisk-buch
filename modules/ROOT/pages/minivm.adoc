@@ -129,7 +129,7 @@ könnte man auch einfach `localdomain` verwenden.
 Mit
 +setvar=_`Feldname`_=_`Wert`_+
 kann man zusätzlich eigene Feld/Wert-Paare setzen, die sich im Dialplan
-mit der Funktion `MINIVMACCOUNT()` (Abschnitt D.64, „`MINIVMACCOUNT()`“) abfragen lassen. Um dabei nicht mit
+mit der Funktion `MINIVMACCOUNT()` abfragen lassen. Um dabei nicht mit
 den fest vorgegebenen Feldnamen in Konflikt zu geraten, empfiehlt sich z.
 B. ein Präfix wie „`x_`“.
 
@@ -156,22 +156,20 @@ Folgende Befehle für MiniVM gibt es auf dem Asterisk-CLI:
 [[minivm-applications-functions]]
 == MiniVM-Applikationen und -Funktionen
 
-Folgende Dialplan-Applikationen werden von MiniVM
-bereitgestellt:
+MiniVM bringt die folgenden Dialplan-Applikationen mit:
 
-[cols="1*"]
-|===
-| `MinivmAccMess()` - Abschnitt C.94, „`MinivmAccMess()`“
-| `MinivmDelete()` - Abschnitt C.95, „`MinivmDelete()`“
-| `MinivmGreet()` - Abschnitt C.96, „`MinivmGreet()`“
-| `MinivmNotify()` - Abschnitt C.97, „`MinivmNotify()`“
-| `MinivmRecord()` - Abschnitt C.98, „`MinivmRecord()`“
-|===
+* `MinivmAccMess()` — persönliche Ansage aufnehmen
+* `MinivmDelete()` — Nachricht löschen
+* `MinivmGreet()` — eine Ansage abspielen
+* `MinivmNotify()` — E-Mail-/Pager-Benachrichtigung versenden
+* `MinivmRecord()` — Sprachnachricht aufzeichnen
 
-Dialplan-Funktionen:
+und diese Dialplan-Funktionen:
 
-[cols="1*"]
-|===
-| `MINIVMACCOUNT()` - Abschnitt D.64, „`MINIVMACCOUNT()`“
-| `MINIVMCOUNTER()` - Abschnitt D.65, „`MINIVMCOUNTER()`“
-|===
+* `MINIVMACCOUNT()` — Werte aus einer MiniVM-Account-Definition lesen
+* `MINIVMCOUNTER()` — einen persistenten Zähler pro Account pflegen
+
+Die vollständige Parameterbeschreibung jeder Applikation und Funktion
+steht in der offiziellen Dokumentation unter https://docs.asterisk.org
+(sowie im CLI über `core show application <Name>` bzw.
+`core show function <Name>`).

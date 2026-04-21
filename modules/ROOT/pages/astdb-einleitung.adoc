@@ -15,18 +15,16 @@ zur Verfügung stehen.
 [[datenbank-performance]]
 == Performance
 
-Bezüglich der Asterisk-Datenbank wird immer wieder die Frage nach
-der Performance derselben gestellt. Das lässt sich nicht so pauschal
-beantworten. Falls Sie nur kleine Datenbestände (wie in unserem
-Wahlwiederholungsbeispiel) benötigen, so ist die Asterisk-Datenbank
-sicherlich eine sinnvolle Wahl. Bei größeren und komplexen
-Datenbeständen sollten Sie aber überlegen, ob das Verwenden einer
-externen SQL-Datenbank geeigneter ist. Allerdings ist diese Diskussion
-bei dem überwiegenden Teil aller Anwendungen rein theoretischer Natur,
-da es sich bei der Asterisk-Datenbank um eine Berkley DB handelt und
-diese ausreichend performant ist. Tatsächlich ist die Berkley DB, wenn
-es sich um reine Schlüssel/Wert-Datenpaare (_key_ = _value_)
-handelt, mit die schnellste ihrer Zunft. Sie sollten sich daher diese
-Frage erst stellen, wenn die Geschwindigkeit der Datenbank nachweislich
-zu Problemen führt oder Sie eine größere Installation mit umfangreicher
-Funktionalität aufsetzen wollen.
+Für kleine, schnelle Lese- und Schreibzugriffe (Call-Forwarding-Ziele,
+kleine Zähler, Feature-Flags) ist die AstDB die richtige Wahl.
+Historisch lag sie in einer Berkeley DB, seit Asterisk 11 in einer
+SQLite3-Datei (`/var/lib/asterisk/astdb.sqlite3`) — beide sind für
+Key-Value-Zugriffe schnell genug, um sie im Dialplan bedenkenlos zu
+nutzen.
+
+Sobald aber *komplexe Datenmodelle* ins Spiel kommen (User-Profile mit
+vielen Feldern, Queue-Zustände über mehrere Tabellen, Realtime-
+Konfiguration), ist die AstDB das falsche Werkzeug. Dann lohnt sich
+der Sprung zu einer externen Datenbank (PostgreSQL, MySQL) —
+angebunden per `func_odbc`, `res_config_odbc`/`res_odbc` oder per
+xref:ari.adoc[ARI]-Anwendung, die ihre eigene Persistenz verwaltet.

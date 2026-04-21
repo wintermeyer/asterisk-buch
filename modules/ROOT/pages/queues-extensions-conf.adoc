@@ -5,8 +5,7 @@
 Im Dialplan (xref:dialplan-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_]) können sich
 zum einen die Agenten über eine bestimmte Extension in die Warteschleife
 einloggen, zum anderen werden Anrufe mit der Applikation
-`Queue()` (Abschnitt C.122, „`Queue()`“) in eine
-Warteschlange eingereiht.
+`Queue()` in eine Warteschlange eingereiht.
 
 Eine minimale Extension, die die Anrufer in die Warteschleife
 einreiht, sähe so aus:

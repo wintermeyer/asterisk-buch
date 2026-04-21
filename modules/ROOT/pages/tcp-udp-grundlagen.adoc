@@ -4,7 +4,7 @@
 
 Wir möchten Ihnen an dieser Stelle die Wikipedia-Artikel zu TCP und
 UDP wärmstens empfehlen. Die folgende Darstellung ist in ihrer Struktur an
-diese Artikelfootnote:[Siehe http://de.wikipedia.org/wiki/Transmission_Control_Protocol und http://de.wikipedia.org/wiki/User_Datagram_Protocol] angelehnt.
+diese Artikelfootnote:[Siehe https://de.wikipedia.org/wiki/Transmission_Control_Protocol und https://de.wikipedia.org/wiki/User_Datagram_Protocol] angelehnt.
 
 Für alle Ungeduldigen, hier eine einfache und knappe Definition: TCP
 ist ein Protokoll, das sicherstellt, dass die Übertragung der gesamten

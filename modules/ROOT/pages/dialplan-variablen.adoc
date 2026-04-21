@@ -171,7 +171,7 @@ exten => _XXX,1,Dial(PJSIP/${EXTEN},${KLINGELZEIT})
 == Variablen mit Set() definieren
 
 Die Applikation `Set()` wird benutzt, um eine Variable
-in einer Extension zu setzen.footnote:[siehe auch Abschnitt C.149, „`Set()`“\]
+in einer Extension zu setzen.
 
 [[set-syntax]]
 === Syntax

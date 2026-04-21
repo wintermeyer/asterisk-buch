@@ -12,46 +12,27 @@ In diesem Kapitel:
 * xref:ivr-mehrstufig.adoc[Mehrstufige IVR-Systeme]
 ** xref:ivr-mehrstufig.adoc#ivr-tiefe[Tiefe der IVR]
 * xref:tts-text-to-speech.adoc[Text-to-Speech (TTS)]
-** xref:tts-text-to-speech.adoc#installation-cepstral-tts[Installation von Cepstral Text-to-Speech]
-** xref:tts-text-to-speech.adoc#cepstral-beispiel[Beispiele und Tests]
-** xref:tts-text-to-speech.adoc#cepstral-pausen[Pausen in Texten]
 
-In der ursprünglichen Definition ist ein
-Interactive-Voice-Response-System (IVR) ein
-Ansagemenüsystem, das durch natürliche Sprache des Anrufers gesteuert wird.
-Allerdings ist diese Definition im Allgemeinen etwas aufgeweicht worden.
-Mittlerweile werden auch Systeme, die nur über Touch-Tone-Erkennung
-arbeiten, allgemein als IVRs bezeichnet.
+Ein _Interactive-Voice-Response-System_ (IVR) ist ursprünglich ein
+Ansagemenü, das per natürlicher Sprache des Anrufers gesteuert wird.
+Heute bezeichnet man damit praktisch jedes Ansagemenü am Telefon —
+auch die weit verbreiteten DTMF-Menüs ("Für den Vertrieb drücken Sie
+die 1 …"), um die es in diesem Kapitel hauptsächlich geht.
 
-IVRs sind automatisierte Dialogsysteme, die einem Anrufer bestimmte
-Informationsangebote oder andere Leistungen in Dialogform anbieten. Das
-grundlegende Prinzip ist bei fast allen Systemen gleich: Dem Anrufer wird
-ein Menü vorgelesen, aus dem er dann durch bestimmte Aktionen (meist das
-Drücken einer Taste auf dem Telefon) einzelne Optionen auswählen kann. So
-kann man über solche Systeme die aktuellen Börsenkurse oder auch
-Abfahrtzeiten von Zügen der Deutschen Bahn abfragen. Es gibt sogar Systeme,
-die Buchungen von Veranstaltungstickets ermöglichen. Die Dialogsysteme
-unterscheiden sich hierbei in dem Grad der Automation. Voll automatisierte
-Systeme generieren die Sprachansagen (Text-to-Speech) und verfügen über eine
-maschinelle Spracherkennung, um die Benutzereingaben zu erkennen. Solche
-Systeme bieten einen sehr hohen Komfort, sind jedoch technisch derart
-anspruchsvoll, dass sie selten zum Einsatz kommen.footnote:[Für Asterisk gibt es von der Firma _LumenVox_ eine Spracherkennungsschnittstelle. Diese war zum Zeitpunkt der Drucklegung dieses Buches allerdings noch nicht für die deutsche Sprache erhältlich. Einfache Konstrukte wie die Erkennung von "Ja" und "Nein" lassen sich aber recht einfach nachbilden. Informationen zu LumenVox finden Sie unter http://www.lumenvox.com/[http://www.lumenvox.com\].]
+Das Grundprinzip ist bei allen Varianten gleich: Dem Anrufer wird ein
+Menü vorgelesen, er trifft seine Wahl durch Tastendruck (DTMF), und
+Asterisk springt in den passenden Zweig des Dialplans. Die Menü-Ansagen
+kommen entweder als fertige Sounddatei aus der Produktion oder —
+heute bequemer — aus einer Text-to-Speech-Engine
+(xref:tts-text-to-speech.adoc[siehe TTS-Abschnitt]).
 
-Die einfachste Variante ist zugleich die verbreitetste. Vorher
-aufgenommene Textnachrichten (Soundfiles) werden abgespielt, und die
-Nutzereingaben erfolgen durch Drücken der Telefontasten, deren
-charakteristische Frequenz einfach und robust von Asterisk standardmäßig
-erkannt werden kann.
+Ein paar Gedanken vorab:
 
-Die Meinungen über IVRs gehen zum Teil deutlich auseinander: Die einen
-empfinden sie als nützliche Hilfe, andere wiederum ärgern sich darüber. Oft
-bieten sie dabei immer wieder Stoff für reichlich Lacher. Meistens liegt das
-an ungeschickten Menüführungen oder – bei Systemen mit einer
-maschinellen Spracherkennung – an einer schlechten Erkennungsrate.
-Eine gut funktionierende IVR kann dem Kunden eine echte Hilfe sein, aber
-eine schlecht umgesetzte kann einen Kunden auch abschrecken. Deshalb sollten
-Sie dieses Mittel mit Bedacht einsetzen und sich Zeit für eine sorgfältig
-geplante und sauber integrierte Lösung nehmen. Häufiges Überprüfen der Zahl
-der vorzeitigen Abbrüche durch Auflegen muss dabei zu den Routineaufgaben
-gehören. Und IVRs sind weder ein Selbstzweck noch ein Allheilmittel: Denken
-Sie an Ihre Kunden!
+* *Weniger ist mehr.* Drei klare Optionen im Hauptmenü sind besser
+  als sieben — und jede Ebene verliert Anrufer, die lieber auflegen.
+* *Immer einen Ausgang einplanen.* Die `0`, `*` oder `9` sollten
+  verlässlich zu einem Menschen führen. Nichts ist so frustrierend
+  wie eine IVR-Schleife ohne Ausweg.
+* *Messen.* Wie oft wird welche Option gewählt? Wie viele Anrufer
+  legen im Menü auf? Die CDR-Daten zusammen mit ein paar eigenen
+  Channel-Variablen zeigen schnell, wo Handlungsbedarf besteht.

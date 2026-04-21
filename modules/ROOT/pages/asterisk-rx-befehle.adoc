@@ -18,14 +18,25 @@ dies mit der Eingabe `asterisk -rx "dialplan show
 
 [source,shell]
 ----
-root@molokai:~>asterisk -rx "dialplan show 23@meine-telefone"
+# asterisk -rx "dialplan show 23@meine-telefone"
 [ Context 'meine-telefone' created by 'pbx_config' ]
- '23' => 1. Wait(1) [pbx_config]
- 2. Answer() [pbx_config]
- 3. Playback(hello-world) [pbx_config]
- 4. Wait(1) [pbx_config]
- 5. Hangup() [pbx_config]
+  '23' =>           1. Wait(1)                                    [extensions.conf]
+                    2. Answer()                                   [extensions.conf]
+                    3. Playback(hello-world)                      [extensions.conf]
+                    4. Wait(1)                                    [extensions.conf]
+                    5. Hangup()                                   [extensions.conf]
 
 -= 1 extension (5 priorities) in 1 context. =-
-root@molokai:~>
+----
+
+Typische Alltagsaufrufe:
+
+[source,shell]
+----
+# asterisk -rx "core show version"
+# asterisk -rx "pjsip show endpoints"
+# asterisk -rx "pjsip show registrations"
+# asterisk -rx "core show channels"
+# asterisk -rx "dialplan reload"
+# asterisk -rx "pjsip reload"
 ----

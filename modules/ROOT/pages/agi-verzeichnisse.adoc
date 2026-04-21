@@ -3,9 +3,25 @@
 :description: AGI-Verzeichnisse und Rechte in Asterisk: Wo Skripte liegen müssen.
 
 AGI-Skripte werden von Asterisk standardmäßig im Verzeichnis
-`/var/lib/asterisk/agi-bin`/ gesucht.
+`/var/lib/asterisk/agi-bin/` gesucht.
 
-Achten Sie darauf, dass das entsprechende Skript von Asterisk auch
-ausgeführt werden darf. Dies wird durch den Aufruf des Befehls
-+chmod 755 _`skriptname`_+
-gewährleistet.
+Das Skript muss für den Asterisk-Prozess lesbar *und* ausführbar sein.
+Wenn Asterisk als eigener Systembenutzer läuft, ist der einfachste Weg:
+
+[source,shell]
+----
+# chown asterisk:asterisk /var/lib/asterisk/agi-bin/mein-skript.py
+# chmod 755 /var/lib/asterisk/agi-bin/mein-skript.py
+----
+
+Im Dialplan rufen Sie ein Skript einfach mit seinem Dateinamen auf —
+Asterisk ergänzt den Pfad selbst:
+
+[source]
+----
+exten => 1234,1,AGI(mein-skript.py)
+----
+
+Für absolute Pfade (`AGI(/opt/tools/mein-skript.py)`) gilt: Das
+Verzeichnis und das Skript müssen für den Asterisk-Benutzer erreichbar
+sein.

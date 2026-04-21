@@ -43,9 +43,9 @@ legt Asterisk auf.
 [[ivr-unterschied-playback-und-background]]
 == Unterschied zwischen Playback() und Background()
 
-Mit der Applikation `Playback()` (siehe Abschnitt C.117, „`Playback()`“) können Soundfiles nur abgespielt
+Mit der Applikation `Playback()` können Soundfiles nur abgespielt
 werden. Jegliche Eingabe während des Abspielens wird nicht beachtet.
-`Background()` (siehe Abschnitt C.13, „`Background()`“) hingegen spielt die Datei ab und
+`Background()` hingegen spielt die Datei ab und
 wartet während des Abspielens auf eine Eingabe. Diese wird dann als
 Extension interpretiert, als wenn sie im aktuellen Context auch so
 gewählt worden wäre.
@@ -85,7 +85,9 @@ gilt die Eingabe als beendet.
 Mit _`TIMEOUT`_ können noch andere Timeouts
 definiert werden. Informationen dazu bekommen Sie im CLI mit der
 Eingabe `show function TIMEOUT`. Weitere
-Informationen zu `TIMEOUT` finden Sie bei Abschnitt D.101, „`TIMEOUT()`“.
+Die vollständige Beschreibung aller `TIMEOUT()`-Varianten finden Sie
+in der offiziellen Dokumentation unter
+https://docs.asterisk.org.
 ====
 
 Den _`TIMEOUT`_ kann man in Sekunden angeben

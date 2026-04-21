@@ -11,7 +11,7 @@ hängen. Sollen mehrere Menüs hintereinander geschaltet werden und sollen
 in jedem Menü gleiche Eingaben andere Ergebnisse bringen, so muss man
 diese Untermenüs in andere Contexte (in unserem Beispiel
 `[kantine]`) legen. Der Sprung zwischen den einzelnen
-Positionen erfolgt dann mit `Goto()` (siehe Abschnitt C.65, „`Goto()`“). Nehmen wir an, Sie haben folgende
+Positionen erfolgt dann mit `Goto()`. Nehmen wir an, Sie haben folgende
 Soundfiles im Verzeichnis `/var/lib/asterisk/sounds/`
 abgespeichert:
 

@@ -10,9 +10,10 @@ als die Nutzlast (also die übertragene Sprache). So bekommen Sie mit dem
 SIP-Protokoll und der Verwendung des GSM-Codecs auf einer
 2-MBit/s-Datenleitung nur ungefähr 35 gleichzeitige Gespräche (wobei beide
 Gesprächspartner gleichzeitig reden können). 35 Gespräche über eine
-2-MBit/s-Leitung ist aber nicht gerade viel. Da wären Sie mit einem
-normalen Mulitplex-Anschluss besser bedient, da dort die Sprachqualität
-wesentlich besser ist.
+2-MBit/s-Leitung ist aber nicht gerade viel. Heutige Breitbandanschlüsse und moderne Codecs wie Opus machen das
+Problem in der Praxis selten. Trunking bleibt trotzdem interessant,
+sobald man viele gleichzeitige Gespräche über eine Leitung schicken
+muss (Site-to-Site-Kopplung, knappe Uplinks).
 
 Die geniale Idee am Trunking-Verfahren ist, nicht pro Nutzlastpaket
 auch einen Overhead zu erzeugen, sondern mehrere Nutzlastpakete

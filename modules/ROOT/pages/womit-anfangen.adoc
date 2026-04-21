@@ -31,7 +31,7 @@ Jump-Start wagen.
 | *F:* | Welchen "guten" VoIP-Anbieter gibt es? Worauf sollte man achten?
 | *A:* | Hier einen bestimmten SIP-Provider zu empfehlen ist nicht sinnvoll — das ändert sich zu oft. Der einfachste Rat für den Asterisk-Neuling ist, anfangs einen SIP-Provider zu wählen, der kostenlose oder günstige Testaccounts anbietet. Damit sammelt man erste Erfahrungen. Für den Produktivbetrieb sind dann Support-Qualität, Zuverlässigkeit, Codec-Auswahl (G.711 und G.722 als Minimum, Opus als Bonus) und Preise ausschlaggebend.
 | *F:* | Welche "normalen" Endgeräte gibt es?
-| *A:* | In der VoIP-Welt gibt es kein "normales" Endgerät, aber sehr viel Auswahl. Empfehlenswert sind SIP-Telefone von Yealink, Snom, Grandfalcon/Grandstream, Fanvil oder Cisco. Für den Homeoffice-Einsatz genügt oft ein Softphone (Linphone, Zoiper, MicroSIP, Telephone.app) oder ein WebRTC-Client im Browser. Analoge Telefone lassen sich per ATA (Analog Telephone Adapter) anschließen, das lohnt aber nur, wenn schon Hardware vorhanden ist.
+| *A:* | In der VoIP-Welt gibt es kein "normales" Endgerät, aber sehr viel Auswahl. Empfehlenswert sind SIP-Telefone von Yealink, Snom, Grandstream, Fanvil oder Cisco. Für den Homeoffice-Einsatz genügt oft ein Softphone (Linphone, Zoiper, MicroSIP, Telephone.app) oder ein WebRTC-Client im Browser. Analoge Telefone lassen sich per ATA (Analog Telephone Adapter) anschließen, das lohnt aber nur, wenn schon Hardware vorhanden ist.
 | *F:* | Was ist mit Fax?
 | *A:* | Über IP funktioniert Fax mit T.38 oder gar nicht zuverlässig. Details finden Sie im xref:fax-t38.adoc[Fax-Kapitel].
 |===

@@ -42,7 +42,10 @@ Die möglichen Ereignisse sind unter anderen (siehe auch
 `TRANSFER`:: Der Anrufer wurde auf eine andere Extension umgeleitet. Parameter: Extension, Context.
 
 Kommerzielle Log-Analyse- und Echtzeitüberwachungssysteme
-sind QueueMetricsfootnote:[http://queuemetrics.loway.it/] oder Easy PABXfootnote:[http://easypabx.com/]. Siehe auch Abschnitt C.123, „`QueueLog()`“.
+sind beispielsweise QueueMetrics (https://www.queuemetrics.com/).
+Die Applikation `QueueLog()`, mit der man aus dem Dialplan heraus
+eigene Einträge ins Queue-Log schreibt, ist in der offiziellen
+Dokumentation unter https://docs.asterisk.org beschrieben.
 
 [[queue-log-mysql]]
 == Queue-Log in MySQL importieren

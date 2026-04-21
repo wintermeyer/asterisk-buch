@@ -2,11 +2,16 @@
 = Ansteuerung der LEDs
 :description: BLF-LEDs in Asterisk ansteuern: Hint-Konfiguration und Device-State.
 
+Damit eine BLF-Taste am Telefon den Zustand einer Nebenstelle anzeigen
+kann, müssen zwei Dinge zusammenkommen: Der Endpoint in `pjsip.conf`
+muss SUBSCRIBEs annehmen dürfen, und Asterisk muss wissen, welche
+Extension welchen Zustand anzeigt (_Hint_).
+
 [[blf-pjsip.conf]]
 == pjsip.conf
 
-Für BLF-Funktionalität müssen in `pjsip.conf` ein paar Optionen am
-Endpoint gesetzt sein:
+Am *überwachenden* Endpoint (dem Telefon, das die BLF-Taste hat) werden
+die folgenden Optionen benötigt:
 
 [source]
 ----
@@ -18,116 +23,101 @@ allow=ulaw
 allow=alaw
 auth=21
 aors=21
-mailboxes=21@default          ; MWI
+mailboxes=21@default          ; MWI (nur wenn Voicemail genutzt wird)
 allow_subscribe=yes           ; Telefon darf SUBSCRIBE senden
 sub_min_expiry=30
 notify_early_inuse_ringing=yes
-device_state_busy_at=0        ; Anzahl gleichzeitiger Gespräche, die als "busy" zählen
-call_group=2                  ; Für Pickup
+device_state_busy_at=1        ; ab wie vielen Gesprächen gilt der Endpoint als "busy"
+call_group=2                  ; für Pickup (siehe unten)
 pickup_group=2
 ----
 
-`device_state_busy_at=0` bedeutet: "Ab 0 parallelen Gesprächen gilt
-der Endpoint als besetzt" — was effektiv "jedes Gespräch macht das
-Telefon busy" heißt. Wer Transfers oder Zweitgespräche erlauben
-will, setzt einen höheren Wert.
+`device_state_busy_at=1` lässt Asterisk das Telefon als _busy_ melden,
+sobald es im Gespräch ist. Wer Transfers oder Zweitgespräche zulassen
+möchte, setzt einen höheren Wert.
 
-`call_group` und `pickup_group` regeln die Berechtigung beim
-Heranholen: Ein Benutzer mit `pickup_group=2` darf Gespräche von
-anderen Benutzern mit `call_group=2` übernehmen. Es gibt 64 Gruppen
-(0–63).
+`call_group` und `pickup_group` sind nur relevant, wenn Sie auch
+Anrufe heranholen wollen (siehe xref:blf-pickup.adoc[Heranholen eines
+Anrufs]). Ein Endpoint mit `pickup_group=2` darf Anrufe von Endpoints
+mit `call_group=2` übernehmen. Asterisk kennt die Gruppen 0 bis 63.
 
 [[blf-hints]]
 == Hints
 
-Als Nächstes muss man Asterisk die Zuordnung zwischen Extensions
-und Benutzern (oder Geräten) mitteilen. Dies macht man im Dialplan mit
-sogenannten „_Hints_“. Wenn man in
-Dialplan-Prioritäten denkt, dann ist ein `hint` eine
-spezielle Priorität, die noch vor der Priorität `1` steht.
-Wichtig ist, dass sich die Hints in dem Context befinden, in dem der
-überwachende Endpoint seine SUBSCRIBE-Anfragen auflösen darf
-(also in dem Context, den Sie dem Endpoint in der `pjsip.conf`
-zugewiesen haben). Andernfalls werden die Status-Informationen nicht
-weitergeleitet. Das ist durchaus Absicht, damit man nicht per se von
-allen Telefonen aus alle weiteren überwachen kann. Durch
-unterschiedliche Contexte lässt sich also auch eine Art
-Berechtigungssystem bauen.footnote:[Diese Methode eignet sich allerdings nicht so gut für datenbankgestützte „Realtime“-Installationen.] Wir beschreiben hier anhand von Beispielen, wie ein Hint
-definiert wird. Je nachdem, ob Ihr Dialplan im
-`extensions.conf`-Format oder in AEL geschrieben ist,
-verwenden Sie die eine oder die andere Variante.
+Ein _Hint_ ist ein spezieller Dialplan-Eintrag mit der "Priorität"
+`hint`. Er verknüpft eine Extension mit dem Gerätestatus eines
+konkreten Channels — zum Beispiel `PJSIP/21`. Wenn sich der Status
+dieses Channels ändert (klingelt, im Gespräch, frei), verschickt
+Asterisk ein SIP `NOTIFY` an alle Telefone, die den Hint abonniert
+haben.
 
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
+Wichtig: Die Hints müssen in dem Context stehen, den der *überwachende*
+Endpoint in `pjsip.conf` als `context=` gesetzt hat. Sonst lehnt
+Asterisk die SUBSCRIBE-Anfrage ab. Das ist Absicht und lässt sich für
+eine einfache Berechtigungssteuerung nutzen: Wer nichts sehen soll,
+bekommt einen eigenen Context ohne Hints.
 
-| [interne-benutzer] exten => 21,*hint,PJSIP/21* exten => 21,1,Dial(PJSIP/$\{EXTEN},40) exten => 21,n,VoiceMail($\{EXTEN},u) exten => 22,*hint,PJSIP/22* exten => 22,1,Dial(PJSIP/$\{EXTEN},40) exten => 22,n,VoiceMail($\{EXTEN},u) | context interne-benutzer { *hint(PJSIP/21)* 21 => { Dial(PJSIP/$\{EXTEN},40); VoiceMail($\{EXTEN},u); } *hint(PJSIP/22)* 22 => { Dial(PJSIP/$\{EXTEN},40); VoiceMail($\{EXTEN},u); } }
-|===
-
-+
-
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
-
-| [interne-benutzer] exten => 21,*hint,PJSIP/21* exten => 22,*hint,PJSIP/22* exten => _2X,1,Dial(PJSIP/$\{EXTEN},40) exten => _2X,n,VoiceMail($\{EXTEN},u) | context interne-benutzer { *hint(PJSIP/21)* 21 => {} *hint(PJSIP/22)* 22 => {} _2X => { Dial(PJSIP/$\{EXTEN},40); VoiceMail($\{EXTEN},u); } }
-|===
-
-+
-
-[IMPORTANT]
-====
-Beachten Sie hierbei, dass ein `hint` in Asterisk 1.4
-nicht mit Patternfootnote:[xref:pattern-matching.adoc[Abschnitt 3.3, „Pattern Matching“\]] geschrieben werden kann.
+=== Hint pro Nebenstelle
 
 [source]
 ----
+[interne-benutzer]
+exten => 21,hint,PJSIP/21
+exten => 21,1,Dial(PJSIP/${EXTEN},40)
+ same => n,VoiceMail(${EXTEN},u)
+
+exten => 22,hint,PJSIP/22
+exten => 22,1,Dial(PJSIP/${EXTEN},40)
+ same => n,VoiceMail(${EXTEN},u)
+----
+
+=== Hints per Pattern
+
+Ab Asterisk 1.6 funktionieren Hints auch mit Pattern, und das ist
+heute der übliche Weg:
+
+[source]
+----
+[interne-benutzer]
 exten => _2X,hint,PJSIP/${EXTEN}
+exten => _2X,1,Dial(PJSIP/${EXTEN},40)
+ same => n,VoiceMail(${EXTEN},u)
 ----
 
-bzw.
+[NOTE]
+====
+Während der Interpretation eines Hints besteht noch kein Channel. Bis
+auf `$\{EXTEN}` stehen deshalb in der `hint`-Zeile *keine*
+Channel-Variablen zur Verfügung.
+====
+
+=== Gruppen-Hint
+
+Ein Hint kann auch mehrere Geräte gemeinsam überwachen — mit `&`
+getrennt. Das ist typisch für Sammelrufe:
 
 [source]
 ----
-hint(PJSIP/${EXTEN}) _2X => {...}
+[interne-benutzer]
+exten => 20,hint,PJSIP/21&PJSIP/22
+exten => 20,1,Dial(PJSIP/21&PJSIP/22,40)
+ same => n,VoiceMail(21,u)
 ----
 
-wäre
-also unzulässig.
-Ab Asterisk 1.6 ist diese Schreibweise möglich, auch wenn es
-anfänglich noch zu Problemen kam. Bitte beachten Sie aber, dass
-während der Interpretation eines Hints noch kein Channel besteht, was
-bedeutet, dass auch keine Channel-Variablen in der Hint-Definition zur
-Verfügung stehen – mit Ausnahme von
-`$\{EXTEN}`.
-====
-
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
-
-| [interne-benutzer] exten => _2X,*hint,PJSIP/$\{EXTEN}* exten => _2X,1,Dial(PJSIP/$\{EXTEN},40) exten => _2X,n,VoiceMail($\{EXTEN},u) | context interne-benutzer { *hint(PJSIP/$\{EXTEN})* _2X => { Dial(PJSIP/$\{EXTEN},40); VoiceMail($\{EXTEN},u); } }
-|===
-
-+
-
-[cols="2*"]
-|===
-| `extensions.conf` | `extensions.ael`
-
-| [interne-benutzer] exten => 20,*hint,PJSIP/21&PJSIP/22* exten => 20,1,Dial(PJSIP/21&PJSIP/22,40) | context interne-benutzer { *hint(PJSIP/21&PJSIP/22)* 20 => {} 20 => { Dial(PJSIP/21&PJSIP/22,40); } }
-|===
-
-+
+Die LED zeigt den _gemeinsamen_ Zustand an: klingelt, wenn *irgendein*
+beteiligtes Telefon klingelt; frei, wenn alle frei sind.
 
 [TIP]
 ====
-Der Übersichtlichkeit halber kann man alle Hints auch in einen
-eigenen Context legen und diesen überall dort mit `include =>
-meine-hints` einbinden, wo er benötigt wird. Dies ist vor allem
-in Asterisk-Versionen vor 1.6 interessant.
+Bei vielen Contexten kann es sinnvoll sein, alle Hints in einen
+eigenen Context `[hints]` zu legen und diesen per `include => hints`
+dort einzubinden, wo man sie braucht. Das hält die Haupt-Contexte
+übersichtlich.
 ====
 
-Danach müssen Sie Asterisk neu starten (*+`/etc/init.d/asterisk
-reload`+* oder *+`asterisk -rx 'module
-reload'`+*).
+Nach Änderungen laden Sie den Dialplan neu:
+
+[source,shell]
+----
+# asterisk -rx "dialplan reload"
+----

@@ -55,7 +55,8 @@ Drückt der User des Systems die Taste `0`
 (kleiner Buchstabe a) geleitet.
 `options`:: Mit der Option `f` kann man das Directory so einstellen, dass nach Vornamen und nicht nach Nachnamen gesucht wird.
 
-Siehe auch Abschnitt C.41, „`Directory()`“.
+Details zur Applikation `Directory()` finden Sie in der offiziellen
+Dokumentation unter https://docs.asterisk.org.
 
 [[voicemail-telefonbuch-funktion]]
 == Funktionsweise

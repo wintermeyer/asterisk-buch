@@ -53,20 +53,21 @@ anzulegen, also z. B. `schlange-support.gsm`.
 Legt fest, in welcher Weise und Reihenfolge die Agenten bei einem
 Anruf angeklingelt werden sollen:
 
-`ringall`:: Alle anklingeln, bis einer antwortet. (Default)
-`roundrobin`:: Der Reihe nach alle anklingeln, bis einer antwortet.
+`ringall`:: Alle verfügbaren Interfaces gleichzeitig anklingeln, bis einer antwortet. (Default)
 `leastrecent`:: Das Interface anklingeln, bei dem der letzte Anruf am längsten zurückliegt.
 `fewestcalls`:: Den anklingeln, der am wenigsten Anrufe in dieser Warteschlange abgearbeitet hat.
 `random`:: Ein zufällig gewähltes Interface anklingeln.
 `rrmemory`:: Round-Robin mit Gedächtnis. Beginnt die Reihe bei dem, der nach dem letzten Anruf an der Reihe ist.
-`linear`:: Wie `roundrobin`, aber streng in der Reihenfolge der `member`-Einträge.
-`wrandom`:: Zufällig, aber mit Berücksichtigung der Penalty der Agenten.
+`rrordered`:: Wie `rrmemory`, hält aber zusätzlich die Reihenfolge aus der Konfigurationsdatei ein.
+`linear`:: Klingelt in der Reihenfolge der `member`-Einträge. Bei dynamischen Members in der Reihenfolge des Einfügens.
+`wrandom`:: Zufällig, aber mit Berücksichtigung der Penalty der Agenten als Gewichtung.
 
 [NOTE]
 ====
-Die Strategie `roundrobin` wurde ab Asterisk 12 entfernt. Benutzen
-Sie stattdessen `rrmemory` (Round-Robin mit Gedächtnis) oder
-`linear` (strikt nach Eintragsreihenfolge).
+Die alte Strategie `roundrobin` ist seit Asterisk 12 nicht mehr
+verfügbar. Wählen Sie als Ersatz `rrmemory` (Round-Robin mit
+Gedächtnis), `rrordered` (dasselbe, aber in Config-Reihenfolge) oder
+`linear` (strikt nach `member`-Einträgen).
 ====
 
 Beachten Sie, dass Agenten, für die ein niedrigerer Malus
@@ -272,7 +273,8 @@ dem `Queue()`-Aufruf
 +Set(MONITOR_FILENAME=_`dateiname`_)+
 angeben. Wir nehmen aber im Beispiel keine Veränderung vor.
 
-Weitere Informationen über Mitschnitte siehe Abschnitt C.100, „`Monitor()`“
+Weitere Informationen zu den Mitschnitte-Applikationen (`Monitor()`,
+`MixMonitor()`) finden Sie unter https://docs.asterisk.org.
 
 [[queues.conf-monitor-join]]
 == `monitor-join`
@@ -287,8 +289,8 @@ Werte: `yes` oder `no`.
 monitor-join = yes
 ----
 
-Zu
-weiteren Informationen über Mitschnitte siehe: Abschnitt C.100, „`Monitor()`“
+Details zu `Monitor()` und `MixMonitor()` finden Sie unter
+https://docs.asterisk.org.
 
 [[queues.conf-joinempty]]
 == `joinempty`

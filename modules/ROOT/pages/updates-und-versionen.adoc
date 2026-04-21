@@ -3,8 +3,7 @@
 :description: Die Evergreen-Ausgabe des Asterisk-Buches wird fortlaufend gepflegt. Wie Updates und Community-Beiträge funktionieren.
 
 Dieses Buch ist ein offenes Open-Source-Projekt. Der Quelltext liegt
-unter https://github.com/svenwintermeyer/asterisk-buch (bzw. dem jeweils
-aktuellen Repository-Pfad, siehe die Projekt-Website). Die gerenderte
+unter https://github.com/wintermeyer/asterisk-buch. Die gerenderte
 Version erreichen Sie unter
 https://das-asterisk-buch.de[das-asterisk-buch.de].
 

@@ -6,7 +6,7 @@ Hier werden die im Zusammenhang mit Asterisk verwendeten Begriffe
 und Abkürzungen kurz erklärt und voneinander abgegrenzt.
 
 ADSI:: Analog Display Services Interface. Ein von einigen analogen Telefonen mit Text-Display unterstütztes Verfahren, das z. B. die Anrufernummer oder die Anzahl der eingegangenen Nachrichten überträgt und ein entsprechendes Blinklicht aktiviert. Wird per FSK (xref:glossar.adoc#glossar-fsk[FSK]) übertragen.
-AGI:: Asterisk Gateway Interface. Ein Interface, über das Asterisk mit externen Skripten kommunizieren kann (ähnlich CGI bei Webservern). Die weiteren Formen EAGI, FastAGI und DeadAGI werden in Abschnitt C.7, „`AGI()`“ erklärt.
+AGI:: Asterisk Gateway Interface. Ein Interface, über das Asterisk mit externen Skripten kommunizieren kann (ähnlich CGI bei Webservern). Neben dem klassischen `AGI()` gibt es die Varianten `EAGI`, `FastAGI` und `DeadAGI` — Details in der offiziellen Dokumentation unter https://docs.asterisk.org.
 AMA:: Automatic Message Accounting. Spezifiziert Mechanismen zur Erzeugung und Übermittlung von CDRs (xref:glossar.adoc#glossar-cdr[CDR]).
 Applikation:: Applikation im Dialplan (xref:glossar.adoc#glossar-dialplan[Dialplan]).
 +
@@ -40,7 +40,7 @@ WebRTC:: Standard für Echtzeit-Kommunikation im Browser (https://www.w3.org/TR/
 DNS:: Domain Name System/Server/Service. Ein Name-Server löst Domain-Namen (z. B. example.com) zu IP-Adressen auf.
 DoS:: Denial of Service. Bezeichnung für einen Angriff auf einen Rechner, bei dem der Rechner mit Anfragen überschwemmt wird, wodurch er nicht mehr in der Lage ist, zu reagieren.
 Durchwahl:: Siehe xref:glossar.adoc#glossar-extension[Extension].
-DSCP:: Differentiated Service CodePoint. Eine Standardisierung von ToS-Flags (xref:glossar.adoc#glossar-tos[ToS]) in RFC 2474footnote:[http://tools.ietf.org/html/rfc2474]. Verwendet die ersten 6 Bits im ToS-Byte von IPv4-Paketen bzw. das Class Field in IPv6-Paketen zur Priorisierung von Übertragungen.
+DSCP:: Differentiated Service CodePoint. Eine Standardisierung von ToS-Flags (xref:glossar.adoc#glossar-tos[ToS]) in RFC 2474footnote:[https://datatracker.ietf.org/doc/html/rfc2474]. Verwendet die ersten 6 Bits im ToS-Byte von IPv4-Paketen bzw. das Class Field in IPv6-Paketen zur Priorisierung von Übertragungen.
 +
 Da so eine Priorisierung natürlich missbraucht werden
 kannfootnote:[Microsoft Windows 2000 z. B. setzt Gerüchten zufolge immer eine ungerechtfertigt hohe Priorität.], werden diese Flags von Internet-Providern in aller Regel
@@ -57,29 +57,25 @@ vorgesehen, die sich jedoch für die Telefonie weniger eignen. Die
 Standard-Einstellung ist BE (_Best Effort_), die
 normale (niedrigste) Priorität.
 DTMF:: Dual-Tone Multi-Frequency. Wähltöne beim Mehrfrequenz-Wählverfahren (MFV, auch Tonwahlverfahren oder _Touch Tone_), das von den meisten analogen Telefonen benutzt wird. Im Gegensatz zum älteren Impuls-Wählverfahren (IWV), _Pulse dialing_. Die meisten Telefone lassen sich bei abgenommenem Hörer vorübergehend mit der Tastenfolge `Set` `*` `Set` zwischen den beiden Verfahren umstellen (`Set` ist die Taste mit einem Pfeil nach rechts mit Karo). Mit DTMF sind außer den Ziffern `0`-`9` die Symbole `*` und `#` sowie die Buchstaben `A`-`D` (kaum verwendet) möglich.
-DUNDi:: Distributed Universal Number Discovery. Ein von Mark Spencer (Digium) entwickeltes Peer-to-Peer-System, um Gateways zu Telefondiensten zu finden. Im Gegensatz zu z. B. ENUM (xref:glossar.adoc#glossar-enum[ENUM]) arbeitet DUNDi dezentral und kann beispielsweise in einer Firma oder auch im ganzen Internet eingesetzt werden. Weitere Informationen: http://www.dundi.info/, http://www.dundi.com/, http://de.wikipedia.org/wiki/DUNDi, `doc/README.dundi` (1.2) / `doc/dundi.txt` (1.4)
+DUNDi:: Distributed Universal Number Discovery. Ein von Mark Spencer entwickeltes Peer-to-Peer-System, um Gateways zu Telefondiensten zu finden. Im Gegensatz zu ENUM (xref:glossar.adoc#glossar-enum[ENUM]) arbeitet DUNDi dezentral. Praktisch eingesetzt wird es heute kaum noch.
 E.164:: Die Richtlinie E.164 _The international public telecommunication numbering plan_ der ITU-T regelt international die Adressierung der Telefonnetze. In E.164 ist festgelegt, aus welchen Bestandteilen eine Telefonnummer besteht und wie viele Stellen sie enthalten darf. Weiterhin sind die internationalen Vorwahlen (wie 43 für Österreich, 49 für Deutschland und 41 für die Schweiz) festgelegt. --_http://de.wikipedia.org/wiki/E.164_
-ENUM:: E.164 number and DNS. Ein Verfahren, um DNS (xref:glossar.adoc#glossar-dns[DNS]) zur Verbreitung von E.164-Telefonnummern (xref:glossar.adoc#glossar-e.164[E.164]) einzusetzen. Eine neuere Methode ist DUNDi (xref:glossar.adoc#glossar-dundi[DUNDi]). Weitere Informationen: `doc/README.enum` (1.2) / `doc/enum.txt` (1.4), RFC 3761footnote:[http://tools.ietf.org/html/rfc3761].
+ENUM:: E.164 number and DNS. Ein Verfahren, um DNS (xref:glossar.adoc#glossar-dns[DNS]) zur Auflösung von E.164-Telefonnummern (xref:glossar.adoc#glossar-e.164[E.164]) zu benutzen. In Deutschland wurde der öffentliche ENUM-Dienst unter `e164.arpa` 2019 abgeschaltet. Siehe RFC 6116footnote:[https://datatracker.ietf.org/doc/html/rfc6116].
 Expression:: Eine _Expression_ (ein Ausdruck) besteht aus Variablen, Operatoren und Werten, die zusammen zu einem Ergebnis ausgewertet werden. Ein Ausdruck kann z. B. Werte vergleichen oder mathematische Berechnungen durchführen. Ausdrücke haben in Asterisk ein Dollar-Zeichen („`$`“) am Anfang und werden in eckige Klammern („`[` _`...`_ `]`“) eingeschlossen.
 +
 Beispiele:
 +
 ** [source] ---- GotoIf($[ $\{test} = 5 ]?ok:nein) ----
 +
-(siehe
-Abschnitt C.66, „`GotoIf()`“, Abschnitt C.64, „`GosubIf()`“)
+(bedingt springen — vgl. `GosubIf()`)
 ** [source] ---- ExecIf($["$\{CALLERID(num)}" = "101"],SayDigits,123) ----
 +
-(siehe
-Abschnitt C.51, „`ExecIf()`“)
+(eine Applikation nur ausführen, wenn der Ausdruck wahr ist)
 ** [source] ---- Set(foo=$\{IF($["$\{Var}" = "123"]?5:9)}) ----
 +
-(siehe
-Abschnitt D.49, „`IF()`“)
+(inline mit der Funktion `IF()`)
 ** [source] ---- Set(ergebnis=$[ 10 / 2 ]) ----
 +
-(siehe
-xref:ael-legacy.adoc[_AEL (Legacy)_])
+(arithmetischer Ausdruck)
 +
 Bei Vergleichen bietet es sich oft an, eine Variable und einen
 Wert in „Anführungszeichen“
@@ -110,8 +106,8 @@ Die besonderen Extensions sind:
 `i`:: (Invalid) Es wurde eine ungültige, nicht vergebene Nummer gewählt oder eine ungültige Eingabe in einem IVR(xref:glossar.adoc#glossar-ivr[IVR])-Menü vorgenommen.
 `o`:: (Operator). In einem IVR-Menü (xref:glossar.adoc#glossar-ivr[IVR]) wurde `0` (Null) gedrückt, um Verbindung mit einem Operator herzustellen.
 `s`:: (Start) Start der Befehlsabarbeitung für eingehende Anrufe.
-`t`:: (Timeout) Zeitberschreitung: User antwortet nicht auf Prompt (siehe Abschnitt D.101, „`TIMEOUT()`“).
-`T`:: (AbsoluteTimeout) Zeitberschreitung insgesamt (siehe Abschnitt C.1, „`AbsoluteTimeout()`“ und Abschnitt D.101, „`TIMEOUT()`“).
+`t`:: (Timeout) Zeitüberschreitung: User antwortet nicht auf Prompt. Konfiguriert über die Funktion `TIMEOUT()`.
+`T`:: (AbsoluteTimeout) Absolute Zeitüberschreitung insgesamt. Konfiguriert über `TIMEOUT(absolute)`.
 `failed`:: Ein automatischer Anruf nach „draußen“ (auto dial-out; mit definiertem Context, Priorität und Extension) ist fehlgeschlagen.
 `fax`:: Fax-Erkennung auf Zap-Kanälen.
 `talk`:: Von der Dialplan-Applikation `BackgroundDetect()` ausgelöst.
@@ -149,7 +145,7 @@ Context:: Siehe xref:glossar.adoc#glossar-context[Context].
 Latenz:: (engl. _latency_) Die auch _Delay_ genannte Verzögerung oder Übertragungsdauer von IP-Paketen (xref:glossar.adoc#glossar-ip[IP]). Gerade für Echtzeitkommunikation (Telefongespräche) ist eine niedrige Latenz wünschenswert.
 MAC-Adresse:: Media Access Control-Adresse. Die feste, weltweit einmalige Hardware-Adresse (auch Ethernet-ID genannt) eines Netzwerk-Interfaces (Netzwerkkarte). (Sie kann nicht physikalisch, aber unter Umständen durch Software geändert werden.) Nicht zu verwechseln mit der IP-Adresse.footnote:[Oder den bekannten Computern :-)].
 MOH:: Music on Hold. Warteschleifenmusik. Bitte beachten Sie, dass Sie entgegen der verbreiteten Meinung keine „kommerziellen“ CDs oder MP3s abspielen dürfen; hierfür fallen gegebenenfalls GEMA-Gebühren an (http://www.gema.de/). Wenn Sie selbst ein Volkslied singen, sind Sie auf der sicheren Seite. :-)
-MySQL:: Die MySQL-Datenbank (http://www.mysql.org/)
+MySQL:: Die MySQL-Datenbank (https://www.mysql.com/). In vielen modernen Linux-Distributionen ist der kompatible MariaDB-Fork (https://mariadb.org/) der Default.
 NTP:: Network Time Protocol. Ein standardisiertes Protokoll (und entsprechende Algorithmen), mit dem sich die Uhr eines Rechners auf Millisekunden genau automatisch mit einem Zeit-Server synchronisieren lässt.
 Pattern:: Siehe xref:glossar.adoc#glossar-regularexpression[Regular Expression].
 Peer:: In Asterisk die Bezeichnung für eine andere Telefonanlage (PBX), zu der eine Verbindung über einen Channel (xref:glossar.adoc#glossar-channel[Channel]) hergestellt wird. Also z. B. ein Asterisk-System an einem anderen Standort.
@@ -171,7 +167,7 @@ SIP:: Session Initiation Protocol (eigentlich eine Sammlung von Protokollen), in
 TCP:: Transmission Control Protocol. Eine Protokollschicht über IP (xref:glossar.adoc#glossar-ip[IP]), die sicherstellt, dass bei der Übertragung keine IP-Pakete verloren gehen, was z. B. für HTTP wichtig ist, damit eine vollständige Übertragung gewährleistet ist.
 ToS:: Type of Service. Eine Form von Traffic Shaping. Manche Router beachten solche Flags in IP-Paketen (xref:glossar.adoc#glossar-ip[IP]), die dazu dienen, bestimmten Diensten (z. B. Telefongesprächen) Priorität gegenüber anderen (z. B. Dateiübertragungen) zu geben und damit die QoS (xref:glossar.adoc#glossar-qos[QoS]) zu verbessern. Kann in Asterisk bei einigen Channels (xref:glossar.adoc#glossar-channel[Channel]) eingestellt werden.
 +
-Die ToS-Flags waren früher in RFC 791footnote:[http://tools.ietf.org/html/rfc791] spezifiziert und wurden in RFC 2474footnote:[http://tools.ietf.org/html/rfc2474] von der IETF als DSCP (xref:glossar.adoc#glossar-dscp[DSCP])
+Die ToS-Flags waren früher in RFC 791footnote:[https://datatracker.ietf.org/doc/html/rfc791] spezifiziert und wurden in RFC 2474footnote:[https://datatracker.ietf.org/doc/html/rfc2474] von der IETF als DSCP (xref:glossar.adoc#glossar-dscp[DSCP])
 rückwärtskompatibel überarbeitet.
 +
 Die alten Flags waren _low-delay,
@@ -182,5 +178,5 @@ Voicemail:: Ein Ausdruck für Sprachnachrichten. Also Nachrichten auf einem (hie
 Voice Mailbox:: Moderner Ausdruck für einen (meist virtuellen) Anrufbeantworter. In Asterisk werden Voice-Mailboxen in der Datei `voicemail.conf` definiert.
 Voice Message:: Siehe xref:glossar.adoc#glossar-voicemail[Voicemail].
 Voice Prompt:: Ein Sprachbaustein – z. B. eine Eingabeaufforderung –, der in einem IVR-Menü (xref:glossar.adoc#glossar-ivr[IVR]) abgespielt wird.
-VoIP:: Voice over IP. Bezeichnet die Echtzeitübertragung von Gesprächen, die in IP-Pakete (xref:glossar.adoc#glossar-ip[IP]) zerlegt werden, anstatt über analoge Leitungen zu laufen. Oft eine kostengünstige Möglichkeit zu telefonieren. Die meisten Anbieter von Breitbandanschlüssen für Privathaushalte meinen damit ihren eigenen kostenpflichtigen Dienst oder die Möglichkeit, an einer mitgelieferten DSL-Modem-Router-Einheit direkt analoge Telefone anschließen zu können. Bekannte von Hausanschlüssen unabhängige Provider sind Skype oder Sipgate, die auch ein Gateway zum und vom öffentlichen Telefonnetz anbieten.
+VoIP:: Voice over IP. Echtzeit-Sprachübertragung über IP-Netze statt über klassische analoge oder ISDN-Leitungen. In Deutschland ist VoIP durch die All-IP-Umstellung der Telekom (seit 2018) faktisch der Standard, auch wenn beim Endkunden oft noch das gleiche "Telefon an der Wand" verwendet wird. Unabhängige VoIP-Provider wie Sipgate, Easybell oder Placetel bieten eigene SIP-Trunks an; der Zugang ist für Asterisk-Anlagen der typische Weg ins öffentliche Netz.
 Wählplan:: Siehe xref:glossar.adoc#glossar-dialplan[Dialplan].

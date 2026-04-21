@@ -27,7 +27,7 @@ Sie könnten beispielsweise die Voicemailboxen
 
 im Abschnitt
 `[call-center-agenten]` anlegen und die User an geeigneter
-Stelle im Dialplan mit `VMAuthenticate` (Abschnitt C.185, „`VMAuthenticate()`“) dem System gegenüber
+Stelle im Dialplan mit `VMAuthenticate()` dem System gegenüber
 authentifizieren:
 
 [source]

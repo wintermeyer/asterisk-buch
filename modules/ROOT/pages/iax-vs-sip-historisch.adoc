@@ -26,7 +26,7 @@ registering. Generally speaking, IAX2 is more efficient in its encoding,
 decoding and verifying information, and it would be extremely difficult
 for an author of an IAX implementation to somehow be incompatible with
 another implementation since so little is left to
-interpretation.footnote:[Anm.: Ironischerweise gabe es (kleinere) Inkompatibilitäten zwischen den IAX-Implementierungen in den Asterisk-Versionen 1.2, 1.4 und 1.6.]
+interpretation.footnote:[Anm.: Ironischerweise gab es (kleinere) Inkompatibilitäten zwischen den IAX-Implementierungen in den Asterisk-Versionen 1.2, 1.4 und 1.6.]
 3) IAX has a very clear layer2 and layer3 separation, meaning that
 both signalling and audio have defined states, are robustly transmitted
 in a consistant fashion, and that when one end of the call abruptly
@@ -34,7 +34,7 @@ disappears, the call WILL terminate in a timely fashion, even if no more
 signalling and/or audio is received. SIP does not have such a mechanism,
 and its reliability from a signalling perspective is obviously very poor
 and clumsy requiring additional standards beyond the core
-RF3261footnote:[Anm.: sic. gemeint ist RFC 3261 (http://tools.ietf.org/html/rfc3261)].
+RF3261footnote:[Anm.: sic. Gemeint ist RFC 3261 (https://datatracker.ietf.org/doc/html/rfc3261).].
 4) IAX's unified signalling and audio paths permit it to
 transparently navigate NAT's and provide a firewal administrator only a
 *single* port to have to open to permit its use. It requires an IAX
@@ -52,7 +52,7 @@ mechanism of the user. SIP does not have a clear method to do this
 unless Remote-Party-ID is used.
 7) SIP is an IETF standard. While there is some fledgling
 documentation courtesy Frank Miller, IAX is not a published standard at
-this time.footnote:[Anm.: Seit Februar 2009 ist IAX2 als RFC 5456 (http://www.rfc-editor.org/authors/rfc5456.txt) standardisiert.]
+this time.footnote:[Anm.: Seit Februar 2009 ist IAX2 als RFC 5456 (https://datatracker.ietf.org/doc/html/rfc5456) standardisiert.]
 8) IAX allows an endpoint to check the validity of a phone number
 to know whether the number is complete, may be complete, or is complete
 but could be longer. There is no way to completely support this in
