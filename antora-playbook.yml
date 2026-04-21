@@ -11,6 +11,7 @@ ui:
   bundle:
     url: https://github.com/wintermeyer/wincon-antora-ui/releases/latest/download/ui-bundle.zip
     snapshot: true
+  output_dir: antora-assets
 
 asciidoc:
   extensions:
