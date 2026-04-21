@@ -1,0 +1,22 @@
+[[protokolle]]
+= Protokolle
+:description: VoIP-Protokolle in Asterisk: PJSIP, IAX2, Channels und wie sie zusammenspielen.
+
+In diesem Kapitel:
+
+* xref:protokolle-einleitung.adoc[Einleitung]
+* xref:tcp-udp-grundlagen.adoc[Netzwerkprotokolle]
+** xref:tcp-udp-grundlagen.adoc#tcp[Transmission Control Protocol (TCP)]
+** xref:tcp-udp-grundlagen.adoc#udp[User Datagram Protocol (UDP)]
+* xref:channels.adoc[Channels]
+* xref:pjsip-endpoints-aors-auths.adoc[Von chan_sip zu PJSIP: Endpoints, AORs, Auths]
+* xref:iax-vs-sip.adoc[IAX versus SIP]
+* xref:pjsip-konfiguration.adoc[SIP / PJSIP]
+** xref:pjsip-konfiguration.adoc#sip-nat-problem[Das SIP-NAT-Problem]
+** xref:pjsip-konfiguration.adoc#pjsip-objekte[Die PJSIP-Objekte im Überblick]
+** xref:pjsip-konfiguration.adoc#pjsip-beispiel[Ein vollständiges Beispiel]
+** xref:pjsip-konfiguration.adoc#sip-trunk-beispiel[Ein Provider-Trunk]
+** xref:pjsip-konfiguration.adoc#pjsip-debugging[Debugging]
+* xref:iax-protokoll.adoc[IAX]
+** xref:iax-protokoll.adoc#warum-iax[Warum (noch) IAX?]
+** xref:iax-protokoll.adoc#iax-beispielkonf[Beispiel für eine IAX-Konfiguration]

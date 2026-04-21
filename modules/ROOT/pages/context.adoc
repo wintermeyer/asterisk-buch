@@ -1,0 +1,62 @@
+[[context]]
+= Context
+:description: Der Context in Asterisk: Abschnitt im Dialplan, der Anrufe und Telefone logisch gruppiert.
+
+Der Dialplan wird in verschiedene Abschnitte unterteilt. Diese
+Abschnitte heißen im Asterisk-Jargon *Contexte*. In der
+`extensions.conf` gibt es einen `[general]`-Block für allgemeine
+Dialplan-Einstellungen (z. B. `autofallthrough`), die folgenden Contexte
+können beliebig benannt werden. Contexte sind das Verbindungsstück
+zwischen der Definition eines Telefons (in `pjsip.conf` oder `iax.conf`)
+und dem Dialplan.
+
+Für jeden Endpoint wird ein Context angegeben. Beispiel aus einer
+`pjsip.conf`:
+
+[source]
+----
+[2000]
+type=endpoint
+context=interne-telefone
+disallow=all
+allow=ulaw
+allow=alaw
+auth=2000
+aors=2000
+----
+
+Das SIP-Telefon mit der Nummer 2000 landet in dieser Konfiguration im
+Context `interne-telefone`. Wählt ein Benutzer vom Telefon 2000 aus
+eine Nummer, sucht Asterisk im Context `interne-telefone` nach der
+passenden Extension. Ist diese nicht vorhanden, passiert nichts.
+
+[WARNING]
+====
+Zu verstehen, wie Contexte funktionieren, ist essenziell für
+Programmierung und Administration einer Asterisk-Telefonanlage. Für
+Anfänger ist das oft nicht sofort einleuchtend. Wenn Sie sich unsicher
+sind: Gehen Sie das Hello-World-Beispiel aus
+xref:hello-world.adoc[Kapitel _„Hello World"_] Schritt für
+Schritt durch. Über diese Hürde stolpert am Anfang fast jeder — es
+lohnt sich, sich dafür die Zeit zu nehmen.
+====
+
+[[context-syntax]]
+== Syntax
+
+Ein Context wird durch einen Namen in eckigen Klammern eingeleitet.
+"Text" ist ein sinnvoller Name, der den Context benennt und als spätere
+Referenz dient. Alle Zeilen nach einer solchen Einleitung bis zum
+nächsten Context zählen zu diesem Context:
+
+[source]
+----
+[general]
+autofallthrough=yes
+
+[interne-telefone]
+; Regeln, Anweisungen, ...
+
+[apfelmus]
+; Regeln, Anweisungen, ...
+----

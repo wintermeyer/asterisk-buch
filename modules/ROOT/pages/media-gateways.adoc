@@ -1,9 +1,0 @@
-[[media-gateways]]
-= Media Gateways
-
-In diesem Kapitel:
-
-* xref:media-gateways-einleitung.adoc[Einleitung]
-* xref:media-gateways-vorteile.adoc[Vorteile]
-* xref:media-gateways-nachteile.adoc[Nachteile]
-* xref:media-gateways-fazit.adoc[Fazit]

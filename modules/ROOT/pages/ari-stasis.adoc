@@ -1,0 +1,49 @@
+[[ari-stasis]]
+= Stasis: der Dialplan-Einsprungpunkt
+:description: Stasis in ARI: Wie eine Dialplan-Extension die Kontrolle an eine ARI-Anwendung übergibt.
+
+Eine ARI-Anwendung übernimmt die Kontrolle über einen Channel, sobald
+der Dialplan die Applikation `Stasis(appname)` aufruft. Ab diesem
+Moment passiert im Dialplan *nichts* mehr — es sei denn, die Anwendung
+schickt den Channel per `ContinueInDialplan`-API-Call zurück.
+
+Beispiel: Der Anrufer wählt `3000`, und alles weitere entscheidet die
+ARI-Anwendung `meine-app`:
+
+[source]
+----
+[default]
+exten => 3000,1,NoOp(Uebergabe an ARI)
+ same => n,Answer()
+ same => n,Stasis(meine-app)
+ same => n,Hangup()
+----
+
+== Der Event-Fluss
+
+Läuft ARI in der Anwendung, verbindet sie sich per WebSocket mit
+Asterisk:
+
+[source]
+----
+ws://127.0.0.1:8088/ari/events?api_key=meine-app:IHR-PASSWORT&app=meine-app
+----
+
+Sobald ein Channel per `Stasis(meine-app)` eintritt, schickt Asterisk
+ein `StasisStart`-Event über die WebSocket-Verbindung. Die Anwendung
+antwortet — zum Beispiel mit HTTP-Requests gegen
+`/channels/\{channelId}/play` (Audio abspielen),
+`/channels/\{channelId}/answer` (abnehmen), `/bridges` (Bridge anlegen)
+oder `/channels/\{channelId}` DELETE (Gespräch beenden).
+
+Der wichtige Unterschied zu AGI: *ARI ist asynchron*. Die Anwendung
+schickt Kommandos und reagiert auf Events — sie ist nicht an den
+Channel "gebunden" und kann viele Channels parallel bedienen.
+
+== Was Stasis nicht tut
+
+Während ein Channel in einer Stasis-Anwendung ist, laufen Dialplan-Timer
+(`TIMEOUT(absolute)`) nicht wie im normalen Dialplan — die App muss
+Zeitüberschreitungen selbst verwalten. Auch die `h`-Extension wird nicht
+aus der App heraus aufgerufen; für Cleanup-Arbeit reagieren Sie auf
+das `StasisEnd`-Event.

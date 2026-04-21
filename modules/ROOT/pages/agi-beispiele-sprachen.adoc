@@ -1,0 +1,132 @@
+[[agi-beispiele-sprachen]]
+= Beispiele in verschiedenen Programmiersprachen
+:description: AGI-Beispielskripte in Python, Bash und Node.js für Asterisk.
+
+Ein AGI-Skript ist ein gewöhnliches ausführbares Programm, das
+Asterisk aus dem Dialplan heraus startet, per stdin/stdout mit ihm
+spricht und sich beim Beenden wieder abmeldet. Es ist fast egal,
+welche Programmiersprache Sie dafür benutzen — hier ein paar
+pragmatische Beispiele.
+
+Das Skript wird aus der `extensions.conf` heraus aufgerufen:
+
+[source]
+----
+exten => 1234,1,Answer()
+ same => n,AGI(mein-skript.sh)
+ same => n,Hangup()
+----
+
+Asterisk sucht AGI-Skripte in `/var/lib/asterisk/agi-bin/`. Die Datei
+muss dem Asterisk-User lesbar und ausführbar sein.
+
+[[agi-bash]]
+== Bash
+
+Für einfache Aufgaben ist Bash völlig ausreichend — das AGI-Protokoll
+ist zeilenbasiertes ASCII.
+
+[source,bash]
+----
+#!/bin/bash
+# /var/lib/asterisk/agi-bin/hello.sh
+
+# Variablen vom Kanal einlesen (die Asterisk vor dem ersten Kommando schickt)
+while read line && [ -n "$line" ]; do
+    case "$line" in
+        agi_callerid:*) CALLERID="${line#*: }" ;;
+    esac
+done
+
+# Ein Kommando senden
+echo "EXEC Playback hello-world"
+read answer
+
+# Eine Variable setzen
+echo "SET VARIABLE AUFRUFER $CALLERID"
+read answer
+
+exit 0
+----
+
+[[agi-python]]
+== Python
+
+Für mehr als ein paar Zeilen ist Python angenehmer. Es gibt mehrere
+AGI-Wrapper; hier ein Minimal-Beispiel ohne Abhängigkeit:
+
+[source,python]
+----
+#!/usr/bin/env python3
+# /var/lib/asterisk/agi-bin/hello.py
+
+import sys
+
+# Initial-Variablen lesen
+vars = {}
+while True:
+    line = sys.stdin.readline().strip()
+    if not line:
+        break
+    key, _, value = line.partition(":")
+    vars[key.strip()] = value.strip()
+
+def agi(cmd):
+    print(cmd, flush=True)
+    return sys.stdin.readline().strip()
+
+agi('VERBOSE "Hallo aus Python!" 3')
+agi('STREAM FILE hello-world ""')
+agi('SET VARIABLE PY_DONE 1')
+----
+
+Für größere Projekte lohnt sich die Bibliothek
+https://github.com/lukesUbuntu/pyst2[pyst2] oder
+https://github.com/philippe-B/asterisk-agi-python[asterisk-agi-python].
+
+[[agi-nodejs]]
+== Node.js
+
+[source,javascript]
+----
+// /var/lib/asterisk/agi-bin/hello.js
+// npm install agi-node
+const { Runner } = require('agi-node');
+const runner = new Runner();
+
+runner.addContext('default', async (channel) => {
+  await channel.streamFile('hello-world');
+  await channel.setVariable('NODE_DONE', '1');
+});
+
+runner.start(3000);
+----
+
+Der Node-Handler läuft als *FastAGI-Server* — das heißt, Asterisk
+öffnet eine TCP-Verbindung zu Ihrem Service statt pro Anruf einen
+neuen Prozess zu starten. Im Dialplan:
+
+[source]
+----
+exten => 1234,1,AGI(agi://127.0.0.1:3000/default)
+----
+
+FastAGI ist für produktive Anwendungen fast immer die bessere Wahl:
+kein Process-Fork pro Anruf, keine Kaltstart-Latenz.
+
+[[agi-andere-programmiersprachen]]
+== Andere Programmiersprachen
+
+Für so gut wie jede Sprache existiert ein AGI-Wrapper:
+
+* *Ruby* — `ruby-agi`, historisch auch *Adhearsion* (auch wenn
+  letzteres als Framework kaum noch aktiv gepflegt wird).
+* *PHP* — `phpagi` (https://github.com/welltime/phpagi), war lange
+  Zeit populär, ist aber eher historisch.
+* *Go* — `agi-go` (https://github.com/zaf/agi).
+* *Perl* — `Asterisk::AGI` (CPAN); zum Historisieren in vielen alten
+  Installationen noch im Einsatz.
+
+Für komplexere externe Logik empfehlen wir heute allerdings den
+Umstieg auf *xref:ari.adoc[ARI]*: asynchrone Event-Verarbeitung,
+HTTP/REST-API, WebSocket, viele gleichzeitige Calls pro Prozess.

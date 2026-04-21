@@ -1,0 +1,29 @@
+[[ari]]
+= Asterisk REST Interface (ARI)
+:description: ARI — Asterisk REST Interface: REST-API und WebSocket für moderne Telefonie-Anwendungen.
+
+In diesem Kapitel:
+
+* xref:ari-einleitung.adoc[Einleitung]
+* xref:ari-konfiguration.adoc[ari.conf und http.conf einrichten]
+* xref:ari-stasis.adoc[Stasis: der Dialplan-Einsprungpunkt]
+* xref:ari-hello-world.adoc[Ein erstes ARI-Beispiel]
+
+ARI — das *Asterisk REST Interface* — ist der moderne Weg, externe
+Anwendungen mit Asterisk zu verbinden. ARI ist der direkte
+technologische Nachfolger von AMI+AGI+AJAM und bietet eine
+zeitgemäße Kombination aus:
+
+* *HTTP-REST-API*, mit der Sie Channels, Bridges, Playbacks und
+  Recordings fernsteuern.
+* *WebSocket-Event-Stream*, der Ihre Anwendung über alles informiert,
+  was im System passiert (Channel aufgebaut, Taste gedrückt, Bridge
+  gestartet, Hangup, …).
+* *Stasis*, eine Dialplan-Applikation, die einen Channel an Ihre
+  Anwendung übergibt. Alles, was mit dem Channel danach passieren
+  soll, steuert die Anwendung.
+
+ARI gab es in der alten Buchauflage noch nicht — und ist heute die
+wichtigste Erweiterung, wenn Sie Telefonanwendungen bauen (Click-to-Call,
+intelligente IVR, Queues mit eigener Logik, Integrationen in CRM- oder
+Helpdesk-Systeme).

@@ -1,0 +1,86 @@
+[[fail2ban]]
+= Fail2ban einrichten
+:description: fail2ban für Asterisk: Brute-Force-Attacken auf SIP automatisch blockieren.
+
+*Fail2ban* (https://www.fail2ban.org/) liest Log-Dateien mit, erkennt
+Muster wie fehlgeschlagene SIP-Registrierungen und sperrt die
+auffällige IP-Adresse per Firewall-Regel. Für Asterisk ist das seit
+Jahren der Standard-Baustein gegen SIP-Scanner.
+
+== Asterisk-Security-Log aktivieren
+
+In `/etc/asterisk/logger.conf` muss der `security`-Kanal aktiv sein:
+
+[source]
+----
+[general]
+
+[logfiles]
+; Andere Kanäle, z. B.:
+console => notice,warning,error
+messages => notice,warning,error
+
+; Security-Events in eine eigene Datei:
+security.log => security
+----
+
+Nach einem `asterisk -rx 'logger reload'` schreibt Asterisk
+sicherheitsrelevante Events (fehlgeschlagene Auths, Access-Violations)
+nach `/var/log/asterisk/security.log`.
+
+== Fail2ban konfigurieren
+
+Auf Debian/Ubuntu:
+
+[source,shell]
+----
+# apt install -y fail2ban
+----
+
+Der mitgelieferte Filter `/etc/fail2ban/filter.d/asterisk.conf` deckt
+die gängigen Security-Log-Meldungen ab. In
+`/etc/fail2ban/jail.local` aktivieren Sie das Asterisk-Jail:
+
+[source]
+----
+[asterisk]
+enabled  = true
+filter   = asterisk
+logpath  = /var/log/asterisk/security.log
+maxretry = 5
+findtime = 600
+bantime  = 86400
+action   = iptables-allports[name=ASTERISK, protocol=all]
+----
+
+* `maxretry=5` — Nach 5 fehlgeschlagenen Versuchen ...
+* `findtime=600` — ... innerhalb von 10 Minuten ...
+* `bantime=86400` — ... bannt Fail2ban die IP für 24 Stunden.
+
+Aktivieren:
+
+[source,shell]
+----
+# systemctl restart fail2ban
+# fail2ban-client status asterisk
+----
+
+== Log-Format prüfen
+
+Wenn Fail2ban keine Treffer meldet, die Sie erwartet hätten:
+
+[source,shell]
+----
+# fail2ban-regex /var/log/asterisk/security.log /etc/fail2ban/filter.d/asterisk.conf
+----
+
+zeigt Zeile für Zeile, welche Log-Einträge der Filter erkannt hat.
+Bei manchen Asterisk-Versionen lohnt sich ein Blick auf die Community-
+Forks des Filters, die um aktuelle Meldungsformate ergänzt sind.
+
+== Was Fail2ban nicht kann
+
+Fail2ban sperrt reaktiv — erst nachdem die ersten fehlgeschlagenen
+Versuche passiert sind. Echte Präventionsmaßnahmen bleiben wichtig:
+starke Passwörter, IP-ACLs, nicht nötige Module deaktivieren, SIP
+bevorzugt über TLS statt UDP.

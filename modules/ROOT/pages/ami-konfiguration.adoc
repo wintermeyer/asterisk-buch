@@ -1,0 +1,500 @@
+[[ami-konfiguration]]
+= Das Manager-Interface (AMI)
+:description: manager.conf in Asterisk konfigurieren: User, Rechte, ACLs.
+
+AMI ist das klassische, seit Jahren bestehende TCP-Protokoll, mit dem
+externe Programme Asterisk fernsteuern und Ereignisse mitlesen. Für
+*neue* Anwendungen, die Call-Control machen sollen (Gespräche anlegen,
+umleiten, Audio abspielen, DTMF verarbeiten), empfehlen wir heute
+xref:ari.adoc[ARI]. AMI ist dennoch nach wie vor sinnvoll:
+für Monitoring-Skripte, für das Reagieren auf Events mit einfachen
+Tools (`expect`, `nc`, kleinen Python-Skripten) und für Altbestand.
+
+Sie aktivieren das Manager-Interface, indem Sie in der
+`manager.conf` im Abschnitt `[general]` den
+Parameter `enabled=yes` setzen.
+
+[CAUTION]
+====
+Das sollten Sie nie auf einem Server mit öffentlichem Zugang
+machen, außer Sie schützen sich zusätzlich durch
+`iptables`, `ipfw` oder eine andere
+Firewall oder einen SSH-Tunnel!
+====
+
+Ganz unten legen wir uns einen Benutzereintrag mit dem Namen
+_`admin`_ an:
+
+[source]
+----
+[admin]
+secret = geheim
+deny = 0.0.0.0/0.0.0.0
+permit = 127.0.0.1/255.255.255.255
+read = all,system,call,log,verbose,command,agent,user,config
+write = all,system,call,log,verbose,command,agent,user,config
+----
+
+Die
+Optionen nach `read` und `write` geben an, für
+welche Befehlsklassen Sie dem User Rechte geben.footnote:[Welche Rechte-Klassen Sie zum Ausführen eines Befehls haben müssen, erfahren Sie im CLI mit `show manager commands` bzw. `manager show commands`.]
+
+[CAUTION]
+====
+Diese großzügige Rechtevergabe dient nur zum Testen! Mit dem
+Recht `command` kann der User z. B. Asterisk stoppen. Seit
+Version 1.4 ist es sogar möglich, durch das AMI den Dialplan zu
+verändern und dann eventuell mit `System()` auf der Shell
+Befehle mit root-Rechten auszuführen!
+====
+
+Nach einem Restart von Asterisk können wir uns auf Port 5038
+mit dem AMI verbinden, was wir auf der Shell mit
+`telnet`footnote:[Hier kommt nur das _Tool_ `telnet` zum Einsatz. Das hat nichts mit dem Telnet-Protokoll oder -Port zu tun.]ausprobieren:
+
+[source,shell]
+----
+$ telnet 127.0.0.1 5038
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Asterisk Call Manager/1.0
+----
+
+Man kann hier von Hand Befehle (die meist
+aus mehreren Zeilen bestehen) eintippen, z. B.:
+
+[source,shell]
+----
+Action: Login
+ActionID: 1
+Username: admin
+Secret: geheim
+----
+
+[NOTE]
+====
+Alle Befehlspakete werden durch zwei Returns
+abgeschlossen.
+====
+
+Antwort:
+
+[source,shell]
+----
+Response: Success
+ActionID: 1
+Message: Authentication accepted
+----
+
+Die primäre Verwendung liegt aber ganz klar im automatisierten
+Zugriff durch Skripte.
+
+[NOTE]
+====
+Das Manager-Interface ist nicht unbedingt dafür berühmt, viele
+gleichzeitige Verbindungen handhaben zu können (auch wenn sich das in
+der Version 1.4 stark verbessert hat). In so einer Last-Situation könnte
+man über den Einsatz eines speziellen Proxys wie des
+„AstManProxy“footnote:[http://github.com/davetroy/astmanproxy/tree/master, http://www.voip-info.org/wiki/view/AstManProxy] (ein Perl-Skript) nachdenken, der viele Verbindungen
+entgegennimmt und zu einer bündelt – für die zugreifenden Skripte
+völlig transparent. Für die folgenden „Spielereien“ ist das
+aber unnötig.
+====
+
+Nach erfolgreicher Authentifizierung können in beiden Richtungen
+Pakete gesendet werden. Die Art des Pakets wird immer von der ersten Zeile
+darin bestimmt. Der Client sendet `Action`-Pakete, der Server
+antwortet mit `Response` oder kann auch von sich aus
+`Event`-Pakete schicken. Die Reihenfolge der Zeilen in einem
+Paket ist ansonsten aber irrelevant. Zeilen werden durch CR LFfootnote:[_Carriage Return_ (ASCII 13 dezimal) und _Line Feed_ (ASCII 10 dezimal)] beendet, das ganze Paket durch ein weiteres CR LF.
+Normalerweise sendet der Client in jeder `Action` ein
+`ActionID`-Feld mit beliebigem, möglichst eindeutigem
+Inhaltfootnote:[Hier bietet sich etwa der Name des Skripts, ein Timestamp und eine fortlaufende Nummer für jede Action an, z. B. `testskript.php-1169405408-1.`], das der Server so in seine `Response` übernimmt,
+damit sich die Antworten bei Überschneidungen zuordnen lassen.
+
+Der Server sendet `Event`-Pakete, um den Client über
+verschiedene Ereignisse zu informieren. Es gibt auch Ereignisse, die von
+einer `Action` des Clients ausgelöst werden. Dann sendet der
+Server ein `Response: Follows`, gefolgt von den Events (die
+dann ebenfalls die `ActionID` beinhalten), und ein
+abschließendes Event (normalerweise
+_`Aktionsname`_Complete).
+
+Wenn Ihr Client keine Events benötigt, kann er direkt im ersten
+Authentifizierungspaket den Parameter `Events: off` senden, um
+dann nur Antworten auf von ihm gesendete Actions zu erhalten.
+
+Die Liste der verfügbaren Befehle erhalten Sie im
+_CLI_ mit `manager show commands`,
+Informationen über einen Befehl mit +manager show command
+_`Befehlsname`_+ (siehe xref:ami-action-referenz.adoc[Anhang F, _AMI-Befehle_]):
+
+[source,shell]
+----
+*CLI> manager show commands
+  Action           Privilege    Synopsis
+  ------           ---------    --------
+  AbsoluteTimeout  call,all     Set Absolute Timeout
+  AgentCallbackLo  agent,all    Sets an agent as logged in by callback
+  AgentLogoff      agent,all    Sets an agent as no longer logged in
+  Agents           agent,all    Lists agents and their status
+  ChangeMonitor    call,all     Change monitoring filename of a channel
+  Command          command,all  Execute Asterisk CLI Command
+  DBGet            system,all   Get DB Entry
+  DBPut            system,all   Put DB Entry
+  Events           <none>       Control Event Flow
+  ExtensionState   call,all     Check Extension Status
+  GetConfig        config,all   Retrieve configuration
+  Getvar           call,all     Gets a Channel Variable
+  Hangup           call,all     Hangup Channel
+  IAXnetstats      <none>       Show IAX Netstats
+  IAXpeers         <none>       List IAX Peers
+  ListCommands     <none>       List available manager commands
+  Logoff           <none>       Logoff Manager
+  MailboxCount     call,all     Check Mailbox Message Count
+  MailboxStatus    call,all     Check Mailbox
+  Monitor          call,all     Monitor a channel
+  Originate        call,all     Originate Call
+  Park             call,all     Park a channel
+  ParkedCalls      <none>       List parked calls
+  PauseMonitor     call,all     Pause monitoring of a channel
+  Ping             <none>       Keepalive command
+  PlayDTMF         call,all     Play DTMF signal on a specific channel.
+  QueueAdd         agent,all    Add interface to queue.
+  QueuePause       agent,all    Makes a queue member temporarily unavailable
+  QueueRemove      agent,all    Remove interface from queue.
+  Queues           <none>       Queues
+  QueueStatus      <none>       Queue Status
+  Redirect         call,all     Redirect (transfer) a call
+  SetCDRUserField  call,all     Set the CDR UserField
+  Setvar           call,all     Set Channel Variable
+  SIPpeers         system,all   List SIP peers (text format)
+  SIPshowpeer      system,all   Show SIP peer (text format)
+  Status           call,all     Lists channel status
+  StopMonitor      call,all     Stop monitoring a channel
+  UnpauseMonitor   call,all     Unpause monitoring of a channel
+  UpdateConfig     config,all   Update basic configuration
+  UserEvent        user,all     Send an arbitrary event
+  WaitEvent        <none>       Wait for an event to occur
+----
+
+Diese
+Befehle sind fast immer gleichlautend mit einer entsprechenden
+Dialplan-Applikation – neu ist vor allem die Action
+`Originate`, mit der man einen ausgehenden Anruf veranlassen
+kann, und `Command`, das einen Befehl direkt auf dem CLI
+ausführt. Da wir unserem User `admin` alle Rechte gegeben haben
+(s. o.), darf er alle Befehle ausführen. Wie man einen Befehl benutzt,
+erfahren Sie so:
+
+[source,shell]
+----
+*CLI> manager show command Command
+Action: Command 
+Synopsis: Execute Asterisk CLI Command
+Privilege: command,a
+Description: Run a CLI command.
+Variables: (Names marked with * are required)
+        *Command: Asterisk CLI command to run
+        ActionID: Optional Action id for message matching.
+----
+
+Die von Asterisk verschickten Events sind bisher so gut wie
+undokumentiert. Auf http://www.voip-info.org/wiki/view/asterisk+manager+events
+finden Sie eine zusammengestellte Liste mit spärlichen Hinweisen. Ein paar
+Erklärungen können Sie auf http://asterisk-java.sourceforge.net/apidocs/net/sf/asterisk/manager/event/package-frame.html
+nachlesenfootnote:[Lassen Sie sich nicht verwirren: Das ist eigentlich eine Java-Dokumentation.].
+
+[[manager-interface-beispiel-expect]]
+== Beispiel: Anzahl der Mailbox-Nachrichten mit Expect abfragen
+
+Nehmen wir an, wir wollten über das Manager-Interface die
+Anzahl der Nachrichten in einer Voicemailbox abfragen. Diese einfache
+Aufgabe lässt sich leicht mit einem Skript für `expect`
+lösen.
+
+[NOTE]
+====
+`expect` ist ein erweiterter Tcl-Interpreter, mit dem man
+automatisiert interaktive Shell-Programme ansteuern
+kann.footnote:[https://core.tcl-lang.org/expect/, https://en.wikipedia.org/wiki/Expect]
+====
+
+Folgendes Expect-Skript verbindet sich mit dem AMI, loggt sich ein
+und gibt schließlich die Anzahl der neuen und alten Nachrichten in der
+angegebenen Mailbox aus:
+
+[source]
+----
+#!/usr/bin/expect
+#
+# Aufruf: ./vmcount.exp 1234@default
+
+# der Benutzer-Zugang wie er in der manager.conf eingerichtet ist:
+set username "admin"
+set secret "geheim"
+set host "127.0.0.1"
+set port "5038"
+
+if {[llength $argv] != 1} {
+    send_user "Fehler: Geben Sie eine Mailbox an!\n"
+    exit 1
+}
+
+# erstes Argument ist die abzufragende Mailbox:
+set mailbox [lindex $argv 0]
+send_user "Mailbox: $mailbox\n"
+
+# das Durchschleifen von stdout zum User abschalten:
+log_user 0
+
+# Verbindung zum AMI öffnen:
+spawn telnet $host $port
+
+# für den Fall, dass telnet abbricht, weil keine Verbindung
+# hergestellt werden kann:
+expect_before eof {
+    send_user "Fehler beim Verbinden.\n"
+    exit 1
+}
+
+# auf die Zeichenfolge "Manager" warten und bei Erfolg
+# ein Login-Paket senden:
+#
+expect "Manager" {
+    send_user "Verbunden.\n"
+    send "Action: Login\nUsername: $username\nSecret: $secret\n\n"
+    # Beachten Sie, dass telnet Zeilenumbrüche (\n) automatisch
+    # in CR LF (\r\n) umwandelt. Man darf hier also nicht \r\n
+    # angeben.
+}
+
+# Login erfolgreich?:
+#
+expect {
+    -re "Response:\\s*Error" {
+        send_user "Login fehlgeschlagen.\n"
+        exit 1
+    }
+    -re "Response:\\s*Success" {
+        send_user "Eingeloggt.\n"
+        # Anzahl der Mailbox-Nachrichten abfragen:
+        send "Action: MailboxCount\nMailbox: $mailbox\n\n"
+    }
+}
+
+expect {
+    -re "Response:\\s*Error" {
+        send_user "Abfragen der Mailbox fehlgeschlagen.\n"
+        exit 1
+    }
+    -re "Response:\\s*Success" {}
+}
+expect {
+    -re "NewMessages:\\s*(\[\\d]*)" {
+        send_user "Neue Nachrichten: $expect_out(1,string)\n"
+    }
+}
+expect {
+    -re "OldMessages:\\s*(\[\\d]*)" {
+        send_user "Alte Nachrichten: $expect_out(1,string)\n"
+    }
+}
+
+# Ausloggen - nicht unbedingt nötig, aber sauber:
+send "Action: Logoff\n\n"
+----
+
+Wir speichern das Skript als `vmcount.exp`
+und setzen es mit `chmod a+x vmcount.exp` auf
+ausführbar.
+
+Aufruf:
+
+[source,shell]
+----
+$ ./vmcount.exp 123@default
+Mailbox: 123@default
+Verbunden.
+Eingeloggt.
+Neue Nachrichten: 0
+Alte Nachrichten: 0
+----
+
+[[manager-interface-starastapi]]
+== StarAstAPI für PHP
+
+Vorweg gesagt: Erwarten Sie nicht zu viel von diesem kleinen
+Exkurs. StarAstAPI ist noch verbesserungsfähig. :-)
+
+Für das Manager-Interface gibt es mittlerweile mehr oder
+weniger gute APIs in verschiedenen Programmiersprachen (PHP, Perl,
+Python, Ruby etc.), die natürlich hier nicht alle getestet werden
+konntenfootnote:[Beispiele mit Anmerkungen auf http://www.voip-info.org/wiki/view/Asterisk+manager+Examples]. Sollte die API für Ihre Lieblingssprache nicht laufen,
+können Sie das Problem sicher lösen – bis hierher haben sowieso
+nur Leute gelesen, die schon mal programmiert haben. :-)
+
+Wir testen hier ganz kurz die StarAstAPIfootnote:[von http://www.starutilities.com/] in PHP, was ein PHP 5 voraussetztfootnote:[Die API lässt sich aber relativ leicht auf PHP 4 umschreiben, obwohl der Code recht unübersichtlich und schlecht formatiert ist. Beheben Sie im Zweifelsfall einfach immer die Parse-Errors. :-)], das mit `--enable-sockets` kompiliert
+wurde.footnote:[Auf der Shell erfahren Sie mit `php -m`, welche Module einkompiliert sind.] Leider findet man in den StarAstAPI-Dateien noch die seit
+Jahren veralteten „short open tags“ (`<?`).
+Ersetzen Sie diese gegebenenfalls durch die korrekte Syntax
+(`<?php`). Der API liegen 4 Demo-Skripte bei:
+`sLogin.php` versucht nur, sich einzuloggenfootnote:[Wenn Sie nach der Anleitung oben vorgegangen sind, müssen Sie natürlich jeweils den Benutzernamen und das Passwort entsprechend anpassen.], `sCommand.php` führt den CLI-Befehl
+`reload` aus, `sDial.php` versucht, eine
+Verbindung mit SIP/120 aufzubauen, und `sEvents.php`
+empfängt Events. Wenn wir gleichzeitig mit `asterisk
+-vvvr` die CLI beobachten und mit `php -q
+sLogin.php` eine Verbindung zum AMI öffnenfootnote:[Hier absichtlich mit falschem Usernamen/Passwort.], sehen wir im CLI:
+
+[source,shell]
+----
+*CLI> 
+  == Parsing '/etc/asterisk/manager.conf': Found
+[Jan 26 20:08:09] NOTICE[10352]: manager.c:961 authenticate: 127.0.0.1 tried to authenticate with nonexistent user 'mark'
+  == Connect attempt from '127.0.0.1' unable to authenticate
+*CLI> 
+----
+
+Es hat also wegen des falschen Usernamens nicht
+funktioniert, trotzdem meldet das Demo-Skript:
+
+[source,shell]
+----
+$  php -q sLogin.php 
+Login Sucessful 
+----
+
+und danach erhalten Sie das Response-Paket:
+
+[source,shell]
+----
+Response: Error
+ActionID: 1
+Message: Authentication failed
+----
+
+StarAstAPI arbeitet also nicht ganz sauber, kann aber sicher ohne
+allzu großen Aufwand verbessert werden. Wenn wir `php -q
+sEvents.php` aufrufen – jetzt mit dem richtigen Usernamen
+– sehen wir im CLI:
+
+[source,shell]
+----
+*CLI> 
+  == Parsing '/etc/asterisk/manager.conf': Found
+  == Manager 'admin' logged on from 127.0.0.1
+*CLI> 
+----
+
+Testhalber führen wir im CLI ein `reload` aus,
+was sich in diesen Events in der Ausgabe des PHP-Skripts
+widerspiegelt:
+
+[source,shell]
+----
+Event: Reload
+Privilege: system,all
+Message: Reload Requested
+
+Event: ChannelReload
+Privilege: system,all
+Channel: SIP
+ReloadReason: RELOAD (Channel module reload)
+Registry_Count: 0
+Peer_Count: 0
+User_Count: 0
+----
+
+Lassen Sie sich etwas einfallen! Schreiben Sie ein kleines Skript,
+das all Ihre Freunde anruft – natürlich mitten in der
+Nacht!
+
+[[manager-interface-beispiel-php]]
+== Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen
+
+So könnten wir das Beispiel aus xref:ami-konfiguration.adoc#manager-interface-beispiel-expect[„Beispiel: Anzahl der Mailbox-Nachrichten mit Expect
+abfragen“] in PHP mit der StarAstAPI
+lösen:
+
+[source]
+----
+#!/usr/bin/php -q
+<?php
+# der Parameter -q dient dazu, bei einem CGI-PHP die Ausgabe der
+# Header abzuschalten
+
+if ($argc != 2) {
+    echo "Fehler: Geben Sie eine Mailbox an!\n";
+    exit(1);
+}
+# das erste Argument nach dem Programmnamen ist die Mailbox:
+$mailbox = $argv[1];
+echo "Mailbox: $mailbox\n\n";
+
+# StarAstAPI einbinden:
+require_once './StarAstAPI/StarAstAPI.php';
+
+# verbinden und einloggen:
+#
+$ami = new AstClientConnection();
+if ($ami->Login( 'admin', 'geheim', '127.0.0.1', 5038 )) {
+    $rp = $ami->GetResponse('1');
+    //echo $rp->ToString();
+} else {
+    exit(1);
+}
+
+# folgendes Paket senden:
+#     Action: MailboxCount
+#     Mailbox: $mailbox
+#     ActionID: 2
+#
+$data = new AstPacketData;
+$data->AddKVPair( 'Action'  , 'MailboxCount' );
+$data->AddKVPair( 'Mailbox' , $mailbox );
+$data->AddKVPair( 'ActionID', '2' );
+$packet = new AstPacket;
+$packet->SetAstPacketType( 'Action' );
+$packet->SetAstPacketData( $data );
+$ami->SendPacket( $packet );
+
+# Antwort-Paket mit ActionID 2 lesen:
+#
+$rPacket = $ami->GetResponse('2');
+//echo $rp->ToString();
+$rData = $rPacket->GetAstPacketData();
+$r = $rData->GetAll();
+
+echo "Neue Nachrichten: ", (int)trim($r['NewMessages:']), "\n";
+echo "Alte Nachrichten: ", (int)trim($r['OldMessages:']), "\n";
+echo "\n";
+
+# Ausloggen - nicht unbedingt nötig, aber sauber:
+#
+$ami->Logoff();
+# allerdings ist die Funktion der StarAstAPI nicht gerade schön.
+# sie tut dies:
+#echo "Logoff Called from somewhere ...";
+#socket_close($this->mSocket);
+
+echo "\n";
+?>
+----
+
+Wir speichern das Skript als
+`vmcount.php` und setzen es mit `chmod a+x
+vmcount.exp` auf ausführbar.
+
+Aufruf:
+
+[source,shell]
+----
+$ ./vmcount.php 123@default
+Mailbox: 123123123
+
+Neue Nachrichten: 0
+Alte Nachrichten: 0
+
+Logoff Called from somewhere ...
+----

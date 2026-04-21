@@ -1,0 +1,79 @@
+[[ari-konfiguration]]
+= ari.conf und http.conf einrichten
+:description: ari.conf und http.conf für ARI in Asterisk einrichten.
+
+Damit ARI läuft, müssen zwei Dinge aktiviert sein: der *eingebaute
+HTTP-Server* von Asterisk (`http.conf`) und *ARI selbst* (`ari.conf`).
+
+== http.conf
+
+[source]
+----
+; /etc/asterisk/http.conf
+[general]
+enabled=yes
+bindaddr=127.0.0.1
+bindport=8088
+; Für Produktivumgebungen TLS aktivieren — siehe unten.
+;tlsenable=yes
+;tlsbindaddr=0.0.0.0:8089
+;tlscertfile=/etc/asterisk/keys/asterisk.crt
+;tlsprivatekey=/etc/asterisk/keys/asterisk.key
+----
+
+[IMPORTANT]
+====
+Binden Sie den ARI-Port *nicht* direkt ans öffentliche Internet. Übliche
+Setups:
+
+* Anwendung läuft auf demselben Host — `bindaddr=127.0.0.1` reicht.
+* Anwendung läuft auf einem anderen Host — Zugriff über VPN oder
+  Reverse-Proxy mit TLS.
+* Für WebRTC-Clients: Reverse-Proxy mit `wss://` terminiert TLS und
+  leitet an `ws://127.0.0.1:8088/ari/events` durch.
+====
+
+== ari.conf
+
+[source]
+----
+; /etc/asterisk/ari.conf
+[general]
+enabled=yes
+pretty=yes          ; JSON-Ausgabe einrücken (nur in Dev-Umgebungen)
+allowed_origins=*   ; CORS; in Produktion spezifische Herkunft angeben
+
+[meine-app]
+type=user
+read_only=no
+password=IHR-ARI-PASSWORT
+password_format=plain
+----
+
+Jede ARI-Anwendung authentifiziert sich mit Benutzer + Passwort im
+Basic-Auth-Header. Vergeben Sie hier keine `1234`-Passwörter — mit
+ARI steht *alles* offen.
+
+== Reload und Check
+
+[source,shell]
+----
+asterisk -rx 'module reload res_http.so'
+asterisk -rx 'module reload res_ari.so'
+asterisk -rx 'http show status'
+asterisk -rx 'ari show status'
+asterisk -rx 'ari show users'
+----
+
+Läuft alles, antwortet Asterisk auf einen Test-Request:
+
+[source,shell]
+----
+$ curl -u meine-app:IHR-ARI-PASSWORT http://127.0.0.1:8088/ari/asterisk/info
+{
+  "build": { ... },
+  "system": { ... },
+  "status": { ... },
+  "config": { ... }
+}
+----

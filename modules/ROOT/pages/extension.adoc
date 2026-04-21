@@ -1,0 +1,120 @@
+[[extension]]
+= Extension
+:description: Die Extension in Asterisk: Programmeinheit im Dialplan mit Priorität und Applikation.
+
+Die einzelnen Dialplan-Programme heißen Asterisk-intern *Extensions*.
+Eine Extension wird nicht kompiliert, sondern bei jedem Durchlauf
+interpretiert. Die `extensions.conf` wird einmal beim Start des
+Asterisk-Daemons eingelesenfootnote:[Eine Ausnahme ist die _Asterisk
+RealTime Architecture_ (ARA). Dort liegt der Dialplan in einer
+Datenbank (z. B. MySQL/PostgreSQL) und wird bei jedem Anruf neu
+ausgelesen. Details: https://docs.asterisk.org.]. Im laufenden Betrieb
+lädt `dialplan reload` im CLI die Datei neu.
+
+[[extension-syntax]]
+== Syntax
+
+Eine Extension besteht immer aus drei Teilen:
+
+* Extension (Nummer oder Name)
+* Priorität (der "Programmzähler")
+* Applikation — die Anweisung, die Asterisk ausführen soll.
+
+[source]
+----
+exten => Extension,Priorität,Applikation()
+----
+
+zum Beispiel:
+
+[source]
+----
+exten => 123,1,Answer()
+----
+
+[IMPORTANT]
+====
+Die erste Priorität in einer Extension muss immer eine `1` sein,
+sonst ruft Asterisk die Extension nicht auf. Die folgenden Prioritäten
+müssen lückenlos um +1 zählen — oder Sie benutzen den Platzhalter `n`
+bzw. `same => n,...` (siehe unten), was heute Standard ist.
+====
+
+[[grundlegende-applikationen]]
+== Grundlegende Applikationen
+
+Um die folgenden Beispiele sinnvoll zu gestaltenfootnote:[Ein
+typisches Henne-Ei-Problem: Man versteht eine Applikation nur, wenn
+man Dialplan-Programmierung versteht — und umgekehrt.], brauchen wir
+einige Applikationen. Die vollständige Liste (und jeweils aktuelle
+Parameterbeschreibung) steht in der offiziellen Dokumentation unter
+https://docs.asterisk.org.
+
+* `Answer()` — akzeptiert einen Verbindungsversuch: "virtuellen Hörer abheben".
+* `Hangup()` — Gegenstück zu `Answer()`: Verbindung trennen.
+* `Playback(Soundfile)` — spielt eine Sounddatei aus
+  `/var/lib/asterisk/sounds/` ab. Die Dateiendung lassen Sie weg —
+  Asterisk wählt das passende Format abhängig vom Codec.
+* `Wait(Sekunden)` — Pause.
+* `NoOp(Text)` — tut *nichts*, schreibt aber `Text` ins CLI (ab
+  Verbose-Level 3). Unverzichtbar beim Debuggen.
+* `VoiceMail(Mailbox@Context,u)` — lässt den Anrufer eine Sprachnachricht
+  hinterlassen.
+* `VoiceMailMain(Mailbox@Context,s)` — Zugang zum Voicemail-Menü für den Besitzer.
+
+[[die-prioritaet]]
+== Priorität
+
+Eine typische Extension besteht aus mehreren Schritten. Damit Asterisk
+diese Schritte in der richtigen Reihenfolge ausführen kann, braucht
+jede Zeile eine *Priorität*. Das erinnert an frühe BASIC-Programme mit
+Zeilennummern: Prioritäten werden der Reihenfolge nach abgearbeitet.
+Fehlt die nächste logische Priorität, bricht Asterisk ab — leider
+manchmal ohne Fehlermeldung.
+
+[[prioritaet-hello-world]]
+=== Ein Hello-World-Beispiel
+
+Die folgende Extension wird immer ausgelöst, wenn ein Telefon aus
+Context `apfelmus` die Nummer 8888 anruft. Asterisk nimmt dann ab,
+spielt den Sprachbaustein `hello-world` ab und legt auf.
+
+[source]
+----
+[apfelmus]
+exten => 8888,1,Answer()
+exten => 8888,2,Playback(hello-world)
+exten => 8888,3,Hangup()
+----
+
+[[n-prioritaet]]
+=== `n`-Priorität und `same =>`
+
+Statt der Prioritäten explizit durchzunummerieren, benutzt man in
+modernen Dialplänen fast immer den Platzhalter `n` ("next"). Der
+`n`-Zähler addiert sich automatisch um 1 zum letzten Wert — das erspart
+das Umnummerieren, wenn man eine Zeile einschiebt.
+
+[source]
+----
+exten => 1234,1,Answer()
+exten => 1234,n,Wait(2)
+exten => 1234,n,Playback(hello-world)
+exten => 1234,n,Wait(2)
+exten => 1234,n,Hangup()
+----
+
+Noch lesbarer wird es mit `same => n,...`. `same` spart das
+Wiederholen des Extension-Namens:
+
+[source]
+----
+exten => 1234,1,Answer()
+ same => n,Wait(2)
+ same => n,Playback(hello-world)
+ same => n,Wait(2)
+ same => n,Hangup()
+----
+
+Diese Schreibweise ist heute Standard und wird im Rest des Buches
+konsequent verwendet.

@@ -1,5 +1,6 @@
 [[blf-device-state]]
 = Gezielte Ansteuerung der LEDs
+:description: Gezielte LED-Ansteuerung in Asterisk über DEVICE_STATE() und Custom-States.
 _DEVICE_STATE()_
 
 Wie man über Hints Extensions mit dem Status von SIP-Benutzern
@@ -9,7 +10,7 @@ verknüpfen kann, haben Sie schon gelernt. Zur Erinnerung:
 |===
 | `extensions.conf` | `extensions.ael`
 
-| exten => 21,*hint,SIP/21* | *hint(SIP/21)* 21 => {}
+| exten => 21,*hint,PJSIP/21* | *hint(PJSIP/21)* 21 => {}
 |===
 
 +
@@ -130,8 +131,8 @@ anderen Hints auf:
 *CLI> core show hints 
     -= Registered Asterisk Dial Plan Hints =-
   99@test              : Custom:mein-status  State:InUse         Watchers  0
-  21@interne-benutzer  : SIP/21              State:Unavailable   Watchers  0
-  22@interne-benutzer  : SIP/22              State:Unavailable   Watchers  0
+  21@interne-benutzer  : PJSIP/21              State:Unavailable   Watchers  0
+  22@interne-benutzer  : PJSIP/22              State:Unavailable   Watchers  0
 ----------------
 - 1 hints registered
 ----

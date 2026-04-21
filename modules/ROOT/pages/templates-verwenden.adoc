@@ -1,0 +1,68 @@
+[[templates-verwenden]]
+= Templates verwenden
+:description: Asterisk-Templates verwenden und vererben: Mehrfach-Vererbung für flexible Konfiguration.
+
+Ein Template wird durch `(templatename)` direkt hinter dem
+Abschnittsbeginn — ohne Leerzeichen — eingebunden. Der neue Abschnitt
+erbt alle Felder des Templates, und eigene Felder überschreiben
+oder ergänzen sie:
+
+[source]
+----
+[201](endpoint-template,verkauf)
+auth=201
+aors=201
+----
+
+Hier erbt der Endpoint `201` zuerst `endpoint-template`, dann
+`verkauf`. Spätere Templates überschreiben frühere bei gleichen
+Feldnamen.
+
+[[conf-templates-beispiel]]
+== Beispiel: verschachtelte Templates für PJSIP
+
+[source]
+----
+; Basis-Template für alle Telefone
+[basis](!)
+type=endpoint
+disallow=all
+allow=ulaw
+allow=alaw
+direct_media=no
+rtp_symmetric=yes
+force_rport=yes
+rewrite_contact=yes
+
+; Template für Verkaufs-Telefone: erbt Basis, ergänzt Context
+[verkauf](!,basis)
+context=verkauf
+
+; Template für IT-Telefone: eigener Context, HD-Audio
+[it](!,basis)
+context=it
+allow=g722
+allow=opus
+
+; Konkrete Telefone
+[301](verkauf)
+auth=301
+aors=301
+
+[302](verkauf)
+auth=302
+aors=302
+
+[161](it)
+auth=161
+aors=161
+----
+
+Die Templates `basis`, `verkauf` und `it` sind alle mit `(!)` markiert
+— sie werden nie selbst als Endpoint aktiv. Die konkreten Endpoints
+`301`, `302`, `161` erben ihre Einstellungen aus den jeweiligen
+Templates.
+
+Damit skaliert `pjsip.conf` auch bei hunderten Telefonen übersichtlich
+— man ändert eine Option im Template und alle erbenden Endpoints
+ziehen nach.

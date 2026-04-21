@@ -1,5 +1,0 @@
-[[upgrade-1.4-1.6-cdr]]
-= CDR
-
-* Das Modul `cdr_sqlite` ist veraltet und wird nach Version 1.6 durch `cdr_sqlite3_custom` abgelöst.
-* Das Modul `cdr_odbc` basiert jetzt auf `res_odbc`. Benutzername und Passwort werden daher nicht mehr aus `cdr_odbc.conf`, sondern aus `res_odbc.conf` gelesen.

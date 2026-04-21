@@ -1,42 +1,51 @@
 [[vorwort]]
 = Vorwort
+:description: Vorwort zur Evergreen-Ausgabe des Asterisk-Buches — kontinuierlich gepflegte deutschsprachige Referenz zu Asterisk, PJSIP, ARI und WebRTC.
 :page-notoc: true
 
 Liebe Leserin, lieber Leser,
 
-dieses Buch ist nur durch den Verkaufserfolg des ersten
-_Asterisk Buches_ (zu den Versionen 1.2 und 1.4)
-möglich geworden. Ich möchte mich dafür bei Ihnen bedanken. Danke auch für
-all die guten Bewertungen auf Amazon.
+dieses Buch ist die _Evergreen-Ausgabe_ des ursprünglich 2009 erschienenen
+_Asterisk Buches_. Die erste Ausgabe deckte Asterisk 1.2 und 1.4 ab, die
+zweite 1.4 bis 10. Beides ist heute Geschichte — Asterisk hat sich in den
+vergangenen Jahren stark weiterentwickelt, und einige Kapitel der alten
+Ausgabe waren schlicht nicht mehr zeitgemäß.
 
-Es hat sich in den letzten Jahren im VoIP-Bereich sehr viel getan. Die
-Arbeit um und mit Asterisk hat mich diesmal nicht nur nach Huntsville,
-Alabama (Hauptsitz von Digium), sondern auch nach Toronto (Hauptsitz von
-Sangoma), nach Chicago (Cluecon) und nach Bukarest (Yate) gebracht. Dabei
-habe ich nicht nur viel über Asterisk, sondern auch über http://yate.null.ro/[Yate] und http://www.freeswitch.org/[FreeSwitch] gelernt. Beides sind
-interessante Open-Source-Alternativen zu Asterisk.
+Statt das Buch erneut gegen eine bestimmte Asterisk-Version festzuschreiben,
+ist es diesmal anders angelegt: Es soll _evergreen_ sein. Die Kapitel
+beschreiben die Konzepte, Werkzeuge und Konfigurationsdateien der aktuellen
+Asterisk-Generation und werden regelmäßig nachgezogen, wenn sich etwas
+Wesentliches ändert. Wenn ein Detail versionsabhängig ist (z. B. "ab
+Asterisk 21 ist `chan_sip` entfernt"), wird das im Text ausdrücklich
+vermerkt. Für Referenzinhalte, die sich ohnehin häufig ändern — die
+vollständigen Listen aller Applications, Functions, AMI- und AGI-Befehle —
+verweisen wir gezielt auf die offizielle Dokumentation unter
+https://docs.asterisk.org[docs.asterisk.org] und das Quellrepository
+https://github.com/asterisk/documentation[github.com/asterisk/documentation].
 
-Da sich Asterisk sehr stark weiterentwickelt hat, enthält das neue
-Buch sehr viel neuen Text. Mein Kollege Philipp Kempgen hat mir noch mehr
-als schon beim ersten Buch geholfen und es entscheidend mitgeprägt. Es ist
-nicht nur umfangreicher, sondern auch besser konzeptioniert als das alte.
-Wir haben uns zum Ziel gesetzt, für den Anfänger einen einfachen und
-schnellen Einstieg und für den Profi ein umfangreiches Nachschlagewerk zu
-realisieren.
+Was hat sich gegenüber der letzten Auflage inhaltlich geändert?
 
-Schon beim Schreiben wurde ich oft gefragt, ob es im Buch auch ein
-Kapitel zu http://www.amooma.de/gemeinschaft/[Gemeinschaft] (der fertigen
-GPL-Telefonanlage, die auf Asterisk aufsetzt) geben wird. Im aktuellen Buch
-haben wir uns aus Zeitgründen dagegen entschieden.
+* Alle SIP-Beispiele verwenden `chan_pjsip` und `pjsip.conf`. `chan_sip` wird nicht mehr gepflegt und ist entfernt.
+* Konferenzen werden mit `ConfBridge` aufgebaut. `MeetMe` und DAHDI-Timing-Device entfallen.
+* Statt `Macro()` wird `Gosub()` benutzt. AEL ist als Legacy markiert.
+* Das ISDN- und Analog-Kapitel wurden komplett entfernt. ISDN ist in
+  Deutschland seit 2018 Geschichte, Analog-Hardware spielt nur noch in
+  Nischen eine Rolle — für beides ist heute ein SIP-Trunk beim
+  Provider (plus ggf. ein ATA für analoge Endgeräte) die richtige
+  Antwort.
+* Neu sind Kapitel zu xref:ari.adoc[ARI (Asterisk REST Interface)],
+  xref:webrtc.adoc[WebRTC] und xref:sicherheit.adoc[Sicherheit].
+* Die langen Anhänge mit Installationsanleitungen für Asterisk 1.4, 1.6,
+  1.8 und 10 sind entfernt. Stattdessen gibt es eine einzige, aktuell
+  gehaltene Installationsanleitung.
 
-Dieses Buch wird gleichzeitig als deutsche und englische Version
-veröffentlicht. In der US-Version wird es dabei ein paar kleine technische
-Änderungen im ISDN-Kapitel geben. Updates zur deutschen Version finden Sie
-wie gewohnt unter http://das-asterisk-buch.de[das-asterisk-buch.de] und
-zur englischen Version unter http://www.the-asterisk-book.com[www.the-asterisk-book.com].
+Nicht geändert hat sich der Anspruch: Einsteiger sollen einen leichten
+Einstieg finden, Profis ein Nachschlagewerk für den Alltag. Und das Buch
+ist nach wie vor frei verfügbar — der Quelltext liegt öffentlich, Pull
+Requests sind willkommen.
 
-Wie schon beim ersten Mal lade ich Sie hiermit ein, mir Feedback, Lob
-und Kritik per E-Mail an mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de] zu
-schicken.
+Feedback, Lob und Kritik bitte per E-Mail an
+mailto:sw@wintermeyer-consulting.de[sw@wintermeyer-consulting.de] oder als
+Issue/Pull Request im Repository.
 
 — Stefan Wintermeyer

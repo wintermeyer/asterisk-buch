@@ -1,69 +1,70 @@
 [[womit-anfangen]]
 = Welche Kapitel sollten Sie lesen, und womit sollten Sie anfangen?
+:description: Leseempfehlung für Asterisk-Anfänger, Fortgeschrittene und Profis — welches Kapitel lohnt sich für wen.
 
-Nicht jeder muss bei „Adam und Eva“ beginnen, und nicht
-jeder will zum absoluten Asterisk-Profi werden. Dieses Buch ist bewusst
-sowohl für Anfänger als auch für Fortgeschrittene geschrieben. Allerdings
-sollten gerade Anfänger das xref:womit-anfangen.adoc#anfaenger-howto[„Absoluter Asterisk-Anfänger“]
-beherzigen.
+Nicht jeder muss bei "Adam und Eva" beginnen, und nicht jeder will zum
+absoluten Asterisk-Profi werden. Dieses Buch ist bewusst sowohl für
+Anfänger als auch für Fortgeschrittene geschrieben. Allerdings sollten
+gerade Anfänger den xref:womit-anfangen.adoc#anfaenger-howto[„Absoluten
+Asterisk-Anfänger"]-Pfad beherzigen.
 
 [[anfaenger-howto]]
 == Absoluter Asterisk-Anfänger
 
-Für den absoluten Asterisk-Anfänger ist es am einfachsten,
-systematisch das Buch durchzulesen, da die meisten Kapitel aufeinander
-aufbauen. Sie können also einfach bei xref:kapitel-hello-world.adoc[Kapitel 2, _„Hello World“_] anfangen und das Buch bis zum Ende
-durchlesen. Ich empfehle, auf jeden Fall xref:kapitel-hello-world.adoc[Kapitel 2, _„Hello World“_] und xref:kapitel-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_] durchzuarbeiten. Danach sind Sie
-schon in der Lage, komplexere Telefonanlagen mit Asterisk aufzusetzen.
-Wenn Sie schon Programmiererfahrung haben, dann können Sie mit xref:programmierer-howto.adoc[Abschnitt 6.1, „Kleines Programmierer-Howto“] einen Jump-Start wagen.
+Für den absoluten Asterisk-Anfänger ist es am einfachsten, systematisch
+das Buch durchzulesen, da die meisten Kapitel aufeinander aufbauen. Sie
+können also einfach bei xref:hello-world.adoc[Kapitel 2, _„Hello
+World"_] anfangen und das Buch bis zum Ende durcharbeiten. Ich empfehle,
+auf jeden Fall xref:hello-world.adoc[Kapitel 2, _„Hello World"_]
+und xref:dialplan-programmieren.adoc[Kapitel _Programmieren im Dialplan_]
+durchzuarbeiten. Danach sind Sie schon in der Lage, komplexere
+Telefonanlagen mit Asterisk aufzusetzen. Wenn Sie schon
+Programmiererfahrung haben, dann können Sie mit
+xref:dialplan-programmieren-howto.adoc[„Kleines Programmierer-Howto"] einen
+Jump-Start wagen.
 
 [[howto-anfaenger-faq]]
 === Die Anfänger-FAQ
 
-Im Laufe der ersten Version dieses Buches sind einige
-Anfängerfragen aufgetaucht, die sich nur schwer in das Buch
-einsortieren ließen. Deshalb gibt es an dieser Stelle eine
-diesbezügliche FAQ (Frequently Asked Questions).
-
 [cols="2*"]
 |===
-| *F:* | Welchen „guten“ VoIP-Anbieter gibt es? Worauf sollte man achten?
-| *A:* | Hier einen bestimmten VoIP-Provider zu empfehlen ist aus verschiedenen Gründen nicht möglich. Der einfachste Rat für den Asterisk-Neuling ist, anfangs einen SIP-Provider zu wählen, der kostenlose Accounts anbietet. Mit diesem Account kann man dann seine ersten Erfahrungen sammeln. Welchen Provider Sie langfristig wählen sollten, hängt von vielen Faktoren ab. Hier nur einige Anregungen:Bietet Ihr Provider nur SIP oder auch IAX an? Benötigen Sie IAX?Wie gut ist der Support des Providers?Wie sind die Preise?
-| *F:* | Welche ISDN-Karte soll ich benutzen?
-| *A:* | Zunächst empfiehlt es sich, Asterisk nur im SIP-Betrieb kennenzulernen. Direkt mit ISDN anzufangen, ist der Versuch, den zweiten Schritt vor dem ersten zu tun. Wenn Sie Asterisk dann sicher beherrschen und das Konzept der Contexte und des Dialplanes verstehen, dann finden Sie im xref:kapitel-isdn.adoc[ISDN-Kapitel] Tipps zur Wahl der für Sie richtigen ISDN-Karte.
-| *F:* | Welche „normalen“ Endgeräte gibt es, und was kosten diese?
-| *A:* | Es gibt in der VoIP-Telefonie kein „normales“ Endgerät. Sie haben folgende Möglichkeiten, ein Telefon mit Asterisk zu betreiben:ein SIP-Telefon (die einfachste Möglichkeit)ein analoges Telefon an einem ATA-Gateway (das ist ein Analog-to-VoIP-Adapter)ein ISDN-Telefon an einem internen ISDN-Bus. Das ist oft teurer als ein SIP-Telefon, ohne mehr zu bieten. Empfehlung: Nutzen Sie ein SIP-Telefon.exotische Konstrukte. Man kann z. B. einen AB-Wandler an einen internen ISDN-Bus hängen und an diesen AB-Wandler dann ein analoges Telefon. Sollte man nicht gerade die Hardware dafür herumliegen haben, ist von dieser Konstellation eher abzuraten.Zu den Preisen kann ich keine Auskunft geben. Dies wäre bei einem Buch auch wenig sinnvoll, da sich gerade bei den VoIP-Telefonen die Preise aktuell stetig bewegen.
+| *F:* | Welchen "guten" VoIP-Anbieter gibt es? Worauf sollte man achten?
+| *A:* | Hier einen bestimmten SIP-Provider zu empfehlen ist nicht sinnvoll — das ändert sich zu oft. Der einfachste Rat für den Asterisk-Neuling ist, anfangs einen SIP-Provider zu wählen, der kostenlose oder günstige Testaccounts anbietet. Damit sammelt man erste Erfahrungen. Für den Produktivbetrieb sind dann Support-Qualität, Zuverlässigkeit, Codec-Auswahl (G.711 und G.722 als Minimum, Opus als Bonus) und Preise ausschlaggebend.
+| *F:* | Welche "normalen" Endgeräte gibt es?
+| *A:* | In der VoIP-Welt gibt es kein "normales" Endgerät, aber sehr viel Auswahl. Empfehlenswert sind SIP-Telefone von Yealink, Snom, Grandfalcon/Grandstream, Fanvil oder Cisco. Für den Homeoffice-Einsatz genügt oft ein Softphone (Linphone, Zoiper, MicroSIP, Telephone.app) oder ein WebRTC-Client im Browser. Analoge Telefone lassen sich per ATA (Analog Telephone Adapter) anschließen, das lohnt aber nur, wenn schon Hardware vorhanden ist.
 | *F:* | Was ist mit Fax?
-| *A:* | Lesen Sie dazu xref:faxserver.adoc[Kapitel 21, _Fax-Server_].
+| *A:* | Über IP funktioniert Fax mit T.38 oder gar nicht zuverlässig. Details finden Sie im xref:fax-t38.adoc[Fax-Kapitel].
 |===
 
 [[medium-howto]]
 == Leser mit etwas Asterisk-Erfahrung
 
-Es ist schwierig, bei Lesern mit etwas Asterisk-Erfahrung
-vorherzusehen, was bereits bekannt ist und was nicht. Selbst bei Dingen,
-die man sehr gut beherrscht, finden sich oft einzelne Aspekte, auf die
-man bisher nicht gestoßen ist. Falls Sie bereits mit Asterisk praktische
-Erfahrungen gesammelt haben, können Sie xref:kapitel-hello-world.adoc[Kapitel 2, _„Hello World“_] überspringen oder einfach querlesen.
-Ich persönlich kann nur empfehlen, es auch in diesem Fall zu lesen
-– es lohnt sich fast immer.
+Es ist schwierig, bei Lesern mit etwas Asterisk-Erfahrung vorherzusehen,
+was bereits bekannt ist und was nicht. Selbst bei Dingen, die man sehr
+gut beherrscht, finden sich oft einzelne Aspekte, auf die man bisher
+nicht gestoßen ist.
 
-Danach empfehle ich, einfach mal die verschiedenen Kapitel
-durchzublättern. Beim Schreiben des Buches wurde auf viele
-Praxisbeispiele Wert gelegt. Allein das Durchlesen dieser Beispiele
-bringt Sie häufig schon auf neue Ideen.
+Wenn Sie aus der `chan_sip`-Ära kommen und seit Jahren nicht mehr mit
+Asterisk gearbeitet haben: Starten Sie unbedingt mit
+xref:hello-world.adoc[Kapitel 2, _„Hello World"_]. `pjsip.conf`
+sieht anders aus als `sip.conf`, und das Mindset
+(Endpoint/AOR/Auth/Transport statt `peer`/`user`/`friend`) ist ein
+anderes. Danach lohnt sich ein Blick in
+xref:ari.adoc[ARI] — das hat es in der alten Auflage nicht
+gegeben und ist das, was modernes Asterisk-Tooling antreibt.
 
 [[profi-howto]]
 == Der Asterisk-Profi
 
-Sie können xref:kapitel-hello-world.adoc[Kapitel 2, _„Hello World“_] überspringen und
-einfach auf Entdeckungstour gehen. Sie werden viele Beispiele finden,
-die Sie direkt in die Praxis übernehmen können. Vielleicht bringt das
-eine oder andere Beispiel aus der Praxis Sie auch auf neue Ideen.
+Sie können xref:hello-world.adoc[Kapitel 2, _„Hello World"_]
+überspringen und einfach auf Entdeckungstour gehen. Besonders
+empfehlenswert sind die Kapitel zu xref:ari.adoc[ARI],
+xref:webrtc.adoc[WebRTC] und xref:sicherheit.adoc[Sicherheit]
+— drei Themen, die in der alten Auflage komplett fehlten und in der Praxis
+täglich relevant sind.
 
-Darüber hinaus wird Ihnen dieses Buch auch als Nachschlagewerk
-gute Dienste leisten. Alle wichtigen Konfigurationsparameter werden
-erklärt (meist mit Beispiel), und das dazugehörige Kapitel hilft, sich
-eingehender mit einzelnen Aspekten zu beschäftigen. Besonderer Wert
-wurde dabei auch auf den Vergleich der verschiedenen Asterisk-Versionen
-(von 1.2 bis 1.6) gelegt.
+Darüber hinaus leistet Ihnen dieses Buch auch als Nachschlagewerk gute
+Dienste. Die wichtigsten Konfigurationsparameter werden erklärt, meist mit
+Beispiel, und für alles, was sich häufig ändert (komplette
+Applications-/Functions-/AMI-Listen), verweisen wir gezielt auf die
+offizielle Dokumentation unter https://docs.asterisk.org[docs.asterisk.org].

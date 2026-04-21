@@ -1,5 +1,6 @@
 [[codecs-performance]]
 = Performance
+:description: Performance-Betrachtungen für Codecs in Asterisk: CPU-Last und Transkodierung.
 
 Das größte Problem beim Einsatz von hochkomprimierenden Codecs ist
 die dadurch verbrauchte Rechenleistung. Bei Ihrer aktuellen Installation

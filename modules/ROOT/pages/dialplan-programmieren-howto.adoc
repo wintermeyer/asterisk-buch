@@ -1,0 +1,214 @@
+[[dialplan-programmieren-howto]]
+= Kleines Programmierer-Howto
+:description: Kurz-Howto für Dialplan-Programmierung in Asterisk.
+
+Ein Asterisk-Buch wird von Admins, Entwicklern,
+Telefonanlagentechnikern und vielen anderen technisch Interessierten
+gelesen. Die praktischen Programmierkenntnisse sind dabei sehr
+unterschiedlich ausgeprägt. Um die Fähigkeiten von Asterisk
+auszureizen, braucht es zumindest Grundprinzipien der Programmierung.
+Dieses Howto bietet einen schnellen Überblick zu den wichtigsten
+Elementen im Dialplan.
+
+[[programmierer-howto-programmstruktur]]
+== Programmstruktur
+
+Im Dialplan (`/etc/asterisk/extensions.conf`) gibt es für jede zur
+Verfügung gestellte Zielrufnummer ein kleines Programm. Dieses
+Programm heißt _Extension_. Eine Extension sieht so aus:
+
+[source]
+----
+exten => 1001,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+In älterem Code sind die Prioritäten oft durchnummeriert:
+
+[source]
+----
+exten => 1001,1,Answer()
+exten => 1001,2,Playback(hello-world)
+exten => 1001,3,Hangup()
+----
+
+Die Funktionsweise ist identisch. Heute schreibt man neue Dialpläne
+mit `same => n,...` — das ist lesbarer und vermeidet das Umnummerieren
+beim Einfügen neuer Zeilen.
+
+[[programmierer-howto-variablen]]
+== Variablen
+
+Zum Setzen und Verändern von Variablen dient die Applikation `Set()`:
+
+[source]
+----
+exten => 1002,1,Set(Lieblingstier=Tiger)
+ same => n,Set(Lieblingszahl=23)
+----
+
+Zum Lesen wird die Syntax `$\{VARIABLENNAME}` benutzt. Mit `NoOp()`
+lassen sich Variablenwerte im CLI ausgeben (ab Verbose-Level 3):
+
+[source]
+----
+exten => 1003,1,NoOp(${Lieblingstier})
+ same => n,NoOp(${Lieblingszahl})
+----
+
+Es gibt verschiedene Arten von Variablen:
+
+* *Globale Variablen*
++
+Globale Variablen gelten im gesamten Dialplan. Sie werden in der
+`extensions.conf` im Abschnitt `[globals]` gesetzt:
++
+[source]
+----
+[globals]
+SUPPORT_NUMMER=>030123456
+----
++
+oder dynamisch im Dialplan:
++
+[source]
+----
+exten => 1004,1,Set(GLOBAL(SUPPORT_NUMMER)=030123456)
+ same => n,NoOp(${SUPPORT_NUMMER})
+----
+
+* *Channel-Variablen*
++
+Channel-Variablen gelten nur innerhalb des aktiven Channels (ein
+Channel ist z. B. ein einzelnes Gespräch). Sie werden mit
+`Set(NAME=WERT)` definiert:
++
+[source]
+----
+exten => 1005,1,Set(IM_CHANNEL=42)
+ same => n,NoOp(${IM_CHANNEL})
+----
+
+* *Systemvariablen*
++
+Systemvariablen sind von Asterisk vorgegeben. Typisches Beispiel:
+`$\{EXTEN}` (die gewählte Nummer):
++
+[source]
+----
+exten => 1006,1,NoOp(Gewaehlte Nummer: ${EXTEN})
+----
+
+.Siehe auch:
+xref:dialplan-variablen.adoc[_Variablen_]
+
+[[programmierer-howto-labels-und-goto]]
+== Labels und Goto()
+
+Mit `Goto()` springt man innerhalb des Dialplans zu einem mit
+`n(Labelname)` markierten Label:footnote:[Alternativ kann man mit
+`Goto()` auch zu einer Priorität springen — dann ist der Vorteil des
+`n`-Zählers allerdings wieder weg.]
+
+* Innerhalb einer Extension:
++
+[source]
+----
+exten => 1007,1,Answer()
+ same => n(Anfang),Wait(1)
+ same => n,Playback(hello-world)
+ same => n,Goto(Anfang)
+----
+
+* Von Extension zu Extension:
++
+[source]
+----
+exten => 1008,1,Answer()
+ same => n,Goto(1009,Ping)
+
+exten => 1009,1(Ping),Playback(hello-world)
+ same => n,Wait(2)
+ same => n,Goto(1010,Pong)
+
+exten => 1010,1(Pong),Playback(weasels-eaten-phonesys)
+ same => n,Wait(2)
+ same => n,Goto(1009,Ping)
+----
+
+* Von Context zu Context:
++
+[source]
+----
+[zentrale]
+exten => 1011,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Goto(verkauf,1012,1)
+
+[verkauf]
+exten => 1012,1,Playback(hello-world)
+ same => n,Hangup()
+----
+
+[[programmierer-howto-while]]
+== While()-Schleifen
+
+Mit `While()` / `EndWhile()` lassen sich Schleifen im Dialplan
+aufbauen:
+
+[source]
+----
+exten => 1013,1,Answer()
+ same => n,Set(i=1)
+ same => n,While($[${i} < 10])
+ same => n,SayNumber(${i})
+ same => n,Wait(1)
+ same => n,Set(i=$[${i} + 1])
+ same => n,EndWhile()
+ same => n,Hangup()
+----
+
+[[programmierer-howto-gotoif]]
+== GotoIf()-Bedingung
+
+Mit `GotoIf()` wird der Sprung an eine Bedingung geknüpft:
+
+[source]
+----
+exten => 1014,1,Answer()
+ same => n,Set(Lieblingsnebenstelle=0815)
+ same => n,NoOp(Pruefe, ob Anruf von ${Lieblingsnebenstelle} kommt.)
+ same => n,GotoIf($[${CALLERID(num)} = ${Lieblingsnebenstelle}]?ja:nein)
+
+ same => n(ja),Playback(hello-world)
+ same => n,Hangup()
+
+ same => n(nein),Playback(tt-monkeys)
+ same => n,Hangup()
+----
+
+[[programmier-howto-gosub]]
+== Gosub()-Unterprogramme
+
+Mit `Gosub()` springen Sie in ein Unterprogramm, mit `Return()` kommen
+Sie zurück. Parameter werden als `ARG1`, `ARG2`, … übergeben.
+
+[source]
+----
+[default]
+exten => 1015,1,Gosub(cid-setzen,s,1(Apfelmus GmbH,012345678))
+ same => n,Dial(PJSIP/${EXTEN})
+
+[cid-setzen]
+exten => s,1,Set(CALLERID(name)=${ARG1})
+ same => n,Set(CALLERID(num)=${ARG2})
+ same => n,Return()
+----
+
+[IMPORTANT]
+====
+`Gosub()` ist heute der Standardweg für Unterprogramme. Die frühere
+`Macro()`-Applikation ist deprecated — Details dazu im Kapitel
+xref:macro-gosub.adoc[_Makros — und warum heute Gosub() benutzt wird_].
+====

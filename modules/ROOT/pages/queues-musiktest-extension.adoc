@@ -1,0 +1,15 @@
+[[queues-musiktest-extension]]
+= Extension zum Musiktest
+:description: Music-on-Hold testen: Eine Extension in Asterisk für den Wartemusik-Test.
+
+Wir legen uns in der `extensions.conf` folgende
+Extension an, mit der wir gleich die ordnungsgemäße Funktion der
+Wartemusik überprüfen können:
+
+[source]
+----
+exten => 222,1,Answer() ; abheben
+exten => 222,n,Set(MUSICCLASS()=default) ; Musikklasse "default" setzen
+exten => 222,n,WaitMusicOnHold(20) ; 20 Sekunden Musik
+exten => 222,n,Hangup() ; auflegen
+----

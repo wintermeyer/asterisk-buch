@@ -1,0 +1,304 @@
+[[pjsip-konfiguration]]
+= SIP / PJSIP
+:description: chan_pjsip in Asterisk konfigurieren: Endpoints, AORs, Auths und Transports — mit funktionierendem Beispiel.
+
+SIP ist das De-facto-Standardprotokoll in der VoIP-Welt. Warum?
+
+* Es ist ein offenes Protokoll, als
+  https://www.ietf.org/rfc/rfc3261.txt[_RFC 3261_] seit 2002 für
+  jedermann kostenlos einsehbar.
+* Fast alle Telefonhersteller und Provider sprechen SIP.
+* Rund um SIP haben sich Ökosystem-Standards gebildet: SRTP und
+  DTLS-SRTP für Medien-Verschlüsselung, ICE/STUN/TURN fürs Durchtauchen
+  von NAT, WebSocket-Transport für WebRTC-Clients.
+
+[NOTE]
+====
+Das IP-Protokoll unterscheidet zwei wesentliche
+Transportmöglichkeiten: TCP und UDP. TCP überträgt zuverlässig — mit
+Checksummen und Retransmissions. UDP überträgt verbindungslos und ohne
+Garantie. Für Medienströme ist UDP meist die bessere Wahl: Ein
+verlorenes Audio-Paket lässt sich nicht sinnvoll nachträglich
+einschieben, und TCP-Retransmissions würden Latenz erzeugen. SIP
+selbst läuft klassisch über UDP, inzwischen gleichwertig auch über
+TCP und TLS; Medien (RTP) laufen praktisch immer über UDP, optional
+mit SRTP-Verschlüsselung.
+====
+
+== chan_sip ist Vergangenheit — PJSIP ist Gegenwart
+
+Die älteren Auflagen dieses Buches drehten sich um `chan_sip` und die
+Datei `sip.conf`. Das spielt heute keine Rolle mehr:
+
+[IMPORTANT]
+====
+*Ab Asterisk 21 ist `chan_sip` nicht mehr Teil von Asterisk.* Der
+aktuelle SIP-Treiber ist `chan_pjsip`, konfiguriert in
+`/etc/asterisk/pjsip.conf`. Auf älteren LTS-Versionen (z. B.
+Asterisk 20 LTS) gibt es `chan_sip` noch als "deprecated" im Baum —
+neu aufsetzen sollten Sie trotzdem mit PJSIP.
+====
+
+`chan_pjsip` basiert auf der PJProject-Bibliothek (http://www.pjsip.org/)
+und ist gegenüber `chan_sip` in praktisch jedem Aspekt besser:
+mehrere Transports gleichzeitig (UDP + TCP + TLS + WSS), saubere
+NAT-Behandlung, Unterstützung für moderne Features wie WebRTC,
+OAUTH-Authentifizierung, RFC-konformere Umsetzung vieler
+SIP-Details.
+
+[[sip-nat-problem]]
+== Das SIP-NAT-Problem
+
+Die wenigsten Büro- und Privat-PCs haben eine eigene feste öffentliche
+IPv4-Adresse. Das NAT-Prinzip löst dieses Adressproblem, indem ein
+NAT-Gateway die Pakete vieler interner Rechner unter einer einzigen
+öffentlichen Adresse ins Internet schickt und Antworten wieder zuordnet.
+
+SIP hat damit ein strukturelles Problem: Während die meisten
+Protokolle ihre Absenderadresse nur im IP-Header stehen haben (wo das
+NAT-Gateway sie sauber umschreibt), schreibt SIP seine eigene Adresse
+zusätzlich *in den Paketinhalt* (in die `Contact:`-, `Via:`- und
+SDP-Felder). Ein normales NAT-Gateway sieht dort nicht hinein und
+lässt die private Absenderadresse unverändert stehen — der
+Kommunikationspartner am anderen Ende antwortet brav an die private
+Adresse und erreicht niemanden.
+
+In der Praxis ist das Problem mit zwei Zutaten in `pjsip.conf`
+abgefangen:
+
+* Dem Transport sagen Sie, welche öffentliche Adresse er "außen"
+  hat — `external_media_address` und `external_signaling_address`
+  (oder `external_signaling_address` + DNS):
++
+[source]
+----
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+external_media_address=myserver.example.com
+external_signaling_address=myserver.example.com
+local_net=192.168.0.0/16
+local_net=10.0.0.0/8
+----
+
+* Am Endpoint aktivieren Sie `rtp_symmetric` und `rewrite_contact`,
+  damit Asterisk die tatsächliche externe Adresse des Clients aus dem
+  Paket lernt statt der `Contact:`-Angabe zu vertrauen.
++
+[source]
+----
+[2000]
+type=endpoint
+; ...
+rtp_symmetric=yes
+force_rport=yes
+rewrite_contact=yes
+----
+
+[NOTE]
+====
+Auf welchen Ports Asterisk RTP-Verbindungen entgegennimmt, legen Sie
+in `rtp.conf` fest (`rtpstart`, `rtpend`). Öffnen Sie diesen Bereich
+in Ihrer Firewall — sonst hören Sie nichts.
+====
+
+[[pjsip-objekte]]
+== Die PJSIP-Objekte im Überblick
+
+`pjsip.conf` ist eine Sammlung von Objekten. Jedes Objekt hat einen
+Namen (in eckigen Klammern) und einen `type=`. Mehrere Objekte mit
+demselben Namen sind legitim — sie unterscheiden sich durch `type`.
+Die wichtigsten Typen:
+
+`transport`:: Bindet Asterisk an eine IP/Port-Kombination (UDP, TCP, TLS, WSS).
+`endpoint`:: Die SIP-Identität: Context, Codec-Liste, Media-Optionen.
+`auth`:: Zugangsdaten (Username, Passwort).
+`aor`:: "Address of Record" — wohin Asterisk den Endpoint rufen kann.
+`identify`:: Eingehende Pakete per Absender-IP einem Endpoint zuordnen (Trunks).
+`registration`:: Asterisk registriert sich selbst als Client (z. B. beim Provider).
+`acl`:: IP-basierte Zugangslisten.
+
+Zu jedem dieser Typen gibt es eigene Optionen. Die umfangreiche,
+jeweils aktuelle Referenz liegt unter
+https://docs.asterisk.org/latest_api/API_Documentation/Module_Configuration/res_pjsip/.
+
+[[pjsip-beispiel]]
+== Ein vollständiges Beispiel
+
+Eine minimale Asterisk-Anlage mit einem Transport und zwei
+Nebenstellen:
+
+[source]
+----
+; --- Transport ---
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+
+; (Optional, für TLS/WSS:)
+;[transport-wss]
+;type=transport
+;protocol=wss
+;bind=0.0.0.0
+
+; --- Template, damit wir nicht alles x-mal wiederholen ---
+[endpoint-template](!)
+type=endpoint
+context=intern
+disallow=all
+allow=ulaw
+allow=alaw
+allow=opus
+direct_media=no
+rtp_symmetric=yes
+force_rport=yes
+rewrite_contact=yes
+
+[aor-template](!)
+type=aor
+max_contacts=1
+
+[auth-template](!)
+type=auth
+auth_type=userpass
+
+; --- Nebenstelle 2000 ---
+[2000](endpoint-template)
+auth=2000
+aors=2000
+
+[2000](aor-template)
+
+[2000](auth-template)
+username=2000
+password=supergeheim
+
+; --- Nebenstelle 2001 ---
+[2001](endpoint-template)
+auth=2001
+aors=2001
+
+[2001](aor-template)
+
+[2001](auth-template)
+username=2001
+password=nochgeheimer
+----
+
+[TIP]
+====
+Die `(!)` nach einem Blocknamen markiert einen PJSIP-Template —
+dieser Block wird nicht selbst aktiv, sondern nur von anderen Blöcken
+mit `(template-name)` geerbt. So vermeiden Sie Wiederholungen.
+Details in xref:konfigurations-templates.adoc[Konfigurations-Templates].
+====
+
+[[sip-trunk-beispiel]]
+== Ein Provider-Trunk
+
+Ein SIP-Trunk, bei dem sich Asterisk beim Provider registriert und
+eingehende wie ausgehende Gespräche darüber abwickelt:
+
+[source]
+----
+[provider-auth]
+type=auth
+auth_type=userpass
+username=5587572
+password=UHDZJD
+
+[provider-aor]
+type=aor
+contact=sip:sip-provider.example.com
+
+[provider]
+type=endpoint
+context=von-provider
+disallow=all
+allow=ulaw
+allow=alaw
+outbound_auth=provider-auth
+aors=provider-aor
+from_user=5587572
+from_domain=sip-provider.example.com
+direct_media=no
+
+[provider-identify]
+type=identify
+endpoint=provider
+match=sip-provider.example.com
+
+[provider-reg]
+type=registration
+transport=transport-udp
+outbound_auth=provider-auth
+server_uri=sip:sip-provider.example.com
+client_uri=sip:5587572@sip-provider.example.com
+retry_interval=60
+----
+
+Im Dialplan dann:
+
+[source]
+----
+[intern]
+; Outbound: alles, was mit 0 anfängt, raus über den Provider
+exten => _0X.,1,Dial(PJSIP/${EXTEN}@provider,60)
+ same => n,Hangup()
+
+[von-provider]
+; Eingehend: Provider liefert die eigene SIP-ID als Ziel
+exten => 5587572,1,Dial(PJSIP/2000,20)
+ same => n,VoiceMail(2000@default,u)
+ same => n,Hangup()
+
+; Fallback für Provider, die 's' oder freie Ziele schicken
+exten => s,1,Goto(5587572,1)
+exten => _X.,1,Goto(5587572,1)
+----
+
+[[pjsip-debugging]]
+== Debugging
+
+Im CLI helfen folgende Befehle am häufigsten:
+
+[cols="2,3"]
+|===
+| Befehl | Zweck
+
+| `pjsip show endpoints`
+| Liste aller Endpoints und ihr aktueller Status ("Available" / "Unavailable").
+
+| `pjsip show endpoint 2000`
+| Detailansicht eines Endpoints (Codecs, AORs, Auths, Options).
+
+| `pjsip show contacts`
+| Derzeit bekannte Contacts (wo sich Telefone registriert haben).
+
+| `pjsip show aors`
+| Address-of-Record-Objekte mit Contacts.
+
+| `pjsip show registrations`
+| Status der Registrierungen, die Asterisk selbst beim Provider angelegt hat.
+
+| `pjsip show transports`
+| Aktive Transport-Definitionen.
+
+| `pjsip show subscriptions inbound`
+| Derzeit aktive BLF-/Dialog-Subscriptions (wer überwacht wen).
+
+| `pjsip set logger on`
+| Schaltet das SIP-Paket-Log im CLI ein — das wichtigste Werkzeug beim NAT-, Auth- oder Registrierungs-Troubleshooting.
+
+| `pjsip set logger off`
+| Schaltet es wieder aus.
+
+| `pjsip reload`
+| Lädt `pjsip.conf` neu, ohne Asterisk neu zu starten.
+|===
+
+Für die allermeisten SIP-Probleme reicht es, `pjsip set logger on` zu
+aktivieren und das Telefon einmal neu zu registrieren oder ein Gespräch
+zu initiieren. Das CLI zeigt dann die SIP-Nachrichten Zeile für Zeile.

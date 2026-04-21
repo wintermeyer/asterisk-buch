@@ -1,5 +1,6 @@
 [[codecs]]
 = Codecs
+:description: Codecs in Asterisk: G.711, G.722, Opus und Co. — welcher wann sinnvoll ist.
 
 In diesem Kapitel:
 
@@ -9,5 +10,5 @@ In diesem Kapitel:
 * xref:codecs-konfiguration.adoc[Konfiguration des Codecs]
 ** xref:codecs-konfiguration.adoc#codecs-allow-1[Beispiel mit einem festen Codec]
 ** xref:codecs-konfiguration.adoc#codecs-allow-n[Beispiel mit mehreren Codecs zur Auswahl]
-* xref:die-wichtigsten-codecs.adoc[Die wichtigsten Codecs]
-* xref:codecs-trunking.adoc[Bandbreite und Trunking]
+* xref:wichtigste-codecs.adoc[Die wichtigsten Codecs]
+* xref:codecs-bandbreite.adoc[Bandbreite und Trunking]

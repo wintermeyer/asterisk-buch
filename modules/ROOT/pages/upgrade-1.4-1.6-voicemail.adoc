@@ -1,5 +1,0 @@
-[[upgrade-1.4-1.6-voicemail]]
-= Voicemail
-
-* Die Mailbox-Parameter „`maxmessage`“ und „`minmessage`“ wurden in „`maxsecs`“ und „`minsecs`“ umbenannt, um ihren Zweck (die Länge einer Nachricht zu begrenzen) deutlicher zu machen und damit sie nicht mit „`maxmsgs`“ (das die Anzahl der Nachrichten beschränkt) verwechselt werden. Die alten Parameter funktionieren noch, aber eine Warnung wird ausgegeben.
-* MWI-Benachrichtigungen and die Telefone sind jetzt event-basiert. Für das alte Verhalten, nämlich alle x Sekunden in allen Mailboxen die Nachrichten zu zählen, kann im „`general`“-Abschnitt der `voicemail.conf` die Option „`pollmailboxes`“ aktiviert werden; in welchem Abstand gesucht wird, legt man dann durch „`pollfreq`“ fest. Das _event_-basierte Model ist grundsätzlich schöner, da es besser skaliert. Es gibt allerdings Fälle, in denen man das alte Verhalten braucht, nämlich wenn die Mailboxen von externen Programmen verändert werden, also über ein Web-Interface, oder wenn die Voicemails auf einem IMAP-Server gespeichert werden.

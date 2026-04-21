@@ -1,0 +1,256 @@
+[[case-study-grundkonfiguration]]
+= Die Grundkonfiguration
+:description: Asterisk-Grundkonfiguration für rund 80 Nebenstellen mit PJSIP-Templates.
+
+Als Erstes konfigurieren wir die Anlage so, dass alle Teilnehmer
+intern telefonieren können und jeder eine persönliche Voicemailbox
+hat. Danach erweitern wir Stück für Stück um weitere Bausteine.
+
+[[apfelmus-pjsip.conf]]
+== pjsip.conf für fast 100 Teilnehmer
+
+Für eine Anlage mit knapp 80 Nebenstellen wird die `pjsip.conf`
+schnell unübersichtlich, wenn man jeden Endpoint einzeln mit
+`endpoint`/`auth`/`aor`-Blöcken ausschreibt. Deshalb benutzen wir
+*Templates* und führen einzelne Endpoints nur noch mit den
+abweichenden Werten.
+
+[source]
+----
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+tos_sip=cs3
+tos_audio=ef
+
+; --- Templates: Defaults für alle Mitarbeiter-Telefone ---
+[endpoint-template](!)
+type=endpoint
+disallow=all
+allow=ulaw
+allow=alaw
+allow=g722
+direct_media=no
+rtp_symmetric=yes
+force_rport=yes
+rewrite_contact=yes
+
+[auth-template](!)
+type=auth
+auth_type=userpass
+
+[aor-template](!)
+type=aor
+max_contacts=1
+
+; --- Hausmeister ---
+[150](endpoint-template)
+context=hausmeister
+callerid="Hausmeister" <150>
+auth=150
+aors=150
+[150](auth-template)
+username=150
+password=SEHR-GEHEIM-150
+[150](aor-template)
+
+[151](endpoint-template)
+context=hausmeister
+callerid="Hausmeister" <150>
+auth=151
+aors=151
+[151](auth-template)
+username=151
+password=SEHR-GEHEIM-151
+[151](aor-template)
+
+; --- IT ---
+[161](endpoint-template)
+context=it
+auth=161
+aors=161
+[161](auth-template)
+username=161
+password=SEHR-GEHEIM-161
+[161](aor-template)
+
+; (162, 165 analog)
+
+; --- Geschäftsführung ---
+[201](endpoint-template)
+context=geschaeftsfuehrung
+auth=201
+aors=201
+[201](auth-template)
+username=201
+password=SEHR-GEHEIM-201
+[201](aor-template)
+
+; (202 analog)
+
+; --- Sekretariat, Verkauf, Versand, Produktion analog ---
+; ...
+----
+
+[WARNING]
+====
+Die Passwörter oben sind Platzhalter. In einer realen Installation
+benutzen Sie für jedes Telefon ein generiertes, individuelles
+Passwort — z. B. aus `pwgen -s 16 1`. Siehe dazu auch das Kapitel
+xref:sicherheit.adoc[Sicherheit].
+====
+
+Wer die PJSIP-Konfiguration noch kompakter haben möchte (oder sie
+aus einer Datenbank ableiten muss), sollte einen Blick auf
+*ARA/Realtime* oder auf generierende Tools wie Ansible-Templates
+werfen. Für die Mehrzahl der Installationen reicht aber die Datei mit
+Templates vollkommen.
+
+[[apfelmus-callerid]]
+=== CallerID
+
+Im Endpoint steht zweimal die Option `callerid`. Sie legt fest, was
+beim Angerufenen auf dem Display angezeigt wird. Beispiel:
+
+[source]
+----
+callerid="Hausmeister" <150>
+----
+
+Damit melden sich beide Hausmeister-Telefone (150 und 151) als
+"Hausmeister" mit der Rückruf-Nummer 150 — ein Rückruf landet also
+immer auf dem Büro-Apparat, nicht auf dem Mobil-Apparat.
+
+[[apfelmus-dialplan]]
+== Der Wählplan (Dialplan)
+
+Im xref:hello-world.adoc[Hello-World-Kapitel] haben wir einen
+einfachen Dialplan für zwei Telefone gebaut. Bei 80 Teilnehmern
+funktioniert derselbe Aufbau — wir fassen Gruppen mit Patterns
+zusammen und verknüpfen Contexte per `include =>`.
+
+[[apfelmus-extensions.conf]]
+=== Die extensions.conf für die Apfelmus GmbH
+
+[source]
+----
+[globals]
+VOICEMAIL_CONTEXT=default
+
+[sonstige]
+
+[hausmeister]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[it]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+; Die IT-Abteilung kann alle Mailboxen debuggen:
+include => voicemailsystem-normal
+
+[geschaeftsfuehrung]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[sekretariat]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[verkauf-national]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[verkauf-ausland]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[versand]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[produktion]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[interne-gespraeche]
+exten => _[1-5]XX,1,Dial(PJSIP/${EXTEN},60)
+ same => n,VoiceMail(${EXTEN}@${VOICEMAIL_CONTEXT},u)
+
+[voicemailsystem-komfort]
+; Der User muss nicht die Mailbox-Nummer eingeben.
+exten => 800,1,VoiceMailMain(${CALLERID(num)}@${VOICEMAIL_CONTEXT})
+
+[voicemailsystem-normal]
+exten => 801,1,VoiceMailMain()
+----
+
+Der Context `[interne-gespraeche]` sagt: Alle Nummern 100–599 rufen
+per `Dial()` den entsprechenden PJSIP-Endpoint für 60 Sekunden,
+danach landet der Anrufer auf der Voicemailbox. Wer 800 wählt, hört
+die eigene Mailbox ab — welche genau, bestimmt
+`$\{CALLERID(num)}`. 801 ist der IT-Debug-Zugang mit expliziter
+Mailbox-Auswahl.
+
+[[schwarze-loecher-im-dialplan]]
+==== Schwarze Löcher im Rufnummernplan
+
+Genau genommen müsste der Dialplan etwas feingranularer sein — es
+gibt laut Rufnummernplan Bereiche (z. B. 270–299), die gar keine
+Telefone haben. Wenn ein Anrufer dort versehentlich landet, hinterlässt
+er eine Nachricht auf einer Mailbox, die niemand abhört. Wer das
+sauber abbilden möchte, schreibt das Pattern enger:
+
+[source]
+----
+[interne-gespraeche]
+exten => _1[5-6]X,1,Dial(PJSIP/${EXTEN},60)
+ same => n,VoiceMail(${EXTEN}@${VOICEMAIL_CONTEXT},u)
+
+exten => _2[0-6]X,1,Dial(PJSIP/${EXTEN},60)
+ same => n,VoiceMail(${EXTEN}@${VOICEMAIL_CONTEXT},u)
+
+exten => _[358]XX,1,Dial(PJSIP/${EXTEN},60)
+ same => n,VoiceMail(${EXTEN}@${VOICEMAIL_CONTEXT},u)
+
+exten => _4[0-4]X,1,Dial(PJSIP/${EXTEN},60)
+ same => n,VoiceMail(${EXTEN}@${VOICEMAIL_CONTEXT},u)
+----
+
+Für die Einführung bleiben wir bei der simplen Variante mit
+`_[1-5]XX`. Sie trifft im Zweifel "zu viel", aber das merkt man beim
+Erstellen der Mailboxen.
+
+[[apfelmus-voicemail.conf]]
+=== voicemail.conf
+
+Die `voicemail.conf` bleibt so, wie in
+xref:minimale-telefonanlage.adoc#min-anlage-ab[„... und jetzt mit
+einem Anrufbeantworter"] beschrieben — wir fügen lediglich mehr
+Einträge hinzu:
+
+[source]
+----
+[general]
+format = wav49|gsm
+serveremail = voicemail@apfelmus-gmbh.de
+maxmsg = 200
+maxsecs = 300
+attach = yes
+delete = no
+
+[default]
+150 => GENERIERT,Hans Hausmeister,hausmeister@apfelmus-gmbh.de
+201 => GENERIERT,Ernst Wichtig,ernst.wichtig@apfelmus-gmbh.de
+202 => GENERIERT,Hans Toll,hans.toll@apfelmus-gmbh.de
+; ... (restliche Einträge analog)
+----
+
+[WARNING]
+====
+Die Passwörter (hier symbolisch `GENERIERT`) sind 4-stellig numerisch,
+da sie über die Telefontastatur eingegeben werden. Benutzen Sie
+trotzdem einen Generator — die `1234` der alten Vorlagen ist ein
+weit bekanntes Einfallstor.
+====

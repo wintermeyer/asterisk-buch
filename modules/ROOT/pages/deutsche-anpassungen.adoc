@@ -1,13 +1,14 @@
 [[deutsche-anpassungen]]
 = Deutsche Anpassungen
+:description: Asterisk auf deutsche Verhältnisse anpassen: Töne, Signale und deutsche Sprachprompts.
 
 In diesem Kapitel:
 
-* xref:toene-und-signale.adoc[Töne und Signale]
-* xref:deutsche-sprachbausteine.adoc[Deutsche Sprachbausteine]
-** xref:deutsche-sprachbausteine.adoc#deutsche-sprachbausteine-download[Download und Installation deutscher Sprachprompts]
-** xref:deutsche-sprachbausteine.adoc#deutsche-sprachbausteine-konfiguration[Konfiguration der deutschen Prompts]
-** xref:deutsche-sprachbausteine.adoc#verzeichnisstruktur-sprachbausteine[Verzeichnisstruktur der Sprachbausteine]
+* xref:indications-conf.adoc[Töne und Signale]
+* xref:deutsche-sprachprompts.adoc[Deutsche Sprachbausteine]
+** xref:deutsche-sprachprompts.adoc#deutsche-sprachbausteine-download[Download und Installation deutscher Sprachprompts]
+** xref:deutsche-sprachprompts.adoc#deutsche-sprachbausteine-konfiguration[Konfiguration der deutschen Prompts]
+** xref:deutsche-sprachprompts.adoc#verzeichnisstruktur-sprachbausteine[Verzeichnisstruktur der Sprachbausteine]
 
 Asterisk ist ein US-amerikanisches Produkt. Allerdings kann man die
 für den Endbenutzer relevanten Teile für deutsche User anpassen.

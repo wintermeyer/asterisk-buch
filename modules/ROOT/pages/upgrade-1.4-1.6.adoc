@@ -1,6 +1,0 @@
-[[upgrade-1.4-1.6]]
-= Upgrade von Asterisk 1.4 auf 1.6
-
-In diesem Kapitel beschreiben wir anhand der Datei
-`UPGRADE.txt` die wichtigsten Änderungen, die Sie für ein
-Upgrade von Asterisk 1.4 auf 1.6 vornehmen müssen.

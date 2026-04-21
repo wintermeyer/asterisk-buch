@@ -1,0 +1,32 @@
+[[konferenzen-einleitung]]
+= Einleitung
+:description: Einführung in Konferenzsysteme in Asterisk: ConfBridge als moderner Ersatz für MeetMe.
+
+Konferenzen gehören zum Standard-Repertoire jeder Telefonanlage. In
+Asterisk gibt es dafür historisch zwei Module:
+
+* `app_meetme` (alt, `meetme.conf`) — als _deprecated_ markiert.
+  Das Modul ist im Asterisk-Quellbaum noch vorhanden, wird aber nicht
+  mehr weiterentwickelt, benötigt ein DAHDI-Timing-Device und wird in
+  vielen Distributionspaketen nicht mehr default ausgeliefert.
+* `app_confbridge` (aktuell, `confbridge.conf`) — was wir hier
+  beschreiben.
+
+`ConfBridge` ist dem alten MeetMe in jeder Hinsicht überlegen:
+
+* *Keine Timing-Hardware nötig.* MeetMe brauchte ein DAHDI-Timing-Device
+  oder `res_timing_pthread`; ConfBridge läuft mit dem Software-Timer out
+  of the box.
+* *Flexible Konfiguration.* Profile für Bridges und Profile für User —
+  Admin, normaler Teilnehmer, Nur-Zuhörer — konfigurieren sich sauber
+  getrennt.
+* *HD-Audio.* ConfBridge mischt intern in `slin` und beherrscht auch
+  höhere Samplingraten.
+* *Menüs* direkt am Telefon (Teilnehmer listen, stummschalten,
+  Admin-Funktionen).
+* *Video* wird unterstützt (SFU-artig, mit letztem Sprecher als
+  dominantem Bild).
+
+Zusätzlich gibt es ConfBridge-spezifische Dialplan-Applikationen
+(`ConfBridge`, `ConfBridgeAdmin`) und AMI-Events, die über Teilnehmer
+und Status informieren.

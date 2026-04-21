@@ -1,0 +1,100 @@
+[[sicherheit-ami-ari]]
+= AMI und ARI absichern
+:description: AMI und ARI absichern: lokales Binden, starke Passwörter, Reverse-Proxy für externe Zugriffe.
+
+Wer AMI-Login oder ARI-Zugang erlangt, hat *die komplette Kontrolle*
+über die Anlage. Diese Schnittstellen müssen entsprechend geschützt
+werden.
+
+== AMI
+
+Default-Port: 5038 TCP. In `manager.conf`:
+
+[source]
+----
+[general]
+enabled=yes
+bindaddr=127.0.0.1       ; NUR lokal binden
+port=5038
+webenabled=no            ; AJAM ist deprecated, bitte aus
+
+[meine-app]
+secret=EIN-LANGES-PASSWORT
+deny=0.0.0.0/0.0.0.0
+permit=127.0.0.1/255.255.255.255
+permit=10.10.0.5/255.255.255.255
+read=system,call,log,verbose,command,agent,user,config,dtmf,reporting,cdr,dialplan
+write=system,call,agent,user,config,command,reporting,originate
+----
+
+Goldene Regeln:
+
+* *`bindaddr=127.0.0.1`* — niemals ins Netz, schon gar nicht ins
+  Internet.
+* *Nicht `read=all`, nicht `write=all`.* Jede Anwendung bekommt nur
+  die Klassen, die sie braucht. `command` etwa gibt Zugriff auf das
+  gesamte CLI — also im Zweifel weglassen.
+* *Passwörter mit 20+ Zeichen.* AMI ist das offensichtlichste Ziel
+  für einen Brute-Force-Angriff, wenn der Port doch aus Versehen offen
+  steht.
+* *ACL ergänzen.* `deny=0.0.0.0/0` + `permit=<konkrete IP>` erlaubt
+  nur Verbindungen von bekannten Clients.
+
+Für externe Anwendungen, die AMI aus dem Netz erreichen müssen, baut
+man besser einen kleinen Wrapper-Service (ARI, eigene REST-API, …)
+auf demselben Host, der AMI nur lokal anspricht.
+
+== ARI
+
+Default-Port: 8088 TCP (HTTP) bzw. 8089 TCP (HTTPS, TLS). In
+`http.conf`:
+
+[source]
+----
+[general]
+enabled=yes
+bindaddr=127.0.0.1       ; lokal
+bindport=8088
+
+; Für externe Clients: nur TLS
+tlsenable=yes
+tlsbindaddr=0.0.0.0:8089
+tlscertfile=/etc/letsencrypt/live/pbx.example.com/fullchain.pem
+tlsprivatekey=/etc/letsencrypt/live/pbx.example.com/privkey.pem
+----
+
+In `ari.conf`:
+
+[source]
+----
+[general]
+enabled=yes
+pretty=no                       ; im Produktivbetrieb aus
+allowed_origins=https://app.example.com   ; konkrete Origins statt *
+
+[meine-app]
+type=user
+read_only=no
+password=EIN-LANGES-ARI-PASSWORT
+password_format=plain           ; alternativ: crypt
+----
+
+Zusätzliche Empfehlungen:
+
+* *Reverse-Proxy* vor ARI. Nginx oder Caddy terminiert TLS, prüft
+  Herkunft und leitet `wss://pbx.example.com/ari/events` an
+  `ws://127.0.0.1:8088/ari/events` durch. Vorteil: Asterisk muss sich
+  nicht selbst um Zertifikats-Rotation kümmern.
+* *Application-spezifische User.* Für jede ARI-Anwendung einen
+  eigenen `[name]`-Block mit eigenem Passwort. So lassen sich
+  Zugriffe im Zweifel einzeln widerrufen.
+* *`read_only=yes`* für reine Monitoring-Anwendungen. Die
+  Differenzierung, welche Kommandos "lesend" sind, ist allerdings
+  grob — für feingranulare Rechte muss der Wrapper-Service helfen.
+
+== Zusammenfassung
+
+Schließen Sie AMI und ARI standardmäßig an `127.0.0.1`. Öffnen Sie
+sie nach außen nur über einen kontrollierten Pfad (Reverse-Proxy mit
+TLS und IP-Filter, oder VPN). Alles andere führt früher oder später
+zum Shell-Zugriff eines Angreifers auf die Anlage.

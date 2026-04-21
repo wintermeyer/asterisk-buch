@@ -1,0 +1,26 @@
+[[webrtc-einleitung]]
+= Einleitung
+:description: Einführung in WebRTC und wie es mit Asterisk zusammenspielt.
+
+*WebRTC* (Web Real-Time Communication) ist ein offener W3C/IETF-Standard,
+der direkten Audio-, Video- und Datenaustausch zwischen Browsern
+ermöglicht. Aus Asterisk-Sicht sind zwei Teilaspekte interessant:
+
+* *Signalisierung per SIP über WebSocket* (WSS). Das SIP-Protokoll
+  selbst ändert sich nicht — nur der Transport ist ein anderer. PJSIP
+  unterstützt WSS als Transport nativ.
+* *Medien per DTLS-SRTP mit ICE*. WebRTC-Browser akzeptieren
+  grundsätzlich keine unverschlüsselten Medien. Alles läuft über
+  SRTP mit per DTLS ausgehandelten Schlüsseln. ICE/STUN/TURN helfen
+  beim NAT-Traversal.
+
+Das bedeutet für den Server:
+
+* Ein *TLS-Zertifikat* für die HTTP-Schnittstelle (WSS läuft über
+  denselben Port wie HTTPS), idealerweise von Let's Encrypt oder einer
+  anderen anerkannten CA.
+* Ein *TLS-Transport für PJSIP*, plus ein *WS- bzw. WSS-Transport*.
+* *SRTP aktiviert* und *DTLS-Zertifikate* hinterlegt.
+* Für entfernte Clients außerhalb des eigenen Netzes: Ein *STUN-* oder
+  ein *TURN-Server* (letzterer auch als Media-Relay für Clients, die
+  gar keine direkte UDP-Verbindung aufbauen können).

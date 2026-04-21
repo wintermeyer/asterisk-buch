@@ -1,0 +1,23 @@
+[[astdb]]
+= Die Asterisk-Datenbank (AstDB)
+:description: Die Asterisk-Datenbank AstDB: Key-Value-Store für den Dialplan (SQLite3).
+
+In diesem Kapitel:
+
+* xref:astdb-einleitung.adoc[Einleitung]
+** xref:astdb-einleitung.adoc#datenbank-performance[Performance]
+* xref:astdb-zugriff.adoc[Die Asterisk-Datenbank]
+** xref:astdb-zugriff.adoc#datenbank-schreiben[Werte in die Datenbank schreiben]
+** xref:astdb-zugriff.adoc#datenbank-lesen[Werte aus der Datenbank lesen]
+** xref:astdb-zugriff.adoc#datenbank-loeschen[Werte aus der Datenbank löschen]
+* xref:astdb-cli.adoc[Datenbankzugriff vom CLI]
+** xref:astdb-cli.adoc#datenbank-cli-schreiben[Werte in die Datenbank schreiben]
+** xref:astdb-cli.adoc#datenbank-cli-lesen[Werte aus der Datenbank lesen]
+** xref:astdb-cli.adoc#datenbank-cli-loeschen[Werte aus der Datenbank löschen]
+** xref:astdb-cli.adoc#datenbank-cli-anzeigen[Datenbankinhalt anzeigen]
+* xref:astdb-shell.adoc[Datenbankzugriff von der Shell]
+* xref:astdb-backup.adoc[Backup der Datenbank]
+* xref:callforwarding.adoc[Anwendungsbeispiel Call-Forwarding]
+** xref:callforwarding.adoc#einfaches-callforwarding[Einfaches Call-Forwarding]
+** xref:callforwarding.adoc#komplexes-callforwarding[Komplexes Call-Forwarding]
+* xref:callingcard.adoc[Anwendungsbeispiel Calling-Card]

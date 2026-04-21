@@ -1,0 +1,19 @@
+[[templates-anlegen]]
+= Templates anlegen
+:description: Asterisk-Konfigurationstemplates anlegen: Syntax und Best Practices.
+
+Prinzipiell kann jeder Abschnitt als Template für andere dienen, aber
+mit der Markierung `(!)` zeigt man dem Parser an, dass dieser
+Abschnitt _ausschließlich_ als Template dient und selbst nicht aktiv
+ist. Zwischen den eckigen und den runden Klammern dürfen keine
+Leerzeichen stehen. Templates können auch selbst von Templates erben.
+
+[source]
+----
+[endpoint-template](!)
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+----

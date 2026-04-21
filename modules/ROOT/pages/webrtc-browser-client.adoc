@@ -1,0 +1,83 @@
+[[webrtc-browser-client]]
+= Ein Browser-Client mit JsSIP
+:description: Ein Browser-Softphone für Asterisk mit JsSIP implementieren.
+
+Für den Client-seitigen Teil gibt es mehrere ausgereifte
+JavaScript-Bibliotheken:
+
+* *JsSIP* (https://jssip.net/) — klassischer SIP-Client im Browser,
+  sehr etabliert, gut dokumentiert.
+* *sip.js* (https://sipjs.com/) — moderne Alternative mit
+  TypeScript-Typings.
+* *WebPhone von BrightPattern*, *OnSIP SIP.js-Fork*, u. a.
+
+Ein Minimal-Beispiel mit JsSIP, das eine Registrierung als
+`bob@pbx.example.com` aufbaut und eine Extension anruft:
+
+[source,html]
+----
+<!-- softphone.html -->
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>WebRTC-Testphone</title></head>
+<body>
+<button id="call">Extension 2000 anrufen</button>
+<audio id="remote-audio" autoplay></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/jssip@3/dist/jssip.min.js"></script>
+<script>
+  const socket = new JsSIP.WebSocketInterface(
+    'wss://pbx.example.com:8089/ws'
+  );
+
+  const ua = new JsSIP.UA({
+    sockets: [socket],
+    uri: 'sip:bob@pbx.example.com',
+    password: 'WEBRTC-GEHEIM-BOB',
+    display_name: 'Bob im Browser'
+  });
+
+  ua.start();
+
+  ua.on('registered', () => console.log('Registriert'));
+  ua.on('registrationFailed', (e) =>
+    console.error('Registrierung fehlgeschlagen:', e.cause)
+  );
+
+  document.getElementById('call').addEventListener('click', () => {
+    const session = ua.call('sip:2000@pbx.example.com', {
+      mediaConstraints: { audio: true, video: false }
+    });
+
+    session.connection.addEventListener('track', (evt) => {
+      document.getElementById('remote-audio').srcObject = evt.streams[0];
+    });
+
+    session.on('failed', (e) => console.error('Call failed:', e));
+    session.on('ended',  () => console.log('Call ended'));
+  });
+</script>
+</body>
+</html>
+----
+
+Laden Sie die Seite über *HTTPS* (WebRTC verweigert den Mikrofonzugriff
+sonst), geben Sie dem Browser die Mikrofonfreigabe, klicken Sie den
+Button — die Extension 2000 klingelt, das Audio läuft verschlüsselt
+zwischen Browser und Asterisk.
+
+[TIP]
+====
+Für Debugging ist das Chrome-interne `chrome://webrtc-internals/`
+Gold wert: Es zeigt ICE-Candidates, DTLS-Verhandlung, RTP-Pakete
+und Codec-Verhandlung live mit. Bei "Es klingelt, aber ich höre
+nichts" ist das der erste Ort, an dem Sie nachschauen.
+====
+
+== Kombination mit ARI
+
+Wenn Sie WebRTC und xref:ari.adoc[ARI] kombinieren, bauen Sie
+sich im Prinzip ein komplettes Softphone inklusive Call-Center-Logik
+direkt im Browser: Der Browser hält die SIP-/Medien-Session, die
+ARI-Anwendung steuert Queues, Recording, CTI-Events etc. — und alles
+läuft über denselben Asterisk.

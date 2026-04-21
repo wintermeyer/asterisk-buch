@@ -1,0 +1,126 @@
+[[contexte-rechteverwaltung]]
+= Rechteverwaltung mit Contexten
+:description: Rechteverwaltung in Asterisk: Wie Contexte in pjsip.conf und extensions.conf Telefon-Berechtigungen steuern.
+
+Bis jetzt durften alle Telefone immer alle Extensions in der
+`extensions.conf` aufrufen. Für eine kleine interne Anlage ist das
+ausreichend — sobald aber mehrere Gruppen von Telefonen unterschiedliche
+Rechte haben sollen (z. B. "nur intern", "auch Festnetz", "nur Notruf"),
+brauchen wir eine Rechteverwaltung. Asterisk realisiert das über
+*Contexte*.
+
+Das Prinzip: Jedem Endpoint wird in `pjsip.conf` ein Context zugewiesen.
+Anrufe, die von diesem Endpoint kommen, landen im gleichnamigen Block
+der `extensions.conf`. Nur die dort definierten Extensions (plus die
+per `include =>` eingebundenen) stehen ihm zur Verfügung.
+
+[[rechteverwaltung-mit-contexten-source-1]]
+== Quelle: Jedes Telefon ist in einem Context
+
+Bis jetzt haben wir für unsere Endpoints keinen Context definiert — wir
+haben einfach `context=default` gesetzt. Soll ein Telefon in einem
+anderen Context landen, wird das im Endpoint-Block angepasst.
+
+[[rechteverwaltung-mit-contexten-source-1-beispiel]]
+=== Beispiel mit einem Context
+
+In der Firma abc gibt es die SIP-Telefone 10 und 11. Beide sollen im
+Context `[intern]` arbeiten. Die `pjsip.conf` sieht dann (auszugsweise,
+nur die Endpoints) so aus:
+
+[source]
+----
+[10]
+type=endpoint
+context=intern      ; <-- Context
+disallow=all
+allow=ulaw
+allow=alaw
+auth=10
+aors=10
+
+[11]
+type=endpoint
+context=intern      ; <-- Context
+disallow=all
+allow=ulaw
+allow=alaw
+auth=11
+aors=11
+----
+
+Die zugehörigen `auth`- und `aor`-Blöcke bleiben gleich.
+
+[TIP]
+====
+Wer mehrere Endpoints mit identischen Einstellungen pflegen möchte
+(gleicher Context, gleiche Codec-Liste, gleiche Optionen), benutzt
+PJSIP-Templates. Siehe
+xref:konfigurations-templates.adoc[Konfigurations-Templates].
+====
+
+[[rechteverwaltung-mit-contexten-source-n-beispiel]]
+=== Beispiel mit mehreren Telefonen
+
+In der Firma abc gibt es die Telefone 10, 11, 12 und 20. Die
+Nebenstellen 10 bis 12 sind Mitarbeitertelefone im Context `[abc]`,
+Nebenstelle 20 ein Gästetelefon im Context `[gast]`:
+
+[source]
+----
+[10]
+type=endpoint
+context=abc
+; ...
+
+[11]
+type=endpoint
+context=abc
+; ...
+
+[12]
+type=endpoint
+context=abc
+; ...
+
+[20]
+type=endpoint
+context=gast
+; ...
+----
+
+[[rechteverwaltung-mit-contexten-dest-n-beispiel]]
+== Ziel: Contexte in der extensions.conf
+
+Die `extensions.conf` wird in verschiedene Abschnitte (Contexte)
+aufgeteilt. Jeder Context wird durch den Context-Namen in eckigen
+Klammern eingeleitet.
+
+Ein Beispiel mit den drei Contexten `default`, `abc` und `gast`:
+
+[source]
+----
+[default]
+exten => 1001,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+[abc]
+exten => 2000,1,Dial(PJSIP/2000,20)
+ same => n,VoiceMail(2000@default,u)
+
+exten => 2001,1,Dial(PJSIP/2001,20)
+ same => n,VoiceMail(2001@default,u)
+
+exten => 2999,1,VoiceMailMain(${CALLERID(num)}@default,s)
+
+[gast]
+; Das Gästetelefon darf nur zur Rezeption und zum Hello-World
+exten => 0,1,Dial(PJSIP/2000,20)
+exten => 1001,1,Goto(default,1001,1)
+----
+
+Fehlt bei einem Endpoint in `pjsip.conf` der Context-Eintrag, nimmt
+PJSIP den Default-Context `default`. Auf diesen Default sollte man sich
+*nicht* verlassen — setzen Sie `context=` immer explizit, das erspart
+Überraschungen.

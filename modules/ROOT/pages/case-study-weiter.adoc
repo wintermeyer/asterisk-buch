@@ -1,0 +1,32 @@
+[[case-study-weiter]]
+= Wie geht es weiter?
+:description: Wie es mit der Asterisk-Case-Study weitergeht: Trunks, Queues, Konferenzen, Security.
+
+Die hier besprochene Konfiguration der Apfelmus GmbH dient als
+Planungsbeispiel für Anlagen dieser Größenordnung. Viele Beispiele in
+diesem Buch lassen sich an dieser Konfiguration durchspielen.
+
+Mit dem, was wir jetzt haben, kann die Firma intern telefonieren und
+Nachrichten auf Mailboxen hinterlassen. Für eine professionelle
+Anlage fehlen noch:
+
+* Anbindung an einen SIP-Trunk (siehe
+  xref:sip-trunk-provider.adoc[Telefonate vom und in das
+  öffentliche Netz])
+* Warteschleifen und Call-Center-Funktionen (siehe
+  xref:queues.adoc[Warteschleifen für Call-Center])
+* Konferenzschaltungen mit ConfBridge (siehe
+  xref:konferenzen.adoc[Telefonkonferenzen])
+* Ein IVR-Menü am Hauptnummereingang (siehe
+  xref:ivr.adoc[IVR])
+* BLF-Tasten für die Sekretariatstelefone (siehe
+  xref:blf-hints.adoc[BLF, Hints, Pickup])
+* Absicherung (siehe xref:sicherheit.adoc[Sicherheit])
+
+Wer lieber ein fertiges Web-Interface auf Asterisk setzt, statt
+alles selbst aus Konfigurationsdateien aufzubauen, findet mit
+*FreePBX*, *Issabel*, *FusionPBX* oder *VitalPBX* etablierte
+Distributionen. Sie nehmen einem viel Kleinkram ab — im Gegenzug
+verliert man ein Stück Kontrolle und Einblick. Dieses Buch
+konzentriert sich bewusst auf das "reine" Asterisk, weil man damit
+das Fundament versteht, auf dem jedes dieser Frameworks sitzt.

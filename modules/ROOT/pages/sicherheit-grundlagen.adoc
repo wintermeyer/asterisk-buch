@@ -1,0 +1,51 @@
+[[sicherheit-grundlagen]]
+= Grundlagen: Die Angriffsflächen
+:description: Grundlagen der Asterisk-Sicherheit: Angriffsflächen, Toll-Fraud, die vier Grundregeln.
+
+Ein Asterisk-Server hat mehrere Schnittstellen, die von außen erreichbar
+sein können. Jede ist eine eigene Angriffsfläche:
+
+[cols="1,3"]
+|===
+| Schnittstelle | Angriffsziel
+
+| *SIP (5060 UDP/TCP, 5061 TLS, 8089 WSS)*
+| Registrierungs-Bruteforce, Toll-Fraud (Anrufe auf teure Nummern auf
+  Kosten des Betreibers), Fingerprinting.
+
+| *AMI (5038 TCP)*
+| Vollzugriff auf die Anlage. Wer hier Login schafft, kann alles.
+
+| *ARI (8088/8089 HTTP/S)*
+| Ebenfalls Vollzugriff — hier heißt das Passwort "api_key".
+
+| *SSH (22 TCP)*
+| Kein Asterisk-Thema, aber nicht vergessen: Das OS selbst absichern.
+|===
+
+== Die typischen Angriffsmuster
+
+1. *SIP-Scanner* wie SIPVicious probieren IP-Bereiche auf offene
+   Port-5060-Dienste ab und starten dann einen Brute-Force-Angriff mit
+   Benutzernamen `100`, `101`, ... `999`, `admin`, `test`, `guest`.
+2. Findet der Angreifer eine funktionierende Registrierung oder einen
+   schwach geschützten Trunk, startet er gebührenpflichtige
+   Auslandsgespräche — oft zu Premium-Nummern in Ländern, die er
+   selbst kontrolliert.
+3. Toll-Fraud läuft meist nachts und am Wochenende. Schäden im
+   vierstelligen Bereich pro Nacht sind nicht selten.
+
+== Vier Grundregeln
+
+1. *Keine Default-Passwörter, keine trivialen Passwörter.* `1234`
+   auf einem SIP-Account, der von außen erreichbar ist, ist
+   gleichbedeutend mit offenem Scheunentor.
+2. *Nicht mehr öffnen als nötig.* AMI/ARI sollten nie ins Internet
+   gebunden sein. Binden Sie an `127.0.0.1` und bauen Sie einen
+   Reverse-Proxy mit TLS, wenn externer Zugriff nötig ist.
+3. *Rate-Limiting für SIP.* PJSIP kann eingehende Registrierungsversuche
+   pro IP bremsen; `fail2ban` sperrt auffällige IPs ganz.
+4. *Regelmäßige Updates.* Die Asterisk-Community veröffentlicht
+   Security-Fixes über den offiziellen Announce-Kanal. Ein System,
+   das seit 18 Monaten läuft, ohne gepatcht zu werden, ist eine
+   Zeitbombe.

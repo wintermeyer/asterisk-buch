@@ -1,5 +1,6 @@
 [[blf-test]]
 = Test der Hints
+:description: BLF-Hints in Asterisk testen mit 'core show hints' und 'pjsip show subscriptions'.
 
 Jetzt können wir überprüfen, ob alles richtig konfiguriert wurde.
 Dazu geben Sie im Asterisk-CLI den Befehl +`core show
@@ -9,8 +10,8 @@ hints`+ ein:footnote:[Die Ausgabe wurde hier aus Platzgründen etwas verkürzt.]
 ----
 *CLI> core show hints
     -= Registered Asterisk Dial Plan Hints =-
-   21         : SIP/21        State:Unavailable     Watchers  0
-   22         : SIP/22        State:Unavailable     Watchers  0
+   21         : PJSIP/21        State:Unavailable     Watchers  0
+   22         : PJSIP/22        State:Unavailable     Watchers  0
 ----------------
 - 2 hints registered
 ----
@@ -26,9 +27,11 @@ subscriptions`+ ausgegeben wird:footnote:[Die Ausgabe wurde hier aus Platzgründ
 
 [source,shell]
 ----
-*CLI> sip show subscriptions
-Peer          User   Call ID      Extension   Last state    Type
-0 active SIP subscriptions
+*CLI> pjsip show subscriptions inbound
+ Endpoint: <Endpoint/CID.....................................>  <State.....>
+     Resource: <Resource.............................................>
+     Event: <Event..............>
+0 Objects found
 ----
 
 Nachdem sich das überwachende Telefon angemeldet hat, setzen wir den
@@ -36,10 +39,11 @@ Befehl erneut ab:
 
 [source,shell]
 ----
-*CLI> sip show subscriptions
-Peer          User   Call ID      Extension   Last state    Type
-192.168.0.2   21     815d944554e  22          Unavailable   dialog-info+xml
-1 active SIP subscription
+*CLI> pjsip show subscriptions inbound
+ Endpoint: 21/sip:21@192.168.0.2:5060                           Active
+     Resource: 22
+     Event: dialog
+1 Objects found
 ----
 
 Hier wird deutlich, dass der User `21` die Extension
@@ -58,8 +62,8 @@ hints`+ erneut ab:
 ----
 *CLI> core show hints
     -= Registered Asterisk Dial Plan Hints =-
-   21         : SIP/21        State:Idle            Watchers  0
-   22         : SIP/22        State:Idle            Watchers  1
+   21         : PJSIP/21        State:Idle            Watchers  0
+   22         : PJSIP/22        State:Idle            Watchers  1
 ----------------
 - 2 hints registered
 ----

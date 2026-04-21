@@ -1,0 +1,22 @@
+[[konferenzen]]
+= Telefonkonferenzen
+:description: Telefonkonferenzen in Asterisk mit ConfBridge — MeetMe ist nicht mehr nötig.
+
+In diesem Kapitel:
+
+* xref:konferenzen-einleitung.adoc[Einleitung]
+* xref:confbridge-konfiguration.adoc[confbridge.conf und Profile]
+* xref:confbridge-dialplan.adoc[Zugang im Dialplan]
+* xref:confbridge-teilnehmer-ansage.adoc[Anzahl der Teilnehmer ansagen]
+
+[IMPORTANT]
+====
+Die alte `MeetMe()`-Applikation ist als _deprecated_ markiert und
+wird nicht mehr weiterentwickelt — zudem benötigt sie ein
+DAHDI-Timing-Device, was auf modernen Servern oft nicht vorhanden
+ist.
+Für Konferenzen verwenden Sie heute *`ConfBridge()`* — konfiguriert
+in `/etc/asterisk/confbridge.conf`. `ConfBridge` benötigt kein
+DAHDI-Timing-Device; ab Asterisk 10 ist ein Software-Timer
+(`res_timing_pthread` oder `res_timing_timerfd`) Standard.
+====

@@ -1,0 +1,25 @@
+[[sicherheit]]
+= Sicherheit
+:description: Asterisk absichern: PJSIP, fail2ban, TLS/SRTP, AMI/ARI — die wichtigsten Angriffsflächen und Gegenmaßnahmen.
+
+In diesem Kapitel:
+
+* xref:sicherheit-grundlagen.adoc[Grundlagen: Die Angriffsflächen]
+* xref:pjsip-absichern.adoc[PJSIP absichern]
+* xref:fail2ban.adoc[Fail2ban einrichten]
+* xref:tls-srtp.adoc[TLS und SRTP]
+* xref:sicherheit-ami-ari.adoc[AMI und ARI absichern]
+
+In der alten Buchauflage fehlte dieses Thema komplett. Heute ist
+Sicherheit kein "nice to have" mehr — ein im Internet erreichbarer
+Asterisk-Server wird innerhalb von Minuten nach dem ersten öffentlichen
+DNS-Eintrag mit SIP-Login-Versuchen überschwemmt. Ohne geeignete
+Gegenmaßnahmen sind Toll-Fraud-Angriffe mit fünfstelligen Schäden
+pro Vorfall keine Seltenheit.
+
+Dieses Kapitel geht die wichtigsten Angriffspunkte systematisch durch.
+Es ist kein vollständiger Ersatz für eine Security-Review — wer eine
+Anlage im Internet betreibt, sollte regelmäßig die offiziellen
+Security-Advisories unter
+https://docs.asterisk.org/Deployment/Asterisk-Security-Events/
+verfolgen.

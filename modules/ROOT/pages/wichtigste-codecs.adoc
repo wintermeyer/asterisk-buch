@@ -1,0 +1,72 @@
+[[wichtigste-codecs]]
+= Die wichtigsten Codecs
+:description: Die wichtigsten Asterisk-Codecs im Überblick: G.711, G.722, Opus, GSM.
+
+Mit dem Befehl `core show translation` bekommen Sie eine Liste der in
+Ihrem System verfügbaren Codecs und der möglichen Transkodierungen.
+Die heute in Asterisk-Installationen gebräuchlichsten Codecs:
+
+* *G.711* (`alaw`/`ulaw`, im CLI als `g711a` / `g711u`)
++
+Der Klassiker. Sehr gute Sprachqualität, unverschlüsselt 64 Kbit/s.
+In Europa dominiert `alaw`, in Nordamerika `ulaw`. Läuft überall,
+kostet keine CPU und braucht keine Lizenzen. Default für fast alles.
+
+* *G.722*
++
+"HD-Audio"-Codec. Weitet den Frequenzbereich auf 50–7000 Hz aus
+(G.711: 300–3400 Hz) — Sprache klingt hörbar klarer. Benötigt
+ebenfalls 64 Kbit/s. Wird von praktisch allen aktuellen Business-SIP-Telefonen
+und den meisten SIP-Providern unterstützt.
+
+* *Opus*
++
+Der moderne offene Codec (IETF RFC 6716, entstanden aus der Fusion von
+SILK und CELT). Variable Bitrate (6–510 Kbit/s), sehr gute Qualität
+auch bei schmaler Bandbreite, niedrige Latenz, resilient gegen
+Paketverlust. Opus ist der Pflicht-Codec für WebRTC-Clients und wird
+auch von modernen SIP-Telefonen und einigen Providern unterstützt.
+In Asterisk per `res_format_attr_opus` + `codec_opus` verfügbar.
+
+* *GSM*
++
+Der Asterisk-Klassiker aus Mobilfunk-Zeiten. 13 Kbit/s, Qualität
+akzeptabel aber nicht überragend. Seine Rolle ist heute vor allem
+historisch — als Kompatibilitätsfallback und als Format für
+Sounddateien (`.gsm`) liegt er in vielen Installationen noch mit
+aktiviert.
+
+* *G.729a*
++
+Früher _der_ Bandbreiten-Sparcodec (8 Kbit/s, akzeptable Qualität).
+War lange kostenpflichtig; mittlerweile sind die relevanten Patente
+ausgelaufen und Asterisk bringt `codec_g729.so` direkt mit. Dennoch
+ist G.729 auf dem Rückzug: Opus liefert bei vergleichbarer Bitrate
+deutlich bessere Qualität.
+
+* *iLBC*
++
+"Internet Low Bitrate Codec", 13–15 Kbit/s, robust gegen
+Paketverlust. Wurde einst als Opus-Vorläufer gehandelt, spielt heute
+in SIP-Installationen praktisch keine Rolle mehr.
+
+* *G.726*
++
+Halbe G.711-Bandbreite (32 Kbit/s) bei ähnlicher Qualität. Selten
+eingesetzt, da G.722 oder Opus die bessere Wahl sind.
+
+[TIP]
+====
+*Empfehlung für neue Installationen:* `ulaw` und/oder `alaw` als
+Default (Kompatibilität), `g722` dazu für HD-Audio, `opus` für
+WebRTC und moderne Telefone. Mehr braucht niemand.
+
+[source]
+----
+disallow=all
+allow=ulaw
+allow=alaw
+allow=g722
+allow=opus
+----
+====

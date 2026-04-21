@@ -1,0 +1,35 @@
+[[confbridge-teilnehmer-ansage]]
+= Anzahl der Teilnehmer ansagen
+:description: Anzahl der Teilnehmer einer ConfBridge-Konferenz mit CONFBRIDGE_INFO() ansagen.
+
+Unter ConfBridge ist die Teilnehmerzahl nicht über eine
+`ConfBridge()`-Option abrufbar, sondern über die Funktion
+`CONFBRIDGE_INFO()`:
+
+[source]
+----
+[intern]
+exten => 5555,1,Answer()
+ same => n,Wait(1)
+ same => n,Set(TEILNEHMER=${CONFBRIDGE_INFO(parties,team)})
+ same => n,SayNumber(${TEILNEHMER})
+ same => n,Playback(conf-thereare&conf-peopleinconf)
+ same => n,Hangup()
+----
+
+`CONFBRIDGE_INFO(type,conference)` liefert je nach `type` verschiedene
+Zahlen:
+
+`parties`:: Gesamtzahl der Teilnehmer
+`admins`:: Anzahl der Admins
+`marked`:: Anzahl der "marked" Teilnehmer
+`locked`:: `1`, wenn die Konferenz gesperrt ist
+
+[TIP]
+====
+Das `Background()`-Menü "Zahl der aktuellen Teilnehmer durchgeben"
+war früher mit MeetMes `c`-Option ein Einzeiler. Mit ConfBridge
+müssen Sie die Zahl selbst aus `CONFBRIDGE_INFO()` lesen und per
+`SayNumber()` ansagen — dafür haben Sie vollständige Kontrolle über
+die Ansage (Sprache, Reihenfolge, zusätzliche Informationen).
+====

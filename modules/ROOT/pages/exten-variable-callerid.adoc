@@ -1,0 +1,68 @@
+[[exten-variable-callerid]]
+= Die Variable $\{EXTEN} und die Funktion $\{CALLERID(num)}
+:description: Die Variable EXTEN und die Funktion CALLERID(num) im Asterisk-Dialplan.
+
+Obwohl wir im Buch erst später über Variablen (siehe
+xref:dialplan-variablen.adoc[„Variablen"]) und Funktionen (siehe
+xref:functions-referenz.adoc[_Funktionen im Dialplan_]) sprechen, stellen wir
+zwei sehr einfache und intuitive Elemente schon hier vor: die
+Systemvariable `$\{EXTEN}` und die Funktion `$\{CALLERID(num)}`.
+
+[[systemvariable-exten]]
+== $\{EXTEN}
+
+In der Systemvariable `$\{EXTEN}` speichert Asterisk die gewählte
+Rufnummer. Man kann also statt
+
+[source]
+----
+exten => 2000,1,Dial(PJSIP/2000)
+----
+
+auch
+
+[source]
+----
+exten => 2000,1,Dial(PJSIP/${EXTEN})
+----
+
+schreiben. Bei einer einzelnen Zeile ist das noch wenig sinnvoll — in
+Kombination mit Pattern Matching (siehe
+xref:pattern-matching.adoc[Pattern Matching]) spart es aber viel
+Tipparbeit und macht die Konfiguration kompakt.
+
+Um alle SIP-Telefone mit den Durchwahlen 2000 bis 2999 wählbar zu
+machen, genügt eine Zeile:
+
+[source]
+----
+exten => _2XXX,1,Dial(PJSIP/${EXTEN})
+----
+
+Voraussetzung ist, dass die entsprechenden Endpoints in `pjsip.conf`
+existieren.
+
+[TIP]
+====
+Eine ausführliche Beschreibung zum Thema Variablen finden Sie unter
+xref:dialplan-variablen.adoc[„Variablen"].
+====
+
+[[funktion-callerid-num]]
+== $\{CALLERID(num)}
+
+`$\{CALLERID(num)}` liefert die Nummer des Anrufers. Besonders praktisch
+ist das bei `VoiceMailMain()`: Der erste Parameter ist dort die
+gewünschte Mailboxnummer — mit `$\{CALLERID(num)}` hört der Benutzer
+automatisch seine eigene Mailbox ab:
+
+[source]
+----
+exten => 99,1,VoiceMailMain(${CALLERID(num)}@default,s)
+----
+
+[TIP]
+====
+Eine ausführliche Beschreibung der Funktion `CALLERID()` finden Sie
+in der offiziellen Dokumentation unter https://docs.asterisk.org.
+====

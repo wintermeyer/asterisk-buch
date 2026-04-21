@@ -1,0 +1,89 @@
+[[sip-telefone-konfiguration]]
+= SIP-Telefone an Asterisk anbinden
+:description: Ein SIP-Telefon allgemein an Asterisk anbinden — PJSIP-Seite und Telefon-Seite.
+
+Die konkrete Einrichtung unterscheidet sich je nach Hersteller in
+Kleinigkeiten — die großen Schritte sind aber überall dieselben.
+
+== Asterisk-Seite: pjsip.conf
+
+Für jedes Telefon gibt es in `pjsip.conf` drei Objekte: `endpoint`,
+`auth`, `aor`. Bei Nutzung von Templates (siehe
+xref:konfigurations-templates.adoc[Konfigurations-Templates]) sind das
+nur wenige Zeilen pro Telefon:
+
+[source]
+----
+[2000](endpoint-template)
+auth=2000
+aors=2000
+mailboxes=2000@default
+
+[2000](auth-template)
+username=2000
+password=GENERIERT
+
+[2000](aor-template)
+----
+
+`mailboxes=2000@default` aktiviert MWI (Message Waiting Indicator) —
+das Lämpchen "Neue Nachricht" am Telefon leuchtet, sobald eine neue
+Voicemail da ist.
+
+== Telefon-Seite: SIP-Account
+
+Die Eingabefelder unterscheiden sich leicht je nach Hersteller; diese
+Daten müssen rein:
+
+[cols="1,3"]
+|===
+| SIP-ID / Username / Identity | `2000`
+| Authentication ID / Authname | `2000`
+| Passwort                     | `GENERIERT`
+| SIP-Server / Registrar / Domain | IP-Adresse des Asterisk-Servers
+| SIP-Port                     | `5060` (UDP), `5061` (TLS), `8089` (WSS/WebRTC)
+| Transport                    | UDP / TCP / TLS / WSS je nach Transport in pjsip.conf
+|===
+
+Zusätzliche Optionen, die praktisch jedes Telefon anbietet:
+
+* *DTMF-Methode:* RFC 2833 (Standard) oder SIP INFO (nur wenn
+  RFC 2833 Probleme macht)
+* *Codec-Präferenzen:* abhängig von `allow=` auf dem Endpoint
+* *NAT-Traversal:* meist "automatisch"; bei Symmetric NAT muss am
+  Telefon oder im Router STUN aktiviert werden
+* *Secure Audio (SRTP):* nur nötig, wenn Sie TLS+SRTP eingerichtet
+  haben (siehe xref:tls-srtp.adoc[TLS und SRTP])
+
+== Auto-Provisioning
+
+Für mehr als eine Handvoll Telefone sollten Sie Auto-Provisioning
+einrichten. Jeder Hersteller hat dafür eigene Datei-Formate:
+
+* *Yealink* — `<mac>.cfg` und `y000000000000.cfg`
+* *Snom* — `snom-<model>-<mac>.xml`
+* *Grandstream* — binäre Config-Dateien per HTTP/HTTPS
+* *Fanvil* — text-basierte `<mac>.cfg`
+* *Cisco* — XML-Profile
+
+Alle lassen sich über HTTP(S)/TFTP ausrollen. Das Telefon fragt beim
+Booten beim Provisioning-Server nach seiner MAC-basierten
+Konfigurationsdatei und zieht sie. So lassen sich Nebenstellen-Rollouts
+im Minutentakt durchführen.
+
+== Klingeltöne, BLF, Komfortfunktionen
+
+Klingeltöne, BLF-Tasten, Kurzwahl-Tasten, Speed-Dials — alles ist
+herstellerspezifisch. Asterisk liefert dafür die Grundlage:
+
+* *BLF* (Busy Lamp Field) — wird über SIP SUBSCRIBE ausgehandelt und
+  von Asterisk per `hint =>`-Einträgen im Dialplan bereitgestellt.
+  Details in xref:blf-hints.adoc[BLF, Hints, Pickup].
+* *Message-Retrieve-Taste* — Jedes Telefon bietet eine "Message"-
+  oder "Voicemail"-Taste. Meist wird dafür ein dedizierter Code
+  (z. B. `*97`) gewählt. In der `extensions.conf`:
++
+[source]
+----
+exten => *97,1,VoiceMailMain(${CALLERID(num)}@default)
+----

@@ -1,16 +1,17 @@
 [[glossar]]
 = Glossar
+:description: Asterisk-Glossar: Begriffe und Abkürzungen der Telefonie und VoIP kurz erklärt.
 
 Hier werden die im Zusammenhang mit Asterisk verwendeten Begriffe
 und Abkürzungen kurz erklärt und voneinander abgegrenzt.
 
 ADSI:: Analog Display Services Interface. Ein von einigen analogen Telefonen mit Text-Display unterstütztes Verfahren, das z. B. die Anrufernummer oder die Anzahl der eingegangenen Nachrichten überträgt und ein entsprechendes Blinklicht aktiviert. Wird per FSK (xref:glossar.adoc#glossar-fsk[FSK]) übertragen.
-AGI:: Asterisk Gateway Interface. Ein Interface, über das Asterisk mit externen Skripten kommunizieren kann (ähnlich CGI bei Webservern). Die weiteren Formen EAGI, FastAGI und DeadAGI werden in xref:applications-agi.adoc[Abschnitt C.7, „`AGI()`“] erklärt.
+AGI:: Asterisk Gateway Interface. Ein Interface, über das Asterisk mit externen Skripten kommunizieren kann (ähnlich CGI bei Webservern). Die weiteren Formen EAGI, FastAGI und DeadAGI werden in Abschnitt C.7, „`AGI()`“ erklärt.
 AMA:: Automatic Message Accounting. Spezifiziert Mechanismen zur Erzeugung und Übermittlung von CDRs (xref:glossar.adoc#glossar-cdr[CDR]).
 Applikation:: Applikation im Dialplan (xref:glossar.adoc#glossar-dialplan[Dialplan]).
 +
 Nicht zu verwechseln mit einer Funktion (xref:glossar.adoc#glossar-funktion[Funktion]).
-AstDB:: Die in Asterisk integrierte Datenbank, die auf der Berkeley DB (BDB, xref:glossar.adoc#glossar-berkeleydb[Berkeley DB]) aufbaut
+AstDB:: Die in Asterisk integrierte Key-Value-Datenbank. Seit Asterisk 11 basiert sie auf SQLite3 und liegt typischerweise unter `/var/lib/asterisk/astdb.sqlite3`. Zugriff über die Dialplan-Funktion `DB()`.
 Ausdrücke:: Siehe xref:glossar.adoc#glossar-expressions[Expression].
 BDB:: Siehe xref:glossar.adoc#glossar-berkeleydb[Berkeley DB].
 Befehl:: In Bezug auf den Dialplan siehe xref:glossar.adoc#glossar-applikation[Applikation]
@@ -23,12 +24,19 @@ CDR:: Call Detail Record oder Call Data Record, auf Deutsch auch _Kommunikations
 ----
 acct code, src, dst, dst context, cid, chan, dst channel, last app, last app args, start time, answer time, end time, dur, billable secs, disposition, ama flags, unique id
 ----
-Channel:: So werden in Asterisk Verbindungen oder Verbindungsdefinitionen zu Teilnehmern (users) oder anderen Telefonanlagen (peers) bezeichnet. Es gibt mehrere mögliche Übertragungsprotokolle, u. a. IAX (xref:glossar.adoc#glossar-iax[IAX]), SIP (xref:glossar.adoc#glossar-sip[SIP]), H.323, CAPI etc., die in xref:kapitel-protokolle.adoc[Kapitel 8, _Protokolle_] vorgestellt und beschrieben werden.
+Channel:: So werden in Asterisk Verbindungen oder Verbindungsdefinitionen zu Teilnehmern (users) oder anderen Telefonanlagen (peers) bezeichnet. Es gibt mehrere mögliche Übertragungsprotokolle, u. a. IAX (xref:glossar.adoc#glossar-iax[IAX]), SIP (xref:glossar.adoc#glossar-sip[SIP]), H.323, CAPI etc., die in xref:protokolle.adoc[Kapitel 8, _Protokolle_] vorgestellt und beschrieben werden.
 Codec:: So bezeichnet man Verfahren zur Kodierung und Dekodierung von Datenströmen, hier von Audiodaten. Das sind z. B. GSM, WAV oder das bekannte MP3. Meist ist auch immer ein entsprechendes Dateiformat gemeint.
-Context:: So wird in Asterisk ein Bereich oder Abschnitt in der `extensions.conf` oder `voicemail.conf` genannt, der z. B. Telefonnummern einer Firma zu einer Abteilung gruppiert. Man muss unterscheiden zwischen Dialplan-Contexten und Voicemail-Contexten. Siehe xref:kapitel-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_] und xref:voicemail-voicemail.conf.adoc[Abschnitt 13.4, „`voicemail.conf` “].
-DAHDI:: Digium Asterisk Hardware Device Interface. Seit Mitte 2008 der neue Name von Zaptel. Siehe xref:zaptel-to-dahdi.adoc[Anhang I, _Zaptel zu DAHDI_].
+Context:: So wird in Asterisk ein Bereich oder Abschnitt in der `extensions.conf` oder `voicemail.conf` genannt, der z. B. Telefonnummern einer Firma zu einer Abteilung gruppiert. Man muss unterscheiden zwischen Dialplan-Contexten und Voicemail-Contexten. Siehe xref:dialplan-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_] und xref:voicemail-conf.adoc[Abschnitt 13.4, „`voicemail.conf` “].
+DAHDI:: Digium Asterisk Hardware Device Interface. Seit 2008 der Nachfolger von Zaptel. Kernel-Modul und User-Space-Tools für ISDN-/Analog-Karten, die heute fast ausschließlich in Legacy-Installationen relevant sind.
 Dialplan:: Im Asterisk-Umfeld: die in der Datei `extensions.conf` festgelegten Abläufe, die aufgerufen werden, sobald eine Extension (xref:glossar.adoc#glossar-extension[Extension]) gewählt wird.
-Digium:: http://www.digium.com[Digium] ist die von Mark Spencer gegründete Firma, die Asterisk entwickelt und vertreibt.
+Digium:: Von Mark Spencer 1999 gegründete Firma, die Asterisk entwickelt und vertrieben hat. 2018 von Sangoma übernommen; die aktive Asterisk-Entwicklung hat seitdem https://www.sangoma.com/[Sangoma] übernommen.
+Sangoma:: Kanadische Firma, die seit 2018 die Hauptträgerin der Asterisk-Entwicklung ist. Übernahm Digium 2018.
+PJSIP:: PJProject-basierter SIP-Kanaltreiber in Asterisk (`chan_pjsip`). Konfiguriert in `pjsip.conf`. Seit Asterisk 21 der einzige im Core verfügbare SIP-Treiber — `chan_sip` wurde entfernt.
+ARI:: Asterisk REST Interface. HTTP/REST-API plus WebSocket-Event-Stream zur Fernsteuerung von Asterisk. Löst AGI/AMI für neue Anwendungen weitgehend ab. Konfiguriert in `ari.conf`.
+Stasis:: Dialplan-Applikation, die die Kontrolle über einen Channel an eine ARI-Anwendung übergibt. Die Anwendung steuert danach alles, bis sie den Channel zurück in den Dialplan schickt oder auflegt.
+ConfBridge:: Der moderne Konferenz-Baustein in Asterisk; ersetzt `MeetMe()`. Konfiguriert in `confbridge.conf` über Bridge- und User-Profile. Benötigt kein DAHDI-Timing-Device.
+Opus:: Moderner, offener Audio-Codec (RFC 6716). Variable Bitrate, hohe Qualität, niedrige Latenz. Standard-Codec für WebRTC und immer häufiger auch bei SIP-Trunks.
+WebRTC:: Standard für Echtzeit-Kommunikation im Browser (https://www.w3.org/TR/webrtc/). In Asterisk via PJSIP-WSS-Transport + DTLS-SRTP realisiert.
 DNS:: Domain Name System/Server/Service. Ein Name-Server löst Domain-Namen (z. B. example.com) zu IP-Adressen auf.
 DoS:: Denial of Service. Bezeichnung für einen Angriff auf einen Rechner, bei dem der Rechner mit Anfragen überschwemmt wird, wodurch er nicht mehr in der Lage ist, zu reagieren.
 Durchwahl:: Siehe xref:glossar.adoc#glossar-extension[Extension].
@@ -56,33 +64,33 @@ Expression:: Eine _Expression_ (ein Ausdruck) besteht aus Variablen, Operatoren 
 +
 Beispiele:
 +
-** [source] ---- GotoIf($[ ${test} = 5 ]?ok:nein) ----
+** [source] ---- GotoIf($[ $\{test} = 5 ]?ok:nein) ----
 +
 (siehe
-xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“], xref:applications-gosubif.adoc[Abschnitt C.64, „`GosubIf()`“])
-** [source] ---- ExecIf($["${CALLERID(num)}" = "101"],SayDigits,123) ----
+Abschnitt C.66, „`GotoIf()`“, Abschnitt C.64, „`GosubIf()`“)
+** [source] ---- ExecIf($["$\{CALLERID(num)}" = "101"],SayDigits,123) ----
 +
 (siehe
-xref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“])
-** [source] ---- Set(foo=${IF($["${Var}" = "123"]?5:9)}) ----
+Abschnitt C.51, „`ExecIf()`“)
+** [source] ---- Set(foo=$\{IF($["$\{Var}" = "123"]?5:9)}) ----
 +
 (siehe
-xref:functions-if.adoc[Abschnitt D.49, „`IF()`“])
+Abschnitt D.49, „`IF()`“)
 ** [source] ---- Set(ergebnis=$[ 10 / 2 ]) ----
 +
 (siehe
-xref:extensions.ael.adoc#ael-expressions-assignments[„Ausdrücke und Zuweisungen“])
+xref:ael-legacy.adoc[_AEL (Legacy)_])
 +
 Bei Vergleichen bietet es sich oft an, eine Variable und einen
 Wert in „Anführungszeichen“
 („+"_`...`_"+“)
-einzuschließen. `$["${test}"="5"]` ist also besser als
-`$[${test}=5]`, denn wenn im zweiten Fall die Variable
+einzuschließen. `$["$\{test}"="5"]` ist also besser als
+`$[$\{test}=5]`, denn wenn im zweiten Fall die Variable
 `test` nichts enthält (einen leeren String), dann tritt in
 dem Ausdruck ein Fehler auf.
 +
-Die Besonderheiten bei Ausdrücken in der _Asterisk
-Extensions Language_ AEL werden in xref:extensions.ael.adoc#ael-expressions-assignments[„Ausdrücke und Zuweisungen“] und xref:extensions.ael.adoc#ael-conditionals[„Bedingte Anweisungen (_conditionals_)“] behandelt.
+Die Besonderheiten bei Ausdrücken in der _Asterisk Extensions Language_
+AEL werden im Legacy-Kapitel xref:ael-legacy.adoc[_AEL_] behandelt.
 +
 Weitere Informationen über Ausdrücke finden Sie im
 Source-Verzeichnis von Asterisk
@@ -102,8 +110,8 @@ Die besonderen Extensions sind:
 `i`:: (Invalid) Es wurde eine ungültige, nicht vergebene Nummer gewählt oder eine ungültige Eingabe in einem IVR(xref:glossar.adoc#glossar-ivr[IVR])-Menü vorgenommen.
 `o`:: (Operator). In einem IVR-Menü (xref:glossar.adoc#glossar-ivr[IVR]) wurde `0` (Null) gedrückt, um Verbindung mit einem Operator herzustellen.
 `s`:: (Start) Start der Befehlsabarbeitung für eingehende Anrufe.
-`t`:: (Timeout) Zeitberschreitung: User antwortet nicht auf Prompt (siehe xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]).
-`T`:: (AbsoluteTimeout) Zeitberschreitung insgesamt (siehe xref:applications-absolutetimeout.adoc[Abschnitt C.1, „`AbsoluteTimeout()`“] und xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]).
+`t`:: (Timeout) Zeitberschreitung: User antwortet nicht auf Prompt (siehe Abschnitt D.101, „`TIMEOUT()`“).
+`T`:: (AbsoluteTimeout) Zeitberschreitung insgesamt (siehe Abschnitt C.1, „`AbsoluteTimeout()`“ und Abschnitt D.101, „`TIMEOUT()`“).
 `failed`:: Ein automatischer Anruf nach „draußen“ (auto dial-out; mit definiertem Context, Priorität und Extension) ist fehlgeschlagen.
 `fax`:: Fax-Erkennung auf Zap-Kanälen.
 `talk`:: Von der Dialplan-Applikation `BackgroundDetect()` ausgelöst.
@@ -158,7 +166,7 @@ Regular Expression:: Ein „regulärer Ausdruck“. Im Falle des Dialplans (xref
 Beispiel: `_2[3-6]X`
 +
 RegExe sind in Asterisk nicht die aus Perl bekannten PCREs.
-Eine ausführliche Erklärung finden Sie in xref:einleitung-regex.adoc[Abschnitt 3.3, „Pattern Matching“].
+Eine ausführliche Erklärung finden Sie in xref:pattern-matching.adoc[Abschnitt 3.3, „Pattern Matching“].
 SIP:: Session Initiation Protocol (eigentlich eine Sammlung von Protokollen), in Asterisk ein Channel (xref:glossar.adoc#glossar-channel[Channel]).
 TCP:: Transmission Control Protocol. Eine Protokollschicht über IP (xref:glossar.adoc#glossar-ip[IP]), die sicherstellt, dass bei der Übertragung keine IP-Pakete verloren gehen, was z. B. für HTTP wichtig ist, damit eine vollständige Übertragung gewährleistet ist.
 ToS:: Type of Service. Eine Form von Traffic Shaping. Manche Router beachten solche Flags in IP-Paketen (xref:glossar.adoc#glossar-ip[IP]), die dazu dienen, bestimmten Diensten (z. B. Telefongesprächen) Priorität gegenüber anderen (z. B. Dateiübertragungen) zu geben und damit die QoS (xref:glossar.adoc#glossar-qos[QoS]) zu verbessern. Kann in Asterisk bei einigen Channels (xref:glossar.adoc#glossar-channel[Channel]) eingestellt werden.

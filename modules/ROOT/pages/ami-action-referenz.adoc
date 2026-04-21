@@ -1,0 +1,68 @@
+[[ami-action-referenz]]
+= AMI-Befehle
+:description: AMI-Actions in Asterisk: Login, Originate, Hangup, PJSIPShowEndpoints und Queue-Steuerung.
+
+_Befehle („Actions") auf dem Asterisk Manager Interface (AMI)_
+
+[IMPORTANT]
+====
+Die alten Auflagen listeten jeden AMI-Befehl als eigene Seite. Für
+die Evergreen-Ausgabe ist diese Liste kompaktiert — die jeweils
+aktuelle, vollständige Referenz steht in der offiziellen
+Dokumentation unter https://docs.asterisk.org sowie direkt im CLI
+mit `manager show commands`.
+====
+
+== Die wichtigsten Actions
+
+[cols="1,3"]
+|===
+| `Login` / `Logoff` | Session-Handling
+| `Ping` | Keepalive
+| `Command` | Beliebigen CLI-Befehl ausführen (braucht `command`-Recht)
+| `CoreSettings` / `CoreStatus` / `CoreShowChannels` | Informationen über Asterisk und laufende Channels
+| `Originate` | Einen ausgehenden Anruf starten
+| `Hangup` | Einen Channel auflegen
+| `Redirect` | Einen Channel an eine andere Extension umleiten
+| `Bridge` | Zwei Channels verbinden
+| `Park` / `ParkedCalls` | Parkplätze verwalten
+| `Status` | Alle Channels abfragen
+| `Getvar` / `Setvar` | Channel-Variablen lesen/schreiben
+| `DBGet` / `DBPut` / `DBDel` / `DBDelTree` | AstDB
+| `ExtensionState` | Status einer Extension (Hint)
+| `Monitor` / `StopMonitor` / `PauseMonitor` / `UnpauseMonitor` / `ChangeMonitor` | Mitschnitt steuern
+| `QueueAdd` / `QueueRemove` / `QueuePause` / `QueueStatus` / `QueueSummary` / `Queues` | Queue-Management
+| `UserEvent` | Eigene Events aus dem Dialplan
+| `GetConfig` / `GetConfigJSON` / `UpdateConfig` / `ListCategories` / `CreateConfig` | Konfigurations-Dateien lesen/schreiben
+| `Events` | Event-Subscription
+| `WaitEvent` | Auf das nächste Event warten (für blockierende Clients)
+| `Reload` | Konfiguration neu laden
+| `ModuleCheck` / `ModuleLoad` | Module anzeigen und laden
+| `MailboxCount` / `MailboxStatus` | Voicemail-Status
+| `ConfbridgeList` / `ConfbridgeKick` / `ConfbridgeMute` / `ConfbridgeUnmute` / `ConfbridgeLock` / `ConfbridgeUnlock` | ConfBridge-Steuerung
+| `PJSIPShowEndpoints` / `PJSIPShowEndpoint` / `PJSIPShowContacts` / `PJSIPShowRegistrationsOutbound` | PJSIP-Status
+|===
+
+== Deprecated / entfernt
+
+[cols="1,3"]
+|===
+| `MeetmeList` / `MeetmeMute` / `MeetmeUnmute` | Durch `Confbridge*` ersetzt
+| `SIPpeers` / `SIPshowpeer` / `SIPqualifypeer` / `SIPshowregistry` / `SIPnotify` | chan_sip — durch PJSIP-Actions ersetzt
+| `ZapDialOffhook` / `ZapDNDon` / `ZapDNDoff` / `ZapHangup` / `ZapRestart` / `ZapShowChannels` / `ZapTransfer` | Zap ist längst DAHDI — benutzen Sie die `DAHDI*`-Actions
+| `AgentCallbackLogin` | entfernt
+| `JabberSend` | entfernt
+|===
+
+== Debug- und Nachschlage-Werkzeug
+
+Im laufenden Asterisk:
+
+[source,shell]
+----
+debian*CLI> manager show commands          ; alle Actions auflisten
+debian*CLI> manager show command <Action>  ; Details einer Action
+----
+
+Für die AMI-Spec siehe auch
+https://docs.asterisk.org/API_Documentation/Manager_Interface/.

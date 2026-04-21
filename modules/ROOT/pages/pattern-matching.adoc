@@ -1,0 +1,245 @@
+[[pattern-matching]]
+= Pattern Matching
+:description: Pattern Matching in Asterisk: Wie _XXX, _0X. und andere Pattern die Wahl von Extensions steuern.
+
+Mit unserem bisher erworbenen Wissen müssten wir pro Rufnummer eine
+eigene Extension schreiben. Das zieht schon nach kurzer Zeit sehr lange
+und fehleranfällige Dialpläne nach sich. Sollen beispielsweise die
+Rufnummern 100 bis 109 jeweils den Sprachbaustein `hello-world`
+abspielen, sähe die `extensions.conf` so aus:
+
+[source]
+----
+[apfelmus]
+exten => 100,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+exten => 101,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+; ... und so weiter bis 109
+----
+
+Mit einem Pattern (in Form eines einfachen regulären Ausdrucks) wird
+das kompakter:
+
+[source]
+----
+[apfelmus]
+exten => _10X,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+Das Pattern `_10X` matcht alle Ziffernfolgen von 100 bis 109.
+
+[IMPORTANT]
+====
+Man benutzt im Asterisk-Jargon das englische Verb _match_ und das
+Substantiv _Pattern_. "Pattern" heißt "Suchmuster", "match" "passt
+zu". Beispiel: Das Pattern `_10X` matcht die Nummer 105 — aber nicht
+die 110.
+====
+
+[NOTE]
+====
+Asterisk-Patterns sind *nicht* identisch mit den regulären Ausdrücken
+aus Perl, Python oder grep. Sie sind eine telefoniespezifische
+Variante mit festen Zeichen (`X`, `Z`, `N`, `.`, `!`) und
+eckigen-Klammern-Mengen. Wer sich daran gewöhnt hat, kennt die
+Syntax aus.
+====
+
+[[regular-expression-syntax]]
+== Syntax
+
+Ein Pattern wird immer mit einem Unterstrich (`_`) eingeleitet:
+
+[source]
+----
+exten => _PATTERN,Priorität,Applikation
+----
+
+Ein Pattern kann aus folgenden Elementen bestehenfootnote:[Es gibt
+noch weitere Elemente, die im deutschen Sprachraum kaum Anwendung
+finden und hier nicht aufgeführt sind.]:
+
+`[ABC]`:: Die Ziffern A, B und C. Beispiel für die Zahlen 34, 37 und 38:
++
+[source]
+----
+exten => _3[478],1,NoOp(Test)
+----
+`[A-B]`:: Beliebige Ziffer von A bis B. Beispiel für 31 bis 35:
++
+[source]
+----
+exten => _3[1-5],1,NoOp(Test)
+----
++
+(`[25-8]` matcht 2, 5, 6, 7, 8.)
+`X`:: Beliebige Ziffer von 0 bis 9. Beispiel für 300 bis 399:
++
+[source]
+----
+exten => _3XX,1,NoOp(Test)
+----
+`Z`:: Beliebige Ziffer von 1 bis 9. Beispiel für 31 bis 39:
++
+[source]
+----
+exten => _3Z,1,NoOp(Test)
+----
+`N`:: Beliebige Ziffer von 2 bis 9. Beispiel für 32 bis 39:
++
+[source]
+----
+exten => _3N,1,NoOp(Test)
+----
+`.`:: Eine oder mehrere beliebige Ziffer(n). Beispiel für alle Nummern, die mit 0 beginnen:
++
+[source]
+----
+exten => _0.,1,NoOp(Test)
+----
++
+[NOTE]
+====
+Das Pattern `_.` sollten Sie *nicht* verwenden — es matcht auch auf
+besondere Extensions wie `i`, `t` oder `h`. Benutzen Sie stattdessen
+`_X.`.
+====
+`!`:: Wie `.`, aber mit Null oder mehr Ziffern — für "overlap dialing". Wird in der Praxis selten gebraucht.
+
+[IMPORTANT]
+====
+Ein beliebter Fehler ist, am Anfang des Patterns den Unterstrich `_`
+zu vergessen. Für Asterisk ist `XXX` eine gültige, wörtliche
+Extension (SIP kennt auch Buchstaben in Adressen). Es gibt also
+keine Fehlermeldung — das Pattern matcht aber auch nie, weil Asterisk
+es als wörtliche Extension `XXX` interpretiert.
+====
+
+[[dialplan-show]]
+== Testen mit `dialplan show`
+
+Nehmen wir folgenden Dialplan:
+
+[source]
+----
+[meine-telefone]
+exten => 23,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+Im CLI (verbinden mit `asterisk -r`) zeigt `dialplan show` den
+geladenen Dialplan an:
+
+[source,shell]
+----
+debian*CLI> dialplan show
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+...
+-= X extensions (Y priorities) in Z contexts. =-
+----
+
+Mit `dialplan show meine-telefone` zeigen Sie einen einzelnen
+Context, mit `dialplan show 23@meine-telefone` die Extension 23
+innerhalb dieses Contexts. Wenn Sie nur die Nummer kennen und nicht
+den Context, benutzen Sie `dialplan show 23@`:
+
+[source,shell]
+----
+debian*CLI> dialplan show 23@
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()
+                    2. Playback(hello-world)
+                    3. Hangup()
+-= 1 extension (3 priorities) in 1 context. =-
+----
+
+Erweitern wir den Dialplan um einen weiteren Context:
+
+[source]
+----
+[meine-telefone]
+exten => 23,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+[abteilung-z]
+exten => _2X,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+Nach `dialplan reload` führt `dialplan show 23@` beide Treffer auf.
+
+[[wann-matcht-welches-pattern]]
+== Wann matcht welches Pattern?
+
+Das Pattern Matching in Asterisk ist bei großen Dialplänen trickreich.
+Asterisk geht den Context *nicht* stumpf von oben nach unten durch,
+sondern priorisiert nach Genauigkeit: Je exakter ein Pattern passt,
+desto eher wird es ausgewählt. Asterisk durchsucht dazu den ganzen
+Context, bevor es entscheidet.
+
+Beispiel:
+
+[source]
+----
+[verkauf]
+exten => _12X.,1,NoOp(12X)
+exten => 12345,1,NoOp(12345)
+exten => _1234.,1,NoOp(1234.)
+----
+
+Welches Pattern matcht für die 12345? `dialplan show 12345@verkauf`
+zeigt alle Treffer, sortiert nach Genauigkeit — mit dem genauesten
+ganz oben:
+
+[source,shell]
+----
+debian*CLI> dialplan show 12345@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '12345' =>        1. NoOp(12345)
+  '_1234.' =>       1. NoOp(1234.)
+  '_12X.' =>        1. NoOp(12X)
+-= 3 extensions (3 priorities) in 1 context. =-
+----
+
+Die exakte Extension `12345` gewinnt. Für die 12346 fällt der
+12345-Eintrag aus der Liste, `_1234.` gewinnt:
+
+[source,shell]
+----
+debian*CLI> dialplan show 12346@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =>       1. NoOp(1234.)
+  '_12X.' =>        1. NoOp(12X)
+-= 2 extensions (2 priorities) in 1 context. =-
+----
+
+[IMPORTANT]
+====
+Es ist egal, in welcher Reihenfolge Patterns im Dialplan stehen.
+Entscheidend ist, wie genau ein Pattern matcht.
+====
+
+[WARNING]
+====
+Das Pattern `_.` matcht *immer* und vor allem anderen, auch vor
+expliziten Extensions. Benutzen Sie stattdessen `_X.` — sonst laufen
+alle Anrufe in diese "Restesammel"-Extension, egal was Sie sonst im
+Context stehen haben.
+====
+
+`dialplan show <nummer>@<context>` ist das wichtigste Debug-Werkzeug
+für Patterns. Wenn ein Anruf nicht ankommt, wo Sie ihn erwartet
+hätten, ist das der erste Befehl.

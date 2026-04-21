@@ -1,0 +1,49 @@
+[[dialplan]]
+= Dialplan – die Grundlagen
+:description: Asterisk-Dialplan: Grundlagen zu extensions.conf, Context, Extension und Priorität.
+
+In diesem Kapitel:
+
+* xref:context.adoc[Context]
+** xref:context.adoc#context-syntax[Syntax]
+* xref:extension.adoc[Extension]
+** xref:extension.adoc#extension-syntax[Syntax]
+** xref:extension.adoc#grundlegende-applikationen[Grundlegende Applikationen]
+** xref:extension.adoc#die-prioritaet[Priorität]
+* xref:pattern-matching.adoc[Pattern Matching]
+** xref:pattern-matching.adoc#regular-expression-syntax[Syntax]
+** xref:pattern-matching.adoc#dialplan-show[Testen mit `dialplan show`]
+** xref:pattern-matching.adoc#wann-matcht-welches-pattern[Wann matcht welches Pattern?]
+* xref:dialplan-includes.adoc[Includes im Dialplan]
+** xref:dialplan-includes.adoc#include-syntax[Syntax]
+** xref:dialplan-includes.adoc#include-beispiel[Beispiel]
+** xref:dialplan-includes.adoc#reihenfolge-beim-include[Die Reihenfolge beim Include]
+** xref:dialplan-includes.adoc#include-zeitgesteuert[Includes zeitgesteuert]
+* xref:exten-variable-callerid.adoc[Die Variable $\{EXTEN} und die Funktion $\{CALLERID(num)}]
+** xref:exten-variable-callerid.adoc#systemvariable-exten[$\{EXTEN}]
+** xref:exten-variable-callerid.adoc#funktion-callerid-num[$\{CALLERID(num)}]
+
+In diesem Kapitel beschäftigen wir uns mit den Grundlagen des
+Dialplans. Wir benutzen das englische Wort _Dialplan_ und nicht das
+deutsche _Wählplan_, weil es auch Asterisk-intern immer wieder benutzt
+wird.footnote:[Zur Definition des Begriffes _Dialplan_ gibt es in der
+Telefoniewelt immer wieder beinahe religiös anmutende Diskussionen. In
+diesem Buch wird das Wort _Dialplan_ in der im Asterisk-Umfeld üblichen
+Bedeutung verwendet.]
+
+Die zentrale Dialplan-Datei ist `/etc/asterisk/extensions.conf`. Dort
+werden Contexte, Extensions und Prioritäten deklariert. Historisch gab
+es daneben noch die `extensions.ael` (AEL — Asterisk Extension
+Language). AEL existiert im Quellbaum zwar weiterhin, wird aber kaum
+noch gepflegt, in fast keiner modernen Installation verwendet und hier
+nur noch als Kapitel mit Abgrenzungshinweisen behandelt (siehe
+xref:ael-legacy.adoc[_AEL_]). Für alles Neue ist die `extensions.conf` der
+richtige Ort.
+
+[NOTE]
+====
+Wenn Sie irgendwo im Netz noch auf AEL-basierte Tutorials stoßen: Die
+Grundkonzepte (Context, Extension) sind identisch. Die AEL-Syntax
+sieht zwar C-artiger aus, bringt aber keinen Vorteil gegenüber einer
+sauberen `extensions.conf` mit `same => n,...`.
+====

@@ -1,0 +1,91 @@
+[[deutsche-sprachprompts]]
+= Deutsche Sprachbausteine
+:description: Deutsche Sprach-Prompts für Asterisk installieren und konfigurieren.
+
+Bei einer Standardinstallation liegen im Verzeichnis
+`/var/lib/asterisk/sounds/en/` die englischen Original-Prompts von
+Sangoma (dem Projektträger hinter Asterisk; _Prompt_ ist der
+Asterisk-Begriff für _Sprachbaustein_).
+
+Deutsche Prompts werden von Sangoma nicht mitgeliefert — Sie müssen sie
+separat beziehen. Die beiden bekanntesten Quellen sind:
+
+* *schwarzer.it* (ehemals AMOOMA):
+  https://www.schwarzer.it/asterisk-sounds-de/[schwarzer.it/asterisk-sounds-de]
+  — kostenlose deutsche Prompts unter GPL, in mehreren Audioformaten
+  (ulaw, alaw, g722, gsm, wav).
+* Kommerzielle Prompt-Sätze professioneller Sprecher, z. B. von
+  VoIP-Distributoren. Qualitativ oft einen Ticken sauberer als die
+  Community-Version.
+
+[[deutsche-sprachbausteine-download]]
+== Installation deutscher Sprachprompts
+
+Laden Sie das passende Archiv herunter und entpacken Sie es in das
+Sprachverzeichnis:
+
+[source,shell]
+----
+# mkdir -p /var/lib/asterisk/sounds/de
+# cd /var/lib/asterisk/sounds/de
+# tar -xzf /pfad/zum/asterisk-sounds-de-X.Y.Z.tar.gz
+# chown -R asterisk:asterisk .
+----
+
+[NOTE]
+====
+Seit Jahren ist die Verzeichnisstruktur `/var/lib/asterisk/sounds/<lang>/`
+Standard (d. h. `languageprefix=yes` in `asterisk.conf`). Sämtliche
+Prompts einer Sprache liegen also gemeinsam unter `sounds/de/`. Nicht
+verwechseln mit der historischen Struktur `sounds/de/` *und*
+`sounds/digits/de/`, die es in Asterisk 1.2 gab.
+====
+
+[[deutsche-sprachbausteine-konfiguration]]
+== Konfiguration der deutschen Prompts
+
+Die Sprache wird je Endpoint (oder global) gesetzt. In `pjsip.conf`:
+
+[source]
+----
+[global]
+type=global
+default_outbound_endpoint=default_endpoint
+language=de             ; <-- globaler Default
+
+[2000]
+type=endpoint
+language=de             ; <-- oder pro Endpoint
+; ...
+----
+
+Auch aus dem Dialplan heraus ist das möglich:
+
+[source]
+----
+exten => 1001,1,Set(CHANNEL(language)=de)
+ same => n,Playback(willkommen)
+ same => n,Hangup()
+----
+
+Fehlt der ausgewählte Prompt in der eingestellten Sprache, fällt
+Asterisk automatisch auf die englische Variante zurück.
+
+[[verzeichnisstruktur-sprachbausteine]]
+== Verzeichnisstruktur der Sprachbausteine
+
+Per Default liegen alle Sprachbausteine unter
+`/var/lib/asterisk/sounds/`. Für jede Sprache gibt es ein
+Unterverzeichnis:
+
+[source,shell]
+----
+/var/lib/asterisk/sounds/en/          # englisch (default)
+/var/lib/asterisk/sounds/en/digits/
+/var/lib/asterisk/sounds/de/          # deutsch
+/var/lib/asterisk/sounds/de/digits/
+----
+
+Im `digits/`-Unterordner liegen die Einzeltöne für Zahlen, Uhrzeiten
+und Wochentage, die Applikationen wie `SayNumber()`, `SayDigits()`
+oder `SayUnixTime()` zusammenbauen.

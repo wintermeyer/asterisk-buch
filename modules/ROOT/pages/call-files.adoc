@@ -1,0 +1,126 @@
+[[call-files]]
+= Call Files
+:description: Call Files in Asterisk: Anrufe durch Datei-Drop im Spool-Verzeichnis initiieren.
+
+Call Files lassen sich am ehesten mit Batch-Dateien vergleichen. Sie
+werden ins Verzeichnis `/var/spool/asterisk/outgoing/`
+verschoben und dort dann von Asterisk abgearbeitet.
+
+[IMPORTANT]
+====
+Ein `mv` (_move_) ist im
+Dateisystem ein atomarer Vorgang und deshalb für Call Files ideal
+geeignet. Bei einem `cp` (_copy_)
+wird dagegen die Datei Zeile für Zeile kopiert. Es kann also
+vorkommen, dass ein halbfertig kopiertes Call File von Asterisk
+bereits abgearbeitet wird.
+====
+
+Der ganze Mechanismus lässt sich anhand eines Beispiels besser
+erklären. Nehmen wir an, dass an einer Asterisk-Anlage ein SIP-Telefon mit
+der Nummer 2000 angemeldet ist. Weiterhin haben wir im Dialplan die
+folgende Extension eingetragen:
+
+[source]
+----
+[call-file-test]
+exten => 10,1,Answer()
+exten => 10,n,Wait(1)
+exten => 10,n,Playback(hello-world)
+exten => 10,n,Wait(1)
+exten => 10,n,Hangup()
+----
+
+Jetzt generieren wir im Verzeichnis `/tmp/` die
+Datei `ein-test.call` mit folgendem
+Inhalt:
+
+[source]
+----
+Channel: SIP/2000
+MaxRetries: 2
+RetryTime: 60
+WaitTime: 30
+Context: call-file-test
+Extension: 10
+----
+
+Danach verschieben wir diese Datei mit `mv
+/tmp/ein-test.call /var/spool/asterisk/outgoing/`:
+
+[source,shell]
+----
+root@molokai:~> mv /tmp/ein-test.call /var/spool/asterisk/outgoing/
+----
+
+Jetzt passiert Folgendes:
+
+* Asterisk überprüft ständig, ob sich im Verzeichnis `/var/spool/asterisk/outgoing/` ein Call File befindet, und arbeitet dieses ab, sobald es da ist.
+* Asterisk öffnet eine Verbindung zum Telefon `SIP/2000`. Wenn das Telefon besetzt sein oder den Anruf nicht annehmen sollte, dann versucht Asterisk das Gleiche noch zweimal (siehe _`MaxRetries`_).
+* Nimmt der Benutzer des Telefons 2000 den Anruf entgegen, dann startet Asterisk im Context _`[call-file-test]`_ die Abarbeitung der Extension `10`. Es wird also der Sprachbaustein `hello-world` abgespielt.
+
+[[call-file-parameter]]
+== Parameter
+
+Im Call File können folgende Parameter angegeben
+werden:
+
+`Channel: <channel>`:: Der zu benutzende Channel. Dabei gilt die gleiche Syntax wie beim `Dial()`-Befehl (siehe Abschnitt C.38, „`Dial()`“).
+`Callerid: <callerid>`:: Die zu benutzende Caller-ID
+`WaitTime: <number>`:: Die Anzahl an Sekunden, die das System auf die Annahme des Anrufs warten soll. Wird der Wert nicht angegeben, dann ist der Default 45 Sekunden.
+`MaxRetries: <number>`:: Die Anzahl der weiteren Wählversuche (falls besetzt oder nicht erreichbar). Wird dieser Parameter nicht angegeben, ist der Defaultwert 0 (es wird also nur einmal versucht, den Channel aufzubauen).
+`RetryTime: <number>`:: Die Anzahl an Sekunden, die bis zum nächsten Wählversuch gewartet wird. Wird dieser Parameter nicht angegeben, ist der Defaultwert 300 Sekunden.
+`Account: <account>`:: Der Abrechnungscode für Ihr CDR-System
+`Context: <context>`:: Der Ziel-Context
+`Extension: <exten>`:: Die Ziel-Extension, die bei Erfolg aufgerufen wird
+`Priority: <priority>`:: Die Zielpriorität. Wenn sie nicht angegeben ist, dann ist der Default-Wert 1.
+`Setvar: <var=value>`:: Mit _`Setvar:`_ können beliebig viele Channel-Variablen definiert werden.
+`Archive: <yes|no>`:: Normalerweise werden Call Files nach der Abarbeitung direkt gelöscht. Ist _`Archive: yes`_ gesetzt, werden die Call Files aber stattdessen ins Verzeichnis `/var/spool/asterisk/outgoing_done/` verschoben. Dabei wird Asterisk noch eine Zeile zum Call File hinzufügen. Diese beschreibt das Ergebnis des Call Files und sieht so aus:
++
+[source]
+----
+Status: <Expired|Completed|Failed>
+----
+
+[[call-file-zukunft]]
+== Call Files in der Zukunft aufrufen
+
+Beim Aufruf eines Call Files vergleicht Asterisk die Zeit der
+letzten Änderung der Datei mit der aktuellen Uhrzeit. Liegt dieser
+Eintrag in der Zukunft, wird das Call File noch nicht abgearbeitet. So
+kann man leicht Call Files zeitgesteuert abarbeiten.
+
+[[call-file-weckruf]]
+== Beispiel Weckruf
+
+Nehmen wir an, ein Hotel möchte über Asterisk ein einfaches
+Weckrufsystem erstellen. Kunden sollen einen Weckruf über die
+Servicerufnummer *77* aktivieren können. Nach der *77* soll das genaue
+Datum und die Weckuhrzeit gewählt werden.
+
+[source]
+----
+[hotel-intern]
+exten => _*77*XXXXXXXXXXXX,1,Answer()
+exten => _*77*XXXXXXXXXXXX,n,Set(Jahr=${EXTEN:4:4})
+exten => _*77*XXXXXXXXXXXX,n,Set(Monat=${EXTEN:8:2})
+exten => _*77*XXXXXXXXXXXX,n,Set(Tag=${EXTEN:10:2})
+exten => _*77*XXXXXXXXXXXX,n,Set(Stunden=${EXTEN:12:2})
+exten => _*77*XXXXXXXXXXXX,n,Set(Minuten=${EXTEN:14:2})
+exten => _*77*XXXXXXXXXXXX,n,NoOp(Weckruf soll fuer die Rufnummer ${CALLERID(num)} soll um ${Stunden}:${Minuten} Uhr am ${Tag}.${Monat}.${Jahr} erfolgen.)
+exten => _*77*XXXXXXXXXXXX,n,System(echo -e "Channel: SIP/${CALLERID(num)}\\nContext: Weckruf\\nExtension: 23" > /tmp/${UNIQUEID}.call)
+exten => _*77*XXXXXXXXXXXX,n,System(touch -t ${Jahr}${Monat}${Tag}${Stunden}${Minuten} /tmp/${UNIQUEID}.call)
+exten => _*77*XXXXXXXXXXXX,n,System(mv /tmp/${UNIQUEID}.call /var/spool/asterisk/outgoing/)
+exten => _*77*XXXXXXXXXXXX,n,Playback(rqsted-wakeup-for)
+exten => _*77*XXXXXXXXXXXX,n,SayNumber(${Stunden})
+exten => _*77*XXXXXXXXXXXX,n,SayNumber(${Minuten})
+exten => _*77*XXXXXXXXXXXX,n,Playback(digits/oclock)
+exten => _*77*XXXXXXXXXXXX,n,Hangup()
+
+[Weckruf]
+exten => 23,1,Answer()
+exten => 23,n,Wait(1)
+exten => 23,n,Playback(this-is-yr-wakeup-call)
+exten => 23,n,Wait(1)
+exten => 23,n,Hangup()
+----

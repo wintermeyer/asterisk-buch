@@ -1,11 +1,24 @@
 [[voicemail-einleitung]]
 = Einleitung
+:description: Einführung in das Asterisk-Voicemail-System (app_voicemail und app_minivm).
 
-In diesem Kapitel beschäftigen wir uns mit den Möglichkeiten des
-eingebauten Voicemail-Systems
-von Asterisk. Dies ist nicht mit einem _Interactive Voice
-Response System_ (IVR) zu verwechseln, dem Thema von xref:kapitel-ivr.adoc[Kapitel 14, _Interactive-Voice-Response-Systeme (IVR)_].
+In diesem Kapitel geht es um das in Asterisk eingebaute
+*Voicemail-System* — nicht zu verwechseln mit einem _Interactive
+Voice Response System_ (IVR), siehe dafür
+xref:ivr.adoc[Interactive-Voice-Response-Systeme (IVR)].
 
-Da jede Telefonanlage einen Anrufbeantworter (oder auf
-Neudeutsch: ein Voicemail-System)footnote:[In diesem Buch wird das Wort _Voicemail-System_ oder kurz _Voicemail_ anstelle von _Anrufbeantworter_ benutzt. Ein Anrufbeantworter ist nach allgemeinem Verständnis eher ein schwarzer Kasten mit einem Kassettenrekorder neben dem Telefon. Ein Voicemail-System bietet viel mehr Möglichkeiten als ein Anrufbeantworter im herkömmlichen Sinne.] benötigt, haben die Asterisk-Entwickler ein solches System
-als Grundausstattung eingebaut.footnote:[Das Voicemail-System wurde übrigens von den Asterisk-Entwicklern scherzhaft _Comedian Voicemail_ genannt und meldet sich im englischen Original auch so.].
+Da jede Telefonanlage einen Anrufbeantworter (oder auf Neudeutsch:
+ein Voicemail-System)footnote:[In diesem Buch wird das Wort
+_Voicemail-System_ oder kurz _Voicemail_ anstelle von
+_Anrufbeantworter_ benutzt. Ein Anrufbeantworter ist nach allgemeinem
+Verständnis eher ein schwarzer Kasten mit einem Kassettenrekorder
+neben dem Telefon. Ein Voicemail-System bietet deutlich mehr
+Möglichkeiten.] benötigt, liefert Asterisk eines als Grundausstattung
+mit. Das Modul heißt `app_voicemail` und wurde von den
+Asterisk-Entwicklern scherzhaft _Comedian Voicemail_ genannt; es
+meldet sich im englischen Original auch so.
+
+Neben `app_voicemail` existiert `app_minivm` als schlankere
+Alternative, die ohne zentrale Mailboxverwaltung arbeitet und sich
+gut in eigene Workflows integrieren lässt — dazu mehr im Abschnitt
+xref:minivm.adoc[Mini-VoiceMail (MiniVM)].

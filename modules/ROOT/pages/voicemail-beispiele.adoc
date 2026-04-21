@@ -1,5 +1,6 @@
 [[voicemail-beispiele]]
 = Beispielanwendungen
+:description: Voicemail-Beispielkonfigurationen für Familie und Firma in Asterisk.
 
 Die folgenden Beispiele geben einen schnellen Überblick über
 typische Konstellationen. Anschließend (in xref:voicemail-applikationen.adoc[Abschnitt 13.3, „Applikationen“]) gehen wir auf die Besonderheiten und
@@ -59,7 +60,7 @@ auf die Voicemailbox verwiesen:
 ; Wenn nach 30 Sekunden niemand abnimmt, geht das Gespräch 
 ; auf die Voicemailbox, das Gleiche passiert bei besetzt:
 exten => _20[0-3],1,Set(ZIELNR=${EXTEN})
-exten => _20[0-3],n,Dial(SIP/${EXTEN},30)
+exten => _20[0-3],n,Dial(PJSIP/${EXTEN},30)
 exten => _20[0-3],n,Goto(s-${DIALSTATUS},1)  ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
 exten => s-NOANSWER,1,VoiceMail(${ZIELNR},u) ; Ansage "nicht erreichbar"
 exten => s-BUSY,1,VoiceMail(${ZIELNR},b)     ; Ansage "besetzt"
@@ -71,24 +72,29 @@ exten => _s-.,1,Goto(s-NOANSWER,1)           ; alles andere wie nicht erreichbar
 exten => 250,1,VoiceMailMain(${CALLERID(num)})
 ----
 
-Schöner wäre es so:
+Schöner wäre es mit einem `Gosub()`-Unterprogramm statt der
+klassischen (deprecated) `Macro()`-Applikation:
 
 [source]
 ----
 [familie-meier]
-exten => _20[0-3],1,Macro(normal|SIP/${EXTEN}|${EXTEN})
+exten => _20[0-3],1,Gosub(sub-normal,s,1(PJSIP/${EXTEN},${EXTEN}))
 
-exten => 250,1,VoiceMailMain(${CALLERID(num)})
+exten => 250,1,VoiceMailMain(${CALLERID(num)}@default)
 
-[macro-normal];
-;  ${ARG1} - anzurufendes(s) Gerät(e) (z. B. SIP/123&SIP/124)
-;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
-exten => s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
-exten => s,n,Goto(s-${DIALSTATUS},1)        ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
-exten => s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Ansage "nicht erreichbar"
-exten => s-BUSY,1,VoiceMail(${ARG2},b)      ; Ansage "besetzt"
-exten => s-ANSWER,1,Hangup()                ; zur Sicherheit nach dem Gespräch auflegen
-exten => _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln
+[sub-normal]
+;  ${ARG1} - anzurufendes(s) Gerät(e) (z. B. PJSIP/123&PJSIP/124)
+;  ${ARG2} - Mailbox (oft gleich ${EXTEN} der rufenden Extension)
+exten => s,1,Dial(${ARG1},30)                       ; max. 30 Sekunden klingeln
+ same => n,Goto(s-${DIALSTATUS},1)                  ; zum Status (NOANSWER, BUSY, ...)
+ same => n,Return()
+
+exten => s-NOANSWER,1,VoiceMail(${ARG2}@default,u)  ; Ansage "nicht erreichbar"
+ same => n,Return()
+exten => s-BUSY,1,VoiceMail(${ARG2}@default,b)      ; Ansage "besetzt"
+ same => n,Return()
+exten => s-ANSWER,1,Return()
+exten => _s-.,1,Goto(s-NOANSWER,1)                  ; alles andere wie "nicht erreichbar"
 ----
 
 [[voicemail-beispiele-firma]]
@@ -212,53 +218,56 @@ include => voicemailsystem-komfort
 
 [sonstige]
 
-[macro-simple];
-;  ${ARG1} - anzuklingelnde(s) Gerät(e) (z. B. SIP/123&SIP/124)
-;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
-exten => s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
-exten => s,n,Goto(s-${DIALSTATUS},1)        ; je nach Status springen (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
-exten => s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Voicemail mit Ansage "nicht erreichbar"
-exten => s-BUSY,1,VoiceMail(${ARG2},b)      ; Voicemail mit Ansage "besetzt"
-exten => s-ANSWER,1,Hangup()                ; zur Sicherheit nach Gespräch auflegen
-exten => _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln
+[sub-simple]
+;  ${ARG1} - anzuklingelnde(s) Gerät(e) (z. B. PJSIP/123&PJSIP/124)
+;  ${ARG2} - Mailbox (oft gleich der rufenden Extension)
+exten => s,1,Dial(${ARG1},30)                        ; max. 30 Sekunden klingeln
+ same => n,Goto(s-${DIALSTATUS},1)
+
+exten => s-NOANSWER,1,VoiceMail(${ARG2}@default,u)
+ same => n,Return()
+exten => s-BUSY,1,VoiceMail(${ARG2}@default,b)
+ same => n,Return()
+exten => s-ANSWER,1,Return()
+exten => _s-.,1,Goto(s-NOANSWER,1)
 
 [interne-gespraeche]
 ; Wenn der Hausmeister nicht ans Telefon geht, wird
 ; das Telefonat auf die Voicemailbox 150 geleitet:
-exten => _15X,1,Macro(simple|SIP/${EXTEN}|150)
+exten => _15X,1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},150))
 
 ; Die IT hat normale Voicemailboxen:
-exten => _16X,1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+exten => _16X,1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},${EXTEN}))
 
 ; Die beiden Geschäftsführer haben eine eigene Voicemailbox:
-exten => _20[1-2],1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+exten => _20[1-2],1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},${EXTEN}))
 
 ; Das Sekretariat hat eine Gruppenmailbox:
-exten => _2[3-6]X,1,Macro(simple|SIP/${EXTEN}|804)
+exten => _2[3-6]X,1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},804))
 
 ; Der Verkauf Inland hat eine Gruppenmailbox:
-exten => _3[0-4]X,1,Macro(simple|SIP/${EXTEN}|802)
+exten => _3[0-4]X,1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},802))
 
 ; Der Verkauf Ausland hat eine Gruppenmailbox:
-exten => _3[5-9]X,1,Macro(simple|SIP/${EXTEN}|803)
+exten => _3[5-9]X,1,Gosub(sub-simple,s,1(PJSIP/${EXTEN},803))
 
 ; Alle anderen erhalten keine Voicemailbox.
-exten => _[4-5]XX,1,Dial(SIP/${EXTEN},30)
+exten => _[4-5]XX,1,Dial(PJSIP/${EXTEN},30)
 
 [voicemailsystem-komfort]
-exten => 800,1,VoiceMailMain(${CALLERID(num)})
+exten => 800,1,VoiceMailMain(${CALLERID(num)}@default)
 
 [voicemailsystem-normal]
 exten => 801,1,VoiceMailMain()
 
 [voicemailsystem-hausmeister]
-exten => 800,1,VoiceMailMain(150)
+exten => 800,1,VoiceMailMain(150@default)
 
 [voicemailsystem-verkauf-national]
-exten => 800,1,VoiceMailMain(802,s)
+exten => 800,1,VoiceMailMain(802@default,s)
 
 [voicemailsystem-verkauf-ausland]
-exten => 800,1,VoiceMailMain(803,s)
+exten => 800,1,VoiceMailMain(803@default,s)
 ----
 
 [[voicemail-beispiele-firma-besonderheiten]]

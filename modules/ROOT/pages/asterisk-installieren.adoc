@@ -1,0 +1,70 @@
+[[asterisk-installieren]]
+= Asterisk auf dem Server installieren
+:description: Asterisk auf Debian oder Ubuntu installieren — aus dem Paketmanager oder als Source-Build.
+
+Für die Installation haben Sie zwei Wege: das *Distributionspaket* oder
+das *Selbstkompilieren aus den Quellen*. Für einen ersten
+Hello-World-Test reicht das Distributionspaket, sofern es für Ihre
+Linux-Version überhaupt existiert.
+
+[IMPORTANT]
+====
+Ab Debian 13 (trixie) ist `asterisk` *nicht mehr im Repository* —
+dort müssen Sie gleich aus der Quelle kompilieren. Unter Ubuntu-LTS
+und älteren Debian-Versionen (bis 12/bookworm) funktioniert der
+Paketweg weiterhin.
+====
+
+Unter Ubuntu-LTS oder Debian 12:
+
+[source,shell]
+----
+# apt update
+# apt install -y asterisk
+# systemctl status asterisk
+----
+
+Damit haben Sie einen lauffähigen Asterisk-Server inklusive
+Default-Konfiguration, Soundprompts und `systemd`-Service.
+
+Unter Debian 13 oder wenn Sie die aktuelle LTS-Version benötigen: Folgen
+Sie der ausführlichen Anleitung im
+xref:asterisk-installation-anleitung.adoc[Installations-Anhang] (Abschnitt
+"Installation aus dem Quellcode"). Der Ablauf ist — mit den Vorbereitungen
+— in rund 30 Minuten durch.
+
+[TIP]
+====
+Für einen Testaufbau ist eine VM (z. B. in KVM, Proxmox, VirtualBox
+oder einem Cloud-Account) oder ein Container ideal. Zwei oder drei
+Kerne, 2 GB RAM und 10 GB Platte reichen locker. Die Beispiele in
+diesem Kapitel wurden mit Asterisk 22 LTS aus dem Quellcode getestet.
+====
+
+[WARNING]
+====
+Wenn Sie eine andere Distribution oder einen anderen Installationsweg
+einschlagen und auf Probleme stoßen, probieren Sie zuerst das hier
+aufgeführte Verfahren. Mit einem fertigen Kochrezept arbeitet es sich
+einfacher als in einer unbekannten Umgebung.
+====
+
+[[server-erste-kontrolle]]
+== Erster Kontrollblick im CLI
+
+Nach der Installation verbinden Sie sich direkt mit dem laufenden
+Asterisk-Prozess:
+
+[source,shell]
+----
+# asterisk -rvvv
+Asterisk 22.x.y, Copyright (C) 1999 - ... Sangoma Technologies Corporation and others.
+...
+Connected to Asterisk 22.x.y currently running on debian (pid = 1234)
+debian*CLI>
+----
+
+Der Prompt `debian*CLI>` signalisiert: Sie sind im _Command Line
+Interface_ von Asterisk. Mit `exit` verlassen Sie das CLI, ohne den
+Asterisk-Prozess zu beenden. `core stop now` oder `core stop gracefully`
+fahren den Daemon herunter.

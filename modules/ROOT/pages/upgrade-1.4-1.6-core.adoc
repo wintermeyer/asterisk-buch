@@ -1,8 +1,0 @@
-[[upgrade-1.4-1.6-core]]
-= Kern
-
-* Die Option `languageprefix` in der `asterisk.ael` ist veraltet. Die Verzeichnisstruktur für nicht-englische Sound-Prompts ist jetzt per Default das in Version 1.4 eingeführte neue Format.
-* Im Dialplan kann jetzt auch mit Fließkommazahlen gearbeitet werden.
-* Als Trennzeichen für Parameter, die an Dialplan-Applikationen übergeben werden, ist jetzt nur noch „`,`“ (Komma) erlaubt, nicht mehr „`|`“ (_Pipe_). Wenn innerhalb eines Parameters ein „`,`“ übergeben werden soll, so ist dies mit „`\`“ (_Backslash_) zu escapen, also als „`\,`“ zu schreiben.
-* Die Option „`rotatetimestamp`“ in der `logger.conf` wurde in „`rotatestrategy`“ geändert. Die neue Option unterstützt eine „`rotate`“-Strategie, die die Log-Dateien etwa so rotiert wie der System-Logger.
-* Die „`concise`“-Versionen verschiedener CLI-Befehle sind veraltet. Früher konnten externe Programme (wie etwa Web-GUIs) z. B. „`core show channels concise`“ statt „`core show channels`“ verwenden um, eine Ausgabe zu erhalten, die sich besser parsen ließ. Externe Programme sollen jetzt über das AMIfootnote:[siehe xref:asterisk-manager-api.adoc[Abschnitt 19.3, „Das Manager-Interface (AMI)“\]] mit Asterisk kommunizieren, anstatt direkt `asterisk -rx "Befehl"` auszuführen.

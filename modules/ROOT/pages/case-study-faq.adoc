@@ -1,0 +1,13 @@
+[[case-study-faq]]
+= FAQ
+:description: FAQ zur Asterisk-Case-Study: Kosten, Lohnt sich Asterisk, FreePBX vs. eigener Aufbau.
+
+[cols="2*"]
+|===
+| *F:* | Welche Kosten kommen auf die Apfelmus GmbH zu?
+| *A:* | Das hängt stark von den Entscheidungen ab. Wichtige Kostentreiber:Ausfallsicherheit (einzelne VM, Cold-Standby, Hot-Standby mit Clustering).Endgeräte: SIP-Telefone gibt es ab 30 Euro (Einstieg) bis weit über 300 Euro (Premium-Geräte mit Farbdisplay, Gigabit, WLAN, HD-Audio).Trunk-Kosten beim Provider: Einmalgebühr, monatliche Grundgebühr, Gesprächsminuten.Support und Wartung: intern leisten oder extern einkaufen.Die reine Asterisk-Software ist frei — was die Apfelmus GmbH insgesamt spart, sieht man erst nach 3–5 Jahren im Vergleich zum Wartungsvertrag einer klassischen Telefonanlage.
+| *F:* | Lohnt sich Asterisk für die Apfelmus GmbH überhaupt, oder ist das eine Arbeitsbeschaffungsmaßnahme für die IT?
+| *A:* | Das hängt von den Bedürfnissen der Firma und den Alternativangeboten ab. Klassische TK-Hersteller bieten oft aggressive Rabatte, sobald Asterisk als Alternative ins Spiel kommt — dafür bindet der Vertrag dann meist über mehrere Jahre an einen Lieferanten. Ein Vorteil von Asterisk ist die *Wahlfreiheit beim Support*: Sie können intern arbeiten, einen externen Consultant einkaufen oder den Dienstleister wechseln, ohne das System tauschen zu müssen. Mittel- bis langfristig fahren die meisten Firmen mit Asterisk günstiger — vor allem, wenn sie Erweiterungen (ARI-basierte Automatisierung, WebRTC-Zugang, CRM-Integration) einplanen, die bei klassischen Anlagen teure Zusatzmodule wären.
+| *F:* | Wäre es für die Apfelmus GmbH nicht besser, eine fertige Asterisk-Distribution (FreePBX, FusionPBX, Issabel) zu nehmen?
+| *A:* | Für den Produktivbetrieb einer nicht-technischen Firma: Oft ja. Diese Distributionen bringen eine komfortable Web-Oberfläche, Backup-Mechanismen und Wizards für die gängigen Szenarien. Die Apfelmus GmbH dient in diesem Buch als Lehrbeispiel — wir bauen die Anlage bewusst aus "nackten" Konfigurationsdateien, damit Sie verstehen, was eine Distribution Ihnen im Hintergrund abnimmt. Das zahlt sich aus, sobald Sie über das Standard-Feature-Set hinaus müssen.
+|===

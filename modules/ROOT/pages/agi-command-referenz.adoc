@@ -1,0 +1,75 @@
+[[agi-command-referenz]]
+= AGI-Befehle
+:description: AGI-Befehle in Asterisk: ANSWER, STREAM FILE, GET VARIABLE und mehr.
+
+_Steuerungsbefehle auf der AGI-Schnittstelle_
+
+Ein AGI-Skript kommuniziert mit Asterisk über `stdin`/`stdout`. Die
+hier gelisteten Befehle sind die Pfeile im Köcher: Das Skript schreibt
+einen Befehl nach stdout, Asterisk antwortet mit einer Statuszeile,
+und das Skript wertet sie aus.
+
+[IMPORTANT]
+====
+Frühere Auflagen dieses Buches hatten jede einzelne AGI-Action auf
+einer eigenen Seite. Für die Evergreen-Ausgabe ist die Liste
+kompaktiert — die jeweils aktuelle, vollständige Referenz steht
+direkt im Asterisk-CLI über `agi show commands` oder
+online unter https://docs.asterisk.org.
+====
+
+== Die wichtigsten AGI-Befehle
+
+[cols="1,3"]
+|===
+| Befehl | Beschreibung
+
+| `ANSWER` | Channel abnehmen
+| `HANGUP [channelname]` | Channel auflegen
+| `CHANNEL STATUS [channelname]` | Channel-Status abfragen
+| `GET VARIABLE <name>` | Channel-Variable lesen
+| `SET VARIABLE <name> <value>` | Channel-Variable setzen
+| `GET FULL VARIABLE <expr>` | Variable/Funktion mit Substitution lesen
+| `GET DATA <file> [timeout] [max_digits]` | Ansage abspielen und Ziffern einsammeln
+| `GET OPTION <file> <escape_digits> [timeout]` | Ansage, abbrechbar durch Taste
+| `STREAM FILE <file> <escape_digits>` | Sound-Datei abspielen
+| `CONTROL STREAM FILE <file> <escape_digits> ...` | Sound mit Vor-/Zurückspulen
+| `RECORD FILE <file> <format> <escape_digits> <timeout> ...` | Mitschneiden
+| `RECEIVE CHAR <timeout>` / `RECEIVE TEXT <timeout>` | Text/Zeichen empfangen
+| `SEND IMAGE <image>` / `SEND TEXT <text>` | Bild/Text senden
+| `SET CALLERID <callerid>` | Caller-ID ändern
+| `SET CONTEXT <context>` | Context wechseln (wird nach AGI gewählt)
+| `SET EXTENSION <ext>` | Extension wechseln
+| `SET PRIORITY <prio>` | Priorität wechseln
+| `SET MUSIC <on\|off> [class]` | Musik on Hold
+| `SAY NUMBER <num> <escape_digits>` | Zahl ansagen
+| `SAY DIGITS <digits> <escape_digits>` | Ziffern einzeln ansagen
+| `SAY ALPHA <text> <escape_digits>` | Buchstabieren
+| `SAY PHONETIC <text> <escape_digits>` | Phonetisch buchstabieren
+| `SAY DATE <unixtime> <escape_digits>` | Datum ansagen
+| `SAY TIME <unixtime> <escape_digits>` | Uhrzeit ansagen
+| `SAY DATETIME <unixtime> <escape_digits> ...` | Datum/Uhrzeit kombiniert
+| `WAIT FOR DIGIT <timeout_ms>` | Auf eine Taste warten
+| `DATABASE GET <family> <key>` / `PUT` / `DEL` / `DELTREE` | AstDB
+| `EXEC <application> <args>` | Beliebige Dialplan-Applikation
+| `GOSUB <context> <exten> <prio> [args]` | Dialplan-Sub aufrufen
+| `NOOP [text]` | NoOp
+| `VERBOSE <message> [level]` | Logausgabe
+| `ASYNCAGI BREAK` | Async-AGI abbrechen
+| `SET AUTOHANGUP <seconds>` | Auto-Hangup setzen
+|===
+
+== Deprecated / selten genutzt
+
+`TDD MODE` (fast nie relevant). Die alten `SET MUSIC ON` / `SET MUSIC OFF`
+(ohne Parameter) tun dasselbe wie die neuere Form mit `<on|off>`.
+
+== Referenz
+
+Im laufenden Asterisk:
+
+[source,shell]
+----
+debian*CLI> agi show commands
+debian*CLI> agi show commands topic <Befehl>
+----

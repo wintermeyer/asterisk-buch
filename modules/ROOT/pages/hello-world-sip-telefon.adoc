@@ -1,0 +1,216 @@
+[[hello-world-sip-telefon]]
+= Hello-World mit einem SIP-Telefon
+:description: Ein SIP-Telefon mit Asterisk verbinden: pjsip.conf-Konfiguration, Registrierung und erster Testanruf.
+
+Nachdem wir die Extension 1001 schon aus dem CLI aufgerufen haben,
+gehen wir jetzt den nächsten logischen Schritt und rufen sie von einem
+SIP-Telefon aus an. Wenn Sie kein Hardware-SIP-Telefon besitzen, können
+Sie auch ein Softphone benutzen — z. B. https://www.linphone.org/[Linphone],
+https://www.zoiper.com/[Zoiper] oder
+https://www.microsip.org/[MicroSIP].
+
+[WARNING]
+====
+Wenn Sie das Softphone und den Asterisk-Server auf demselben Rechner
+laufen lassen möchten, müssen Sie den SIP-Port des Softphones
+umstellen (z. B. auf 5061) — den Standardport 5060 belegt Asterisk
+bereits. Ein Hardware-Telefon oder ein Softphone auf einem zweiten
+Gerät ist zum Einstieg aber einfacher.
+====
+
+[[pjsip.conf-fuer-einen-account]]
+== pjsip.conf und das SIP-Telefon konfigurieren
+
+Für das Telefon muss in der Asterisk-Konfiguration ein Account angelegt
+werden. Wie bei der `extensions.conf` verschieben wir zuerst die
+Default-Datei an einen sicheren Ort:
+
+[source,shell]
+----
+# mv /etc/asterisk/pjsip.conf /var/tmp/asterisk-etc-backup/
+----
+
+[NOTE]
+====
+Wenn Sie Asterisk aus den Quellen gebaut haben, existiert unter
+Umständen noch keine `pjsip.conf` — erst mit `make samples` hätte
+sie angelegt werden müssen. In diesem Fall bekommen Sie bei `mv` eine
+Fehlermeldung "No such file or directory", die Sie ignorieren können.
+====
+
+Dann legen wir eine neue, minimale `/etc/asterisk/pjsip.conf` an:
+
+[source]
+----
+; --- Transport: auf welcher Adresse/Port lauscht Asterisk? ---
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+
+; --- Ein Telefon als "Endpoint" ---
+; In PJSIP ist ein "Endpoint" die logische SIP-Identität (Nebenstelle).
+; Dazu gehört ein "AOR" (wohin ist das Telefon registriert?) und
+; ein "auth" (Benutzername und Passwort).
+[2000]
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+auth=2000
+aors=2000
+
+[2000]
+type=auth
+auth_type=userpass
+username=2000
+password=supergeheim
+
+[2000]
+type=aor
+max_contacts=1
+----
+
+Das SIP-Telefon konfigurieren Sie mit:
+
+* User / Authentication Name: *2000*
+* Passwort: *supergeheim*
+* SIP-Registrar / Domain: IP-Adresse Ihres Asterisk-Servers
+* SIP-Proxy / Outbound-Proxy: IP-Adresse Ihres Asterisk-Servers
+
+[TIP]
+====
+Bei manchen Telefonen müssen alle verfügbaren Felder befüllt sein.
+Eine allgemein gültige Anleitung gibt es dafür nicht — hier hilft nur
+Ausprobieren.
+====
+
+[NOTE]
+====
+Die drei `[2000]`-Blöcke (Endpoint, Auth, AOR) *heißen* alle
+`[2000]`, sind aber über das Feld `type` klar voneinander getrennt.
+Das ist PJSIP-Konvention und erleichtert das Zuordnen.
+====
+
+[[asterisk-und-telefon-starten]]
+== Asterisk und Telefon starten
+
+Wenn Sie Asterisk im vorherigen Abschnitt mit `core stop gracefully`
+beendet haben, starten Sie den Dienst jetzt wieder:
+
+[source,shell]
+----
+# systemctl start asterisk
+----
+
+Dann laden Sie die neue PJSIP-Konfiguration im laufenden Asterisk:
+
+[source,shell]
+----
+# asterisk -rvvv
+debian*CLI> pjsip reload
+debian*CLI> pjsip show endpoints
+----
+
+Die Ausgabe von `pjsip show endpoints` listet alle Endpoints und ihren
+aktuellen Status. Solange das Telefon noch nicht registriert ist, steht
+"Unavailable". Starten Sie das Telefon (bzw. Softphone) neu und warten
+Sie im CLI auf die Registrierung:
+
+[source,shell]
+----
+debian*CLI> pjsip set logger on
+debian*CLI> pjsip show endpoints
+----
+
+Nach erfolgreicher Registrierung zeigt `pjsip show endpoints` den
+Endpoint als "Available" an und ein `pjsip show contacts` listet den
+Contact des Telefons.
+
+[[asterisk-sip-telefon-erster-test]]
+== Der Test
+
+Wenn Sie nun mit dem SIP-Telefon die 1001 anrufen, spielt Asterisk den
+Sprachbaustein `hello-world` ab.
+
+[[test-console-dial]]
+== Vom Dialplan aus das Telefon anrufen
+
+Wenn wir vom Telefon _aus_ anrufen können, sollten wir umgekehrt auch
+_zum_ Telefon rufen können. Dafür fügen wir in der
+`/etc/asterisk/extensions.conf` eine weitere Extension ein:
+
+[source]
+----
+[default]
+exten => 1001,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+exten => 2000,1,Dial(PJSIP/2000,20)
+----
+
+Dann im CLI neu laden:
+
+[source,shell]
+----
+debian*CLI> dialplan reload
+----
+
+Wenn Sie zum Testen kein zweites Telefon haben, können Sie den
+Aufruf per `channel originate` aus dem CLI simulieren:
+
+[source,shell]
+----
+debian*CLI> channel originate PJSIP/2000 extension 1001@default
+----
+
+Das ruft den Endpoint 2000 an — sobald er abhebt, wird im
+`default`-Context die Extension 1001 ausgeführt und `hello-world`
+abgespielt.
+
+[[asterisk-extension-dial-analyse]]
+== Analyse
+
+Die Applikation `Dial()` baut eine Verbindung zu einem Telefon auf. Der
+Parameter besteht aus mindestens zwei Teilen: Die "Technology" (hier
+`PJSIP`) sagt Asterisk, über welchen Channel-Treiber gerufen wird. Der
+Resource-Teil dahinter (`2000`) nennt das Ziel innerhalb dieses
+Treibers — in unserem Fall den Endpoint `2000` aus `pjsip.conf`.
+
+Bei `Dial()` sind `Answer()` und `Hangup()` nicht nötig: Asterisk kann
+ja nicht wissen, ob die Gegenstelle das Gespräch annimmt, deshalb hat
+`Dial()` die "Eigenintelligenz", den Channel auf- und abzubauen.
+
+Dass der Name der Extension `2000` zufällig identisch mit dem
+SIP-Account `2000` ist, ist Konvention und macht die Konfiguration
+lesbar — zwingend ist es nicht. Genauso gültig wäre:
+
+[source]
+----
+exten => 55,1,Dial(PJSIP/2000,20)
+----
+
+Dann ruft `55` aus dem Dialplan den Endpoint `2000` an.
+
+[[comments-in-conf-files]]
+== Kommentare in der Konfiguration
+
+Das Hash-Zeichen `#` ist in der Telefonie ein
+xref:glossar.adoc#glossar-dtmf[DTMF]-Signal (Doppelton-Mehrfrequenz)
+und kann deshalb nicht als Kommentarzeichen dienen. In den
+Asterisk-Konfigurationsdateien werden Kommentare mit einem Semikolon
+`;` eingeleitet:
+
+[source]
+----
+[default]
+; Die Extension 1001 ist ein Funktionstest für alle Telefone.
+exten => 1001,1,Answer()             ; abgehoben
+ same => n,Playback(hello-world)
+ same => n,Hangup()                  ; aufgelegt
+
+; 2000 ruft das SIP-Telefon 2000 an.
+exten => 2000,1,Dial(PJSIP/2000,20)
+----

@@ -1,0 +1,24 @@
+[[sip-telefone-einleitung]]
+= Einleitung
+:description: Überblick über SIP-Telefone für den Einsatz mit Asterisk.
+
+Anders als in den früheren Auflagen gehen wir in diesem Kapitel nicht
+mehr auf einzelne Telefone ein. Der Markt ist zu groß und zu
+kurzlebig: Was 2012 als Empfehlung stand, ist heute irrelevant. Wir
+konzentrieren uns stattdessen auf die Prinzipien, die für jede
+Marke gelten.
+
+Etablierte Hersteller (in alphabetischer Reihenfolge, ohne
+Empfehlungscharakter):
+
+* *Cisco* — insbesondere die 8800er-Serie
+* *Fanvil* — preiswerte Business-Telefone mit gutem Funktionsumfang
+* *Grandstream* — breite Palette von Einstiegs- bis Premium-Geräten
+* *Poly* (ehemals Polycom) — Fokus auf Audio-Qualität
+* *Snom* — deutscher Hersteller mit Unternehmens-Fokus
+* *Yealink* — preiswert, hohe Verbreitung, solide
+
+Alle diese Hersteller bieten SIP-Telefone, die sich problemlos an
+einen Asterisk-Server anbinden lassen. Die Unterschiede liegen im
+Detail: Display-Qualität, Anzahl der BLF-Tasten, HD-Audio-Codecs,
+WLAN/Gigabit-Ports, Auto-Provisioning-Mechanismen, Firmware-Updates.

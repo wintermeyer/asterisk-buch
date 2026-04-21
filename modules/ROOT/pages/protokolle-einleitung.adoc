@@ -1,5 +1,6 @@
 [[protokolle-einleitung]]
 = Einleitung
+:description: Einführung in die Netzwerk- und Telefonie-Protokolle, die Asterisk verwendet.
 
 In diesem Kapitel geht es um die Technik, die einzelnen Sprachpakete
 von A nach B zu bekommen. Diese Aufgabe wird mithilfe von verschiedenen

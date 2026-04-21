@@ -1,0 +1,107 @@
+[[musiconhold-conf]]
+= `musiconhold.conf`
+:description: Die musiconhold.conf in Asterisk: Wartemusik-Klassen konfigurieren.
+
+Beginnen wir mit dem Einfachsten, der Festlegung der Wartemusik
+(Music on Hold).
+
+[WARNING]
+====
+Für das Abspielen von Musik können Gebühren an die
+https://www.gema.de/[_GEMA_] anfallen. Freie klassische Werke finden
+Sie unter anderem auf https://www.classiccat.net/ zum Download, oder
+Sie verwenden die drei mitgelieferten Stücke.
+====
+
+Die Einstellmöglichkeiten werden in der Datei
+`musiconhold.conf` beschrieben. Ein paar Informationen
+zur MP3-Unterstützung durch das Programm `mpg123` stehen
+in `doc/README.mp3` (1.2) /
+`doc/mp3.txt` (1.4). Die optimale Abtastrate für die
+MP3s ist 8000 Hz, mono.
+
+Die einfachste (Default-)Konfiguration mit nur einer Musikklasse
+(`default`) sieht so aus:
+
+[source]
+----
+[default]
+mode=quietmp3
+directory=/var/lib/asterisk/mohmp3
+----
+
+Jetzt stoppen und starten
+wir Asterisk, z. B. mit `asterisk -rx "stop now"` und
+`asterisk`, um die neue Extension und die Streams zu
+aktivieren (ein Reload reicht nicht aus). Wenn Sie jetzt die Extension
+`222` (wie oben definiert) anrufen, sollten Sie Wartemusik
+hören (im oben genannten Verzeichnis werden bereits 3 Dateien
+mitgeliefert).
+
+Besser ist aber folgende Konfiguration, für die wir ein Verzeichnis
+`moh-native` in `/var/lib/asterisk/`
+anlegen:
+
+[source]
+----
+[default]
+mode=files   ; Dateien direkt in einem Asterisk-kompatiblen Format lesen
+directory=/var/lib/asterisk/moh-native
+random=yes   ; Dateien in zufälliger Reihenfolge abspielen
+----
+
+Es
+ist dazu notwendig, die MP3-Dateien in ein Asterisk-kompatibles Format zu
+konvertieren, was z. B. mit den Programmen `sox`footnote:[`sox` (http://sox.sourceforge.net/) gibt es als Debian-Paket, also:$ *`apt-get install sox`*] und `lame`footnote:[Für MacOS X gibt es ein Paket über Darwinports (siehe die Beschreibung zu `sox`):$ *`port install lame`* oder über Fink (http://fink.sourceforge.net/):$ *`fink install lame`*Natürlich geht das auch über den FinkCommander mit grafischem Interface.] so geht:
+
+[source,shell]
+----
+$  lame --decode musik.mp3 musik.wav
+$  sox -V musik.wav -r 8000 -c 1 -w musik.raw
+$  sox -V musik.wav -r 8000 -c 1 -w musik.gsm
+----
+
+Damit
+haben wir eine fiktive Datei `musik.mp3` in das
+WAV-Format und dann in die Formate RAW und GSM konvertiert (mit einer
+Abtastrate von 8 kHz). Wir können in unserem Verzeichnis auch Formate wie
+alaw und ulaw (Dateiendungen für `sox`:
+`.al` und `.ul`) ablegen –
+Asterisk wird automatisch das am wenigsten CPU-intensive wählen. Wichtig
+ist, dass die Abtastrate immer 8000 Hz beträgt.
+
+[IMPORTANT]
+====
+Wenn Sie in der `modules.conf` nicht
+`autoload` benutzen, müssen Sie sicherstellen, dass die
+Module für die Formate, die Sie hier verwenden wollen,
+_vor_ `res_musiconhold` geladen
+werden.
+====
+
+In unserem Test haben wir die im Verzeichnis
+`moh/` mitgelieferten WAV-Dateien in unser Verzeichnis
+`moh-native/` kopiert, mit `sox` nach
+RAW und GSM umkodiert und dann die WAV-Dateien, die Probleme bereiteten,
+aus dem Verzeichnis gelöscht:
+
+[source]
+----
+$  cd /var/lib/asterisk/moh-native/
+$  for i in *.wav; do \
+sox $i -r 8000 -c 1 $(basename $i .wav).raw; \
+sox $i -r 8000 -c 1 $(basename $i .wav).gsm; \
+done
+$  rm *.wav
+----
+
+Für CPU-kritische Anwendungen (große Installationen) sollten Sie
+einen Blick auf die Beschreibung in
+`contrib/utils/README.rawplayer` im ursprünglichen
+Asterisk-Verzeichnis werfen.
+
+Weitere Musikklassen lassen sich definieren, indem man außer dem
+`[default]`-Abschnitt noch weitere Abschnitte, z. B.
+`[rock]` anlegt, dort ein anderes Verzeichnis, z. B. ein
+Unterverzeichnis, angibt und die Musikdateien in dieses Verzeichnis legt.
+Reload nicht vergessen!

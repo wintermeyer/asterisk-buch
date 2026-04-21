@@ -1,0 +1,81 @@
+[[macro-gosub]]
+= Makros — und warum heute Gosub() benutzt wird
+:description: Macro() in Asterisk ist entfernt — das aktuelle Unterprogramm-Muster mit Gosub() und Return() erklärt.
+
+Frühere Auflagen dieses Buches haben ein eigenes Kapitel der
+`Macro()`-Applikation gewidmet. In heutigen Asterisk-Versionen gilt:
+
+[IMPORTANT]
+====
+*`Macro()` ist aus aktuellen Asterisk-Versionen entfernt.* Das
+Modul `app_macro.so` ist ab Asterisk 21 nicht mehr Teil des
+Core-Builds. Ältere LTS-Versionen hatten es noch als "deprecated"
+markiert. Für neue Dialpläne und beim Update bestehender Dialpläne
+ersetzen Sie `Macro()` durch `Gosub()`.
+====
+
+Die Gründe sind technisch (Makros liefen in einem eigenen
+pseudo-stack, der bei Asterisk' Channel-Modell immer wieder für
+Überraschungen gesorgt hat, z. B. bei `Hangup()` oder beim Thema
+vererbte Variablen) und zugleich pragmatisch: `Gosub()`/`Return()`
+können alles, was `Macro()` konnte, und sind sauberer definiert.
+
+== Das Macro-Muster im Gosub-Stil
+
+Ein klassisches Macro sah so aus:
+
+[source]
+----
+; DEPRECATED — bitte nicht mehr so schreiben
+[macro-anruf]
+exten => s,1,Dial(SIP/${MACRO_EXTEN},10)
+ same => n,VoiceMail(${MACRO_EXTEN})
+
+[verkauf]
+exten => _2XXX,1,Macro(anruf)
+----
+
+Dasselbe mit `Gosub()`:
+
+[source]
+----
+[sub-anruf]
+exten => s,1,Dial(PJSIP/${ARG1},10)
+ same => n,VoiceMail(${ARG1}@default,u)
+ same => n,Return()
+
+[verkauf]
+exten => _2XXX,1,Gosub(sub-anruf,s,1(${EXTEN}))
+ same => n,Hangup()
+----
+
+Zwei Unterschiede, die Sie sich einprägen sollten:
+
+* Parameter werden mit `Gosub(context,exten,priority(ARG1,ARG2,...))`
+  übergeben. Innerhalb des Unterprogramms greifen Sie mit `$\{ARG1}`,
+  `$\{ARG2}`, … darauf zu. Für die ursprüngliche Extension, die das
+  Gosub aufgerufen hat, gibt es `$\{ARG1}` per Konvention — Sie geben
+  sie explizit mit.
+* Das Unterprogramm *muss* mit `Return()` enden. Fehlt das, läuft der
+  Dialplan im Sub einfach weiter — und fällt am Ende oft durch.
+
+== Was ist mit `MacroExclusive`, `MacroIf`, `MacroExit`?
+
+Alle zusätzlichen Macro-Varianten (`MacroExclusive`, `MacroIf`,
+`MacroExit`) sind zusammen mit `Macro()` deprecated. Die modernen
+Äquivalente sind:
+
+* `MacroIf` → `GosubIf(condition?target:elseTarget)`
+* `MacroExclusive` → kein direktes Äquivalent; Locks im Dialplan
+  realisieren Sie mit `LOCK()`/`TRYLOCK()`/`UNLOCK()`.
+* `MacroExit` → `Return()` bzw. `Goto()` aus dem Sub heraus.
+
+== Altbestand migrieren
+
+Wenn Sie einen älteren Dialplan erben, der viele `Macro(...)`-Aufrufe
+enthält: Lesen Sie erst die Modul-Warnungen im CLI (`module show like
+macro`). Asterisk wird jedes Laden von `app_macro` mit einer
+deprecated-Warnung quittieren. Für die Migration reicht in der Regel
+der Ersatz "`Macro(name,arg1,arg2)` → `Gosub(sub-name,s,1(arg1,arg2))`",
+der Kontext `macro-name` → `sub-name`, Umbenennen von `$\{MACRO_EXTEN}`
+→ `$\{ARG1}`, und ein abschließendes `Return()` in der Sub-Extension.

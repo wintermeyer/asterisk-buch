@@ -1,0 +1,87 @@
+[[functions-referenz]]
+= Funktionen im Dialplan
+:description: Die wichtigsten Asterisk-Dialplan-Funktionen im Überblick — mit Link zur offiziellen Dokumentation.
+
+Funktionen werden in Asterisk mit `$\{FUNCTIONNAME(argumente)}`
+aufgerufen — sowohl zum Lesen (im Ausdruck) als auch zum Schreiben
+(als Ziel einer `Set()`-Zuweisung). Beispiel:
+
+[source]
+----
+; Lesen:
+exten => 123,1,NoOp(${CALLERID(num)})
+
+; Schreiben:
+exten => 123,1,Set(CALLERID(name)=Max Meier)
+----
+
+Die Liste aller verfügbaren Funktionen im CLI:
+
+[source,shell]
+----
+debian*CLI> core show functions
+debian*CLI> core show function CALLERID
+----
+
+[IMPORTANT]
+====
+Frühere Auflagen dieses Buches hatten hier einen Anhang mit über 100
+Einzelseiten, je eine pro Funktion. Für die Evergreen-Ausgabe
+wurde auch dieser Anhang gekürzt: Die vollständige, jeweils aktuelle
+Referenz steht in der offiziellen Doku unter
+https://docs.asterisk.org. Wir listen hier die am häufigsten
+genutzten Funktionen als Orientierungshilfe.
+====
+
+== Anrufer-/Channel-Informationen
+`CALLERID()`, `CALLERPRES()`, `CHANNEL()`, `CHANNELS()`,
+`CDR()`, `HINT()`, `DEVICE_STATE()`, `EXTENSION_STATE()`,
+`DIALPLAN_EXISTS()`.
+
+== Strings / Formatierung
+`LEN()`, `REGEX()`, `REPLACE()`, `TOLOWER()`, `TOUPPER()`,
+`CUT()`, `FIELDQTY()`, `FILTER()`, `QUOTE()`, `SPRINTF()`,
+`MD5()`, `SHA1()`, `BASE64_ENCODE()`, `BASE64_DECODE()`,
+`URIDECODE()`, `URIENCODE()`, `KEYPADHASH()`.
+
+== Rechnen, Zeit, Zufall
+`MATH()`, `IF()`, `ISNULL()`, `EXISTS()`, `RAND()`,
+`STRFTIME()`, `STRPTIME()`, `TIMEOUT()`, `LOCK()`, `TRYLOCK()`,
+`UNLOCK()`.
+
+== Variablen-Management
+`GLOBAL()`, `LOCAL()`, `HASH()`, `HASHKEYS()`, `ARRAY()`, `SHARED()`,
+`IMPORT()`, `SET()`.
+
+== AstDB und Datenbank
+`DB()`, `DB_EXISTS()`, `DB_DELETE()`, `DB_KEYS()`, `REALTIME()`,
+`REALTIME_STORE()`, `REALTIME_DESTROY()`, `SQL_ESC()`.
+
+== Dateien und Shell
+`FILE()`, `SHELL()`, `ENV()`, `STAT()`, `SYSINFO()`.
+
+== PJSIP-spezifisch
+`PJSIP_HEADER()`, `PJSIP_DIAL_CONTACTS()`, `PJSIP_ENDPOINT()`,
+`PJSIP_AOR()`, `PJSIP_CONTACT()`, `PJSIP_MEDIA_OFFER()`.
+
+== Queue- und ConfBridge-Informationen
+`QUEUE_MEMBER()`, `QUEUE_MEMBER_COUNT()`, `QUEUE_MEMBER_LIST()`,
+`QUEUE_MEMBER_PENALTY()`, `QUEUE_VARIABLES()`, `QUEUE_WAITING_COUNT()`,
+`CONFBRIDGE_INFO()`.
+
+== Caller-ID / Telefonbuch
+`VALID_EXTEN()`, `VMCOUNT()`, `MAILBOX_EXISTS()`, `TXTCIDNAME()`.
+
+== Als entfernt / deprecated geltend
+`JABBER_STATUS()`, `MEETME_INFO()` (durch `CONFBRIDGE_INFO()`
+ersetzt), `SIP_HEADER()` / `SIPPEER()` / `SIPCHANINFO()` (chan_sip —
+für PJSIP die `PJSIP_*`-Funktionen), `ODBC_ANTIGF()`, `AGC()`,
+`DENOISE()`, `IAXPEER()` in älteren Formen.
+
+[TIP]
+====
+Wenn Sie eine Funktion in einem Dialplan sehen, die Sie nicht
+kennen: `core show function <name>` gibt direkt auf dem Server die
+aktuelle Beschreibung aus. Schneller und zuverlässiger als jedes
+gedruckte Nachschlagewerk.
+====

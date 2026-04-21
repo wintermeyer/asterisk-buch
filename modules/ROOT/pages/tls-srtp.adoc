@@ -1,0 +1,95 @@
+[[tls-srtp]]
+= TLS und SRTP
+:description: TLS und SRTP für Asterisk: SIP und Medien verschlüsselt übertragen.
+
+SIP über UDP/5060 ist die klassische Variante — und die anfälligste.
+Jeder auf dem Pfad zwischen Client und Server kann Signalisierung
+mitlesen (Benutzernamen, Gesprächspartner, Gesprächsdauer) und
+RTP-Pakete direkt abgreifen (Audio im Klartext).
+
+Abhilfe schaffen zwei Ebenen:
+
+* *SIP über TLS* (Port 5061 oder über den WSS-Port 8089): Signalisierung
+  verschlüsselt.
+* *SRTP* (Secure RTP): Medien verschlüsselt.
+
+Für WebRTC ist diese Kombination *Pflicht*. Für klassische SIP-Telefone
+in einem geschlossenen Firmen-LAN ist es "nice to have" — für SIP
+über das öffentliche Internet sollte es Standard sein.
+
+== Zertifikat vorbereiten
+
+Am bequemsten per Let's Encrypt (der Hostname muss natürlich im DNS
+auflösbar sein):
+
+[source,shell]
+----
+# apt install -y certbot
+# certbot certonly --standalone -d pbx.example.com
+# ls /etc/letsencrypt/live/pbx.example.com/
+cert.pem  chain.pem  fullchain.pem  privkey.pem
+----
+
+Oder mit einer eigenen CA für geschlossene Netze (OpenSSL, PKCSS,
+step-ca — das ist ein OS-Thema, kein Asterisk-Thema).
+
+== TLS-Transport in pjsip.conf
+
+[source]
+----
+[transport-tls]
+type=transport
+protocol=tls
+bind=0.0.0.0:5061
+cert_file=/etc/letsencrypt/live/pbx.example.com/fullchain.pem
+priv_key_file=/etc/letsencrypt/live/pbx.example.com/privkey.pem
+method=tlsv1_2
+----
+
+Der Endpoint verweist auf den TLS-Transport und fordert SRTP:
+
+[source]
+----
+[2000]
+type=endpoint
+transport=transport-tls
+media_encryption=sdes   ; oder: dtls (für WebRTC)
+; ...
+----
+
+Gegenüberseite im Softphone: Statt `sip:2000@pbx.example.com` jetzt
+`sips:2000@pbx.example.com` (SIPS = SIP Secure) und SRTP in den
+Settings aktivieren.
+
+== ACL auf den Transport
+
+Der `transport-udp` für externe SIP-Provider bleibt offen, aber der
+interne TLS-Transport soll nicht aus dem Internet nutzbar sein:
+
+[source]
+----
+[acl-intern]
+type=acl
+deny=0.0.0.0/0
+permit=192.168.0.0/24
+permit=10.0.0.0/8
+
+[transport-tls]
+type=transport
+; ...
+local_net=192.168.0.0/24
+local_net=10.0.0.0/8
+----
+
+== Zertifikate rotieren
+
+Let's-Encrypt-Zertifikate sind 90 Tage gültig. Nach der Erneuerung
+muss Asterisk das neue Zertifikat aktivieren:
+
+[source,shell]
+----
+# certbot renew --deploy-hook "asterisk -rx 'module reload res_pjsip.so'"
+----
+
+Der Reload lädt die Transport-Konfiguration neu und zieht das neue
+Zertifikat.

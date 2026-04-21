@@ -1,0 +1,177 @@
+[[asterisk-installation-anleitung]]
+= Asterisk installieren
+:description: Asterisk auf Debian, Ubuntu oder aus dem Quellcode installieren — ausführliche Anleitung.
+
+Für eine Asterisk-Installation gibt es zwei sinnvolle Wege:
+
+1. *Distributionspaket* — am bequemsten, aber oft nicht die aktuelle
+   LTS-Version. Funktioniert nur, wenn die Distribution Asterisk
+   überhaupt packt (siehe Hinweis unten).
+2. *Aus dem Quellcode kompilieren* — etwas mehr Arbeit, dafür die
+   exakte Version Ihrer Wahl und Kontrolle über die geladenen Module.
+   Der empfohlene Weg für Produktivsysteme.
+
+Beide Wege laufen auf einem frischen Debian- oder Ubuntu-Server.
+Andere Distributionen (RHEL/Rocky/AlmaLinux, openSUSE, Alpine) sind
+ebenfalls möglich — die Pakete heißen dort anders, das Grundprinzip
+bleibt gleich.
+
+[IMPORTANT]
+====
+*Distributionspakete sind nicht immer verfügbar.* Debian hatte
+Asterisk bis einschließlich Debian 12 (bookworm) im Repository, in
+Debian 13 (trixie) ist das Metapaket `asterisk` *nicht* mehr
+enthalten — dort müssen Sie aus der Quelle bauen. Ubuntu-LTS-Versionen
+haben Asterisk in der Regel in den Universe-Repositories; bitte vor
+der Installation die Version mit `apt-cache policy asterisk`
+prüfen, sie liegt oft deutlich hinter dem aktuellen LTS.
+====
+
+[[install-paket]]
+== Installation aus dem Distributionspaket
+
+Auf Ubuntu (oder älteren Debian-Versionen):
+
+[source,shell]
+----
+# apt update
+# apt install -y asterisk
+# systemctl status asterisk
+----
+
+Asterisk läuft danach als `systemd`-Service, lädt die Default-Konfiguration
+aus `/etc/asterisk/` und verwendet die mitgelieferten Soundprompts aus
+`/var/lib/asterisk/sounds/`.
+
+Prüfen Sie im Anschluss die Version:
+
+[source,shell]
+----
+# asterisk -rx 'core show version'
+----
+
+Reicht Ihnen das Alter des Paketes nicht, installieren Sie aus den
+Quellen — das ist gerade unter Debian 13 ohnehin der einzige Weg.
+
+[[install-source]]
+== Installation aus dem Quellcode
+
+=== Voraussetzungen
+
+[source,shell]
+----
+# apt update
+# apt install -y build-essential wget git pkg-config \
+    libedit-dev libjansson-dev libsqlite3-dev libssl-dev \
+    libxml2-dev uuid-dev libsrtp2-dev
+----
+
+=== Quellcode holen und vorbereiten
+
+Die aktuellen Release-Tarballs stehen unter
+https://downloads.asterisk.org/pub/telephony/asterisk/. Pinnen Sie
+auf eine konkrete LTS-Version Ihrer Wahl:
+
+[source,shell]
+----
+# cd /usr/src
+# ASTERISK_VERSION=22   # bzw. die jeweils aktuelle LTS-Major-Version
+# wget https://downloads.asterisk.org/pub/telephony/asterisk/asterisk-${ASTERISK_VERSION}-current.tar.gz
+# tar xzf asterisk-${ASTERISK_VERSION}-current.tar.gz
+# cd asterisk-${ASTERISK_VERSION}*
+----
+
+Das mitgelieferte Skript `contrib/scripts/install_prereq` installiert
+alle weiteren Abhängigkeiten (inkl. PJProject, das für `chan_pjsip`
+benötigt wird):
+
+[source,shell]
+----
+# contrib/scripts/install_prereq install
+----
+
+=== Konfigurieren, kompilieren, installieren
+
+[source,shell]
+----
+# ./configure
+# make menuselect        # interaktiv: welche Module werden gebaut?
+# make -j$(nproc)
+# make install
+# make samples           # legt Default-Config in /etc/asterisk/ ab
+# make config            # installiert systemd-Service
+# make install-logrotate
+----
+
+`make menuselect` startet eine TUI, in der Sie Module an- oder
+abschalten können. Default ist ein ausgewogener Satz. Für eine
+schlanke Installation können Sie Legacy-Module (`app_meetme`,
+`pbx_ael`) und Module, die Sie nicht brauchen, herausnehmen.
+
+[NOTE]
+====
+`chan_sip` ist ab Asterisk 21 *nicht mehr enthalten* — taucht also in
+`menuselect` nicht mehr auf. Der einzige SIP-Treiber ist `chan_pjsip`.
+====
+
+=== Erster Start
+
+[source,shell]
+----
+# systemctl enable --now asterisk
+# asterisk -rvvv
+----
+
+Wenn alles läuft, sehen Sie einen Prompt wie
+`servername*CLI>` und können per `core show version` die Version
+prüfen:
+
+[source,shell]
+----
+servername*CLI> core show version
+Asterisk 22.x.y built by ...
+----
+
+[[install-firewall]]
+== Firewall-Einstellungen
+
+Ein Asterisk-Server braucht in der Firewall ein paar geöffnete Ports:
+
+[cols="1,2,3"]
+|===
+| Port | Protokoll | Zweck
+
+| 5060 | UDP / TCP | SIP (unverschlüsselt)
+| 5061 | TCP | SIP über TLS
+| 8089 | TCP | HTTPS / WSS (für WebRTC und ARI)
+| 10000–20000 | UDP | RTP (Audio), Bereich in `rtp.conf` einstellbar
+| 4569 | UDP | IAX2 — nur öffnen, wenn IAX wirklich benötigt wird
+| 5038 | TCP | AMI — nur intern öffnen, niemals ins Internet
+| 8088 | TCP | ARI HTTP / AMI-HTTP — nur intern (TLS über 8089)
+|===
+
+[WARNING]
+====
+Öffnen Sie *nicht* den SIP-Port 5060 einfach für das gesamte
+Internet, ohne Absicherung (`fail2ban`, strikte
+`pjsip.conf`-Konfiguration, IP-ACLs, starke Passwörter). Siehe
+xref:sicherheit.adoc[Sicherheit].
+====
+
+[[install-tools]]
+== Nützliche Begleittools
+
+* *Konfiguration prüfen:* `asterisk -rx 'pjsip show endpoint <name>'`
+  zeigt, wie Asterisk einen PJSIP-Endpoint tatsächlich geladen hat —
+  inklusive Warnungen, wenn etwas nicht zusammenpasst. Vergleichbare
+  Befehle existieren für alle größeren Module (`queue show`,
+  `confbridge show`, `voicemail show users`).
+* *Reloads:* Nach Änderungen an `extensions.conf` reicht
+  `dialplan reload`. Für andere Konfigurationsdateien gibt es jeweils
+  passende Reload-Befehle (`pjsip reload`, `voicemail reload`,
+  `module reload res_parking.so`, …).
+* *Logdatei:* `/var/log/asterisk/full` und
+  `/var/log/asterisk/messages`. Konfigurierbar in `logger.conf`.
+* *`fail2ban`:* Mit dem Filter `asterisk` sperrt es IPs, die im
+  Security-Log mit fehlgeschlagenen Logins auffallen. Siehe
+  xref:fail2ban.adoc[Fail2ban einrichten].

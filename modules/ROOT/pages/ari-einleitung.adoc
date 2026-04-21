@@ -1,0 +1,41 @@
+[[ari-einleitung]]
+= Einleitung
+:description: Einführung in das Asterisk REST Interface (ARI) als Nachfolger von AGI/AMI/AJAM.
+
+Der klassische Weg, aus externem Code mit Asterisk zu reden, war lange
+Zeit *AMI* (Manager-API, asynchroner TCP-Event-Stream) und *AGI*
+(Gateway-Interface, blocking Dialplan-Aufruf mit stdin/stdout). Beide
+funktionieren weiterhin, haben aber Grenzen:
+
+* AMI/AGI kennen kein sauberes Call-Control-Modell. Man schickt
+  Befehle, hofft auf Events und muss Zustände selbst nachhalten.
+* AJAM (asynchronous JavaScript Asterisk Manager), der HTTP-Wrapper
+  um AMI, ist deprecated.
+* Moderne Anwendungen wollen WebSockets und JSON, nicht proprietäre
+  TCP-Protokolle.
+
+*ARI* löst diese Probleme. Die API ist in Swagger/OpenAPI dokumentiert,
+antwortet mit JSON und spricht Events über eine WebSocket-Verbindung.
+Die offizielle, jeweils aktuelle Spec liegt unter
+https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/Asterisk_REST_Interface/.
+
+== Wann ARI, wann AMI/AGI?
+
+Als grobe Orientierung:
+
+[cols="1,3"]
+|===
+| *ARI*
+| Neue Anwendungen, die Gespräche steuern (IVR, Callcenter-Logik,
+WebRTC-Softclients, CTI, Click-to-Call). Langlebige Prozesse, die per
+WebSocket auf Events reagieren.
+
+| *AMI*
+| System- und Monitoring-Tools, die Zustände abfragen oder reagieren
+("User ist online?", "Wie viele aktive Channels?"), sowie Altbestand.
+
+| *AGI*
+| Kleine synchrone Aufrufe aus dem Dialplan heraus — "frage eine DB,
+setze eine Variable, geh weiter". Funktioniert weiter und ist für
+Einzel-Aufgaben nach wie vor das einfachste Tool.
+|===

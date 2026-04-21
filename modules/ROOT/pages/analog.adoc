@@ -1,8 +1,0 @@
-[[analog]]
-= Analoge Telefonie
-
-In diesem Kapitel:
-
-* xref:analog-einleitung.adoc[Einleitung]
-* xref:ata.adoc[ATA (Analog-Telefon-Adapter)]
-* xref:analog-installationsanleitungen.adoc[Installationsanleitungen für Analog-Karten]

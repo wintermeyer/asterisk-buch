@@ -1,5 +1,6 @@
 [[minivm]]
 = Mini-VoiceMail (MiniVM)
+:description: MiniVM (app_minivm) in Asterisk: Die schlanke Voicemail-Alternative ohne zentrale Mailbox-Verwaltung.
 
 MiniVM (Mini-VoiceMail) ist ein alternatives Voicemail-System, das ab
 Asterisk 1.6 zur Verfügung steht. Es lässt sich etwas modularer gestalten,
@@ -38,7 +39,7 @@ befinden:
 
 MiniVM wird in der Datei
 `/etc/asterisk/minivm.conf` konfiguriert, die analog
-zur bekannten `voicemail.conf` (xref:voicemail-voicemail.conf.adoc[Abschnitt 13.4, „`voicemail.conf`
+zur bekannten `voicemail.conf` (xref:voicemail-conf.adoc[Abschnitt 13.4, „`voicemail.conf`
 “]) aufgebaut ist. Die
 Mailbox-Definitionen haben allerdings immer das Format
 +_`benutzer`_@_`domain`_+.
@@ -128,7 +129,7 @@ könnte man auch einfach `localdomain` verwenden.
 Mit
 +setvar=_`Feldname`_=_`Wert`_+
 kann man zusätzlich eigene Feld/Wert-Paare setzen, die sich im Dialplan
-mit der Funktion `MINIVMACCOUNT()` (xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“]) abfragen lassen. Um dabei nicht mit
+mit der Funktion `MINIVMACCOUNT()` (Abschnitt D.64, „`MINIVMACCOUNT()`“) abfragen lassen. Um dabei nicht mit
 den fest vorgegebenen Feldnamen in Konflikt zu geraten, empfiehlt sich z.
 B. ein Präfix wie „`x_`“.
 
@@ -160,17 +161,17 @@ bereitgestellt:
 
 [cols="1*"]
 |===
-| `MinivmAccMess()` - xref:applications-minivmaccmess.adoc[Abschnitt C.94, „`MinivmAccMess()`“]
-| `MinivmDelete()` - xref:applications-minivmdelete.adoc[Abschnitt C.95, „`MinivmDelete()`“]
-| `MinivmGreet()` - xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“]
-| `MinivmNotify()` - xref:applications-minivmnotify.adoc[Abschnitt C.97, „`MinivmNotify()`“]
-| `MinivmRecord()` - xref:applications-minivmrecord.adoc[Abschnitt C.98, „`MinivmRecord()`“]
+| `MinivmAccMess()` - Abschnitt C.94, „`MinivmAccMess()`“
+| `MinivmDelete()` - Abschnitt C.95, „`MinivmDelete()`“
+| `MinivmGreet()` - Abschnitt C.96, „`MinivmGreet()`“
+| `MinivmNotify()` - Abschnitt C.97, „`MinivmNotify()`“
+| `MinivmRecord()` - Abschnitt C.98, „`MinivmRecord()`“
 |===
 
 Dialplan-Funktionen:
 
 [cols="1*"]
 |===
-| `MINIVMACCOUNT()` - xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“]
-| `MINIVMCOUNTER()` - xref:functions-minivmcounter.adoc[Abschnitt D.65, „`MINIVMCOUNTER()`“]
+| `MINIVMACCOUNT()` - Abschnitt D.64, „`MINIVMACCOUNT()`“
+| `MINIVMCOUNTER()` - Abschnitt D.65, „`MINIVMCOUNTER()`“
 |===

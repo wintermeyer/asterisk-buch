@@ -1,5 +1,6 @@
 [[blf-subscriptions]]
 = Verfahren für SIP-_Subscriptions_
+:description: SIP-Subscriptions für BLF: Wie Telefone den Status anderer Nebenstellen abonnieren.
 
 [NOTE]
 ====
@@ -9,18 +10,13 @@ weiter von Bedeutung. Sie können also getrost zum nächsten Abschnitt
 springen.
 ====
 
-Es gibt in SIP mehrere unterschiedlich Verfahren, wie man den Status
-einer Nebenstelle „abonnieren“ kann. Die gebräuchlichste
-SIP-Erweiterung dafür ist http://tools.ietf.org/html/rfc4235[_„_Dialog Event Package_“_ (RFC
-4235)], an die sich u. a. auch die 3x0-Snoms halten. Dieser
-Standard basiert auf http://tools.ietf.org/html/rfc3265[_„_SIP Event Notification_“_ (RFC
-3265)]. Dabei schickt das Telefon für jede zu überwachende
-Nebenstelle ein `SUBSCRIBE` an die Telefonanlage und
-erhält bei jeder Status-Änderung ein `NOTIFY`
-(`PUBLISH` wird von Asterisk noch nicht unterstützt). Der
-Hauptunterschied sind die unterschiedlichen (XML-)Formate im
-„_Body_“ der
-„_Notifications_“.
+Es gibt in SIP mehrere Verfahren, wie man den Status einer
+Nebenstelle "abonnieren" kann. Der De-facto-Standard heute ist das
+https://tools.ietf.org/html/rfc4235[_Dialog Event Package_ (RFC 4235)],
+das auf https://tools.ietf.org/html/rfc6665[_SIP Event Notification_ (RFC 6665, ersetzt RFC 3265)]
+aufbaut. Das Telefon schickt für jede zu überwachende Nebenstelle ein
+`SUBSCRIBE` an Asterisk und erhält bei jeder Status-Änderung ein
+`NOTIFY`.
 
 Die von Asterisk (mehr oder weniger) unterstützten Verfahren
 sind:

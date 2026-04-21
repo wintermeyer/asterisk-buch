@@ -1,0 +1,140 @@
+[[applications-referenz]]
+= Applikationen im Dialplan
+:description: Die wichtigsten Asterisk-Dialplan-Applikationen im Überblick — mit Link zur offiziellen Dokumentation.
+
+Applikationen sind die Befehle, die Sie im Dialplan (in der
+`/etc/asterisk/extensions.conf`) aufrufen. Welche Applikationen in
+Ihrer Installation verfügbar sind, hängt davon ab, welche Module
+geladen sind — `core show applications` zeigt die aktuelle Liste im
+CLI. Details zu einer einzelnen Applikation liefert
+`core show application <name>`.
+
+[IMPORTANT]
+====
+Frühere Auflagen dieses Buches hatten hier einen Anhang mit über 200
+Einzelseiten, je eine pro Applikation. Für die Evergreen-Ausgabe
+wurde dieser Anhang drastisch gekürzt: Die vollständige und jeweils
+aktuelle Referenz steht in der offiziellen Asterisk-Dokumentation
+unter https://docs.asterisk.org. Wir listen hier nur die
+Applikationen, die Sie im Alltag wirklich brauchen, und verweisen
+für den Rest auf die Upstream-Doku.
+====
+
+Zur Orientierung ein kurzer Überblick über die wichtigsten
+Applikationen, gruppiert nach Einsatzzweck:
+
+== Anruf-Verwaltung
+`Answer()`, `Hangup()`, `Busy()`, `Congestion()`, `Ringing()`,
+`Dial()`, `RetryDial()`, `ChannelRedirect()`, `Transfer()`,
+`Park()`, `Pickup()`, `FollowMe()`, `ChanIsAvail()`, `Page()`.
+
+== Flusskontrolle
+`Goto()`, `GotoIf()`, `GotoIfTime()`, `Gosub()`, `GosubIf()`,
+`Return()`, `While()`, `EndWhile()`, `ExitWhile()`, `ContinueWhile()`,
+`ExecIf()`, `ExecIfTime()`, `Random()`.
+
+[NOTE]
+====
+`Macro()`, `MacroExclusive()`, `MacroIf()`, `MacroExit()` sind
+deprecated — benutzen Sie stattdessen `Gosub()` und `GosubIf()`.
+Details in xref:macro-gosub.adoc[_Makros — und warum heute Gosub() benutzt wird_].
+====
+
+== Variablen
+`Set()`, `MSet()`, `SetGlobalVar()`, `ImportVar()`, `Read()`,
+`ReadFile()`, `RealTime()`, `RealTimeUpdate()`.
+
+== Musik-/Sprachausgabe
+`Playback()`, `Background()`, `ControlPlayback()`, `BackgroundDetect()`,
+`Festival()`, `MusicOnHold()`, `StartMusicOnHold()`, `StopMusicOnHold()`,
+`WaitMusicOnHold()`, `Playtones()`, `StopPlaytones()`, `MP3Player()`,
+`Echo()`, `SayAlpha()`, `SayDigits()`, `SayNumber()`, `SayPhonetic()`,
+`SayUnixTime()`.
+
+== Aufzeichnen
+`MixMonitor()`, `StopMixMonitor()`, `ChanSpy()`, `ExtenSpy()`,
+`Record()`, `Dictate()`.
+
+[NOTE]
+====
+Die alte `Monitor()`-Applikation ist größtenteils durch `MixMonitor()`
+abgelöst worden; `MixMonitor()` schreibt eine einzelne gemischte
+Audiodatei, was in 99 % der Fälle gewünscht ist.
+====
+
+== Voicemail
+`VoiceMail()`, `VoiceMailMain()`, `Directory()`, `MailboxExists()`,
+`VMAuthenticate()`.
+
+== Konferenzen (ConfBridge)
+`ConfBridge()`, `ConfBridgeAdmin()`, `ConfBridgeInfo()`.
+
+[NOTE]
+====
+`MeetMe()`, `MeetMeAdmin()`, `MeetMeCount()`, `MeetMeChannelAdmin()`
+sind als _deprecated_ markiert und benötigen DAHDI. Benutzen Sie
+`ConfBridge()` — siehe xref:konferenzen.adoc[Telefonkonferenzen].
+====
+
+== Warteschlangen, Call-Center
+`Queue()`, `QueueLog()`, `AddQueueMember()`, `RemoveQueueMember()`,
+`PauseQueueMember()`, `UnpauseQueueMember()`, `AgentLogin()`.
+
+[NOTE]
+====
+`AgentCallbackLogin()`, `AgentMonitorOutgoing()` sind entfernt.
+====
+
+== Externe Skripte / Steuerung
+`AGI()`, `EAGI()`, `DeadAGI()`, `System()`, `TrySystem()`, `Exec()`,
+`TryExec()`, `UserEvent()`, `Log()`, `Verbose()`, `NoOp()`,
+`DumpChan()`.
+
+[TIP]
+====
+Für komplexere externe Steuerung (Call-Control, persistente Apps) ist
+*xref:ari.adoc[ARI]* der moderne Weg — die klassischen
+AGI-/AMI-Pfade bleiben aber voll funktional.
+====
+
+== Authentifizierung, Kennung, Sicherheit
+`Authenticate()`, `VMAuthenticate()`, `PrivacyManager()`,
+`SetCallerPres()`, `SoftHangup()`.
+
+== CDR / Abrechnung
+`NoCDR()`, `ForkCDR()`, `ResetCDR()`, `SetAMAFlags()`.
+
+== SIP / PJSIP-spezifisch
+`PJSIP_HEADER`-Funktionen (nicht Applikationen — siehe
+xref:functions-referenz.adoc[Funktionen]) sowie `PJSIPNotify()`.
+
+[NOTE]
+====
+Die alten chan_sip-spezifischen Applikationen (`SIPAddHeader()`,
+`SIPdtmfMode()`, `SIPGetHeader()`) gibt es nur mit `chan_sip` — der
+ist entfernt. Für PJSIP benutzen Sie die `PJSIP_*`-Dialplan-Funktionen
+(siehe Doku).
+====
+
+== Zapateller und Co. — entfernt / deprecated
+`Zapateller()`, `ZapBarge()`, `ZapRAS()`, `ZapScan()`,
+`ZapSendKeypadFacility()`, `SMS()`, `ICES()`, `NBScat()`,
+`AlarmReceiver()`, `Morsecode()` — für diese exotischen Befehle
+konsultieren Sie im Einzelfall die Upstream-Doku.
+
+[[applications-reference]]
+== Referenz
+
+Die vollständige, jeweils aktuelle Referenz mit allen Parametern und
+Rückgabewerten finden Sie in der offiziellen Dokumentation unter
+https://docs.asterisk.org. Alternativ direkt im CLI:
+
+[source,shell]
+----
+debian*CLI> core show applications    ; alle Applikationen auflisten
+debian*CLI> core show application Dial ; Details zu Dial()
+----
+
+Diese CLI-Ausgabe ist exakt zur Version passend, die Sie installiert
+haben — und ist der verlässlichste Bezugspunkt, wenn man konkret
+wissen will, welche Optionen eine Applikation gerade unterstützt.

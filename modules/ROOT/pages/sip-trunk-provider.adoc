@@ -1,0 +1,181 @@
+[[sip-trunk-provider]]
+= Telefonate vom und in das öffentliche Netz
+:description: SIP-Trunk beim Provider einrichten: Asterisk an das öffentliche Telefonnetz anbinden (sipgate, Easybell, Telekom, Vodafone).
+
+In diesem Abschnitt verbinden wir unsere kleine Mini-Telefonanlage mit
+dem Rest der Telefonwelt.
+
+[[min-anlage-festnetz]]
+== In das öffentliche Telefonnetz telefonieren
+
+Bisher haben Sie zwar eine fertige Telefonanlage, was an und für sich
+spannend, aber ohne Anschluss an die große, weite Welt noch nicht
+wirklich nützlich ist. Mit einem Internetanschluss und einem
+SIP-Provider-Account lässt sich das in wenigen Minuten beheben.
+
+Die meisten SIP-Provider (z. B. sipgate, Easybell, Toplink, Deutsche
+Telefon, Placetel, Telekom DeutschlandLAN, Vodafone) nennen Ihnen
+nach Anlage eines Trunks genau drei Angaben:
+
+* *Registrar / Domain* (z. B. `sipgate.de`, `tel.t-online.de`)
+* *Benutzername / SIP-ID*
+* *Passwort*
+
+Diese tragen wir in die `pjsip.conf` ein. Wir bauen dafür drei
+PJSIP-Objekte: einen `auth` für die Zugangsdaten, einen `aor` mit der
+Provider-Adresse, einen `endpoint` für die Outbound-Seite sowie ein
+`registration`-Objekt, damit Asterisk sich beim Provider registriert
+und eingehende Anrufe empfangen kann.
+
+[source]
+----
+; Outbound-Auth (unsere Zugangsdaten beim Provider)
+[provider-auth]
+type=auth
+auth_type=userpass
+username=5587572
+password=UHDZJD
+
+; Provider-Adresse
+[provider-aor]
+type=aor
+contact=sip:mein-voip-provider.de
+
+; Endpoint für die Provider-Seite
+[provider]
+type=endpoint
+context=von-provider
+disallow=all
+allow=ulaw
+allow=alaw
+outbound_auth=provider-auth
+aors=provider-aor
+from_user=5587572
+from_domain=mein-voip-provider.de
+
+; identify: eingehende Anrufe dem Endpoint "provider" zuordnen
+[provider-identify]
+type=identify
+endpoint=provider
+match=mein-voip-provider.de
+
+; registration: Asterisk meldet sich beim Provider an
+[provider-reg]
+type=registration
+transport=transport-udp
+outbound_auth=provider-auth
+server_uri=sip:mein-voip-provider.de
+client_uri=sip:5587572@mein-voip-provider.de
+retry_interval=60
+----
+
+Benutzername (im Beispiel `5587572`) und Passwort (`UHDZJD`) stammen aus
+dem Kundenkonto bei Ihrem SIP-Provider.
+
+[NOTE]
+====
+Die genaue Schreibweise von `server_uri`, `client_uri` und `match`
+hängt vom Provider ab. Viele Provider haben ein Beispiel für Asterisk
+/ PJSIP in ihrer Dokumentation — wenn Sie sich unsicher sind, orientieren
+Sie sich an der Provider-Vorgabe. Ein häufiger Fallstrick ist
+`from_user` vs. `username` — das eine ist die "öffentliche"
+SIP-Identität beim Provider, das andere der Authentisierungsname.
+====
+
+Jetzt brauchen wir noch in der `extensions.conf` einen Eintrag fürs
+Rauswählen. Gleichzeitig trennen wir sauber zwischen "unseren eigenen
+Telefonen" und "von außen über den Provider" — im Kapitel
+xref:contexte-rechteverwaltung.adoc[Rechteverwaltung mit
+Contexten] haben wir das Konzept schon eingeführt. Wir benennen
+unseren bisherigen `[default]`-Context deshalb um in
+`[meine-telefone]` und ergänzen einen Context `[von-provider]`:
+
+[source]
+----
+[meine-telefone]
+exten => 2000,1,Dial(PJSIP/2000,20)
+ same => n,VoiceMail(2000@default,u)
+
+exten => 2001,1,Dial(PJSIP/2001,20)
+ same => n,VoiceMail(2001@default,u)
+
+exten => 2999,1,VoiceMailMain(${CALLERID(num)}@default,s)
+
+; Alles, was mit 0 anfängt, geht raus über den Provider.
+exten => _0X.,1,Dial(PJSIP/${EXTEN}@provider,60)
+
+[von-provider]
+; wird gleich gefüllt
+----
+
+Damit die bestehenden Telefone diesen neuen Context benutzen, passen
+wir in der `pjsip.conf` bei jedem Endpoint das `context=`-Feld an:
+
+[source]
+----
+[2000]
+type=endpoint
+context=meine-telefone       ; vorher: context=default
+; ...
+----
+
+[NOTE]
+====
+Der Mailbox-Context (der Teil nach dem `@` in
+`VoiceMail(2000@default,u)`) bleibt `default` — das ist ein *Mailbox*-Context
+aus der `voicemail.conf`, nicht zu verwechseln mit dem
+Dialplan-Context in der `extensions.conf`.
+====
+
+Nach
+
+[source,shell]
+----
+debian*CLI> pjsip reload
+debian*CLI> dialplan reload
+debian*CLI> pjsip show registrations
+----
+
+sollte der Status der Registration auf `Registered` stehen. Wählen Sie
+jetzt eine beliebige Festnetznummer (mit Vorwahl) — im CLI können Sie
+bei aktivem `pjsip set logger on` mitverfolgen, wie Asterisk ein INVITE
+an den Provider schickt. Nach dem Freizeichen telefonieren Sie mit
+einem Festnetz-Teilnehmer.
+
+[NOTE]
+====
+`_0X.` ist ein Pattern: "alles, was mit 0 anfängt und mindestens
+zwei Ziffern hat". Details dazu in
+xref:pattern-matching.adoc[Pattern Matching].
+====
+
+[[festnetz-incoming]]
+== Gespräche vom öffentlichen Netz entgegennehmen
+
+Jetzt der letzte Schritt: Wir wollen über unsere Rufnummer beim
+Provider auf dem Telefon 2000 angerufen werden können. Dazu füllen wir
+den Context `[von-provider]` in der `extensions.conf`:
+
+[source]
+----
+[von-provider]
+exten => 5587572,1,Dial(PJSIP/2000,20)
+ same => n,VoiceMail(2000@default,u)
+
+; Fallback, falls der Provider keine oder eine andere Ziel-Nummer schickt:
+exten => _X.,1,Goto(5587572,1)
+exten => s,1,Goto(5587572,1)
+----
+
+Die `5587572` ist in diesem Beispiel Ihre interne Rufnummer beim
+VoIP-Provider. Bei welcher Nummer der Anruf im Dialplan landet, hängt
+von Ihrem Provider ab — manche schicken die SIP-ID, manche eine E.164-Nummer,
+manche nur `s`. Der Fallback oben deckt die üblichen Fälle ab.
+
+Wer mag, ergänzt noch eine Voicemailbox für eingehende
+Provider-Anrufe — die `VoiceMail()`-Zeile steht schon im Beispiel.
+
+In diesem Einführungskapitel wollte ich zeigen, wie schnell und einfach
+sich mit Asterisk eine funktionierende Telefonanlage aufbauen lässt.
+Im Rest des Buches gehen wir in die Tiefe und zeigen, was mit Asterisk
+sonst noch alles geht.

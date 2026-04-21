@@ -1,0 +1,48 @@
+[[priority-jumping-entfernt]]
+= Priority Jumping ist entfernt!
+:description: Priority Jumping in Asterisk ist entfernt — moderne Fehlerbehandlung mit GotoIf und DIALSTATUS.
+
+In frühen Asterisk-Versionen war _Priority Jumping_ das übliche Muster
+zur Fehlerbehandlung: Bestimmte Applikationen (z. B. `Dial()`) sprangen
+im Fehlerfall automatisch zur Priorität `aktuell+101`. Das Verfahren
+wurde schon in Asterisk 1.4 als _deprecated_ markiert und später
+komplett entfernt.
+
+[IMPORTANT]
+====
+Priority Jumping ist heute nicht mehr verfügbar. Dialplan-Schnipsel,
+die auf `exten => XXX,102,...` als implizite Fehlerlandung setzen,
+funktionieren nicht mehr. Auch die früher verbreiteten
+`Dial()`-Optionen `j` oder `g` als "Jump"-Trigger sind entfallen.
+====
+
+Wenn Sie alte Tutorials oder Dialpläne sehen, die Konstrukte wie
+
+[source]
+----
+exten => _2XXX,1,Dial(SIP/${EXTEN},20,j)
+exten => _2XXX,102,VoiceMail(${EXTEN})       ; <-- DEPRECATED, wird nicht mehr erreicht
+----
+
+benutzen, ersetzen Sie das durch `GotoIf()` oder eine
+`DIALSTATUS`-basierte Auswertung:
+
+[source]
+----
+exten => _2XXX,1,Dial(PJSIP/${EXTEN},20)
+ same => n,Goto(${DIALSTATUS})
+
+ same => n(BUSY),VoiceMail(${EXTEN}@default,b)
+ same => n,Hangup()
+
+ same => n(NOANSWER),VoiceMail(${EXTEN}@default,u)
+ same => n,Hangup()
+
+ same => n(CHANUNAVAIL),Playback(tt-somethingwrong)
+ same => n,Hangup()
+----
+
+Die Variable `$\{DIALSTATUS}` enthält nach `Dial()` das Ergebnis
+(`BUSY`, `NOANSWER`, `ANSWER`, `CHANUNAVAIL`, `CONGESTION`, …). Mit
+einem `Goto($\{DIALSTATUS})` und passenden Labels erreichen Sie alles,
+was früher über Priority Jumping lief — nur verständlicher.

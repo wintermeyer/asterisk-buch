@@ -1,0 +1,16 @@
+[[case-study-einleitung]]
+= Einleitung
+:description: Einleitung zur Asterisk-Case-Study einer fiktiven mittelständischen Firma.
+
+Nachdem Sie in xref:hello-world.adoc[Kapitel _„Hello World"_]
+gesehen haben, wie man schnell eine kleine Asterisk-Anlage aufbaut,
+zeigen wir am Beispiel einer fiktiven Firma die umfangreicheren
+Möglichkeiten von Asterisk.
+
+Jede Firma — und damit jede Telefonanlage — ist anders. Dieses Kapitel
+dient deshalb als Anregung und als roter Faden, nicht als
+Eins-zu-eins-Kochrezept. Viele mittelständische Firmen setzen auf
+fertige Lösungen (FreePBX, Issabel, FusionPBX, Vitalpbx), die Asterisk
+als Engine verwenden — für den Einstieg lohnt sich trotzdem ein Blick
+auf die "nackten" Konfigurationsdateien, weil man erst damit wirklich
+versteht, was unter der Haube passiert.

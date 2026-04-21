@@ -1,0 +1,13 @@
+[[agi-dialplan]]
+= Aufruf eines AGI-Skripts im Dialplan
+:description: Ein AGI-Skript im Asterisk-Dialplan aufrufen: AGI(), FastAGI und AsyncAGI.
+
+Ein AGI-Skript wird im Dialplan über die Applikation
+`agi` aufgerufen. Die kann wie folgt aussehen:
+
+[source]
+----
+exten => 1234,1,Answer()
+exten => 1234,2,AGI(mein-agi-programm.php)
+exten => 1234,3,Hangup()
+----

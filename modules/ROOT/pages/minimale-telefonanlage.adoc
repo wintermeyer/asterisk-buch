@@ -1,128 +1,169 @@
 [[minimale-telefonanlage]]
 = Eine Minimal-Telefonanlage mit zwei SIP-Telefonen
+:description: Eine Minimal-Telefonanlage mit Asterisk, zwei SIP-Telefonen und Voicemail.
 
-Wie sieht die einfachste mögliche Telefonanlage aus? Zwei Telefone
-und ein Asterisk.
+Wie sieht die einfachste mögliche Telefonanlage aus? Zwei Telefone und
+ein Asterisk.
 
-Wir haben schon alle Einzelteile in diesem Puzzle behandelt und
-müssen sie jetzt nur noch richtig zusammenfügen. Als Erstes konfigurieren
-wir die zwei SIP-Telefone in der
-`/etc/asterisk/sip.conf`:
-
-[source]
-----
-[general] 
-port=5060 
-bindaddr=0.0.0.0 
-
-[2000] 
-type=friend 
-secret=1234 
-host=dynamic
-
-[2001] 
-type=friend 
-secret=1234 
-host=dynamic
-----
-
-Als Nächstes müssen wir noch die
-`/etc/asterisk/extensions.conf` anpassen. Das
-Hello-World-Beispiel lassen wir zu Testzwecken im Dialplan. So können wir
-die Funktion jedes einzelnen Telefons durch Anwahl der 1001 überprüfen.
-Der Dialplan sieht wie folgt aus:
+Wir haben schon alle Einzelteile in diesem Puzzle behandelt und müssen
+sie jetzt nur noch richtig zusammenfügen. Für das zweite Telefon
+erweitern wir die `pjsip.conf` — Endpoint, Auth und AOR muss jedes
+Telefon einzeln haben:
 
 [source]
 ----
-[default] 
+[transport-udp]
+type=transport
+protocol=udp
+bind=0.0.0.0
+
+; --- Telefon 2000 ---
+[2000]
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+auth=2000
+aors=2000
+
+[2000]
+type=auth
+auth_type=userpass
+username=2000
+password=supergeheim
+
+[2000]
+type=aor
+max_contacts=1
+
+; --- Telefon 2001 ---
+[2001]
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+auth=2001
+aors=2001
+
+[2001]
+type=auth
+auth_type=userpass
+username=2001
+password=nochgeheimer
+
+[2001]
+type=aor
+max_contacts=1
+----
+
+[TIP]
+====
+Wer viele Telefone betreut, wird sich bei der Wiederholung der
+Endpoint/Auth/AOR-Blöcke schnell die Finger wundschreiben. Dafür
+bietet PJSIP *Templates* (siehe
+xref:konfigurations-templates.adoc[Konfigurations-Templates]). Für den
+Einstieg ist die explizite Schreibweise aber lesbarer.
+====
+
+Als Nächstes die `/etc/asterisk/extensions.conf`. Das
+Hello-World-Beispiel lassen wir zu Testzwecken im Dialplan — so können
+wir pro Telefon mit Anwahl der `1001` prüfen, ob die Audio-Wiedergabe
+funktioniert:
+
+[source]
+----
+[default]
 exten => 1001,1,Answer()
-exten => 1001,2,Playback(hello-world)
-exten => 1001,3,Hangup()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
 
-exten => 2000,1,Dial(SIP/2000)
-exten => 2001,1,Dial(SIP/2001)
+exten => 2000,1,Dial(PJSIP/2000,20)
+exten => 2001,1,Dial(PJSIP/2001,20)
 ----
 
-Nach einem Neustart von Asterisk und der SIP-Telefone können Sie,
-nachdem die Telefone sich registriert haben, von einem Telefon zum anderen
-und zur 1001 anrufen.
+Nach
+
+[source,shell]
+----
+debian*CLI> pjsip reload
+debian*CLI> dialplan reload
+----
+
+und einem Neustart der SIP-Telefone können Sie, sobald sich beide
+registriert haben, zwischen den Telefonen hin- und hertelefonieren sowie
+von beiden die 1001 anrufen.
 
 [[min-anlage-ab]]
 == ... und jetzt mit einem Anrufbeantworter
 
-Asterisk beinhaltet bereits ein fertiges Voicemail-Modul. Wir
-müssen es lediglich in der Datei
-`/etc/asterisk/voicemail.conf` aktivieren. Als ersten
-Schritt verschieben wir diese Default-Datei in unser Verzeichnis mit den
-Sicherungskopien der Konfigurationsdateien:
+Asterisk bringt ein fertiges Voicemail-Modul mit. Wir müssen es lediglich
+in der Datei `/etc/asterisk/voicemail.conf` aktivieren. Erst das
+Default-Original sichern (falls die Datei bei Ihnen nicht existiert,
+ignorieren Sie die Fehlermeldung):
 
 [source,shell]
 ----
-debian:/etc/asterisk# mv voicemail.conf /var/tmp/asterisk-etc-backup/
+# mv /etc/asterisk/voicemail.conf /var/tmp/asterisk-etc-backup/
 ----
 
-Daraufhin erstellen wir eine neue
-`/etc/asterisk/voicemail.conf` und versehen diese mit
-folgendem Inhalt:
+Dann eine neue `/etc/asterisk/voicemail.conf` mit folgendem Inhalt
+anlegen:
 
 [source]
 ----
 [general]
-format = wav
+format = wav49|gsm|wav
 
 [default]
-2000 => 4711,Hans Mustermann,hansi@company.de
-2001 => 0815,Ute Beispiel,ute.beispiel@company.de
+2000 => 4711,Hans Mustermann,hansi@example.com
+2001 => 0815,Ute Beispiel,ute.beispiel@example.com
 ----
 
 Damit sind die Voicemailboxen grundsätzlich eingerichtet (ja, so
-einfach geht das!). Jetzt müssen wir aber noch in der
-`/etc/asterisk/extensions.conf` einige weitere Zeilen
-eintragen, um die Voicemail-Funktionalität unseren Telefonen zuzuweisen.
-Bitte vergessen Sie dabei nicht den neuen Eintrag
-_`",20"`_ bei der Dial-Applikation.
+einfach). Jetzt noch in der `/etc/asterisk/extensions.conf` ein paar
+Zeilen einbauen, damit die Mailbox zum Einsatz kommt, wenn das Telefon
+nicht abgenommen wird:
 
 [source]
 ----
-[default] 
+[default]
 exten => 1001,1,Answer()
-exten => 1001,2,Playback(hello-world)
-exten => 1001,3,Hangup()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
 
-exten => 2000,1,Dial(SIP/2000,20)
-exten => 2000,2,VoiceMail(2000,u)
+exten => 2000,1,Dial(PJSIP/2000,20)
+ same => n,VoiceMail(2000@default,u)
 
-exten => 2001,1,Dial(SIP/2001)
-exten => 2001,2,VoiceMail(2001,u)
+exten => 2001,1,Dial(PJSIP/2001,20)
+ same => n,VoiceMail(2001@default,u)
 
-exten => 2999,1,VoiceMailMain(${CALLERID(num)},s)
+; Mailbox vom eigenen Telefon aus abhören:
+exten => 2999,1,VoiceMailMain(${CALLERID(num)}@default,s)
 ----
 
-Fertig! Jetzt müssen Sie Asterisk nur noch mit `asterisk
--vvvvvc` neu starten
+Nach
 
-[TIP]
-====
-In einem laufenden Asterisk-System reicht auch ein
-`reload` im CLI aus.
-====
+[source,shell]
+----
+debian*CLI> voicemail reload
+debian*CLI> dialplan reload
+----
 
-und mit einem Telefon das andere anrufen. Nachdem es 20 Sekunden
-lang geklingelt hat (deshalb die _`20`_ am Ende des
-Dial-Befehls), kommt man auf die Voicemailbox. Ist die Gegenstelle
-besetzt, wird man direkt auf die Voicemailbox 2000 geleitet. Sie können
-vom Telefon mit der Nummer 2000 die entsprechende Mailbox abhören, indem
-Sie die Nummer 2999 anrufen. Dann bekommen Sie Ihre Voicemailbox als
-Menü vorgespielt.
+im CLI können Sie von einem Telefon das andere anrufen. Hebt niemand nach 20 Sekunden ab (deshalb die `,20` bei
+`Dial()`), landet der Anruf auf der Voicemailbox. Mit der Extension
+`2999` hören Sie Ihre eigene Mailbox ab.
 
 [NOTE]
 ====
-Ist auf Ihrem System ein Mail Transfer Agent (MTA)
-eingerichtet (z. B. sendmail oder postfix), so werden von Ihnen neu
-aufgesprochene Nachrichten direkt an die in der
-`voicemail.conf` angegebene E-Mail-Adresse
-geschickt.
+Ist auf Ihrem System ein Mail Transfer Agent (MTA) installiert und
+korrekt konfiguriert (z. B. Postfix oder ein Submission-Relay),
+schickt Asterisk neue Nachrichten als E-Mail an die in
+`voicemail.conf` hinterlegte Adresse.
 ====
 
 Wenn Sie das Ganze noch mit einer Passwortabfrage absichern wollen
-oder eine Auflistung des Menüs suchen, finden Sie dazu in xref:kapitel-voicemail.adoc[Kapitel 13, _Voicemail-System_] die nötigen Informationen.
+oder eine Auflistung des Menüs suchen, finden Sie dazu in
+xref:voicemail.adoc[Kapitel _Voicemail-System_] die nötigen
+Informationen.

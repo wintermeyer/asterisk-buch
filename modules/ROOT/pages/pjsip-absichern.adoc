@@ -1,0 +1,100 @@
+[[pjsip-absichern]]
+= PJSIP absichern
+:description: PJSIP-Endpoints absichern: ACLs, starke Passwörter, kein anonymer Zugang, Toll-Fraud-Schutz.
+
+In `pjsip.conf` gibt es eine Reihe von Optionen, die direkt auf die
+Angriffsfläche wirken:
+
+[source]
+----
+[global]
+type=global
+; Antwortet Asterisk auf unbekannte SIP-Angriffe? Nein.
+endpoint_identifier_order=auth_username,username,ip,anonymous
+
+; Hinter der IP einen Hostnamen ermitteln (langsam, unbedingt aus)
+disable_endpoint_identifier_order=no
+
+; Nicht authentifizierte Anfragen stumm abweisen
+allow_transports_for_aors=no
+----
+
+Am *Endpoint* selbst:
+
+[source]
+----
+[2000]
+type=endpoint
+; KEIN anonymer Zugang
+context=intern
+; Starke Passwörter über auth=...
+auth=2000
+aors=2000
+; IP-Einschränkung wenn möglich
+acl=intern
+; Anzahl gleichzeitiger Anrufe begrenzen (Toll-Fraud-Bremse)
+device_state_busy_at=3
+----
+
+Der ACL-Block:
+
+[source]
+----
+[intern]
+type=acl
+deny=0.0.0.0/0.0.0.0
+permit=192.168.0.0/24
+permit=10.0.0.0/8
+----
+
+== Registrierungsversuche drosseln
+
+PJSIP kennt `auth_rejection_permanent=no`, damit Asterisk bei
+falschem Passwort den Request *nicht* sofort dauerhaft ablehnt (das
+würde einem Angreifer "dieser User existiert" verraten):
+
+[source]
+----
+[global]
+type=global
+; 403 Forbidden statt 404 Not Found bei existierenden/nicht existierenden Usern
+;   -- macht es schwerer, User zu enumerieren
+allow_transports_for_aors=no
+
+[2000]
+type=endpoint
+; ...
+inband_progress=no
+allow_subscribe=no       ; SUBSCRIBE nur, wo es wirklich gebraucht wird
+----
+
+== Anonyme Anrufe
+
+Wenn Sie keinen öffentlich erreichbaren "Gast-Zugang" wollen (und das
+wollen Sie in den meisten Fällen nicht), entfernen Sie `anonymous`
+aus der `endpoint_identifier_order`. Ohne dieses Matching wirft
+Asterisk nicht authentifizierte INVITEs ab.
+
+== Toll-Fraud-Bremsen im Dialplan
+
+Unabhängig von PJSIP lohnt sich im Dialplan eine Kosten-Bremse:
+
+[source]
+----
+[von-extern]
+; Alle eingehenden Trunk-Anrufe dürfen nur ins eigene Netz,
+; NIEMALS raus über den Trunk.
+exten => _X.,1,NoOp(Eingang)
+ same => n,Goto(intern,${EXTEN},1)
+
+[intern]
+; Ausgehende Premium-/Auslands-Nummern nur, wenn PIN bekannt
+exten => _00[1-9]X.,1,Authenticate(${OUT_PIN})
+ same => n,Dial(PJSIP/${EXTEN}@provider,60)
+
+; Hohe Kosten-Länder komplett sperren
+exten => _001[9]XX.,1,Congestion()   ; Beispiel: bestimmte Präfixe ablehnen
+----
+
+Die Variable `$\{OUT_PIN}` stammt aus der `[globals]`-Section und ist
+eine PIN, die niemand "nebenbei" weiß.

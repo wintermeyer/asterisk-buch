@@ -1,0 +1,133 @@
+[[webrtc-gateway-konfiguration]]
+= Asterisk als WebRTC-Gateway einrichten
+:description: Asterisk als WebRTC-Gateway: pjsip.conf mit transport=wss und webrtc=yes.
+
+Für einen funktionierenden WebRTC-Endpoint müssen vier Stellen
+stimmen: die `http.conf`, der WSS-Transport in `pjsip.conf`, der
+WebRTC-Endpoint und das DTLS-Material.
+
+== http.conf: TLS-WebSocket aktivieren
+
+[source]
+----
+; /etc/asterisk/http.conf
+[general]
+enabled=yes
+bindaddr=0.0.0.0
+bindport=8088
+
+tlsenable=yes
+tlsbindaddr=0.0.0.0:8089
+tlscertfile=/etc/letsencrypt/live/pbx.example.com/fullchain.pem
+tlsprivatekey=/etc/letsencrypt/live/pbx.example.com/privkey.pem
+----
+
+Die WebRTC-Clients verbinden sich dann mit
+`wss://pbx.example.com:8089/ws`.
+
+== pjsip.conf: WSS-Transport und WebRTC-Endpoint
+
+[source]
+----
+; WSS-Transport
+[transport-wss]
+type=transport
+protocol=wss
+bind=0.0.0.0
+
+; Template für WebRTC-Clients
+[webrtc-endpoint](!)
+type=endpoint
+context=intern
+disallow=all
+allow=opus
+allow=ulaw
+webrtc=yes
+; (webrtc=yes setzt implizit:
+;   transport=transport-wss
+;   dtls_ca_file, dtls_cert_file, ...
+;   ice_support=yes
+;   use_avpf=yes
+;   media_encryption=dtls
+;   rtcp_mux=yes
+;   direct_media=no
+; Einzelne Einstellungen lassen sich weiterhin überschreiben.)
+
+[auth-webrtc-template](!)
+type=auth
+auth_type=userpass
+
+[aor-webrtc-template](!)
+type=aor
+max_contacts=5
+remove_existing=yes
+
+; Ein Browser-User
+[bob](webrtc-endpoint)
+auth=bob
+aors=bob
+
+[bob](auth-webrtc-template)
+username=bob
+password=WEBRTC-GEHEIM-BOB
+
+[bob](aor-webrtc-template)
+----
+
+[NOTE]
+====
+`webrtc=yes` ist die bequeme Abkürzung, die gleich ein halbes Dutzend
+Einstellungen mit WebRTC-tauglichen Defaults setzt. Historisch mussten
+alle diese Flags einzeln gesetzt werden — heute reicht dieses eine
+Flag in den meisten Fällen.
+====
+
+== DTLS-Material
+
+Standardmäßig erzeugt `webrtc=yes` eine DTLS-Verbindung mit den in
+`/var/lib/asterisk/keys/` abgelegten Zertifikaten. Für eine
+Produktivumgebung sollten Sie eigene Schlüssel erzeugen:
+
+[source,shell]
+----
+# cd /etc/asterisk/keys
+# openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 \
+      -subj "/CN=pbx.example.com" \
+      -keyout asterisk.key -out asterisk.crt
+# chown asterisk:asterisk asterisk.key asterisk.crt
+# chmod 640 asterisk.key asterisk.crt
+----
+
+Anschließend im Endpoint-Template ergänzen:
+
+[source]
+----
+[webrtc-endpoint](!)
+...
+dtls_ca_file=
+dtls_cert_file=/etc/asterisk/keys/asterisk.crt
+dtls_private_key=/etc/asterisk/keys/asterisk.key
+dtls_verify=fingerprint
+----
+
+== ICE/STUN
+
+Innerhalb eines LANs funktioniert WebRTC meist ohne zusätzliche
+Maßnahmen. Sobald ein Client von außerhalb kommt, braucht es einen
+STUN-Server (für das reine Herausfinden der öffentlichen IP) oder
+einen TURN-Server (als Media-Relay, wenn UDP blockiert ist).
+
+Beliebte Wahl für eigene Installationen: *coturn*
+(https://github.com/coturn/coturn). In der `pjsip.conf` hinterlegen
+Sie den STUN-Server z. B. per `ice_host_candidates` / externe Adresse
+am Transport — Details dazu in der offiziellen Asterisk-Doku.
+
+== Reload
+
+[source,shell]
+----
+asterisk -rx 'module reload res_http.so'
+asterisk -rx 'pjsip reload'
+asterisk -rx 'pjsip show transports'
+asterisk -rx 'pjsip show endpoint bob'
+----

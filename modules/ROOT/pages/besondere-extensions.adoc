@@ -1,177 +1,141 @@
 [[besondere-extensions]]
 = Besondere Extensions
+:description: Besondere Asterisk-Extensions: s, h, i, t, T, o und a.
 
-Da sämtliche Programmierlogik über Extensions programmiert werden
-muss, benötigen wir noch eine Reihe von besonderen und vom System
-vorbelegten Extensions.
+Da sämtliche Programmierlogik über Extensions läuft, gibt es einige
+besondere Extensions, die Asterisk von sich aus aufruft.
 
 [[h-extension]]
 == Die h-Extension
 
-Das `h` steht bei dieser Standard-Extension für
-_Hangup_ (Auflegen). Sie wird aufgerufen, sobald ein
-Gespräch beendet wurde. Dabei muss berücksichtigt werden, dass dann
-logischerweise der Wert der Variable `${EXTEN}` nicht
-mehr die ursprüngliche Extension, sondern den Wert `h`
-enthält.
+Das `h` steht für _Hangup_ (Auflegen). Die `h`-Extension wird
+aufgerufen, sobald ein Gespräch beendet wurde. Innerhalb dieser
+Extension enthält `$\{EXTEN}` nicht mehr die ursprüngliche Nummer,
+sondern den Wert `h`.
 
 [[h-extension-beispiel]]
 === Beispiel
 
-Soll in der globalen Variable `GESPRAECHE`
-immer die Anzahl der aktuell geführten Gespräche gespeichert werden,
-so muss diese beim Aufbau eines Gesprächs um 1 erhöht und beim Abbau
-eines Gesprächs (also beim Auflegen) wieder um 1 vermindert werden.
-Der folgende Dialplan zeigt die Grundidee:
+Soll in der globalen Variable `GESPRAECHE` die Anzahl der aktuell
+geführten Gespräche stehen, wird sie beim Aufbau um 1 erhöht und beim
+Auflegen um 1 vermindert:
 
 [source]
 ----
-[global]
+[globals]
 GESPRAECHE=0
 
 [from-intern]
-exten => _X.,1,Set(GESPRAECHE=$[${GESPRAECHE} + 1]|g)
-exten => _X.,2,Dial(SIP/${EXTEN})
+exten => _X.,1,Set(GLOBAL(GESPRAECHE)=$[${GESPRAECHE} + 1])
+ same => n,Dial(PJSIP/${EXTEN})
 
-exten => h,1,Set(GESPRAECHE=$[${GESPRAECHE} - 1]|g)
+exten => h,1,Set(GLOBAL(GESPRAECHE)=$[${GESPRAECHE} - 1])
 ----
 
 [[i-extension]]
 == Die i-Extension
 
-Um einen Context "wasserdicht" zu machen, wird die
-`i`-Extension benutzt. Das `i` steht dabei für
-_invalid_ (ungültig) und behandelt alle im
-entsprechenden Context nicht definierten Zielrufnummern. Auch hier wird
-in der Variable `EXTEN` natürlich nicht mehr die angewählte
-Nummer abgebildet. Diese ist mit der Variable `INVALID_EXTEN`
-abrufbar.
+Um einen Context "wasserdicht" zu machen, wird die `i`-Extension
+benutzt. Das `i` steht für _invalid_ und behandelt alle im Context
+nicht definierten Zielrufnummern. `$\{EXTEN}` enthält in der
+`i`-Extension nicht mehr die gewählte Nummer — diese finden Sie in
+`$\{INVALID_EXTEN}`.
 
 [[i-extension-beispiel]]
 === Beispiel
 
-In der Apfelmus GmbH können aus der Abteilung B nur die
-Rufnummern 100 bis 199 angerufen werden. Alle anderen Gespräche führen
-zur Ansage des Bausteines
-`that-is-not-rec-phn-num`.footnote:[Der Sprachbaustein in der Datei `that-is-not-rec-phn-num.gsm` enthält den folgenden Text: "That is not a recognized phone number".]
+In der Apfelmus GmbH können aus Abteilung B nur die Rufnummern 100 bis
+199 angerufen werden. Alle anderen Gespräche laufen in eine Ansage:
 
 [source]
 ----
 [abteilung-b]
-exten => _1XX,1,Dial(${EXTEN})
+exten => _1XX,1,Dial(PJSIP/${EXTEN})
 
 exten => i,1,NoOp(Undefinierte Nummer ${INVALID_EXTEN} wurde gewaehlt.)
-exten => i,2,Answer()
-exten => i,3,Playback(that-is-not-rec-phn-num)
-exten => i,4,Hangup()
+ same => n,Answer()
+ same => n,Playback(that-is-not-rec-phn-num)
+ same => n,Hangup()
 ----
 
 [[o-und-a-extension]]
 == Die o- und die a-Extension
 
-Wurde in der Konfigurationsdatei
-`voicemail.conf` der Eintrag
-`operator=yes` gesetzt, so kann innerhalb der Voicemailbox
-durch Drücken der `0` (Null) die `o`-Extension
-aufgerufen werden (`o` steht für
-_Operator_).
-
-Durch Drücken der Stern-Taste (`*`) kommt man hingegen
-in die `a`-Extension (_abort_,
-Abbruch).
+Ist in `voicemail.conf` der Eintrag `operator=yes` gesetzt, kann der
+Anrufer innerhalb der Voicemailbox mit `0` die `o`-Extension aufrufen
+(`o` für _Operator_). Mit `*` landet er in der `a`-Extension
+(_abort_).
 
 [[t-extension]]
 == Die t- und die T-Extension
 
-Bei der `t`- und der `T`-Extension handelt
-es sich jeweils um Timeout-Extensions, also Zeitüberschreitungen.
+`t` und `T` sind Timeout-Extensions für Zeitüberschreitungen.
 
 [[klein-t-extension]]
 === t-Extension
 
-Erfolgt nach einer bestimmten Zeit in einem IVR-Menü keine
-Eingabe, so wird die `t`-Extension aufgerufen.
-
-Beispiel:
+Erfolgt nach einer bestimmten Zeit in einem IVR-Menü keine Eingabe,
+ruft Asterisk die `t`-Extension auf:
 
 [source]
 ----
 [hauptmenue]
 exten => 10,1,Answer()
-exten => 10,n,Background(marryme)             ; "Heiraten? 1 für ja, 2 für nein"
+ same => n,Background(marryme)              ; "Heiraten? 1 fuer ja, 2 fuer nein"
 
-exten => 1,1,Playback(thank-you-cooperation)  ; 1 => "Danke"
-exten => 1,n,Hangup()
+exten => 1,1,Playback(thank-you-cooperation)
+ same => n,Hangup()
 
-exten => 2,1,Playback(hangup-try-again)       ; 2 => "Nochmal probieren"
-exten => 2,n,Hangup()
+exten => 2,1,Playback(hangup-try-again)
+ same => n,Hangup()
 
-exten => t,1,Hangup()                         ; keine Eingabe => auflegen
+exten => t,1,Hangup()                        ; keine Eingabe => auflegen
 ----
 
 [[gross-t-extension]]
 === T-Extension
 
-Die `T`-Extension wird nach einem _Absolute
-Timeout_ aufgerufen. Dieser kann mit
-`Set(TIMEOUT(absolute)=<Sekunden>)` gesetzt
-werden.
+Die `T`-Extension wird nach einem _Absolute Timeout_ aufgerufen,
+gesetzt mit `Set(TIMEOUT(absolute)=<Sekunden>)`.
 
 [WARNING]
 ====
-Bitte achten Sie darauf, dass vor und nach dem "=" Zeichen
-kein Leerzeichen stehen darf.
+Zwischen Variable, `=` und Wert dürfen keine Leerzeichen stehen.
 ====
 
-Der Timeout wird immer dann gestartet, wenn der Zähler
-neu gesetzt wird (es wird also nicht automatisch vom Anfang des
-Gesprächs an gezählt). Mit `Set(TIMEOUT(absolute)=0)` wird
-dieser Timeout wieder deaktiviert.
-
-Beispiel:
+Der Timeout wird jedes Mal neu gestartet, wenn der Zähler neu gesetzt
+wird — also nicht automatisch ab Gesprächsbeginn. Mit
+`Set(TIMEOUT(absolute)=0)` wird er deaktiviert.
 
 [source]
 ----
 exten => 20,1,Answer()
-exten => 20,2,Set(TIMEOUT(absolute)=120)
-exten => 20,3,Playback(hello-world)
-exten => 20,4,Wait(1)
-exten => 20,5,Goto(3)
+ same => n,Set(TIMEOUT(absolute)=120)
+ same => n(loop),Playback(hello-world)
+ same => n,Wait(1)
+ same => n,Goto(loop)
 
 exten => T,1,Wait(1)
-exten => T,2,Playback(thank-you-for-calling)
-exten => T,3,Wait(1)
-exten => T,4,Hangup()
+ same => n,Playback(thank-you-for-calling)
+ same => n,Wait(1)
+ same => n,Hangup()
 ----
 
 [[s-extension]]
 == Die s-Extension
 
-Der erste Parameter einer Regel (Extension) ist immer der Name
-bzw. die Nummer. Was passiert aber, falls der Anruf auf einer
-klassischen analogen Leitung eintrifft und Asterisk gar nicht wissen
-kann, an wen der Anruf gerichtet ist? Dies ist dann der Fall, wenn Sie
-Asterisk mittels eines analogen Anschlusses an das Festnetz anschließen
-und die Rufnummerweitergabe aus dem Festnetz an den analogen
-Teilnehmeranschluss nicht erfolgt. Für dieses und alle anderen
-Szenarien, in denen der eingehende Anruf ohne eine Zielrufnummer
-ankommt, gibt es die `s`-Extension.
-
-[NOTE]
-====
-Wenn Sie ein ATA-Device, also einen Analog-zu-VoIP-Adapter
-benutzen, benötigen Sie dafür keine `s`-Extension. Die
-Zielrufnummer müssen Sie hierbei im Adapter (meist über ein
-Webinterface) konfigurieren.
-====
-
-Beispiel:
+Der erste Parameter einer Regel ist normalerweise die gewählte
+Nummer. Was aber, wenn ein Anruf ankommt, ohne dass Asterisk die
+Zielrufnummer kennt? Das ist typisch für manche SIP-Trunks, die bei
+eingehenden Anrufen als Zielrufnummer nur `s` schicken, oder für
+Szenarien, in denen kein DID/DDI-Mapping existiert. Für diese Fälle
+gibt es die `s`-Extension (_start_):
 
 [source]
 ----
 exten => s,1,Answer()
-exten => s,2,Wait(1)
-exten => s,3,Play(carried-away-by-monkeys)
-exten => s,4,Wait(1)
-exten => s,5,Hangup()
+ same => n,Wait(1)
+ same => n,Playback(carried-away-by-monkeys)
+ same => n,Wait(1)
+ same => n,Hangup()
 ----

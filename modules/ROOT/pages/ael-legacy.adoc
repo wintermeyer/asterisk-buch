@@ -1,0 +1,164 @@
+[[ael-legacy]]
+= AEL (Legacy)
+:description: AEL (Asterisk Extension Language) ist Legacy. Was Sie wissen müssen, wenn Sie auf einen AEL-Dialplan stoßen.
+
+_Asterisk Extension Language_
+
+[IMPORTANT]
+====
+AEL ist effektiv tot. Das Modul `pbx_ael` existiert zwar noch im
+Quellbaum, wird aber nicht mehr weiterentwickelt, bekommt im Rahmen
+der Asterisk-Module-Bereinigung immer wieder den Status
+"extended/deprecated" und ist in den großen Distributionspaketen
+teilweise nicht mehr standardmäßig enthalten. Für eine neue
+Asterisk-Installation ist die klassische `extensions.conf` mit
+`same => n,...` der richtige Weg. Dieser Abschnitt bleibt nur im
+Buch, weil Sie beim Einstieg in eine Alt-Installation auf AEL stoßen
+können.
+====
+
+AEL wurde mit Asterisk 1.4 eingeführt und versprach einen
+"richtiger-programmiersprachigen" Dialplan: C-artige Blöcke mit
+geschweiften Klammern, `if`/`else`/`while`, Label-Sprünge, Makros. In
+der Praxis hat sich die klassische `extensions.conf` durchgesetzt —
+auch, weil sich Tooling, Beispiele, Community-Snippets und die
+offizielle Dokumentation praktisch ausschließlich an `extensions.conf`
+orientieren.
+
+Ein direkter Vergleich:
+
+[cols="2*"]
+|===
+| `extensions.conf`
+| `extensions.ael`
+
+|
+[source]
+----
+[meine-telefone]
+exten => 20,1,Answer()
+ same => n,Playback(beep)
+ same => n,Hangup()
+----
+|
+[source]
+----
+context meine-telefone {
+    20 => {
+        Answer();
+        Playback(beep);
+        Hangup();
+    }
+}
+----
+|===
+
+== Was Sie wissen sollten, wenn Sie AEL in der Praxis sehen
+
+* `extensions.conf` und `extensions.ael` existieren nebeneinander.
+  Sind beide Dateien vorhanden, gewinnt je nach Ladereihenfolge
+  `extensions.conf` beim Contextnamen-Konflikt. Das ist für die
+  Migration nützlich: Man kann Context für Context aus AEL in die
+  `extensions.conf` umziehen.
+* AEL2 (kurz: AEL) ist die einzige Variante. Ein früher AEL1 war nur
+  ein Prototyp.
+
+Für neue Dialpläne und jede Art von Überarbeitung eines
+AEL-Altbestands gilt: `extensions.conf` mit `same => n`, `Gosub()`
+statt `Macro()`, und für alles, was wirklich komplex ist,
+xref:ari.adoc[ARI].
+
+== AEL-Syntax im Überblick
+
+Zeilenende::
+Befehle werden mit `;` abgeschlossen.
+
+Kommentare::
+`// einzeilig` oder `/* mehrzeilig */`. Die Semikolon-Kommentare aus
+`extensions.conf` funktionieren in AEL *nicht*.
+
+Includes::
+`includes { other-context; }` innerhalb eines Context-Blocks. Alte
+Pipe-Trenner für Zeit-Includes (`09:00-17:00|mon-fri|*|*`) sind in
+AEL weiterhin Pipe-separiert.
+
+Globale Variablen::
+[source]
+----
+globals {
+    KUCHEN = Marmorkuchen;
+    KLINGELZEIT = 60;
+}
+----
+
+Bedingungen::
+[source]
+----
+50 => {
+    Set(a=test);
+    if ("${a}" = "test") { SayDigits(123); }
+    else { SayDigits(456); }
+}
+----
+
+Sprünge::
+[source]
+----
+goto anfang;              // Label in derselben Extension
+goto 10|anfang;           // Label in anderer Extension
+goto cntxt2|40|vierzig;   // Label in anderem Context
+jump 10@beispiel;         // Extension in anderem Context
+----
+
+Hints::
+[source]
+----
+context intern {
+    hint(PJSIP/21) 21 => { Dial(PJSIP/21,30); }
+}
+----
+
+== CLI und Tooling
+
+`ael reload`::
+Lädt `extensions.ael` neu ein, ohne Asterisk neu zu starten.
+
+`dialplan show`::
+Zeigt den Dialplan, den Asterisk aus `extensions.conf` und
+`extensions.ael` zusammengesetzt hat. Pro Zeile ist angegeben, ob sie
+aus `pbx_config` oder `pbx_ael` stammt.
+
+`aelparse`::
+Kommandozeilen-Werkzeug, das eine `extensions.ael` in das
+`extensions.conf`-Format konvertieren kann. Ideal zur Migration und
+zum Aufspüren von Syntaxfehlern:
++
+[source,shell]
+----
+# aelparse -q -w
+----
++
+schreibt den eingelesenen Dialplan als `extensions.conf.aeldump` ins
+aktuelle Verzeichnis.
+
+== extensions.ael oder extensions.conf?
+
+Kurze Antwort: *`extensions.conf`*. Die Frage hatte vor zehn Jahren
+noch zwei Seiten. Heute nicht mehr. `pbx_ael` wird nicht aktiv
+weiterentwickelt, die Community-Dokumentation und -Beispiele bauen
+fast ausschließlich auf `extensions.conf` auf, und mit `same => n,...`
+ist die klassische Syntax ebenfalls angenehm lesbar.
+
+Wenn Sie einen Bestand mit `extensions.ael` pflegen: Es gibt keinen
+Zwang, panikartig zu migrieren — `pbx_ael` läuft in den meisten
+aktuellen Asterisk-Versionen nach wie vor. Planen Sie die Umstellung
+aber für die nächste größere Umbauphase ein. Mit `aelparse` können Sie
+AEL zu `extensions.conf` konvertieren und so in einem überschaubaren
+Schritt umziehen.
+
+== Weiterführend
+
+Für den vollständigen AEL-Sprachumfang gibt es keine gepflegte
+Community-Referenz mehr. Der historische Text `doc/asterisk.pdf` (in
+den älteren Asterisk-Quellen) enthält ein AEL-Kapitel — das ist die
+beste verfügbare Quelle.

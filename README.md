@@ -1,9 +1,27 @@
 # Das Asterisk-Buch
 
-Antora source for _Das Asterisk-Buch_ by Stefan Wintermeyer. 
-The prose is German. Content lives under
+Antora source for _Das Asterisk-Buch_ by Stefan Wintermeyer —
+Evergreen-Ausgabe. The prose is German. Content lives under
 `modules/ROOT/pages/*.adoc`; navigation is declared in
 `modules/ROOT/nav.adoc`.
+
+## Philosophie
+
+This is an _evergreen_ edition of the book, deliberately not pinned
+to a specific Asterisk version. Instead of freezing the content for
+one release, it is maintained continuously:
+
+- Core concepts (dialplan, contexts, channels, bridges, ARI ideas)
+  are written to apply across versions.
+- Version-specific details (e.g. "since Asterisk 21, `chan_sip` is
+  gone") are explicitly flagged.
+- For fast-moving reference material (complete lists of applications,
+  functions, AMI/AGI commands), we link to the upstream docs at
+  https://docs.asterisk.org rather than embedding stale snapshots.
+
+The book covers PJSIP (not `chan_sip`), ConfBridge (not MeetMe),
+ARI, WebRTC, modern security practices — everything that was missing
+or obsolete in the previous edition.
 
 ## Build
 
@@ -31,3 +49,9 @@ single `.adoc` page, linked from `modules/ROOT/nav.adoc`. Images go in
 Shell / CLI transcripts use `[source,bash]` (or `[source,shell]`) and
 get the `terminal` CSS role automatically via the Asciidoctor extension
 in `asciidoctor-extensions/terminal-role.js`.
+
+## Contributing
+
+Pull requests welcome. For larger changes, please open an issue first
+to discuss the direction. Feedback via email to
+<sw@wintermeyer-consulting.de> also works.

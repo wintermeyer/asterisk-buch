@@ -1,0 +1,30 @@
+[[updates-und-versionen]]
+= Updates und Versionen des Buches
+:description: Die Evergreen-Ausgabe des Asterisk-Buches wird fortlaufend gepflegt. Wie Updates und Community-Beiträge funktionieren.
+
+Dieses Buch ist ein offenes Open-Source-Projekt. Der Quelltext liegt
+unter https://github.com/svenwintermeyer/asterisk-buch (bzw. dem jeweils
+aktuellen Repository-Pfad, siehe die Projekt-Website). Die gerenderte
+Version erreichen Sie unter
+https://das-asterisk-buch.de[das-asterisk-buch.de].
+
+Anders als die gedruckten Vorgänger ist diese Ausgabe _evergreen_. Es
+gibt keine eingefrorene "Asterisk-22-Ausgabe" oder "Asterisk-25-Ausgabe".
+Stattdessen wird das Buch fortlaufend gepflegt:
+
+* Allgemeine Konzepte (Dialplan, Contexte, Channels, Bridges, ARI-Ideen)
+  werden so formuliert, dass sie möglichst versionsunabhängig gelten.
+* Wo ein Detail an eine bestimmte Asterisk-Version gebunden ist (z. B.
+  Entfernen eines Moduls, neue Konfigurationsoptionen, geändertes
+  Default-Verhalten), steht das explizit im Text — meist in Form einer
+  Notiz "ab Asterisk X".
+* Für Referenzmaterial, das sich ohnehin mit jeder Version ändert
+  (vollständige Listen aller Applications, Functions, AMI-/AGI-Befehle),
+  verweisen wir gezielt auf die offizielle Dokumentation unter
+  https://docs.asterisk.org und das Quell-Repository
+  https://github.com/asterisk/documentation.
+
+Wer eine konkrete Version testet: Asterisk unterscheidet zwischen
+Standard- und LTS-Releases. Für Produktivsysteme ist das jeweils aktuelle
+LTS-Release erste Wahl. Die Release-Übersicht findet sich unter
+https://docs.asterisk.org/Deployment/Asterisk-Versions/.

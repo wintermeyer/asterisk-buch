@@ -1,0 +1,20 @@
+[[webrtc]]
+= WebRTC
+:description: WebRTC mit Asterisk: Browser-basierte Telefonie über PJSIP-WSS und DTLS-SRTP.
+
+In diesem Kapitel:
+
+* xref:webrtc-einleitung.adoc[Einleitung]
+* xref:webrtc-gateway-konfiguration.adoc[Asterisk als WebRTC-Gateway einrichten]
+* xref:webrtc-browser-client.adoc[Ein Browser-Client mit JsSIP]
+
+WebRTC ermöglicht Telefonie direkt im Browser — ohne Plugins, ohne
+Software-Installation. Für Asterisk ist WebRTC keine andere Welt,
+sondern nur ein weiterer Transport: Der Browser spricht SIP über
+WebSocket (WSS), die Medien werden als DTLS-SRTP verschlüsselt, und
+Asterisk verhält sich wie ein gewöhnlicher SIP-Server.
+
+In der alten Buchauflage fehlte dieses Thema komplett. Heute ist
+WebRTC ein Standardbestandteil vieler Asterisk-Installationen:
+Kunden-Portale, interne Soft-Phones im Browser, Click-to-Call auf
+Websites.

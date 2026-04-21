@@ -1,0 +1,27 @@
+[[voicemail]]
+= Voicemail-System
+:description: Voicemail in Asterisk: Mailbox-System mit app_voicemail, E-Mail-Benachrichtigung, Dial-by-Name.
+
+In diesem Kapitel:
+
+* xref:voicemail-einleitung.adoc[Einleitung]
+* xref:voicemail-beispiele.adoc[Beispielanwendungen]
+** xref:voicemail-beispiele.adoc#voicemail-beispiele-meier[Die Voicemailbox der Familie Meier]
+** xref:voicemail-beispiele.adoc#voicemail-beispiele-firma[Die Apfelmus GmbH]
+* xref:voicemail-applikationen.adoc[Applikationen]
+** xref:voicemail-applikationen.adoc#voicemail-applikationen-voicemail[`VoiceMail()`]
+** xref:voicemail-applikationen.adoc#voicemail-applikationen-voicemailmain[`VoiceMailMain()`]
+* xref:voicemail-conf.adoc[`voicemail.conf`]
+** xref:voicemail-conf.adoc#voicemail-voicemail.conf-general[`[general]`]
+** xref:voicemail-conf.adoc#voicemail-voicemail.conf-zonemessages[`[zonemessages]`]
+** xref:voicemail-conf.adoc#voicemail-voicemail.conf-contexte[Freie Contexte]
+** xref:voicemail-conf.adoc#voicemail-voicemail.conf-mailbox[Mailbox-Definition]
+* xref:voicemail-dial-by-name.adoc[Telefonbuch (Dial-by-Name)]
+** xref:voicemail-dial-by-name.adoc#voicemail-telefonbuch-syntax[Syntax]
+** xref:voicemail-dial-by-name.adoc#voicemail-telefonbuch-funktion[Funktionsweise]
+* xref:voicemail-passwortspeicher.adoc[`voicemail.conf` als Passwortspeicher]
+* xref:minivm.adoc[Mini-VoiceMail (MiniVM)]
+** xref:minivm.adoc#minivm-directories[Verzeichnisstruktur]
+** xref:minivm.adoc#minivm.conf[minivm.conf]
+** xref:minivm.adoc#minivm-cli[CLI-Befehle für Mini-VoiceMail]
+** xref:minivm.adoc#minivm-applications-functions[MiniVM-Applikationen und -Funktionen]

@@ -1,0 +1,145 @@
+[[konfigurations-templates]]
+= Konfigurations-Templates
+:description: Templates in Asterisk-Konfigurationsdateien: DRY-Prinzip für pjsip.conf, queues.conf und Co.
+
+Konfigurationsdateien wie die `pjsip.conf`, `iax.conf`,
+`queues.conf` oder `confbridge.conf` haben oft viele sehr ähnliche
+Einträge und werden dadurch schnell unübersichtlich.
+
+In diesem Anhang zeigen wir das Template-Feature am Beispiel von
+PJSIP-Endpoints — das Prinzip funktioniert aber in allen
+Asterisk-Konfigurationsdateien identisch.
+
+== Ohne Template
+
+[source]
+----
+[201]
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+auth=201
+aors=201
+
+[201]
+type=auth
+auth_type=userpass
+username=201
+password=GEHEIM1
+
+[201]
+type=aor
+max_contacts=1
+
+[202]
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+auth=202
+aors=202
+
+[202]
+type=auth
+auth_type=userpass
+username=202
+password=GEHEIM2
+
+[202]
+type=aor
+max_contacts=1
+----
+
+Bei drei Telefonen noch überschaubar, bei dreißig ein Alptraum.
+
+== Mit Template
+
+Ein Template wird durch `(!)` nach dem Blocknamen markiert und von
+einem anderen Block mit `(template-name)` geerbt:
+
+[source]
+----
+; --- Templates ---
+[endpoint-template](!)
+type=endpoint
+context=default
+disallow=all
+allow=ulaw
+allow=alaw
+allow=g722
+
+[auth-template](!)
+type=auth
+auth_type=userpass
+
+[aor-template](!)
+type=aor
+max_contacts=1
+
+; --- Telefon 201 ---
+[201](endpoint-template)
+auth=201
+aors=201
+
+[201](auth-template)
+username=201
+password=GEHEIM1
+
+[201](aor-template)
+
+; --- Telefon 202 ---
+[202](endpoint-template)
+auth=202
+aors=202
+
+[202](auth-template)
+username=202
+password=GEHEIM2
+
+[202](aor-template)
+----
+
+Die Templates (`endpoint-template`, `auth-template`, `aor-template`)
+sind selbst nicht aktiv — `(!)` markiert sie nur als Vorlage. Die
+konkreten Telefonblöcke erben deren Inhalte und überschreiben bei
+Bedarf einzelne Felder.
+
+== Template-Ketten und Mehrfach-Erben
+
+Ein Block kann auch *mehrere* Templates erben:
+
+[source]
+----
+[basis](!)
+type=endpoint
+disallow=all
+allow=ulaw
+
+[hd-audio](!)
+allow=g722
+allow=opus
+
+[hq-telefon](basis,hd-audio)
+auth=hq-telefon
+aors=hq-telefon
+----
+
+Die Reihenfolge in den Klammern ist wichtig: Spätere Templates
+überschreiben frühere bei gleichen Feldnamen.
+
+== Wo funktionieren Templates?
+
+Das Template-Feature ist eine Fähigkeit des allgemeinen
+Asterisk-Konfigurations-Parsers. Es funktioniert überall, wo dieser
+Parser benutzt wird — also in praktisch allen `.conf`-Dateien. Konkret
+sind Templates besonders nützlich in:
+
+* `pjsip.conf` (endpoint/auth/aor)
+* `iax.conf`
+* `queues.conf` (Queue-Definitionen)
+* `confbridge.conf` (Bridge- und User-Profile — hier sind Templates
+  sogar idiomatisch)
+* `manager.conf` (AMI-Benutzer)

@@ -1,6 +1,0 @@
-[[updates-und-versionen-des-buches]]
-= Updates und Versionen des Buches
-
-Dieses Buch wird wie ein typisches Open-Source-Projekt entwickelt.
-Das Buch ist quasi ein Ausdruck des Stable-Zweiges. Updates und Bugfixes
-zu diesem Zweig finden Sie auf der Webseite http://das-asterisk-buch.de.

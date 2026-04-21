@@ -1,0 +1,32 @@
+[[ami-manager-interface]]
+= Asterisk fernsteuern
+:description: Das Asterisk Manager Interface (AMI) als TCP-Protokoll für Monitoring und Steuerung.
+
+In diesem Kapitel:
+
+* xref:asterisk-rx-befehle.adoc[asterisk -rx "_`Befehl`_"]
+** xref:asterisk-rx-befehle.adoc#asterisk-rx-beispiel[Beispiel]
+* xref:call-files.adoc[Call Files]
+** xref:call-files.adoc#call-file-parameter[Parameter]
+** xref:call-files.adoc#call-file-zukunft[Call Files in der Zukunft aufrufen]
+** xref:call-files.adoc#call-file-weckruf[Beispiel Weckruf]
+* xref:ami-konfiguration.adoc[Das Manager-Interface (AMI)]
+* xref:ajam-deprecated.adoc[AJAM — und warum es durch ARI ersetzt wurde]
+
+Es gibt verschiedene Möglichkeiten, eine Asterisk-Anlage extern zu
+steuern. Von der einfachsten zur mächtigsten:
+
+1. *`asterisk -rx "<befehl>"`* — schnelle CLI-Befehle aus einem Skript
+   heraus.
+2. *Call Files* — eine Textdatei ins Spool-Verzeichnis schreiben, um
+   einen Anruf zu initiieren. Simpel, Fire-and-forget, kein Code.
+3. *AMI (Manager-Interface)* — TCP-Protokoll für Monitoring,
+   Event-Handling und Originate.
+4. *xref:ari.adoc[ARI (REST Interface)]* — die aktuelle
+   Empfehlung für neue Anwendungen. REST + WebSocket, volle
+   Call-Control.
+
+Für neue Entwicklungen empfehlen wir klar *ARI*. AMI bleibt für
+bestehende Anwendungen und einfache Monitoring-Skripte relevant. AJAM
+(der alte HTTP-Wrapper um AMI) ist deprecated und wird nicht mehr
+empfohlen.

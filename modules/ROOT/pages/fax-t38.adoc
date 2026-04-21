@@ -1,0 +1,47 @@
+[[fax-t38]]
+= Fax-Server
+:description: Fax-Server mit Asterisk: T.38 und die Alternativen für Fax over IP.
+
+Fax über IP ist nach wie vor ein schwieriges Thema. Es gibt zwei
+Ansätze, die in der Praxis funktionieren:
+
+1. *T.38* — das "Fax over IP"-Protokoll. Für SIP-Trunks der
+   richtige Weg: Fax-Frames werden in T.38-UDPTL-Paketen übertragen,
+   die resistent gegen Jitter und Paketverlust sind. Asterisk
+   unterstützt T.38 über `res_fax_spandsp` (Open Source) oder
+   `res_fax_digium` (kommerzielles Modul von Sangoma).
++
+Das Problem: Nicht jeder SIP-Provider unterstützt T.38 sauber, und
+nicht jedes Fax-Gerät oder jeder ATA beherrscht die T.38-Aushandlung.
+
+2. *G.711 passthrough* — das Fax-Signal im Audio-Stream mit G.711
+   (alaw/ulaw) durchleiten. Funktioniert nur, wenn die Leitung
+   sehr gute QoS hat und kein Packet-Loss auftritt.
+
+Im Asterisk-Dialplan:
+
+[source]
+----
+; Eingehendes Fax auf Extension 999 mit spandsp empfangen
+exten => 999,1,Answer()
+ same => n,Set(FAXOPT(headerinfo)=Eingehendes Fax)
+ same => n,Set(FAXOPT(localstationid)=5551234)
+ same => n,ReceiveFax(/var/spool/asterisk/fax/in_${UNIQUEID}.tiff)
+ same => n,Hangup()
+----
+
+[[faxserver-hylafax]]
+== Historische Variante: IAXmodem + HylaFax
+
+Vor der breiten T.38-Unterstützung gab es einen pragmatischen Trick,
+der in älteren Installationen noch anzutreffen ist: *IAXmodem*
+emuliert ein Fax-Modem an einer IAX-Schnittstelle zu Asterisk, und
+*HylaFax* (eine jahrzehntealte, sehr stabile Fax-Serversoftware aus
+der Unix-Welt) verwaltet die Faxe. Asterisk leitet eingehende Faxe an
+das IAXmodem, das stellt sie HylaFax zur Verfügung, und HylaFax
+übernimmt Empfang, Versand, OCR und Zustellung per E-Mail.
+
+Für neue Projekte empfehlen wir den direkten Einsatz von T.38 mit
+`ReceiveFAX()` und `SendFAX()`. Anleitungen zum IAXmodem+HylaFax-Setup
+finden Sie in der HylaFax-Dokumentation unter
+https://hylafax.sourceforge.io/.

@@ -1,0 +1,55 @@
+[[hilfe-bei-problemen]]
+= Hilfe, ich habe immer noch ein Problem mit Asterisk!
+:description: Hilfe bei Asterisk-Problemen: CLI-Debugging, offizielle Dokumentation, Community, Forum und Bugtracker.
+
+Sie haben ein Problem und finden in diesem Buch keine entsprechende
+Antwort? Dann gibt es folgende Möglichkeiten:
+
+* https://docs.asterisk.org[docs.asterisk.org]
++
+Die offizielle Asterisk-Dokumentation. Hier stehen die jeweils
+aktuellen Listen aller Applications, Functions, AMI- und
+AGI-Befehle, das Modul-Register und die Release-Notes. Das ist die
+erste Adresse, wenn ein Befehl nicht wie erwartet funktioniert.
+
+* https://community.asterisk.org[community.asterisk.org]
++
+Die offizielle Asterisk-Community. Fragen werden dort meist
+schnell und kompetent beantwortet. Sprache ist Englisch.
+
+* *Mailinglisten und Bugtracker*
++
+Das Projekt betreibt Mailinglisten
+(https://lists.asterisk.org) und einen Issue-Tracker auf
+GitHub (https://github.com/asterisk/asterisk/issues).
+
+* *Stack Overflow*
++
+Stichwort `asterisk`, zahlreiche beantwortete Fragen
+(https://stackoverflow.com/questions/tagged/asterisk).
+
+* *Eigene Diagnose*
++
+Die wirkungsvollsten Werkzeuge stehen direkt auf Ihrem Server:
++
+[source,shell]
+----
+asterisk -rvvvvv              # CLI mit hoher Verbosity
+pjsip set logger on           # SIP-Traffic im CLI mitlesen
+core set debug 3              # nur in Ausnahmefällen
+core show channels            # laufende Gespräche
+pjsip show endpoints          # Endpoints und Status
+----
++
+In 80 % der Fälle löst das Problem schon ein aufmerksamer Blick
+ins CLI-Log mit `-vvvvv`.
+
+* *Kontakt zum Autor*
++
+Wenn alle Stricke reißen, erreichen Sie den Autor unter
+mailto:sw@wintermeyer-consulting.de[sw@wintermeyer-consulting.de].
+Bitte ein paar Tage Zeit für die Antwort einplanen.
+
+_Wichtig: Wenn Sie auf ein allgemeines Problem stoßen und im Buch keine
+ausreichende Erklärung finden, schreiben Sie uns bitte! Nur so kann das
+Buch besser werden._

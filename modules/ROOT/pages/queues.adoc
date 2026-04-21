@@ -1,0 +1,120 @@
+[[queues]]
+= Warteschleifen für Call-Center
+:description: Warteschleifen in Asterisk mit app_queue: Call-Center-Logik für eingehende Anrufe.
+
+In diesem Kapitel:
+
+* xref:queues-musiktest-extension.adoc[Extension zum Musiktest]
+* xref:musiconhold-conf.adoc[`musiconhold.conf`]
+* xref:queues-conf.adoc[`queues.conf`]
+** xref:queues-conf.adoc#queues.conf-musiconhold[`musiconhold`]
+** xref:queues-conf.adoc#queues.conf-announce[`announce`]
+** xref:queues-conf.adoc#queues.conf-strategy[`strategy`]
+** xref:queues-conf.adoc#queues.conf-servicelevel[`servicelevel`]
+** xref:queues-conf.adoc#queues.conf-context[`context`]
+** xref:queues-conf.adoc#queues.conf-timeout[`timeout`]
+** xref:queues-conf.adoc#queues.conf-retry[`retry`]
+** xref:queues-conf.adoc#queues.conf-weight[`weight`]
+** xref:queues-conf.adoc#queues.conf-wrapuptime[`wrapuptime`]
+** xref:queues-conf.adoc#queues.conf-maxlen[`maxlen`]
+** xref:queues-conf.adoc#queues.conf-announce-frequency[`announce-frequency`]
+** xref:queues-conf.adoc#queues.conf-announce-holdtime[`announce-holdtime`]
+** xref:queues-conf.adoc#queues.conf-announce-round-seconds[`announce-round-seconds`]
+** xref:queues-conf.adoc#queues.conf-sprachbausteine[Sprachbausteine]
+** xref:queues-conf.adoc#queues.conf-periodic-announce-frequency[`periodic-announce-frequency`]
+** xref:queues-conf.adoc#queues.conf-monitor-format[`monitor-format`]
+** xref:queues-conf.adoc#queues.conf-monitor-join[`monitor-join`]
+** xref:queues-conf.adoc#queues.conf-joinempty[`joinempty`]
+** xref:queues-conf.adoc#queues.conf-leavewhenempty[`leavewhenempty`]
+** xref:queues-conf.adoc#queues.conf-eventwhencalled[`eventwhencalled`]
+** xref:queues-conf.adoc#queues.conf-eventmemberstatus[`eventmemberstatus`]
+** xref:queues-conf.adoc#queues.conf-reportholdtime[`reportholdtime`]
+** xref:queues-conf.adoc#queues.conf-memberdelay[`memberdelay`]
+** xref:queues-conf.adoc#queues.conf-timeoutrestart[`timeoutrestart`]
+** xref:queues-conf.adoc#queues.conf-autopause[`autopause`]
+** xref:queues-conf.adoc#queues.conf-ringinuse[`ringinuse`]
+** xref:queues-conf.adoc#queues.conf-member[`member`]
+* xref:agents-conf.adoc[`agents.conf`]
+** xref:agents-conf.adoc#agents.conf-autologoff[`autologoff`]
+** xref:agents-conf.adoc#agents.conf-ackcall[`ackcall`]
+** xref:agents-conf.adoc#agents.conf-endcall[`endcall`]
+** xref:agents-conf.adoc#agents.conf-wrapuptime[`wrapuptime`]
+** xref:agents-conf.adoc#agents.conf-musiconhold[`musiconhold`]
+** xref:agents-conf.adoc#agents.conf-updatecdr[`updatecdr`]
+** xref:agents-conf.adoc#agents.conf-recordagentcalls[`recordagentcalls`]
+** xref:agents-conf.adoc#agents.conf-recordformat[`recordformat`]
+** xref:agents-conf.adoc#agents.conf-createlink[`createlink`]
+** xref:agents-conf.adoc#agents.conf-urlprefix[`urlprefix`]
+** xref:agents-conf.adoc#agents.conf-savecallsin[`savecallsin`]
+** xref:agents-conf.adoc#agents.conf-agent[`agent`]
+* xref:queues-extensions-conf.adoc[`extensions.conf`]
+* xref:queues-log.adoc[Log-Datei]
+** xref:queues-log.adoc#queue-log-mysql[Queue-Log in MySQL importieren]
+
+Warteschleifen sind der Horror vieler Kunden. Trotzdem sind sie in
+kaum einer Firma mit einem telefonischen Kunden-Service mehr wegzudenken.
+Daher soll hier beschrieben werden, wie man eine Warteschleife anlegt und
+welche Einstellungen möglich sind.
+
+Um Warteschlangen einzurichten, sind insbesondere 4 Dateien
+wichtig:
+
+`queues.conf`:: Definiert Warteschlangen.
+`agents.conf`:: Definiert „Agenten“, also die Mitarbeiter, die die Anrufe entgegennehmen. In der Praxis werden heute häufig statt des `Agent/`-Kanals direkt PJSIP-Endpoints als Queue-Mitglieder verwendet — `agents.conf` ist dann überflüssig.
+`musiconhold.conf`:: Definiert die Wartemusik.
+`extensions.conf`:: Im Dialplan werden Anrufe mit `Queue()` in eine Warteschlange eingereiht. Agenten werden entweder statisch in `queues.conf` oder dynamisch mit `AddQueueMember()`/`RemoveQueueMember()` im Dialplan verwaltet. `AgentLogin()` existiert weiterhin für klassische Callcenter-Agenten mit dediziertem Login.
+
+Eine häufige Ursache für Missverständnisse ist die Verwechslung von
+„Queue Members“ mit Anrufern: Mit den Mitgliedern einer
+Warteschlange sind immer nur die Agenten, _nicht_ die
+Anrufer gemeint.
+
+[TIP]
+====
+Hier wird der Einfachheit halber der Begriff „Agenten“
+verwendet, Markus Bönke macht aber folgende Anmerkung:"Queue Member" mit "Agenten" zu übersetzen ist historisch gewachsen;
+wer aus der Call-Center-Welt kommt, kennt auch Queue Members, die
+einfach normale SIP-Extensions sind. Das ist völlig richtig: Man muss
+nicht über den `Agent`-Channel (der wie ein Proxy funktioniert)
+gehen, sondern kann auch direkt PJSIP-Geräte zu einer Warteschlange
+hinzufügen — statisch in der `queues.conf` (`member => PJSIP/1001`)
+oder dynamisch aus dem Dialplan mit `AddQueueMember()`.
+====
+
+Agenten können mehreren Warteschlangen angehören, und wir wollen,
+dass sich jeder Agent von einer beliebigen Extension aus einloggen kann
+(„Hot-Desking“). Das grundsätzliche Vorgehen zur Definition von
+Agenten und Warteschlangen sieht vereinfacht so aus:
+
+*`agents.conf`*
+
+[source]
+----
+[agents]
+;    AgentenNr,Passwort,Name
+agent => 1001,1234,Mark Spencer
+agent => 1002,1234,Will Meadows
+----
+
+*`queues.conf`*
+
+[source]
+----
+[support-schlange]
+member => Agent/1001   ; Agent 1001 zur support-schlange hinzufügen
+member => Agent/1002   ;   ... 1002 ...
+----
+
+*`extensions.conf`*
+
+[source]
+----
+exten => 20,1,Queue(support-schlange)   ; => Warteschlange
+exten => 25,1,AgentLogin()              ; bei Anruf Login
+----
+
+Und so funktioniert es: Die Agenten loggen sich über Extension
+`25` ein, hören fröhliche Musik und warten auf Anrufer. Anrufe
+auf Extension `20` werden in die Schlange aufgenommen und der
+Reihe nach (FIFO) abgearbeitet: Der Agent hört einen Piepton, und der erste
+Anrufer wird verbunden.

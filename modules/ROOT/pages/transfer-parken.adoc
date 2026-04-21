@@ -1,0 +1,15 @@
+[[transfer-parken]]
+= Features
+:description: Transfer und Parken von Gesprächen in Asterisk.
+
+In diesem Kapitel:
+
+* xref:call-transfer.adoc[Transfer von Gesprächen]
+** xref:call-transfer.adoc#blind-transfer[Blind Transfer]
+** xref:call-transfer.adoc#attended-transfer[Attended Transfer]
+* xref:call-parken.adoc[Gespräche parken]
+
+Auch wenn Asterisk extrem mächtig ist, gibt es ein paar im normalen
+Büroalltag notwendige Funktionen, die per Default nicht aktiviert sind oder
+aber sehr gut versteckt sind. Dieses Kapitel geht auf diese Features
+ein.

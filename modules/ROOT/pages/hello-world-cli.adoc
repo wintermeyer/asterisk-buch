@@ -1,0 +1,173 @@
+[[hello-world-cli]]
+= Hello-World im CLI aufrufen
+:description: Den ersten Asterisk-Dialplan bauen und aus dem CLI mit 'channel originate' testen — ganz ohne SIP-Telefon.
+
+Im ersten Beispiel bauen wir uns einen einfachen
+Hello-World-Dialplan und rufen diesen aus der Asterisk-Konsole — dem
+CLI — auf. Wir brauchen dafür noch kein SIP-Telefon.
+
+[[asterisk-conf-files]]
+== Asterisk konfigurieren
+
+Im Verzeichnis `/etc/asterisk/` finden Sie nach einer frischen
+Installation eine ganze Reihe von Default-Konfigurationsdateien. Keine
+Angst — für unser Hello-World-Beispiel interessiert uns nur eine einzige:
+die `extensions.conf`.
+
+Damit wir mit einer sauberen Datei starten und die Default-Inhalte nicht
+verlieren, sichern wir die Originale und legen eine eigene Version an:
+
+[source,shell]
+----
+# mkdir -p /var/tmp/asterisk-etc-backup
+# mv /etc/asterisk/extensions.* /var/tmp/asterisk-etc-backup/
+----
+
+Legen Sie jetzt mit Ihrem Lieblings-Editorfootnote:[Wenn Sie keinen
+Editor im Terminal gewohnt sind, empfehle ich `nano`: unter Debian
+installierbar mit `apt install nano`. Mit `nano dateiname` öffnen Sie
+die Datei, die wichtigsten Tastenkürzel stehen unten am
+Bildschirmrand.] die Datei `/etc/asterisk/extensions.conf` mit
+folgendem Inhalt an:
+
+[source]
+----
+[default]
+exten => 1001,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+[NOTE]
+====
+Statt jede Zeile mit der vollen `exten =>`-Schreibweise zu wiederholen,
+benutzen wir `same => n,...` ("next priority"). Das ist der moderne,
+lesbare Stil.
+====
+
+[[asterisk-konfigurieren]]
+== Dialplan laden und Hello-World abrufen
+
+Nachdem die Datei geschrieben ist, laden wir den Dialplan im laufenden
+Asterisk neu. Verbinden Sie sich mit dem CLI:
+
+[source,shell]
+----
+# asterisk -rvvv
+debian*CLI>
+----
+
+Und führen Sie aus:
+
+[source,shell]
+----
+debian*CLI> dialplan reload
+Dialplan reloaded.
+----
+
+Jetzt können wir die Extension 1001 direkt aus dem CLI aufrufen — ganz
+ohne Telefon, über den Dummy-Kanal `Local`:
+
+[source,shell]
+----
+debian*CLI> channel originate Local/1001@default application Wait 5
+    -- Executing [1001@default:1] Answer("Local/1001@default-00000000;2", "") in new stack
+    -- Executing [1001@default:2] Playback("Local/1001@default-00000000;2", "hello-world") in new stack
+    -- <Local/1001@default-00000000;2> Playing 'hello-world.ulaw' (language 'en')
+    -- Executing [1001@default:3] Hangup("Local/1001@default-00000000;2", "") in new stack
+  == Spawn extension (default, 1001, 3) exited non-zero on 'Local/1001@default-00000000;2'
+----
+
+Damit haben wir gezeigt, dass der Dialplan funktioniert. Asterisk hat
+die drei Prioritäten der Extension 1001 ausgeführt: abgehoben, die Datei
+`hello-world.ulaw` abgespielt, aufgelegt.
+
+[NOTE]
+====
+Der alte Befehl `console dial 1001` aus früheren Auflagen dieses
+Buches hängt am Channel-Treiber `chan_console`, der eine lokale
+Soundkarte voraussetzt. Auf einem typischen Server (oder in einer VM)
+gibt es die nicht, deshalb arbeiten wir hier mit `channel originate`
+und einem `Local`-Channel. Das Ergebnis ist dasselbe: Asterisk führt
+den Dialplan aus.
+====
+
+[[was-ist-eine-extension]]
+=== Was ist eine Extension?
+
+Eine Extension ist eine Programmeinheit in einem Dialplan. Jede
+Extension besteht aus mindestens einer Zeile im Format
+
+[source]
+----
+exten => Name-der-Extension,Priorität,Applikation
+----
+
+Die Priorität bestimmt die Reihenfolge der Programmabschnitte. Unsere
+Extension 1001 hat drei Prioritäten:
+
+[source]
+----
+exten => 1001,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+----
+
+Die Applikationen sind selbsterklärend:
+
+* `Answer()`
++
+hebt ab und öffnet damit einen neuen Asterisk-Channel.
+
+* `Playback(hello-world)`
++
+spielt im aktuellen Channel die Datei `hello-world` aus dem
+Verzeichnis `/var/lib/asterisk/sounds/en/` ab. Die Endung (`.ulaw`,
+`.gsm`, `.wav`, ...) wählt Asterisk abhängig vom Codec selbst.
+
+* `Hangup()`
++
+legt auf und schließt den Channel.
+
+[[cli-verbosity]]
+=== Verbosity im CLI
+
+Zum Debuggen empfiehlt es sich, im CLI die Verbosity ("Gesprächigkeit")
+hochzuschalten. Beim Aufruf `asterisk -rvvv` steht das "vvv" für Level 3.
+Aus dem CLI heraus lässt sich der Level jederzeit ändern:
+
+[source,shell]
+----
+debian*CLI> core set verbose 5
+Console verbose was 3 and is now 5.
+----
+
+Für Protokoll-spezifisches Debugging gibt es eigene Schalter, zum
+Beispiel für SIP-Traffic:
+
+[source,shell]
+----
+debian*CLI> pjsip set logger on
+----
+
+[WARNING]
+====
+Setzen Sie `core set debug` nur, wenn ein Asterisk-Entwickler das im
+Bugtracker ausdrücklich verlangt. Es produziert Ausgaben aus dem
+Quellcode und ist für den Dialplan-Alltag unbrauchbar.
+====
+
+[[cli-stop-now]]
+=== Asterisk beenden
+
+Aus dem CLI heraus fahren Sie den Daemon mit `core stop now` sofort
+herunter, oder mit `core stop gracefully`, damit laufende Gespräche erst
+zu Ende geführt werden:
+
+[source,shell]
+----
+debian*CLI> core stop gracefully
+----
+
+Im normalen Systembetrieb ist `systemctl stop asterisk` auf dem
+Host-System die richtige Wahl.

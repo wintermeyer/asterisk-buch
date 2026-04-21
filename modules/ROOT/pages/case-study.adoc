@@ -1,16 +1,17 @@
 [[case-study]]
 = Case-Study einer Beispielfirma
+:description: Case-Study: Eine mittelständische Asterisk-Installation von der Infrastruktur bis zur Konfiguration.
 
 In diesem Kapitel:
 
-* xref:grosse-anlage-einleitung.adoc[Einleitung]
-* xref:personen-der-apfelmus-gmbh.adoc[Die Apfelmus GmbH]
-* xref:apfelmus-rufnummernplan.adoc[Der Rufnummernplan]
-* xref:apfelmus-infrastruktur.adoc[Auswahl der Infrastruktur]
-** xref:apfelmus-infrastruktur.adoc#apfelmus-netzwerk[Netzwerk]
-** xref:apfelmus-infrastruktur.adoc#apfelmus-server-hardware[Server-Hardware]
-* xref:apfelmus-grundkonfiguration.adoc[Die Grundkonfiguration]
-** xref:apfelmus-grundkonfiguration.adoc#apfelmus-sip.conf[sip.conf für fast 100 Teilnehmer]
-** xref:apfelmus-grundkonfiguration.adoc#apfelmus-dialplan[Der Wählplan (Dialplan)]
-* xref:apfelmus-weiter.adoc[Wie geht es weiter?]
-* xref:apfelmus-faq.adoc[FAQ]
+* xref:case-study-einleitung.adoc[Einleitung]
+* xref:case-study-beispielfirma.adoc[Die Apfelmus GmbH]
+* xref:case-study-rufnummernplan.adoc[Der Rufnummernplan]
+* xref:case-study-infrastruktur.adoc[Auswahl der Infrastruktur]
+** xref:case-study-infrastruktur.adoc#apfelmus-netzwerk[Netzwerk]
+** xref:case-study-infrastruktur.adoc#apfelmus-server-hardware[Server-Hardware]
+* xref:case-study-grundkonfiguration.adoc[Die Grundkonfiguration]
+** xref:case-study-grundkonfiguration.adoc#apfelmus-pjsip.conf[pjsip.conf für fast 100 Teilnehmer]
+** xref:case-study-grundkonfiguration.adoc#apfelmus-dialplan[Der Wählplan (Dialplan)]
+* xref:case-study-weiter.adoc[Wie geht es weiter?]
+* xref:case-study-faq.adoc[FAQ]

@@ -1,0 +1,107 @@
+[[astdb-zugriff]]
+= Die Asterisk-Datenbank
+:description: Auf die AstDB aus dem Dialplan zugreifen: DB(), DB_DELETE(), DB_EXISTS().
+
+Asterisk bringt eine eingebaute Key-Value-Datenbank mit, die
+*AstDB*. Historisch basierte sie auf Berkeley DB; seit Asterisk 11
+nutzt sie SQLite3 und speichert die Daten typischerweise unter
+`/var/lib/asterisk/astdb.sqlite3`. Das Daten-Modell ist unverändert:
+Jeder Eintrag besteht aus einer _family_ (Gruppe), einem _key_ und
+einem _value_.
+
+[NOTE]
+====
+Für komplexe Daten (User-Profile, Queue-Zustände,
+Realtime-Konfiguration) ist AstDB nicht das richtige Werkzeug. Dann
+lohnt sich ein Blick auf *ARA (Asterisk RealTime Architecture)* mit
+einer externen Datenbank wie PostgreSQL oder MySQL. AstDB ist für
+kleine, schnelle Key-Value-Aufgaben da: Call-Forwarding-Ziele,
+kleine Zähler, einfache Feature-Flags, Session-Merker.
+====
+
+Auf AstDB greifen Sie mit der Funktion `DB()` zu — sowohl lesend als
+auch schreibend.
+
+[[datenbank-schreiben]]
+== Werte in die Datenbank schreiben
+
+Die Funktion `DB()` kann innerhalb der Applikation
+`Set()` aufgerufen werden. Soll in der Family
+`obst` der Eintrag `apfel` den Wert
+`20` bekommen, so geschieht das mit folgendem
+Aufruf:
+
+[source]
+----
+exten => 1234,1,Set(DB(obst/apfel)=20)
+----
+
+[[datenbank-lesen]]
+== Werte aus der Datenbank lesen
+
+Die Werte in der Datenbank können mit der Funktion
+`DB()` in der Form `$\{DB(family/key)}` abgerufen
+werden. Um den Inhalt des Eintrags `apfel` in der Family
+`obst` auf dem Command Line Interface auszugeben, kann man
+folgenden Aufruf ausführen:
+
+[source]
+----
+exten => 1234,1,NoOp(obst/apfel hat den Wert ${DB(obst/apfel)})
+----
+
+Soll der Inhalt dieses Datenbankfeldes in der Variablen
+`apfelmenge` gespeichert werden, so kann dies mit
+`Set()` erfolgen:
+
+[source]
+----
+exten => 1234,1,Set(apfelmenge=${DB(obst/apfel)})
+----
+
+[[datenbank-loeschen]]
+== Werte aus der Datenbank löschen
+
+Die beiden Applikationen `DBdel()` und
+`DBdeltree()` können zum Löschen von Datenbankeinträgen
+genutzt werden.
+
+[[datenbank-dbdel]]
+=== DBdel() und $\{DB_DELETE()}
+
+In der Asterisk-Version 1.2 löscht `DBdel()` einen
+einzelnen Eintrag in der Datenbank. Soll der Key `apfel` in
+der Family `obst` gelöscht werden, so geschieht das wie
+folgt:
+
+[source]
+----
+exten => 1234,1,DBdel(obst/apfel)
+----
+
+In der Asterisk-Version 1.4 ist DBdel() _deprecated_, und man soll
+die Funktion `DB_DELETE()` benutzen. Der Aufruf
+kann wie folgt erfolgen:
+
+[source]
+----
+exten => 1234,1,NoOp(${DB_DELETE(obst/apfel)})
+----
+
+Siehe
+auch Abschnitt C.33, „`DBdel()`“ und Abschnitt D.18, „`DB_DELETE()`“.
+
+[[datenbank-dbdeltree]]
+=== DBdeltree()
+
+Soll eine ganze Family gelöscht werden, so verwendet man
+`DBdeltree()`. Die Family `obst` kann mit
+
+[source]
+----
+exten => 1234,1,DBdeltree(obst)
+----
+
+gelöscht werden.
+
+Siehe auch: Abschnitt C.34, „`DBdeltree()`“

@@ -1,5 +1,6 @@
 [[codecs-beschreibung]]
 = Was macht ein Codec?
+:description: Was macht ein Codec? Grundlagen zu Kodierung und Dekodierung von Audiosignalen.
 
 Ein Codec wandelt analoge Audiosignale in ein digitales Format um.
 Dies kann nahezu verlustfrei (z. B. G.711)footnote:[Aber auch „nahezu verlustfrei“ ist immer relativ.] oder auch mit einem gewissen Verlust (z. B. GSM) geschehen.

@@ -1,0 +1,87 @@
+[[case-study-infrastruktur]]
+= Auswahl der Infrastruktur
+:description: Infrastruktur-Entscheidungen für eine Asterisk-Anlage: Server, Netzwerk, Codecs.
+
+Da im neuen Firmengebäude bereits eine strukturierte Netzwerkverkabelung
+liegt, ist jeder Arbeitsplatz mit einem SIP-Telefon ausgestattet — so
+muss kein separates Telefonnetz verlegt werden. Faxe und schnurlose
+Analog-Geräte werden über ATAs angeschlossen. Der Asterisk-Server
+läuft in einer VM im Firmen-Hypervisor (alternativ in einer kleinen
+Cloud-VM), mit ausreichender CPU-Reserve und einem Backup-Konzept.
+
+Als Anbindung ans öffentliche Netz dient ein SIP-Trunk beim Provider —
+ISDN ist in Deutschland Geschichte, und selbst wo die Telefonnummer
+im Kaufvertrag noch "ISDN" steht, stellt der Carrier im Hintergrund
+längst auf All-IP zu.
+
+[[apfelmus-netzwerk]]
+== Netzwerk
+
+Die wichtigste Regel: *Telefonie ist synchron.* Sender und Empfänger
+brauchen die Daten praktisch gleichzeitig, durchgehend. Verzögerungen
+bis etwa 150–200 ms sind noch akzeptabel, alles darüber wird als
+störend empfunden. IP-Netze sind dagegen von Natur aus asynchron; dass
+Telefonie über IP funktioniert, liegt an der Leistungsfähigkeit
+moderner Netzwerke und an *Quality of Service*-Mechanismen.
+
+Die wesentlichen Stellschrauben:
+
+* *Ausreichend Bandbreite reservieren.* Ein Gespräch mit G.711 belegt
+  ca. 80 Kbit/s je Richtung (64 Kbit/s Codec + Overhead). Für 39
+  gleichzeitige interne Gespräche (78 Telefone, worst case) ergibt
+  das rund 2 × 39 × 80 Kbit/s ≈ 6,5 Mbit/s — im LAN unkritisch.
+* *Priorisieren.* Jeder ernstzunehmende Business-Switch kennt DSCP
+  (Differentiated Services Code Point). RTP-Pakete bekommen EF
+  (Expedited Forwarding, DSCP 46), SIP-Signalisierung CS3. In der
+  `pjsip.conf` setzen Sie `tos_audio=ef` und `tos_sip=cs3` auf dem
+  Transport. Der Switch respektiert die Markierung, und Sprachpakete
+  bekommen Vorrang vor Bulk-Traffic (Backups, OS-Updates, große
+  Downloads).
+* *Konsistente MTU.* VPN-Tunnel zwischen Standorten mit zu kleiner
+  MTU fragmentieren RTP-Pakete und erzeugen akustisches Knacken.
+* *Symmetrische Leitung.* Für SIP-Trunks zählt die Upload-Bandbreite
+  genauso wie die Download-Bandbreite. Eine typische asymmetrische
+  DSL-Leitung mit 50 Mbit down / 10 Mbit up reicht für viele
+  gleichzeitige Gespräche — aber eben nicht für alle.
+
+Für mehrere Standorte lohnt sich die Abstimmung mit dem Internet-Provider:
+Business-Produkte mit SLA und priorisiertem RTP-Transport sind zwar
+teurer, sorgen aber für stabile Sprachqualität auch unter Last.
+
+[[apfelmus-server-hardware]]
+== Server-Hardware
+
+Asterisk ist extrem genügsam. Eine mittlere VM reicht locker für
+unsere Apfelmus GmbH mit rund 80 Nebenstellen:
+
+* 2–4 vCPU (aktueller Server-Prozessor)
+* 2–4 GB RAM
+* 20–40 GB Storage (Voicemail-Files + Sounddateien + Logs)
+* 1 Gbit/s Netzwerk
+
+Wichtiger als reine CPU-Leistung ist, die *Transkodierung zu
+vermeiden*: Wenn alle Telefone und der Trunk `ulaw`/`alaw` sprechen,
+muss Asterisk keine Audiokonvertierung machen, und ein Gespräch kostet
+fast keine CPU. Wer Opus + G.711-Trunks + Konferenzen + Recording
+gleichzeitig fährt, sollte ein paar zusätzliche Kerne einplanen.
+
+Für Voicemail-Speicher rechnen Sie in modernen Formaten (`wav49`,
+GSM) mit etwa 0,1 MB pro Minute. Bei 80 Nutzern × 30 Minuten = 240 MB
+belegt Voicemail — das fällt in der Gesamtbilanz nicht ins Gewicht.
+
+[TIP]
+====
+Eine VM-Installation ist heute deutlich üblicher als ein Hardware-Server.
+Snapshots vor Konfigurationsänderungen sind Gold wert, und das
+Backup läuft über den Hypervisor mit. Wichtig: *Nicht oversubscriben.*
+Asterisk reagiert empfindlich auf CPU-Steal-Time — wenn der Host
+lastig ist, hört man das im Gespräch als Knacken.
+====
+
+Die aufgezeichneten Sprachnachrichten sind genauso schützenswert wie
+andere Geschäftsdaten. Ein RAID-1 auf dem Hypervisor-Host, ein
+tägliches Backup der Asterisk-Dateien (`/etc/asterisk`,
+`/var/spool/asterisk`, `/var/lib/asterisk/sounds/custom`) reichen für
+die meisten Anforderungen. Alles, was über eine einzelne Anlage
+hinausgeht (Georedundanz, Active/Passive-Clustering), ist ein eigenes
+Architekturthema.

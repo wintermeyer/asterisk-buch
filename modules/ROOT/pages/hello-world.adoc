@@ -1,0 +1,26 @@
+[[hello-world]]
+= „Hello World"
+:description: Asterisk Hello World: In wenigen Schritten von der leeren Installation zur funktionierenden SIP-Telefonanlage mit zwei Nebenstellen.
+
+In diesem Kapitel:
+
+* xref:installation.adoc[Einleitung]
+* xref:asterisk-installieren.adoc[Asterisk auf dem Server installieren]
+* xref:hello-world-cli.adoc[Hello-World im CLI aufrufen]
+** xref:hello-world-cli.adoc#asterisk-conf-files[Asterisk konfigurieren]
+** xref:hello-world-cli.adoc#asterisk-konfigurieren[Asterisk starten und Hello-World abrufen]
+* xref:hello-world-sip-telefon.adoc[Hello-World mit einem SIP-Telefon]
+** xref:hello-world-sip-telefon.adoc#pjsip.conf-fuer-einen-account[pjsip.conf und das SIP-Telefon konfigurieren]
+** xref:hello-world-sip-telefon.adoc#asterisk-und-telefon-starten[Asterisk und Telefon starten]
+** xref:hello-world-sip-telefon.adoc#asterisk-sip-telefon-erster-test[Der Test]
+** xref:hello-world-sip-telefon.adoc#test-console-dial[Vom CLI aus das Telefon anrufen]
+** xref:hello-world-sip-telefon.adoc#asterisk-extension-dial-analyse[Analyse]
+** xref:hello-world-sip-telefon.adoc#comments-in-conf-files[Kommentare in der Konfiguration]
+* xref:minimale-telefonanlage.adoc[Eine Minimal-Telefonanlage mit zwei SIP-Telefonen]
+** xref:minimale-telefonanlage.adoc#min-anlage-ab[... und jetzt mit einem Anrufbeantworter]
+* xref:contexte-rechteverwaltung.adoc[Rechteverwaltung mit Contexten]
+** xref:contexte-rechteverwaltung.adoc#rechteverwaltung-mit-contexten-source-1[Quelle: Jedes Telefon ist in einem Context]
+** xref:contexte-rechteverwaltung.adoc#rechteverwaltung-mit-contexten-dest-n-beispiel[Ziel: Contexte in der extensions.conf]
+* xref:sip-trunk-provider.adoc[Telefonate vom und in das öffentliche Netz]
+** xref:sip-trunk-provider.adoc#min-anlage-festnetz[In das öffentliche Telefonnetz telefonieren]
+** xref:sip-trunk-provider.adoc#festnetz-incoming[Gespräche vom öffentlichen Netz entgegennehmen]

@@ -1,0 +1,66 @@
+[[call-parken]]
+= Gespräche parken
+:description: Gespräche in Asterisk parken: res_parking.conf und Park()/ParkedCall() im Dialplan.
+
+"Parken" bezeichnet das Ablegen eines aktiven Gesprächs in einem
+"Parkplatz" mit einer Nummer — ein anderer Teilnehmer kann es dann
+wieder herausholen. Der klassische Anwendungsfall: Die Sekretärin
+bekommt einen Anruf für jemand aus dem Vertrieb, parkt das Gespräch
+auf 701 und ruft per Durchsage aus: "Herr Müller, für Sie ein Anruf
+auf 701."
+
+In modernem Asterisk steuert `res_parking.conf` das Parken:
+
+[source]
+----
+; /etc/asterisk/res_parking.conf
+
+[general]
+; hier kein "type=" — die Sektionen weiter unten SIND die Parking-Lots
+
+[default]
+parkext => 700              ; Zum Parken: 700 während eines Gesprächs wählen
+parkpos => 701-720          ; Parkplätze 701 bis 720
+context => parkedcalls      ; Interner Context für die Parking-Ext's
+parkingtime => 45           ; Sekunden bis Rückruf (Default)
+comebacktoorigin => yes     ; Nach Timeout zurück zum Parker
+courtesytone => beep        ; Signalton beim Aufheben
+----
+
+[NOTE]
+====
+`res_parking.conf` benutzt eine andere Syntax als die meisten anderen
+Asterisk-Konfigurationsdateien: Die Optionen werden mit `=>` (Pfeil)
+statt `=` (Gleichzeichen) gesetzt, und es gibt *kein* `type=`-Feld —
+jede Section unterhalb von `[general]` ist bereits ein Parking-Lot.
+Ein Parking-Lot namens `default` existiert automatisch, auch wenn er
+nicht konfiguriert ist.
+====
+
+Im Dialplan wird der Parkplatz über die Applikationen `Park()` und
+`ParkedCall()` genutzt — oder einfacher über die `Dial()`-Optionen `k`
+und `K`, die dem Anrufer/Angerufenen erlauben, das Gespräch mit einer
+Tastenkombination zu parken.
+
+[source]
+----
+; Gespräch manuell parken (innerhalb des Gesprächs 700 wählen):
+exten => 700,1,Park()
+
+; Gespräch aus Parkplatz 701 herausholen:
+exten => 701,1,ParkedCall(default,701)
+----
+
+Bei `comebacktoorigin => yes` klingelt nach `parkingtime` Sekunden
+automatisch das Telefon, das das Gespräch geparkt hat, wieder. Wenn
+Sie stattdessen einen anderen Context anspringen wollen, setzen Sie
+`comebacktoorigin => no` und definieren den Context in
+`comebackcontext`.
+
+[TIP]
+====
+Die vollständige Referenz aller Parking-Optionen steht in der
+offiziellen Dokumentation unter https://docs.asterisk.org, oder
+direkt im CLI über `config show help res_parking` und
+`parking show parkinglots`.
+====

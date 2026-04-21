@@ -1,0 +1,54 @@
+[[pjsip-endpoints-aors-auths]]
+= Von chan_sip zu PJSIP: Endpoints, AORs, Auths
+:description: Von chan_sip zu chan_pjsip: Das neue Objekt-Modell aus Endpoint, AOR, Auth, Transport und Identify.
+
+Frühere Auflagen dieses Buches hatten an dieser Stelle die
+`chan_sip`-Begriffe _Peer_, _User_ und _Friend_ erklärt:
+
+* _Peer_ = Asterisk ruft hin (outbound)
+* _User_ = Asterisk wird angerufen (inbound authenticiert)
+* _Friend_ = beides
+
+Das ist mittlerweile Geschichte: `chan_sip` (Konfiguration in
+`sip.conf`) ist seit Asterisk 21 *entfernt*. Der aktuelle SIP-Treiber
+ist `chan_pjsip`, er wird über die Datei `pjsip.conf` konfiguriert
+und denkt nicht in Peer/User/Friend, sondern in einer Handvoll
+eigener Objekttypen:
+
+[cols="1,3"]
+|===
+| Objekttyp | Rolle
+
+| `transport`
+| Wo lauscht Asterisk? UDP, TCP, TLS oder WSS (WebRTC). Eine Datei kann mehrere Transports haben.
+
+| `endpoint`
+| Die logische SIP-Identität. Enthält Context, Codec-Liste, DTLS-/SRTP-Policy, Media-Optionen.
+
+| `aor`
+| _Address of Record_ — wohin kann der Endpoint gerufen werden? Bei dynamischen Endpoints steht der Contact nach der Registrierung hier.
+
+| `auth`
+| Zugangsdaten. `username` + `password` (oder MD5). Kann inbound und/oder outbound verwendet werden.
+
+| `identify`
+| Zuordnung eingehender Pakete zu einem Endpoint anhand der Absender-IP (für Provider-Trunks, die sich nicht authentifizieren).
+
+| `registration`
+| Asterisk selbst registriert sich als Client — typisch für Provider-Trunks.
+|===
+
+Ein einfaches Nebenstellen-Telefon besteht aus drei Objekten:
+`endpoint`, `auth`, `aor`. Ein Provider-Trunk besteht typischerweise
+aus `endpoint`, `auth`, `aor`, `identify`, `registration`.
+
+[TIP]
+====
+Das Mindset-Update für `chan_sip`-Veteranen: Aus einem `type=friend`
+mit `secret=...`, `host=dynamic`, `context=...` werden drei Blöcke —
+ein `endpoint`, ein `auth`, ein `aor` — die alle denselben Namen
+tragen können, aber über das Feld `type` unterschieden werden.
+====
+
+Die Details und ein vollständiges Beispiel stehen im Kapitel
+xref:pjsip-konfiguration.adoc[SIP / PJSIP].

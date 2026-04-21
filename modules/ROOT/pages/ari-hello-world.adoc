@@ -1,0 +1,91 @@
+[[ari-hello-world]]
+= Ein erstes ARI-Beispiel
+:description: Erste ARI-Anwendung in Node.js: Ansage abspielen, Gespräch steuern, Events empfangen.
+
+Das folgende Beispiel ist minimal. Ein Anrufer wählt eine
+Dialplan-Extension, die Anwendung empfängt das `StasisStart`-Event,
+nimmt das Gespräch an, spielt einen Soundprompt ab und legt auf.
+
+Der Dialplan-Teil (`extensions.conf`):
+
+[source]
+----
+exten => 3000,1,NoOp(Uebergabe an ARI-App)
+ same => n,Stasis(demo)
+ same => n,Hangup()
+----
+
+Die ARI-Anwendung als Node.js-Script. Wir benutzen das offizielle
+`ari-client`-Modul:
+
+[source,javascript]
+----
+// demo-app.js
+// $ npm install ari-client
+// $ node demo-app.js
+const ari = require('ari-client');
+
+const ARI_URL = 'http://127.0.0.1:8088';
+const ARI_USER = 'meine-app';
+const ARI_PASS = 'IHR-ARI-PASSWORT';
+const APP_NAME = 'demo';
+
+ari.connect(ARI_URL, ARI_USER, ARI_PASS)
+  .then(client => {
+    client.on('StasisStart', async (event, channel) => {
+      console.log('Channel betritt Stasis:', channel.id);
+
+      try {
+        await channel.answer();
+        // hello-world abspielen
+        const playback = client.Playback();
+        await channel.play({ media: 'sound:hello-world' }, playback);
+
+        playback.once('PlaybackFinished', async () => {
+          await channel.hangup();
+        });
+      } catch (err) {
+        console.error(err);
+        channel.hangup().catch(() => {});
+      }
+    });
+
+    client.on('StasisEnd', (event, channel) => {
+      console.log('Channel verlaesst Stasis:', channel.id);
+    });
+
+    client.start(APP_NAME);
+  })
+  .catch(err => {
+    console.error('Verbindungsfehler:', err);
+    process.exit(1);
+  });
+----
+
+Starten Sie die App, rufen Sie 3000 an — die App übernimmt, spielt
+die Ansage ab und legt auf.
+
+[TIP]
+====
+Die offiziellen Swagger-Definitionen aller ARI-Endpoints stehen unter
+`http://127.0.0.1:8088/ari/api-docs/resources.json`. Damit generieren
+Sie Clients für Python, Go, Java, oder studieren einfach alle
+verfügbaren Operationen inklusive Parametern.
+====
+
+== Von hier aus weiter
+
+Sobald die Basis läuft, baut sich ARI-Logik wie jede andere
+Event-getriebene Anwendung: Channels anlegen und verbinden (externe
+Rückrufe starten), Bridges für Konferenzen (bridge type=mixing),
+Recording starten/stoppen, DTMF empfangen, externe Medienquellen
+(Stream) einspielen. Die volle API-Liste steht unter
+https://docs.asterisk.org/Asterisk_Latest_Documentation/API_Documentation/Asterisk_REST_Interface/.
+
+Für Projekte, die eine komfortable Abstraktion wollen, lohnt sich
+ein Blick auf:
+
+* https://github.com/asterisk/node-ari-client[node-ari-client] (Node.js)
+* https://github.com/asterisk/asterisk-ari-py[ari-py] / `aioari`
+  (Python)
+* https://github.com/CyCoreSystems/ari[ari-go] (Go)

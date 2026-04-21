@@ -1,7 +1,8 @@
 [[stichwortverzeichnis]]
 = Stichwortverzeichnis
+:description: Stichwortverzeichnis des Asterisk-Buches.
 
-=== A
+== A
 
 A500::
 +
@@ -120,7 +121,7 @@ auth (Siehe iax.conf)::
 authdebug (Siehe iax.conf)::
 autokill (Siehe iax.conf)::
 
-=== B
+== B
 
 bandwidth (Siehe iax.conf)::
 +
@@ -172,7 +173,7 @@ BRI,::
 PtMP,::
 PtP,::
 
-=== C
+== C
 
 Call Files,::
 +
@@ -347,7 +348,7 @@ Context, ,::
 context (Siehe iax.conf)::
 Contexte,::
 
-=== D
+== D
 
 DAHDI,::
 +
@@ -921,7 +922,7 @@ DTMF,::
 DUNDi,::
 Durchwahl,::
 
-=== E
+== E
 
 E.164,::
 +
@@ -1014,7 +1015,7 @@ VoiceMailMain(),::
 externnotify (Siehe voicemail.conf: Parameter)::
 externpass (Siehe voicemail.conf: Parameter)::
 
-=== F
+== F
 
 FAQ::
 +
@@ -1057,13 +1058,13 @@ Funktionen::
 +
 Dialplan,::
 
-=== G
+== G
 
 [general] (Siehe voicemail.conf: [general])::
 Gosub()-Unterprogramme,::
 GotoIf()-Bedingung,::
 
-=== H
+== H
 
 Heranholen,::
 +
@@ -1088,7 +1089,7 @@ Howto::
 Kleines Programmierer-Howto,::
 http.conf,::
 
-=== I
+== I
 
 iax.conf,::
 +
@@ -1208,24 +1209,24 @@ Kaufempfehlung,::
 ISDN-Primär-Multiplex-Anschluss,::
 IVR,::
 
-=== J
+== J
 
 Jitter,::
 jitterbuffer (Siehe iax.conf)::
 
-=== K
+== K
 
 Kanal,::
 Konfigurations-Templates,::
 
-=== L
+== L
 
 Labels,::
 language (Siehe iax.conf)::
 Latenz,::
 LEDs,::
 
-=== M
+== M
 
 MAC-Adresse,::
 +
@@ -1294,18 +1295,18 @@ Music on Hold,::
 musiconhold.conf,::
 MySQL,::
 
-=== N
+== N
 
 nextaftercmd (Siehe voicemail.conf: Parameter)::
 NTP,::
 
-=== O
+== O
 
 ODBC,::
 operator (Siehe voicemail.conf: Parameter)::
 outkey (Siehe iax.conf)::
 
-=== P
+== P
 
 pagerbody (Siehe voicemail.conf: Parameter)::
 +
@@ -1365,7 +1366,7 @@ priority jumping,::
 Prompt,::
 PSTN,::
 
-=== Q
+== Q
 
 QoS,::
 qualify (Siehe iax.conf)::
@@ -1373,7 +1374,7 @@ qualifysmoothing (Siehe iax.conf)::
 queues.conf,::
 queue_log,::
 
-=== R
+== R
 
 RBS,::
 regcontext (Siehe iax.conf)::
@@ -1389,7 +1390,7 @@ rsa (Siehe iax.conf: Parameter: auth)::
 Rufnummernunterdrückung,::
 Rufübernahme,::
 
-=== S
+== S
 
 S2M,::
 +
@@ -1456,7 +1457,7 @@ Deutsche Sprachbausteine,::
 StarAstAPI,::
 Suchmuster,::
 
-=== T
+== T
 
 TCP,::
 +
@@ -1480,7 +1481,7 @@ trunkfreq (Siehe iax.conf)::
 type (Siehe iax.conf)::
 tz, (Siehe voicemail.conf: Parameter)::
 
-=== U
+== U
 
 UDP,::
 +
@@ -1490,7 +1491,7 @@ Upgrade::
 1.4 auf 1.6,::
 usedirectory (Siehe voicemail.conf: Parameter)::
 
-=== V
+== V
 
 Variablen,::
 +
@@ -1918,7 +1919,7 @@ einrichten,::
 VoiceMailMain() (Siehe extensions.conf: VoiceMailMain())::
 VoIP,::
 
-=== W
+== W
 
 Wählplan,::
 +
@@ -1934,7 +1935,7 @@ Warteschleifen,::
 Warteschleifen-Log,::
 While()-Schleifen,::
 
-=== Z
+== Z
 
 Zaptel::
 +

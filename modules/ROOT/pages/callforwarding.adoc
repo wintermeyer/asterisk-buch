@@ -1,0 +1,110 @@
+[[callforwarding]]
+= Anwendungsbeispiel Call-Forwarding
+:description: Call-Forwarding in Asterisk mit AstDB als Speicher — praktisches Anwendungsbeispiel.
+
+Wer bei Abwesenheit alle Anrufe, die an seine Durchwahl gerichtet
+sind, z. B. an sein Handy weiterleiten will, benötigt eine
+Call-Forwarding-Funktionalität. Diese kann entweder vom Endgerät (also dem
+SIP-Telefon) oder zentral von der Telefonanlage realisiert werden.
+Letztere Variante ist in der Praxis vorzuziehen, da man dadurch unabhängig
+von den Endgeräten ist (diese also im Zweifelsfall auch austauschen kann)
+und zusätzlich die gesamte Kontrolle auf dem Server behält. Außerdem ist
+im Falle eines Stromausfalls die Konfiguration nicht verloren und wird
+beim nächsten Start der Telefonanlage automatisch
+wiederhergestellt.
+
+[[einfaches-callforwarding]]
+== Einfaches Call-Forwarding
+
+Bei der Apfelmus GmbH soll jeder Mitarbeiter die Möglichkeit
+bekommen, Gespräche zu seinem Telefon an eine beliebige andere Nummer
+weiterzuleiten. Um diese Weiterleitung zu aktivieren, muss die interne
+Rufnummer 44, gefolgt von der Zielrufnummer, angerufen werden. Zum
+Deaktivieren der Weiterleitung muss wieder die 44 (aber diesmal ohne
+eine weitere Nummer) angerufen werden. Dies wird mit folgendem Wählplan
+realisiert:
+
+[source]
+----
+[from-intern]
+; Call-Forwarding für einen einzelnen Anschluss
+;
+; aktivieren
+exten => _44X.,1,Answer()
+exten => _44X.,n,Set(DB(CF/${CALLERID(num)})=${EXTEN:2})
+exten => _44X.,n,SayDigits(${EXTEN:2})
+exten => _44X.,n,NoOp(Weiterleitung fuer ${CALLERID(num)} auf ${EXTEN:2} aktiviert.) 
+exten => _44X.,n,Hangup()
+
+; deaktivieren
+exten => 44,1,Answer()
+exten => 44,n,DBdel(CF/${CALLERID(num)})
+exten => 44,n,Playback(auth-thankyou)
+exten => 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.) 
+exten => 44,n,Hangup()
+
+[from-extern]
+exten => _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
+exten => _X.,n,GotoIf($[foo${DB(CF/${EXTEN})} != foo]?normal:forward)
+exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
+exten => _X.,n(forward),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(local/${DB(CF/${EXTEN})})
+----
+
+[[komplexes-callforwarding]]
+== Komplexes Call-Forwarding
+
+Diesmal soll in der Apfelmus GmbH jeder Mitarbeiter ein
+Call-Forwarding aktivieren können, allerdings soll es ein weiteres
+Call-Forwarding für die gesamte Firma geben, damit bei einem
+Betriebsausflug alle Gespräche an eine andere Niederlassung geleitet
+werden können. Diese Weiterleitung wird über die Funktionsnummer 55
+aktiviert (gefolgt von der Zielrufnummer). Die große Weiterleitung für
+die gesamte Anlage hat dabei eine höhere Priorität als die einzelnen
+Regeln. Eine Realisierung kann wie folgt aussehen:
+
+[source]
+----
+[from-intern]
+; Call-Forwarding für einen einzelnen Anschluss
+;
+; aktivieren
+exten => _44X.,1,Answer()
+exten => _44X.,n,Set(DB(CF/${CALLERID(num)})=${EXTEN:2})
+exten => _44X.,n,SayDigits(${EXTEN:2})
+exten => _44X.,n,NoOp(Weiterleitung fuer ${CALLERID(num)} auf ${EXTEN:2} aktiviert.)
+exten => _44X.,n,Hangup()
+
+; deaktivieren
+exten => 44,1,Answer()
+exten => 44,n,DBdel(CF/${CALLERID(num)})
+exten => 44,n,Playback(auth-thankyou)
+exten => 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.)
+exten => 44,n,Hangup()
+
+; Call-Forwarding für die gesamte Telefonanlage
+;
+; aktivieren
+exten => _55X.,1,Answer()
+exten => _55X.,n,Set(DB(CF/anlage)=${EXTEN:2})
+exten => _55X.,n,SayDigits(${EXTEN:2})
+exten => _55X.,n,NoOp(Weiterleitung der Anlage auf ${EXTEN:2} aktiviert.)
+exten => _55X.,n,Hangup()
+
+; deaktivieren
+exten => 55,1,Answer()
+exten => 55,n,DBdel(CF/anlage)
+exten => 55,n,Playback(auth-thankyou)
+exten => 55,n,NoOp(Weiterleitung der Anlage deaktiviert.)
+exten => 55,n,Hangup()
+
+[from-extern]
+exten => _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
+exten => _X.,n,GotoIf($[foo${DB(CF/anlage)} != foo]?cfanlage:zweiteregel)
+exten => _X.,n(zweiteregel),GotoIf($[foo${DB(CF/${EXTEN})} != foo]?cfnormal:normal)
+exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
+exten => _X.,n(cfnormal),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(local/${DB(CF/${EXTEN})})
+exten => _X.,n(cfanlage),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/anlage)})
+exten => _X.,n,Dial(local/${DB(CF/anlage)})
+----

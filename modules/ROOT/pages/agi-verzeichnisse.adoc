@@ -1,5 +1,6 @@
 [[agi-verzeichnisse]]
 = Verzeichnisse und Rechte
+:description: AGI-Verzeichnisse und Rechte in Asterisk: Wo Skripte liegen müssen.
 
 AGI-Skripte werden von Asterisk standardmäßig im Verzeichnis
 `/var/lib/asterisk/agi-bin`/ gesucht.

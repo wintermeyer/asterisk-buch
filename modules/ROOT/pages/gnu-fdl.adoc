@@ -1,5 +1,6 @@
 [[gnu-fdl]]
 = Appendix K. GNU Free Documentation License
+:description: GNU Free Documentation License — die Lizenz des Asterisk-Buches.
 
 == Preamble
 

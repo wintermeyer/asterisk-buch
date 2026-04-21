@@ -1,0 +1,68 @@
+[[confbridge-dialplan]]
+= Zugang im Dialplan
+:description: ConfBridge im Dialplan einsetzen: Syntax, Beispiele, PIN-Schutz.
+
+Mit der Applikation `ConfBridge()` betritt ein Anrufer eine Konferenz.
+Syntax:
+
+[source]
+----
+ConfBridge(conference[,bridge_profile[,user_profile[,menu]]])
+----
+
+`conference`:: Name des Konferenzraums (beliebige Zeichenkette). Existiert der Raum noch nicht, wird er beim ersten Eintritt angelegt und beim Auszug des letzten Teilnehmers wieder entsorgt.
+`bridge_profile`:: Profil vom Typ `bridge` in `confbridge.conf` — bestimmt Sprache, Teilnehmerlimit etc.
+`user_profile`:: Profil vom Typ `user` — bestimmt die Rechte des Teilnehmers.
+`menu`:: Optionaler Name eines `type=menu`-Profils.
+
+Eine typische Konfiguration für einen dauerhaft verfügbaren Raum und
+einen per Code abgesicherten Raum:
+
+[source]
+----
+[konferenzen]
+; Offene Konferenz "team" — jeder kann rein:
+exten => 800,1,Answer()
+ same => n,ConfBridge(team,default_bridge,normal-user)
+ same => n,Hangup()
+
+; Konferenz "vorstand" — mit PIN:
+exten => 801,1,Answer()
+ same => n,Authenticate(4711)
+ same => n,ConfBridge(vorstand,default_bridge,admin)
+ same => n,Hangup()
+
+; "Wait-marked" pattern: der Moderator steigt über 802 ein
+; (marked), alle anderen über 801.
+exten => 802,1,Answer()
+ same => n,Authenticate(4711)
+ same => n,ConfBridge(vorstand,default_bridge,marked)
+ same => n,Hangup()
+----
+
+== CLI-Befehle
+
+[cols="2,3"]
+|===
+| Befehl | Zweck
+
+| `confbridge list`           | Alle aktiven Konferenzen
+| `confbridge list <name>`    | Teilnehmer einer Konferenz
+| `confbridge kick <name> <user>` | Einen Teilnehmer rausschmeißen
+| `confbridge mute <name> <user>` | Stummschalten
+| `confbridge record start <name>` | Aufzeichnung starten
+| `confbridge record stop <name>`  | Aufzeichnung stoppen
+|===
+
+== Video
+
+Wenn Sie Video benötigen (z. B. WebRTC-Konferenzen), aktivieren Sie
+`video_mode` im Bridge-Profil:
+
+[source]
+----
+[video-bridge]
+type=bridge
+video_mode=last_marker       ; das Bild des letzten "marked" Teilnehmers
+max_members=20
+----

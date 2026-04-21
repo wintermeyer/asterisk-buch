@@ -1,0 +1,74 @@
+[[confbridge-konfiguration]]
+= confbridge.conf und Profile
+:description: confbridge.conf: Bridge-Profile und User-Profile für Asterisk-Konferenzen.
+
+Die zentrale Datei ist `/etc/asterisk/confbridge.conf`. Sie kennt
+vier Arten von Blöcken:
+
+[cols="1,3"]
+|===
+| `type=bridge`    | Eigenschaften einer Konferenz (Sprache, Musik on Hold, maximale Teilnehmerzahl, ob Video erlaubt ist).
+| `type=user`      | Eigenschaften eines Teilnehmers (darf stummgeschaltet werden, Admin-Rechte, Menü-Zugang, Kanalansage bei Eintritt).
+| `type=menu`      | DTMF-Menüs für Teilnehmer.
+| `default_bridge` / `default_user` | Default-Profile, wenn beim Aufruf nichts angegeben wurde.
+|===
+
+== Ein minimales Profil-Set
+
+[source]
+----
+; /etc/asterisk/confbridge.conf
+
+[default_bridge]
+type=bridge
+max_members=30
+mixing_interval=20
+internal_sample_rate=auto
+language=de
+record_conference=no
+
+[default_user]
+type=user
+announce_user_count=yes
+announce_user_count_all=no
+announce_only_user=yes
+quiet=no
+dsp_drop_silence=yes
+
+[admin]
+type=user
+admin=yes
+end_marked=yes
+wait_marked=no
+announce_join_leave=yes
+music_on_hold_when_empty=yes
+dsp_drop_silence=yes
+
+[marked]
+type=user
+marked=yes
+wait_marked=no
+announce_join_leave=yes
+music_on_hold_when_empty=yes
+
+[normal-user]
+type=user
+marked=no
+wait_marked=yes             ; wartet, bis mindestens ein marked user da ist
+music_on_hold_when_empty=yes
+announce_join_leave=yes
+dsp_drop_silence=yes
+
+[listener]
+type=user
+startmuted=yes               ; Nur-Zuhörer
+announce_join_leave=no
+----
+
+[TIP]
+====
+*marked users* sind ein elegantes Pattern für geplante Konferenzen:
+Der Moderator ist "marked", alle anderen "wait_marked=yes". Die
+Konferenz startet erst, wenn der Moderator anruft — und endet
+(`end_marked=yes`) wieder, wenn er auflegt.
+====

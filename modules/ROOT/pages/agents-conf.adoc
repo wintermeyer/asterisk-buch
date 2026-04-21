@@ -1,0 +1,112 @@
+[[agents-conf]]
+= `agents.conf`
+:description: Die agents.conf in Asterisk — heute Legacy, da PJSIP-Endpoints als Queue-Member ausreichen.
+
+[IMPORTANT]
+====
+*Das klassische Agent-System ist weitgehend Legacy.* In modernen
+Asterisk-Installationen werden Queue-Mitglieder direkt als
+PJSIP-Endpoints eingetragen (`member => PJSIP/1001` in `queues.conf`)
+oder dynamisch per `AddQueueMember()`/`RemoveQueueMember()` im
+Dialplan gesetzt. Die dedizierte `agents.conf` mit eigenen
+Agent-Kanälen (`Agent/1001`) braucht man nur noch, wenn man die
+klassische Callcenter-Logik mit "Agent loggt sich einmal am
+Telefon ein und bleibt verbunden" wirklich möchte.
+
+Die Syntax von `agents.conf` hat sich seit den alten Büchern
+geändert: Es gibt keine globalen Optionen mehr im `[general]`-Block,
+und Agenten werden als eigene Sections (`[agent-id]`) definiert —
+nicht mehr als `agent => ...`-Zeilen.
+====
+
+== Grundaufbau
+
+[source]
+----
+; /etc/asterisk/agents.conf
+
+[general]
+; Der general-Block wird derzeit nicht ausgewertet.
+
+; Template für alle Agenten:
+[my-agents](!)
+autologoff = 15
+wrapuptime = 5000
+musiconhold = default
+recordagentcalls = yes
+ackcall = no
+custom_beep = beep
+
+; Konkrete Agenten
+[1001](my-agents)
+fullname = Mark Spencer
+
+[1002](my-agents)
+fullname = Will Meadows
+----
+
+Jede Section unterhalb von `[general]` ist bereits ein Agent; die
+ID entspricht dem Section-Namen. Die `(!)` markiert Templates
+(siehe xref:konfigurations-templates.adoc[Konfigurations-Templates]).
+
+== Relevante Optionen
+
+[[agents.conf-autologoff]]
+=== `autologoff`
+
+Sekunden, die ein eingehender Anruf beim Agenten "klingeln" darf,
+bevor der Agent automatisch ausgeloggt wird. `0` = nie
+ausloggen.
+
+[[agents.conf-ackcall]]
+=== `ackcall`
+
+Muss der Agent einen Anruf aktiv bestätigen (DTMF-Taste), bevor das
+Gespräch durchgestellt wird? Default: `no`. Bei `yes` wird der
+DTMF-Code aus `acceptdtmf` erwartet (Default `##`).
+
+[[agents.conf-wrapuptime]]
+=== `wrapuptime`
+
+Mindestpause in Millisekunden nach Auflegen, bevor der Agent einen
+nächsten Anruf bekommt.
+
+[[agents.conf-musiconhold]]
+=== `musiconhold`
+
+Music-on-Hold-Klasse für den Agenten.
+
+[[agents.conf-recordagentcalls]]
+=== `recordagentcalls`
+
+Aufzeichnung aktivieren. Nutzt intern das
+`automixmon`-Feature (`features.conf`).
+
+[[agents.conf-fullname]]
+=== `fullname`
+
+Freitext-Name des Agenten für Log-Meldungen.
+
+== Dialplan-Verwendung
+
+[source]
+----
+; Agent einloggen:
+exten => 25,1,Answer()
+ same => n,AgentLogin()
+ same => n,Hangup()
+
+; Anrufer in eine Queue einreihen, die Agenten als Mitglieder hat
+; (statisch in queues.conf oder dynamisch via AddQueueMember):
+exten => 8000,1,Queue(support)
+----
+
+[TIP]
+====
+Die historisch stark verwendete Applikation `AgentCallbackLogin()`
+ist aus Asterisk entfernt. Der moderne Ersatz ist ein
+`AddQueueMember()`-Aufruf im Dialplan, der den konkreten
+Nebenstellen-Endpoint des Agenten als Queue-Member registriert —
+siehe xref:queues-extensions-conf.adoc[extensions.conf]
+im Warteschleifen-Kapitel.
+====

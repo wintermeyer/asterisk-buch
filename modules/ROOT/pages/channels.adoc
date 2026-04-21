@@ -1,0 +1,47 @@
+[[channels]]
+= Channels
+:description: Asterisk Channels erklärt: Die aktuelle Treiber-Landschaft (PJSIP, IAX2, Local) und was davon in modernen Installationen relevant ist.
+
+Ein _Channel_ ist in Asterisk die logische Verbindung zwischen einem
+Endpunkt (typischerweise ein Telefon oder SIP-Trunk) und dem
+Asterisk-Kern. Jeder aktive Gesprächsteilnehmer hat einen eigenen
+Channel; ein "Gespräch" zwischen Peter und Uwe besteht intern aus zwei
+Channels, die Asterisk über eine _Bridge_ verbindet.
+
+Im CLI listet `core show channels` alle laufenden Channels auf.
+Channel-Namen setzen sich aus Technology (Treiber) und Ressource
+zusammen, z. B. `PJSIP/2000-00000005`. Der Teil nach dem Minus ist
+Asterisk-intern und identifiziert die konkrete Instanz.
+
+== Die heute relevanten Channel-Treiber
+
+[cols="1,3"]
+|===
+| Treiber | Zweck
+
+| `PJSIP`
+| Der moderne SIP-Treiber (`chan_pjsip`). Default für VoIP.
+
+| `IAX2`
+| Das Asterisk-eigene IAX-Protokoll. Heute vor allem für die Kopplung zweier Asterisk-Server sinnvoll.
+
+| `Local`
+| Loopback in einen anderen Dialplan-Context. Erzeugt kein Gespräch nach außen, sondern triggert intern einen weiteren Dialplan-Lauf. Unverzichtbar für komplexere Szenarien wie Ring-All oder Queues-in-Queues.
+
+| `DAHDI`
+| Digium-Hardware für ISDN/Analog. Nur noch in Nischeninstallationen relevant.
+
+| `Console` / `ALSA`
+| Lokale Soundkarte. Auf Servern meist nicht vorhanden.
+|===
+
+Weitere, historisch mal bedeutende, heute aber kaum noch relevante
+Treiber (`chan_sip`, `chan_h323`, `chan_mgcp`, `chan_skinny`,
+`chan_capi`, `chan_misdn`, `chan_vpb`, `chan_phone`, `chan_nbs`,
+`chan_vofr`, `chan_agent`) sind entweder entfernt oder Legacy-Module.
+Wenn Sie sie in älteren Tutorials erwähnt sehen: Ignorieren Sie sie
+für neue Installationen.
+
+In den meisten Beispielen dieses Buches geht es um `PJSIP`- und
+gelegentlich `IAX2`- oder `Local`-Channels — mit diesen drei
+Treibern sind über 95 % aller heutigen Installationen abgedeckt.

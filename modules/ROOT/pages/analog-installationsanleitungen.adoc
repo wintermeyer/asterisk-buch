@@ -1,6 +1,0 @@
-[[analog-installationsanleitungen]]
-= Installationsanleitungen für Analog-Karten
-
-Installationsanleitungen für Asterisk mit verschiedenen
-Analog-Karten und entsprechenden Treibern finden Sie in xref:installationsanleitungen-asterisk-karten-isdn-analog.adoc[Anhang B, _Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
-Analog-Karten_].

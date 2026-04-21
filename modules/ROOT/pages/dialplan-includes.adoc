@@ -1,0 +1,152 @@
+[[dialplan-includes]]
+= Includes im Dialplan
+:description: Includes im Asterisk-Dialplan: Context-Wiederverwendung und zeitgesteuerte Regeln für Tag-/Nachtschaltungen.
+
+Includes bringen Struktur und Ordnung in große Dialpläne. Mit einem
+Include können andere Contexte in den aktuellen Context eingebaut
+(also "included") werden.
+
+[[include-syntax]]
+== Syntax
+
+[source]
+----
+include => Name-des-anderen-Contextes
+----
+
+[[include-beispiel]]
+== Beispiel
+
+[source]
+----
+[verkauf]
+include => intern
+include => extern
+
+[intern]
+exten => 2000,1,Dial(PJSIP/2000)
+
+[extern]
+exten => _0X.,1,Dial(PJSIP/${EXTEN}@provider)
+----
+
+[[reihenfolge-beim-include]]
+== Die Reihenfolge beim Include
+
+Asterisk sucht, bevor es einen Include auflöst, immer erst im
+aktuellen Context nach einem Treffer. Gibt es einen Treffer, wird
+dieser benutzt. Gibt es keinen Treffer, wird das erste Include
+aufgerufen und dort gesucht. Das funktioniert rekursiv — auch
+verschachtelte Includes (Includes innerhalb von Includes) werden
+abgearbeitet.
+
+Im Zweifelsfall hilft zum Debuggen der Befehl
+`dialplan show <nummer>@<context>` im CLI.
+
+Beispiel: Mit folgendem Dialplan und Aufruf der 2000 im Context
+`verkauf` …
+
+[source]
+----
+[verkauf]
+include => intern
+include => extern
+
+[intern]
+exten => 2000,1,Dial(PJSIP/2000)
+
+[extern]
+exten => _0X.,1,Dial(PJSIP/${EXTEN}@provider)
+----
+
+… zeigt `dialplan show 2000@verkauf`:
+
+[source,shell]
+----
+debian*CLI> dialplan show 2000@verkauf
+[ Included context 'intern' created by 'pbx_config' ]
+  '2000' =>         1. Dial(PJSIP/2000)
+-= 1 extension (1 priority) in 1 context. =-
+----
+
+Erweitern wir den Context `verkauf` um eine eigene 2000-Extension:
+
+[source]
+----
+[verkauf]
+include => intern
+include => extern
+
+exten => 2000,1,Answer()
+ same => n,Playback(hello-world)
+ same => n,Hangup()
+
+[intern]
+exten => 2000,1,Dial(PJSIP/2000)
+----
+
+Die Ausgabe ändert sich:
+
+[source,shell]
+----
+debian*CLI> dialplan show 2000@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '2000' =>         1. Answer()
+                    2. Playback(hello-world)
+                    3. Hangup()
+[ Included context 'intern' created by 'pbx_config' ]
+  '2000' =>         1. Dial(PJSIP/2000)
+----
+
+Asterisk wird hier den Sprachbaustein `hello-world` abspielen und
+*nicht* zum Telefon 2000 durchstellen, obwohl der Include vorher im
+Dialplan auftaucht. Grund: Erst werden alle Möglichkeiten innerhalb
+des aktuellen Contexts geprüft, danach die Includes.
+
+[[include-zeitgesteuert]]
+== Includes zeitgesteuert
+
+Includes können zeitgesteuert eingebunden werden. Damit lassen sich
+Tag-/Nachtschaltungen und Wochenend-/Urlaubsregeln bequem abbilden.
+
+[[include-zeitgesteuert-syntax]]
+=== Syntax
+
+[source]
+----
+include => context,<uhrzeit>,<wochentag>,<tag-des-monats>,<monat>
+----
+
+[NOTE]
+====
+Die Trennzeichen sind heute Kommas. In sehr alten Asterisk-Versionen
+war das Trennzeichen `|` — das funktioniert aus Kompatibilitätsgründen
+teilweise noch, ist aber deprecated. Schreiben Sie neue Dialpläne mit
+Kommas.
+====
+
+Wochentage und Monate werden mit den ersten drei Buchstaben des
+englischen Begriffs angegeben: `mon`, `tue`, `wed`, `thu`, `fri`,
+`sat`, `sun`; `jan`, `feb`, `mar` …
+
+[[include-zeitgesteuert-beispiel]]
+=== Beispiel
+
+Eine Firma mit Öffnungszeiten Mo–Fr 09:00–17:00 und Sa 09:00–14:00:
+
+[source]
+----
+[zentrale]
+include => tagschaltung,09:00-17:00,mon-fri,*,*
+include => tagschaltung,09:00-14:00,sat,*,*
+include => anrufbeantworter
+
+[tagschaltung]
+exten => 2000,1,Dial(PJSIP/2000)
+
+[anrufbeantworter]
+exten => 2000,1,VoiceMail(2000@default,u)
+----
+
+Innerhalb der Öffnungszeiten wird der Include `tagschaltung`
+gefeuert, danach fällt Asterisk durch auf `anrufbeantworter`.

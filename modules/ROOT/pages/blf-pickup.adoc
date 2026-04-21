@@ -1,5 +1,6 @@
 [[blf-pickup]]
 = Heranholen eines Anrufs („Pickup“)
+:description: Pickup in Asterisk: Einen eingehenden Anruf einer anderen Nebenstelle heranholen.
 
 In der bisherigen Konfiguration werden Gespräche des überwachten
 Teilnehmers nur angezeigt. Wir wollen aber auch die Möglichkeit schaffen,
@@ -53,14 +54,14 @@ dass beim Wählen von
 `*8`_`<Nebenstelle>`_ (also z.
 B. `*821`) der Anruf herangeholt wird, der gerade auf dieser
 _`<Nebenstelle>`_ (z. B. `21`)
-im Context `interne-benutzer` klingelt.footnote:[Zur Beschreibung der Applikation `Pickup()` siehe auch: xref:applications-pickup.adoc[Abschnitt C.115, „`Pickup()`“\]]footnote:[Die Applikation `Pickup()` darf nicht verwechselt werden mit der Bristuff-Applikation `PickUp()` bzw. `DPickup()`, `PickUp2()` oder anderen Applikationen ähnlichen Namens, die in den diversen Internet-Foren usw. als Patches herumgeistern, auch wenn sie ungefähr das Gleiche bewirken.]
+im Context `interne-benutzer` klingelt.footnote:[Zur Beschreibung der Applikation `Pickup()` siehe auch: Abschnitt C.115, „`Pickup()`“\]footnote:[Die Applikation `Pickup()` darf nicht verwechselt werden mit der Bristuff-Applikation `PickUp()` bzw. `DPickup()`, `PickUp2()` oder anderen Applikationen ähnlichen Namens, die in den diversen Internet-Foren usw. als Patches herumgeistern, auch wenn sie ungefähr das Gleiche bewirken.]
 
 [[blf-pickup-telefon]]
 == Konfiguration des Telefons für Pickup
 
 Dem Snom-Telefon muss jetzt noch mitgeteilt werden, welche Nummer
 zur Gesprächsübernahme gewählt werden muss. Anstatt wie oben beschrieben
-(xref:blf-telefon-konfiguration-snom.adoc[Abschnitt 23.3, „Konfiguration der Telefone für BLF“]) bei
+(xref:blf-telefon-konfiguration.adoc[Abschnitt 23.3, „Konfiguration der Telefone für BLF“]) bei
 „Ziel“/„Nebenstelle“ bzw. „BLF“
 nur die zu überwachende Nummer einzutragen, tragen Sie nun die Nummer
 gefolgt von einem „`|`“ (Pipe-Symbol) und der
@@ -143,8 +144,8 @@ B. die folgende:
 context interne-benutzer {
   
   // Verkaufsabteilung
-  hint(SIP/21&SIP/22&SIP/23) 20 => {
-    Dial(SIP/21&SIP/22&SIP/23,40);
+  hint(PJSIP/21&PJSIP/22&PJSIP/23) 20 => {
+    Dial(PJSIP/21&PJSIP/22&PJSIP/23,40);
   }
   
   // Gesprächsübernahme (PickUp) von der Gruppe Verkauf
@@ -160,7 +161,7 @@ Als zu überwachende Nebenstelle würde man dann am Telefon die
 
 Als gute Alternative bietet sich die
 `PICKUPMARK`-Funktionalität der
-`Pickup()`-Applikation (xref:applications-pickup.adoc[Abschnitt C.115, „`Pickup()`“]) an, mit der man flexibler ist.
+`Pickup()`-Applikation (Abschnitt C.115, „`Pickup()`“) an, mit der man flexibler ist.
 Beispiel:
 
 [source]
@@ -170,16 +171,16 @@ context interne-benutzer {
   // Verkaufsmitarbeiter
   _2X => {
     Set(__PICKUPMARK=verkauf);
-    Dial(SIP/${EXTEN},40);
+    Dial(PJSIP/${EXTEN},40);
   }
-  hint(SIP/21) 21 => {}
-  hint(SIP/22) 22 => {}
-  hint(SIP/23) 23 => {}
+  hint(PJSIP/21) 21 => {}
+  hint(PJSIP/22) 22 => {}
+  hint(PJSIP/23) 23 => {}
   
   // Verkaufsabteilung
-  hint(SIP/21&SIP/22&SIP/23) 20 => {
+  hint(PJSIP/21&PJSIP/22&PJSIP/23) 20 => {
     Set(__PICKUPMARK=verkauf);
-    Dial(SIP/21&SIP/22&SIP/23,40);
+    Dial(PJSIP/21&PJSIP/22&PJSIP/23,40);
   }
   
   // Gesprächsübernahme von der Gruppe Verkauf
@@ -203,17 +204,17 @@ context interne-benutzer {
     Set(__PICKUPMARK=200);
     // welcher Mitarbeiter zu welcher Pickup-Gruppe gehört, ließe sich
     // z. B. über ein ausgefeiltes AGI-Skript setzen
-    Dial(SIP/${EXTEN}&Local/**${PICKUPMARK},40);
+    Dial(PJSIP/${EXTEN}&Local/**${PICKUPMARK},40);
   }
-  hint(SIP/21) 21 => {}
-  hint(SIP/22) 22 => {}
-  hint(SIP/23) 23 => {}
+  hint(PJSIP/21) 21 => {}
+  hint(PJSIP/22) 22 => {}
+  hint(PJSIP/23) 23 => {}
   
   // Pickup-Gruppen
   _**X. => {
     Verbose(1,Es klingelt in Pickup-Gruppe ${EXTEN:2});
   }
-  hint(SIP/21&SIP/22&SIP/23) **200 => {}
+  hint(PJSIP/21&PJSIP/22&PJSIP/23) **200 => {}
   
   // Gesprächsübernahme direkt
   _*8X. => {

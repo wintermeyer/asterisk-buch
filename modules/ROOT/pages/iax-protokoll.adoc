@@ -1,0 +1,149 @@
+[[iax-protokoll]]
+= IAX
+:description: IAX2 in Asterisk: Wann das Protokoll noch sinnvoll ist und wie die Konfiguration aussieht.
+
+IAXfootnote:[Wenn hier von IAX die Rede ist, ist immer IAX2 gemeint —
+IAX Version 1 war ein experimenteller Vorgänger, der nie ernsthaft
+eingesetzt wurde.] steht für _Inter-Asterisk-eXchange-Protokoll_. Es
+wurde für Asterisk entwickelt, um zwei Asterisk-Server miteinander zu
+verbinden, und hatte gegenüber SIP eine Reihe technischer Vorteile
+(siehe xref:iax-vs-sip.adoc[IAX versus SIP]).
+
+[NOTE]
+====
+In der Praxis spielt IAX heute kaum noch eine Rolle: Es wird von
+fremden Geräten und Providern praktisch nicht unterstützt, sodass
+SIP/PJSIP (`chan_pjsip`) der Default für neue Anlagen ist. IAX ist
+weiterhin sinnvoll, wenn zwei *eigene* Asterisk-Server gekoppelt
+werden sollen — besonders bei NAT und knapper Bandbreite.
+====
+
+[[warum-iax]]
+== Warum (noch) IAX?
+
+Die relevanten Vorteile, die IAX auch heute noch gegenüber SIP hat:
+
+* *Nur ein UDP-Port* (4569) für Signalisierung und Medien. Für
+  Firewall-Admins wesentlich bequemer als SIP mit seinem großen
+  RTP-Portbereich.
+* *Trunking*: Mehrere Gespräche werden auf einer IAX-Verbindung
+  gebündelt, mit einem gemeinsamen Header — günstig bei knapper
+  Bandbreite.
+* *Weniger Overhead* als SIP + RTP, insbesondere bei vielen
+  gleichzeitigen Gesprächen.
+* Signalisierung und Medien sind im selben Stream — kein Problem mit
+  "Signalisierung kommt, aber Audio fehlt".
+
+Die Nachteile: Keine fremde Gegenstelle spricht IAX. Wer IAX einsetzt,
+muss auf beiden Seiten Asterisk betreiben.
+
+[[iax-beispielkonf]]
+== Beispiel: zwei Asterisk-Server koppeln
+
+Zwei Anlagen mit jeweils eigenen Nebenstellen sollen untereinander
+Gespräche führen können, ohne über einen externen SIP-Provider zu
+gehen.
+
+* Anlage `ast1` auf `192.168.0.101`, Nebenstellen 1000 und 1001
+* Anlage `ast2` auf `192.168.0.102`, Nebenstellen 1000 und 1001
+* Die Vorwahl `0901` wählt hin zu `ast1`, `0902` zu `ast2`.
+
+=== Konfiguration auf ast1
+
+`/etc/asterisk/iax.conf`:
+
+[source]
+----
+[general]
+bindport=4569
+disallow=all
+allow=ulaw
+allow=alaw
+
+[ast2]
+type=friend
+host=192.168.0.102
+secret=sehr-geheim
+context=von-ast2
+disallow=all
+allow=ulaw
+allow=alaw
+----
+
+`/etc/asterisk/extensions.conf` (Ausschnitt):
+
+[source]
+----
+[intern]
+; Nach ast2 rausrufen
+exten => _0902XXXX,1,Dial(IAX2/ast2/${EXTEN:4})
+ same => n,Hangup()
+
+[von-ast2]
+; Eingehend von ast2: Anruf an die passende lokale Nebenstelle
+exten => _1XXX,1,Dial(PJSIP/${EXTEN},20)
+ same => n,Hangup()
+----
+
+=== Konfiguration auf ast2
+
+Spiegelverkehrt. `iax.conf`:
+
+[source]
+----
+[general]
+bindport=4569
+disallow=all
+allow=ulaw
+allow=alaw
+
+[ast1]
+type=friend
+host=192.168.0.101
+secret=sehr-geheim
+context=von-ast1
+disallow=all
+allow=ulaw
+allow=alaw
+----
+
+`extensions.conf`:
+
+[source]
+----
+[intern]
+exten => _0901XXXX,1,Dial(IAX2/ast1/${EXTEN:4})
+ same => n,Hangup()
+
+[von-ast1]
+exten => _1XXX,1,Dial(PJSIP/${EXTEN},20)
+ same => n,Hangup()
+----
+
+[TIP]
+====
+Damit ast1 und ast2 jeweils wissen, dass die andere Seite online ist,
+können Sie in beiden `iax.conf`-Einträgen `qualify=yes` ergänzen.
+`iax2 show peers` zeigt dann live den Status.
+====
+
+== CLI-Befehle
+
+[cols="2,3"]
+|===
+| Befehl | Zweck
+| `iax2 show peers` | Liste aller Peers mit Status
+| `iax2 show registry` | Status eigener Registrierungen bei anderen IAX-Servern
+| `iax2 show channels` | Aktive IAX-Gespräche
+| `iax2 set debug` / `iax2 set debug off` | IAX-Traffic im CLI mitlesen
+| `iax2 reload` | `iax.conf` neu laden
+|===
+
+== Ein Blick auf weitere Optionen
+
+Die `iax.conf` unterstützt eine Reihe weiterer Optionen
+(`bandwidth=low|medium|high`, `codecpriority`, `autokill`,
+`tos=ef`, `trunk=yes`/`trunkfreq`, `encryption=aes128`, …). Die
+jeweils aktuelle, vollständige Referenz steht in der offiziellen
+Dokumentation unter
+https://docs.asterisk.org/Configuration/Channel-Drivers/Inter-Asterisk-eXchange-protocol-version-2-IAX2/.

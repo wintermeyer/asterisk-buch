@@ -1,0 +1,42 @@
+[[blf-telefon-konfiguration]]
+= Konfiguration der Telefone für BLF
+:description: BLF am SIP-Telefon konfigurieren: Tasten mit Asterisk-Hints verbinden.
+
+Nun müssen noch die überwachenden Telefone konfiguriert werden. Wie
+das genau geht, hängt natürlich vom jeweiligen Modell ab und kann im
+Handbuchfootnote:[z. B. http://wiki.snom.com/[_Snom-Wiki_\]] nachgelesen werden. Wir zeigen es hier exemplarisch für ein
+Snom 360.
+
+Melden Sie sich wie gewohnt mit einem Webbrowser am Snom an, und
+gehen Sie in das Untermenü „Funktionstasten“. Dort belegen
+Sie die Funktionstaste Ihrer Wahl (im Beispiel die P6) mit der Funktion
+„Ziel“/„Nebenstelle“footnote:[Die Bezeichnung „Ziel“ wurde in einer der neueren Firmware-Versionen in „Nebenstelle“ geändert. Ansonsten ist die weitere hier beschriebene Funktionalität gleich.] und tragen die zu überwachende Extension ein, also z. B. am
+Telefon des Benutzers `21` die `22` und
+`23` und umgekehrt.
+
+[IMPORTANT]
+====
+Ab den Firmware-Versionen 7.1.33 und 7.3 muss als Tastenfunktion
+„BLF“footnote:[+_`blf`_+ (http://wiki.snom.com/Settings/fkey/blf)] statt „Nebenstelle“footnote:[+_`dest`_+ (http://wiki.snom.com/Settings/fkey/dest)] verwendet werden. Weitere Informationen dazu von Snom auf
+http://wiki.snom.com/Features/Extension_Monitoring
+und http://wiki.snom.com/Features/Busy_Lamp_Field_(BLF).
+====
+
+Die Bezeichnung „Kontext“ werden Sie vom Snom schon
+kennen. Damit ist einer der 12 möglichen SIP-Accounts gemeint. Im
+Normalfall hat man seinen Account als den ersten konfiguriert und wählt
+diesen hier aus.
+
+image::snom-hint1.html.jpg[image]
+
+Nachdem die Einstellungen gespeichert wurden, ändert das Telefon den
+Eintrag automatisch in eine passende SIP-URI der Form
++<sip:21@_`x.x.x.x`_;user=phone>+
+ab. _`x.x.x.x`_ ist die IP-Adresse der
+Telefonanlage. (Der Zusatz `;user=phone` ist nicht von
+Bedeutung.)
+
+image::snom-hint2.html.jpg[image]
+
+Je nach Firmware-Version muss jetzt noch das Telefon neu gestartet
+werden.footnote:[Der Telefon-Neustart nach einem Asterisk-Neustart ist für die saubere Anmeldung der Subscription des Telefons notwendig – jedenfalls solange Asterisk noch keine „persistent subscriptions“, also das Fortbestehen von Status-Abonnements über einen Reload hinweg, unterstützt.]

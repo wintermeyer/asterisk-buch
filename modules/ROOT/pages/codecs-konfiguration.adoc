@@ -1,55 +1,84 @@
 [[codecs-konfiguration]]
 = Konfiguration des Codecs
+:description: Codec-Konfiguration in pjsip.conf: allow und disallow richtig einsetzen.
 
-Die Konfiguration des Codecs erfolgt immer technologieabhängig.
-IAX-Telefone werden in der `iax.conf` und SIP-Telefone
-in der `sip.conf` konfiguriert.
+Codecs werden pro Channel-Treiber konfiguriert: In `pjsip.conf` für
+SIP-Endpoints, in `iax.conf` für IAX-Peers.
 
 [[codecs-allow-1]]
 == Beispiel mit einem festen Codec
 
-Will man alle SIP-Telefone auf den Codec G.711 (also alaw)
-einstellen, dann geschieht das mit folgendem Code in der
-`sip.conf`:
+Soll ein PJSIP-Endpoint ausschließlich G.711 (`alaw`) sprechen:
 
 [source]
 ----
-[general]
-disallow=all
-allow=alaw
-----
-
-Wollen Sie im gleichen System das Telefon mit dem SIP-User 2000 so
-einstellen, dass es nur GSM sprechen kann, so geschieht dies
-folgendermaßen:
-
-[source]
-----
-[general]
-disallow=all
-allow=alaw
-
 [2000]
+type=endpoint
 disallow=all
-allow=gsm
+allow=alaw
+; ...
 ----
 
 [[codecs-allow-n]]
 == Beispiel mit mehreren Codecs zur Auswahl
 
-Wenn Sie in einer SIP-Umgebung Telefone mit unterschiedlichen
-Codecs betreiben, so können Sie in der `sip.conf`
-auch eine gewünschte Reihenfolge eintragen:
+Die `allow=`-Zeilen werden in der Reihenfolge ausgehandelt — die erste
+hat die höchste Priorität.
 
 [source]
 ----
-[general]
+[2000]
+type=endpoint
 disallow=all
+allow=ulaw
 allow=alaw
-allow=gsm
-allow=ilbc
+allow=g722
+allow=opus
+; ...
 ----
 
-Jetzt wird Asterisk mit jedem SIP-Telefon den optimalen Codec
-aushandeln. Dabei hat alaw die höchste und ilbc die niedrigste
-Chance.
+Mit dieser Liste handelt Asterisk mit dem Telefon den Codec aus:
+Wenn beide Seiten `opus` unterstützen, gewinnt `opus` nicht
+automatisch — die Reihenfolge gibt die Präferenz vor, und hier steht
+`ulaw` vorn. Wer HD-Audio bevorzugen möchte, dreht die Reihenfolge um.
+
+[TIP]
+====
+Mit PJSIP-Templates (siehe
+xref:konfigurations-templates.adoc[Konfigurations-Templates]) vermeiden
+Sie, die Codec-Liste in jedem Endpoint-Block zu wiederholen:
+
+[source]
+----
+[endpoint-template](!)
+type=endpoint
+disallow=all
+allow=ulaw
+allow=alaw
+allow=g722
+allow=opus
+
+[2000](endpoint-template)
+auth=2000
+aors=2000
+
+[2001](endpoint-template)
+auth=2001
+aors=2001
+----
+====
+
+== Im Dialplan: was spricht mein Channel gerade?
+
+Die Funktion `CHANNEL(audionativeformat)` (ausgehend) bzw.
+`CHANNEL(audioreadformat)` (eingehend) verrät den aktuell gewählten
+Codec:
+
+[source]
+----
+exten => 123,1,NoOp(Ich hoere: ${CHANNEL(audioreadformat)})
+ same => n,NoOp(Ich sende: ${CHANNEL(audiowriteformat)})
+----
+
+Das ist beim Troubleshooting von Qualitäts- oder
+Transkodierungsproblemen extrem nützlich.

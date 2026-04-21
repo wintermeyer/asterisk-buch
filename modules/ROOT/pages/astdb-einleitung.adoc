@@ -1,0 +1,32 @@
+[[astdb-einleitung]]
+= Einleitung
+:description: Einführung in die AstDB — Asterisks integrierte Key-Value-Datenbank.
+
+Das Problem bei der Benutzung von Variablen im Dialplan ist, dass
+der Wert dieser und überhaupt aller zur Laufzeit definierten Variablen bei
+einem Systemabsturz oder einem Neustart von Asterisk gelöscht wird bzw.
+dass die Variablen auf ihre Anfangswerte zurückgesetzt werden. Dadurch
+sind bestimmte Einsatzszenarien gar nicht denkbar. Wenn man beispielweise
+eine Call-Forwarding-Funktionfootnote:[Call-Forwarding-Funktionalität: Jeder Teilnehmer kann durch Wahl einer bestimmten Nummer alle Gespräche an einen anderen Apparat weiterleiten lassen. Durch Wahl einer anderen Nummer wird diese Funktion wieder deaktiviert.] oder ein Calling-Card-System implementieren möchte, dann
+sollten diese natürlich z. B. das Restguthaben in einer Datenbank
+speichern, damit diese Daten bei einem Neustart des Systems wieder korrekt
+zur Verfügung stehen.
+
+[[datenbank-performance]]
+== Performance
+
+Bezüglich der Asterisk-Datenbank wird immer wieder die Frage nach
+der Performance derselben gestellt. Das lässt sich nicht so pauschal
+beantworten. Falls Sie nur kleine Datenbestände (wie in unserem
+Wahlwiederholungsbeispiel) benötigen, so ist die Asterisk-Datenbank
+sicherlich eine sinnvolle Wahl. Bei größeren und komplexen
+Datenbeständen sollten Sie aber überlegen, ob das Verwenden einer
+externen SQL-Datenbank geeigneter ist. Allerdings ist diese Diskussion
+bei dem überwiegenden Teil aller Anwendungen rein theoretischer Natur,
+da es sich bei der Asterisk-Datenbank um eine Berkley DB handelt und
+diese ausreichend performant ist. Tatsächlich ist die Berkley DB, wenn
+es sich um reine Schlüssel/Wert-Datenpaare (_key_ = _value_)
+handelt, mit die schnellste ihrer Zunft. Sie sollten sich daher diese
+Frage erst stellen, wenn die Geschwindigkeit der Datenbank nachweislich
+zu Problemen führt oder Sie eine größere Installation mit umfangreicher
+Funktionalität aufsetzen wollen.

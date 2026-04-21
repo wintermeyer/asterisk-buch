@@ -1,0 +1,20 @@
+[[einstieg]]
+= Das How-To zu diesem Buch
+:description: Einstieg und Lese-Howto für dieses Asterisk-Buch. Wer anfängt, wo weiter, was überspringen.
+
+In diesem Kapitel:
+
+* xref:was-ist-asterisk.adoc[Was ist Asterisk?]
+** xref:was-ist-asterisk.adoc#unterschied-klassisch-und-asterisk[Unterschied zwischen klassischer Telefonanlage und Asterisk]
+* xref:womit-anfangen.adoc[Welche Kapitel sollten Sie lesen, und womit sollten Sie anfangen?]
+** xref:womit-anfangen.adoc#anfaenger-howto[Absoluter Asterisk-Anfänger]
+** xref:womit-anfangen.adoc#medium-howto[Leser mit etwas Asterisk-Erfahrung]
+** xref:womit-anfangen.adoc#profi-howto[Der Asterisk-Profi]
+* xref:updates-und-versionen.adoc[Updates und Versionen des Buches]
+* xref:feedback.adoc[Mitwirken und Feedback]
+* xref:hilfe-bei-problemen.adoc[Hilfe, ich habe immer noch ein Problem mit Asterisk!]
+
+Liebe Leserin, lieber Leser, vielen Dank für Ihr Interesse an diesem Buch.
+Dieses Kapitel ist der Einstieg — wer Asterisk noch nicht kennt, erfährt
+hier, was das Buch für unterschiedliche Vorkenntnisse bietet und wie Sie
+es am sinnvollsten durcharbeiten.

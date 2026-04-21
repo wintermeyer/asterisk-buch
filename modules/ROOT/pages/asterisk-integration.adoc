@@ -1,0 +1,43 @@
+[[asterisk-integration]]
+= Asterisk von außen steuern
+:description: Asterisk programmatisch steuern: AGI, AMI, ARI, WebRTC und Call Files im Überblick.
+
+In diesem Kapitel:
+
+* xref:asterisk-rx-befehle.adoc[asterisk -rx "Befehl"] — CLI-Befehle aus der Shell
+* xref:call-files.adoc[Call Files] — Anrufe per Datei initiieren
+* xref:agi.adoc[AGI] — externe Skripte aus dem Dialplan
+* xref:ami-manager-interface.adoc[AMI] — Manager-Interface
+* xref:ari.adoc[ARI] — REST-API + WebSocket
+* xref:webrtc.adoc[WebRTC] — Browser-Clients
+
+Für alles, was über eine reine Konfigurationsdatei hinausgeht — CTI,
+Click-to-Call, eigene IVRs, Callcenter-Logik, Integrationen in CRM
+oder Ticketsystem — bietet Asterisk mehrere Integrationspunkte. Die
+wichtigste Entscheidung am Anfang:
+
+[cols="1,3"]
+|===
+| Zweck | Empfehlung
+
+| Einmalige CLI-Befehle aus einem Shell-Skript
+| `asterisk -rx "..."` — einfach, reicht für die meisten Admin-Aufgaben.
+
+| Outbound-Anruf ohne Code, nur durch eine Datei
+| Call Files. Minimal, deterministisch, keine Abhängigkeiten.
+
+| Kurze, synchrone Logik aus dem Dialplan heraus
+| AGI. Ein Skript bekommt stdin/stdout und läuft pro Anruf.
+
+| Monitoring, Event-Stream, Originate von außen
+| AMI. Klassisches TCP-Protokoll, ideal für Nagios-artige Checks oder CTI-Popups.
+
+| Moderne Anwendungen mit voller Call-Control
+| ARI. REST + WebSocket + Stasis. Für neue Projekte erste Wahl.
+
+| Softphones im Browser
+| WebRTC. PJSIP-Endpoints mit `webrtc=yes` plus ein JsSIP-Client im Browser.
+|===
+
+Die folgenden Abschnitte behandeln jeden dieser Integrationspunkte
+einzeln.

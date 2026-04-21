@@ -1,5 +1,6 @@
 [[agi-datenstroeme]]
 = Datenströme
+:description: AGI-Datenströme in Asterisk: stdin, stdout, stderr im Skript.
 
 Für AGI-Skripte ist ein Verständnis des Unix-Datenstrom-Models
 unabdingbar. Im Anhang dieses Buches finden Sie Informationen zu diesem
@@ -45,8 +46,8 @@ Die eingestellte Sprache (z. B. `en` für Englisch
 oder `de` für Deutsch)
 * `agi_type`
 +
-Die Channel-Art (z. B. `sip` für SIP oder
-`zap` für ISDN)
+Die Channel-Art (z. B. `PJSIP` für SIP, `IAX2` für IAX, `Local` für
+Local-Channels)
 * `agi_uniqueid`
 +
 Eine im System unique (einmalige) ID für das Gespräch

@@ -1,0 +1,361 @@
+[[voicemail-conf]]
+= `voicemail.conf`
+:description: Die voicemail.conf in Asterisk: alle relevanten Optionen erklärt.
+
+In der Datei `voicemail.conf` wird das
+Voicemail-System von Asterisk konfiguriert. Es besteht aus drei
+Bereichen:
+
+* `[general]`
+* `[zonemessages]`
+* Freie Contexte
+
+[[voicemail-voicemail.conf-general]]
+== `[general]`
+
+Im Bereich `[general]` werden allgemeine
+Konfigurationen des Voicemail-Systems vorgenommen. Es stehen folgende
+Optionen zur Verfügung:
+
+attach = _`[yes|no]`_:: Legt fest, ob an die Benachrichtigungs-E-Mails an die Nutzer auch die Sprachnachricht als Sounddatei angehängt wird. Default: `yes`. Normalerweise wird das erste unter `format` eingestellte Format verwendet.
++
+Beispiel:
++
+`attach = no`
+callback = _`[Context]`_:: Legt einen Context fest, der für Rückrufe aus dem System benutzt wird. Ist dieser Wert nicht gesetzt, was per Default der Fall ist, dann kann der User keine Rückrufe aus dem Voicemail-System machen.
++
+Beispiel:
++
+`callback = intern`
+charset = _`[Zeichensatz]`_:: Gibt den Zeichensatz (Charset) vor, in dem die E-Mails vom Voicemail-System kodiert werden.
++
+Beispiel:
++
+`charset = ISO-8859-1`
+delete = _`[yes|no]`_:: Definiert, ob eine Sprachnachricht nach dem Versenden per E-Mail automatisch gelöscht werden soll. Dies spart Festplattenplatz auf dem Server, falls man Sprachnachrichten nur per E-Mail empfangen will.
++
+Beispiel:
++
+`delete = yes`
+directoryintro = _`[Dateiname]`_:: Definiert eine Sprachdatei innerhalb des Default-Verzeichnisses `/var/lib/asterisk/sounds/`, die anstatt der normalen Datei für das Dial-by-Name-System abgespielt wird (siehe xref:voicemail-dial-by-name.adoc[Abschnitt 13.5, „Telefonbuch (Dial-by-Name)“]).
++
+Beispiel:
++
+`directoryintro = intro-telefonbuch`
+emailsubject = _`[Text der Betreffzeile]`_:: Definiert den Betreff (Subject) einer Benachrichtigungs-E-Mail. Für Informationen über Variablen siehe `emailbody`.
++
+Beispiel:
++
+`emailsubject = Neue Sprachnachricht von
+$\{VM_CALLERID}`
+pbxskip = _`[yes|no]`_:: Standardmäßig schreibt Asterisk am Anfang der Betreffzeile der E-Mail-Benachrichtigung über eine Sprachnachricht den Text `[PBX]:` Dies kann mit `yes` unterdrückt werden.
++
+Beispiel:
++
+`pbxskip = yes`
+emailbody = _`[Text der Email]`_:: Definiert den E-Mail-Bodyfootnote:[Textteil einer E-Mail] einer Benachrichtigungs-E-Mail (maximal 512 Zeichen).
++
+Im Betreff und im Body einer solchen E-Mail kann auf
+folgende Variablen zugegriffen werden:
++
+[cols="2*"]
+|===
+| `$\{VM_NAME}` | Name des Mailbox-Inhabers
+| `$\{VM_DUR}` | Länge der Nachricht
+| `$\{VM_MSGNUM}` | Nummer der Nachricht
+| `$\{VM_MAILBOX}` | Name der Mailbox
+| `$\{VM_CALLERID}` | Telefonnummer und Name des Anrufers
+| `$\{VM_CIDNUM}` | Telefonnummer des Anrufers
+| `$\{VM_CIDNAME}` | Name des Anrufers
+| `$\{VM_DATE}` | Datum und Uhrzeit des Anrufs
+| `$\{VM_MESSAGEFILE}` | Name der Sounddatei, in der die Nachricht abgespeichert ist
+|===
++
+Beispiel:
++
+`emailbody = Hallo $\{VM_NAME},\n\nSie haben eine
+neue Nachricht von $\{VM_CALLERID} in Mailbox $\{VM_MAILBOX}.`
+footnote:[Es muss alles in eine Zeile geschrieben werden. Durch `\n` wird in der E-Mail ein Zeilenumbruch eingefügt.]
+serveremail = _`[Absenderadresse]`_:: Die E-Mail-Adresse, die als Absender der E-Mail vom Voicemail-System an den User übermittelt wird.
++
+Beispiel:
++
+`serveremail =
+voicemail@apfelmus-gmbh.de`
+fromstring = _`[Absendername]`_:: Definiert den Absender (`From`-Header) in E-Mails vom Voicemail-System.
++
+Beispiel:
++
+`fromstring = AB`
+mailcmd = _`[Shell-Befehl]`_:: Definiert das Programm (mit absolutem Pfad und gegebenenfalls mit Parametern), das zum Versenden von E-Mails benutzt werden soll. Default: `/usr/sbin/sendmail -t`
++
+Beispiele:
++
+`mailcmd = /usr/sbin/sendmail -t`
++
+`mailcmd = /usr/exim/bin/exim -t`
+externnotify = _`[Shell-Befehl]`_:: Definiert ein Programm (mit absolutem Pfad), das von Asterisk aufgerufen wird, wenn eine neue Sprachnachricht für einen User vorliegt.
++
+Beispiel:
++
+`externnotify =
+/usr/bin/local/mach-was.sh`
+externpass = _`[Shell-Befehl]`_:: Definiert ein Programm (mit absolutem Pfad), das von Asterisk aufgerufen wird, wenn ein User sein Passwort geändert hat.
++
+Beispiel:
++
+`externpass =
+/usr/bin/local/mach-was.sh`
+forcegreetings = _`[yes|no]`_:: Definiert, ob ein User vom System dazu gezwungen wird, beim ersten Benutzen des Systems eine Begrüßungsnachricht aufzunehmen. Default: `no`
++
+Beispiel:
++
+`forcegreetings = no`
+forcename = _`[yes|no]`_:: Definiert, ob der User vom System dazu gezwungen wird, bei der ersten Nutzung seinen Namen aufzunehmen. Default: `no`
++
+Beispiel:
++
+`forcename = yes`
+format = _`[gsm|wav|wav49]`_:: Listet die Codecs auf, mit denen eine Sprachnachricht abgespeichert werden soll. Werden mehrere Codecs aufgeführt, werden auch mehrere Dateien gespeichert. Das kann im Extremfall zu Platzproblemen auf der Festplatte führen. Der Vorteil besteht darin, dass bei einer Abfrage die Nachricht nicht noch einmal neu kodiert werden muss, falls der Abfragende mit einem anderen Codec abfragt als mit dem, in dem die Nachricht bereits gespeichert wurde.
++
+Bei aktiviertem `attach` wird das erste Format
+dieser Liste für E-Mail-Anhänge verwendet.
++
+Beispiele:
++
+`format = gsm|wav`
++
+Jede Sprachnachricht wird im GSM- und im WAV-Format
+abgespeichert.
++
+`format = wav`
++
+Jede Sprachnachricht wird nur im WAV-Format
+abgespeichert.
++
+[CAUTION]
+====
+Wird diese Einstellung im laufenden Betrieb verändert,
+müssen vorher vom System angelegte Sounddateien manuell gelöscht
+werden.
+====
+searchcontexts = _`[yes|no]`_:: Standardmäßig werden Voicemailboxen nur im angegebenen Context gesucht. Mit diesem Schalter kann man das Suchverhalten auf alle Contexte erweitern. Default: `no`
++
+Beispiel:
++
+`searchcontexts = no`
+maxmsg = _`[Anzahl Nachrichten]`_:: Definiert die maximale Anzahl an Sprachnachrichten in einer Voicemailbox. Default: `100`. Danach können keine neuen Nachrichten mehr aufgenommen werden, und der Anrufer hört die Nachricht aus `/var/lib/asterisk/sounds/vm-mailboxfull.gsm`footnote:[Der Pfad ist von der Installation abhängig, siehe z. B. auch `/usr/share/asterisk/sounds/.`].
++
+Beispiel:
++
+`maxmsg = 50`
+maxmessage = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Sprachnachricht in Sekunden. Default: unendlich.
++
+Beispiel:
++
+`maxmessage = 120`
+minmessage = _`[Länge in Sekunden]`_:: Definiert die minimale Länge einer Sprachnachricht in Sekunden. Default: `0`.
++
+Beispiel:
++
+`minmessage = 5`
+maxgreet = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Begrüßungsnachricht in Sekunden. Default: unendlich.
++
+Beispiel:
++
+`maxgreet=240`
+maxsilence = _`[Länge in Sekunden]`_:: Definiert die Anzahl der Sekunden an Stille, die das System wartet, bevor es davon ausgeht, dass die Nachricht zu Ende gesprochen wurde.
++
+Beispiel:
++
+`maxsilence=10`
+silencethreshold = _`[Schwellenwert]`_:: Definiert, was für Asterisk bei der Einstellung `maxsilence` Stille (also _Silence_) ist. Je niedriger dieser Wert ist, desto höher ist die Empfindlichkeit. Default: `128`footnote:[Es lässt sich selbst im Source-Code von Asterisk keine Information dazu finden, in welchem Rahmen sich dieser Wert sinnvoll bewegen kann (es handelt sich um einen Int). Gegebenenfalls müssen Sie das ausprobieren.]
++
+Beispiel:
++
+`silencethreshold = 50`
+maxlogins = _`[Anzahl]`_:: Definiert die maximale Anzahl von fehlerhaften Einlogversuchen (falsches Passwort durch den User), bevor Asterisk auflegt. Default: `3`.
++
+Beispiel:
++
+`maxlogins = 3`
+skipms = _`[Millisekunden]`_:: Setzt die Anzahl an Millisekunden, um die während des Abhörens einer Sprachnachricht mit den Tasten für *Weiter* und *Zurück* in der Nachricht gesprungen wird. Default: `3000`.
++
+Beispiel:
++
+`skipms = 6000`
+usedirectory = _`[yes|no]`_:: Erlaubt es dem User von Voicemailboxen, die Einträge eines Dial-by-Name-Systems zur Weiterleitung von Nachrichten zu benutzen. Default: `no`.
++
+Beispiel:
++
+`usedirectory = yes`
+saycid = _`[yes|no]`_:: Definiert, ob die Telefonnummer des Anrufers beim Abrufen der Nachrichten angesagt werden soll. Default: `no`.
++
+Beispiel:
++
+`saycid = yes`
+cidinternalcontexts = _`[context,context,...]`_:: Legt die Contexte fest (durch Kommata getrennt), die beim Abrufen einer Voicemail-Nachricht als intern gelten, für die also z. B. nur die Durchwahl (Extension) als Caller-ID angesagt wird. Default: keine.
+pagerfromstring = _`[Absendername]`_:: Analog zu `fromstring` für Nachrichten an Pager.
++
+Beispiel:
++
+`pagerfromstring = Apfelmus GmbH`
+pagersubject = _`[Betreff]`_:: Analog zu `emailsubject` für Nachrichten an Pager.
++
+Beispiel:
++
+`pagersubject = Neue Voicemail`
+pagerbody = _`[Absendername]`_:: Analog zu `emailbody` für Nachrichten an Pager.
++
+Beispiel:
++
+`pagerbody = Neue Voicemail in Mailbox $\{VM_MAILBOX}
+von $\{VM_CALLERID}.`
+
+Neben den hier aufgeführten Parametern gibt es noch weitere;
+die genannten sind jedoch die wichtigsten für gängige Konfigurationen.
+Eine Auflistung aller verfügbaren Parameter finden Sie in der Datei
+`voicemail.conf`. In der Grundinstallation sind dort
+alle Parameter mit einer kurzen Beschreibung enthalten.
+
+[[voicemail-voicemail.conf-zonemessages]]
+== `[zonemessages]`
+
+Da es vorkommt, dass sich die User eines Voicemail-Systems in
+unterschiedlichen Zeitzonen befinden, kann im Bereich
+`[zonemessages]` für jede Zeitzone ein unterschiedliches
+Format definiert werden, mit dem dem User die Uhrzeit angesagt
+wird.footnote:[Beachten Sie, dass Sie eine wie hier beschrieben definierte Zeitzone noch für die User aktivieren müssen (siehe xref:voicemail-conf.adoc#voicemail-voicemail.conf-mailbox[„Mailbox-Definition“\]).]
+
+[[voicemail-voicemail.conf-zonemessages-syntax]]
+=== Syntax
+
+[source]
+----
+zonenname = timezone | format
+----
+
+`zonenname`:: Unter diesem Namen kann man später auf das entsprechende Format zugreifen. Verwenden Sie nur Kleinbuchstaben, Ziffern, Bindestrich (`-`) und Unterstrich (`_`).
+`timezone`:: In einem normalen Debian-Linux-System finden Sie im Verzeichnis `/usr/share/zoneinfo/` eine Auflistung von verschiedenen Regionen. Jede Region wird mit einem Unterverzeichnis dargestellt. In diesem Unterverzeichnis stehen Städtenamen. Ein `timezone`-Eintrag besteht aus der Region und dem Städtenamen (getrennt durch ein `/`).
++
+Beispiele:
++
+`Europe/Berlin`
++
+`Australia/Sydney`
+`format`:: Definiert das Format, in dem die Zeit angesagt wird. Es stehen folgende Variablen zur Verfügung:
++
+[cols="2*"]
+|===
+| `A` | Wochentag (Montag bis Sonntag)
+| `a` | siehe `A`
+| `B` | Monat (Januar bis Dezember)
+| `b` | siehe `B`
+| `h` | siehe `B`
+| `d` | Tag des Monats (1. bis 31.)
+| `e` | siehe `d`
+| `Y` | Jahr (z. B. 2006)
+| `I` | Stunde im amerikanischen 12-Stunden-Format
+| `l` | siehe `I`
+| `H` | Stunde im europäischen 24-Stunden-Format. Dabei wird beim englischen Sprachmenü einstelligen Uhrzeiten eine 0 (englische Aussprache „oh“) vorangestellt.
+| `k` | Stunde im europäischen 24-Stunden-Format
+| `M` | Minute
+| `P` | AM oder PM
+| `p` | siehe `P`
+| `Q` | „heute“, „gestern“ oder `ABdY` (Wochentag, Monat, Tag, Jahr)
+| `q` | „“ (also nichts, wenn es heute ist), „gestern“ oder `ABdY` (Wochentag, Monat, Tag, Jahr)
+| `R` | Stunde:Minute:Sekunde
+|===
++
+Daneben gibt es noch die Sonderfälle
++$\{_`VAR`_}+ (der Inhalt
+dieser Variablen wird eingefügt) und+'_`sprachdatei`_'+. Dabei ist zu
+beachten, dass '_`sprachdatei`_' ohne
+„ `.gsm` “ ist. Dieser
+Sprachbaustein aus dem Verzeichnis `sounds/`
+wird dann abgespielt. Die einfachen Anführungszeichen sind
+zwingend.
+
+Beispiel:
+
+[source]
+----
+[zonemessages]
+deutschland = Europe/Berlin | 'vm-received' Q 'digits/at' kM
+england = Europe/London | 'vm-received' Q 'digits/at' R
+military = Zulu | 'vm-received' q 'digits/at' H N 'hours' 'phonetic/z_p'
+----
+
+[[voicemail-voicemail.conf-contexte]]
+== Freie Contexte
+
+Genau wie in der `extensions.conf` gibt es
+auch in der `voicemail.conf` die Möglichkeit, einen
+Context zu definieren. Das ist praktisch, um zum Beispiel verschiedene
+Firmenabteilungen separat zu behandeln. Dadurch können auch
+unterschiedliche Adress- oder Telefonbücher definiert werden (siehe
+xref:voicemail-dial-by-name.adoc[Abschnitt 13.5, „Telefonbuch
+(Dial-by-Name)“]).
+
+[[voicemail-voicemail.conf-contexte-default]]
+=== Der Default-Context
+
+Wenn kein anderer Context eingerichtet wurde, muss zumindest
+der `[default]`-Context existieren. Für die meisten aller
+Installationen reicht dieser aus.
+
+[[voicemail-voicemail.conf-mailbox]]
+== Mailbox-Definition
+
+In einem Context können beliebig viele Mailboxen definiert
+werden.
+
+[[voicemail-voicemail.conf-mailbox-syntax]]
+=== Syntax
+
+[source]
+----
+mailbox => passwort,name[,e-mail[,pager-e-mail[,optionen]]]
+----
+
+Beispiel:
+
+[source]
+----
+202 => 1234,Peter Meier,peter@familie-meier.de,,attachfmt=wav|delete=yes
+----
+
+`mailbox`:: Der Name der Mailbox (in Ziffern)
+`passwort`:: Das Passwort für die Mailbox (in Ziffern oder Buchstaben). Ziffern sind in der Regel praktischer, da sie auch auf normalen Telefonen vom User eingegeben werden können.
+`e-mail`:: Die E-Mail-Adresse, an die Sprachnachrichten gesendet werden sollen
+`pager-e-mail`:: Die E-Mail Adresse des Pagers, an die Benachrichtigungen (eine Textzeile) geschickt werden sollenfootnote:[Bitte beachten Sie, dass diese Nachrichten ebenfalls E-Mails sind. Sollten Sie SMS-Nachrichten verschicken wollen, suchen Sie im Internet nach „sms gateway“ oder „asterisk sms gateway“.]
+`optionen`:: Unterschiedliche Optionen, die, durch ein Pipe-Zeichen (`|`) voneinander getrennt, aneinandergereiht werden. Sie können hier die unter `[general]` (siehe xref:voicemail-conf.adoc#voicemail-voicemail.conf-general[„`[general]` “]) global festgelegten Einstellungen pro Mailbox verändern. Bitte beachten Sie, dass zwischen dem Parameternamen, dem Gleichheitszeichen (`=`) und dem Wert keine Leerzeichen sein dürfen. Dasselbe gilt für das Pipe-Zeichen (`|`).
++
+Die wichtigsten Optionen in diesem Zusammenhang
+sind:
++
+tz=_`[Zeitzone]`_:: Setzt die gewünschte Zeitzone aus dem vorher definierten `[zonemessages]` Context (siehe xref:voicemail-conf.adoc#voicemail-voicemail.conf-zonemessages[„`[zonemessages]` “]).
++
+Beispiel:
++
+`tz=deutschland`
+attach=_`[yes|no]`_:: Legt fest, ob die Sounddatei der Sprachnachricht der E-Mail beigefügt werden soll.
+attachfmt=_`[gsm|wav|wav49]`_:: Legt gegebenenfalls ein anderes Format fest als das unter `[general]` mittels `format` eingestellte Format, das für E-Mail-Anhänge verwendet wird.
+saycid=_`[yes|no]`_:: Definiert, ob die Telefonnummer des Anrufers angesagt werden soll.
+sayduration=_`[yes|no]`_:: Definiert, ob die Länge der Nachricht angesagt werden soll. Default: `yes`.
+saydurationm=_`[ab Dauer in Minuten]`_:: Legt die Mindestlänge einer Nachricht in Minuten fest, ab der die Länge angesagt wird. Default: `0`.
+dialout=_`[context]`_:: Definiert den Context, der zum Hinauswählen benutzt werden soll. Ohne diese Angabe kann man aus dem Voicemail-System heraus keine Telefonate führen.
++
+Beispiel:
++
+`dialout=intern`
+sendvoicemail=_`[yes|no]`_:: Bestimmt, ob Teilnehmer Sprachnachrichten an andere Teilnehmer des Voicemail-Systems schicken können.
+callback=_`[context]`_:: Definiert den Context, der für Rückrufe benutzt wird. Ist er festgelegt, kann man den Anrufer, der eine Sprachnachricht hinterlassen hat, einfach aus dem Voicemailboxsystem zurückrufen.
+review=_`[yes|no]`_:: Legt fest, ob der Anrufer die von ihm hinterlassene Sprachnachricht vor dem Speichern erneut anhören kann. Default: `no`.
+operator=_`[yes|no]`_:: Definiert, ob der Anrufer vor, während oder nach der Aufnahme seiner Sprachnachricht mit der Eingabe von `0` (indem er also Null auf dem Telefon drückt) zum Operator durchgestellt wird. Der Operator hat immer die Extension `o` (kleiner Buchstabe o) im aktuellen Context. Default: `no`.
+envelope=_`[yes|no]`_:: Legt fest, ob allgemeine Informationen vor der Sprachnachricht angesagt werden sollen. Wenn dieser Parameter auf `no` gesetzt ist, dann werden dadurch bestimmte andere Einstellungen (wie zum Beispiel `tz`) überschrieben. Default: `yes`.
+delete=_`[yes|no]`_:: Definiert, ob Sprachnachrichten nach dem Versenden per E-Mail automatisch gelöscht werden sollen. Default: `no`.
+nextaftercmd=_`[yes|no]`_:: Definiert, ob das System nach dem Löschen oder Abspeichern einer Sprachnachricht automatisch zur nächsten Nachricht springt. Default: `no`.
+forcename=_`[yes|no]`_:: Bestimmt, ob das System den User beim ersten Abruf des Systems dazu zwingt, seinen Namen aufnehmen zu lassen. Default: `no`.
+forcegreetings=_`[yes|no]`_:: Definiert, ob das System den User bei der ersten Nutzung des Voicemail-Systems dazu zwingt, eine persönliche Ansage für seine Voicemailbox aufzunehmen. Default: `no`.
+hidefromdir=_`[yes|no]`_:: Definiert, ob dieser Eintrag aus dem Dial-by-Name-Verzeichnis herausgenommen (versteckt) werden soll. Default: `no`.

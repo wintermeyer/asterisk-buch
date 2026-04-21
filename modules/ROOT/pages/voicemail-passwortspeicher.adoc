@@ -1,5 +1,6 @@
 [[voicemail-passwortspeicher]]
 = `voicemail.conf` als Passwortspeicher
+:description: voicemail.conf als Passwortspeicher für Asterisk-Agent-Authentifizierung.
 
 Nicht nur als internes Rufnummernverzeichnis kann die
 `voicemail.conf` sehr nützlich sein, sondern auch als
@@ -26,7 +27,7 @@ Sie könnten beispielsweise die Voicemailboxen
 
 im Abschnitt
 `[call-center-agenten]` anlegen und die User an geeigneter
-Stelle im Dialplan mit `VMAuthenticate` (xref:applications-vmauthenticate.adoc[Abschnitt C.185, „`VMAuthenticate()`“]) dem System gegenüber
+Stelle im Dialplan mit `VMAuthenticate` (Abschnitt C.185, „`VMAuthenticate()`“) dem System gegenüber
 authentifizieren:
 
 [source]

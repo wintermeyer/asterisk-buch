@@ -1,0 +1,45 @@
+[[installation]]
+= Einleitung
+:description: Einleitung zur Asterisk-Installation: Wege, Entscheidungen und die Wahl der richtigen Asterisk-Version.
+
+Ein hartnäckiges Vorurteil gegenüber Asterisk besagt, man müsse
+mindestens 2 bis 3 Tage Dokumentation studieren, um überhaupt irgendetwas
+Lauffähiges hinzubekommen. Diese Hürde ist für viele Interessierte zu
+hoch. Wenn Sie zu denen gehören, die sich nicht lange mit theoretischem
+Unterbau beschäftigen möchten, sondern möglichst schnell ein Ergebnis
+sehen wollen, ist dieses Kapitel genau richtig. Arbeiten Sie es von
+Anfang bis Ende durch, auch wenn Sie den Rest des Buches wie ein
+Nachschlagewerk nutzen.
+
+[IMPORTANT]
+====
+In diesem Buch geht es um Asterisk und nicht um Linux. Wir setzen
+grundlegendes Linux-Know-how voraus: Sie sollten einen Text-Editor
+bedienen und eine einfache Netzwerkkonfiguration einstellen können.
+Falls nicht anders erwähnt, wird als _root_ gearbeitet (bzw. mit
+`sudo`).
+====
+
+[[welche-asterisk-version]]
+== Welche Asterisk-Version?
+
+Für den Einstieg ist die Version zweitrangig — die Grundkonzepte
+(Contexte, Extensions, Channels) haben sich seit Jahren nicht
+verändert. Im Produktivbetrieb greift man idealerweise zur jeweils
+aktuellen *LTS-Version* (Long Term Support). Die Release-Übersicht des
+Projekts listet auf, welche Versionen aktuell als LTS gelten und wie
+lange sie gepflegt werden:
+https://docs.asterisk.org/Deployment/Asterisk-Versions/.
+
+Zwei Dinge sollten Sie gleich zu Beginn im Kopf haben, weil sie beim
+Querlesen älterer Tutorials immer wieder für Verwirrung sorgen:
+
+* *SIP-Kanaltreiber:* Alle SIP-Konfiguration läuft heute über
+  `chan_pjsip` mit der Datei `pjsip.conf`. Der alte Treiber `chan_sip`
+  (mit `sip.conf`) ist seit Asterisk 21 nicht mehr Teil von Asterisk.
+  Tutorials, die `sip.conf` verwenden, sind veraltet.
+* *Konferenzen:* Statt `MeetMe()` wird `ConfBridge()` benutzt. Ein
+  DAHDI-Timing-Device brauchen Sie dafür nicht mehr.
+
+Diese Unterschiede sind an den passenden Stellen im Buch nochmal
+ausführlich beschrieben.

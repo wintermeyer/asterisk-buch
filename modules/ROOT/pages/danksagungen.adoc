@@ -1,8 +1,38 @@
 [[danksagungen]]
 = Danksagungen
+:description: Danksagungen zur Evergreen-Ausgabe des Asterisk-Buches.
 
-In diesem Kapitel:
+Das erste _Asterisk-Buch_ erschien 2006, die zweite Auflage 2009. In
+all den Jahren gab es sehr viel positives Feedback aus der Community —
+vielen Dank dafür. Ohne Ihre Fehlermeldungen, Anregungen und Pull
+Requests wäre das Buch heute nicht das, was es ist.
 
-* xref:danksagung-einleitung.adoc[Einleitung]
-* xref:danksagungen-von-stefan-wintermeyer.adoc[Danksagungen von Stefan Wintermeyer]
-* xref:danksagungen-von-philipp-kempgen.adoc[Danksagungen von Philipp Kempgen]
+Die Evergreen-Ausgabe, die Sie hier lesen, ist eine grundlegende
+Überarbeitung der bisherigen Texte: chan_sip raus, PJSIP rein;
+MeetMe raus, ConfBridge rein; ARI- und WebRTC-Kapitel neu. Sie pflegen
+wir fortlaufend — und freuen uns über jeden Beitrag.
+
+In früheren Auflagen hatten wir alle Mitwirkenden namentlich mit
+E-Mail-Adresse aufgelistet. Seit der zweiten Ausgabe verzichten wir
+darauf — SPAM-Harvester und fehlende Einwilligungen machen das
+schwierig. Bedanken wollen wir uns aber trotzdem: bei allen, die
+durch Reviews, Pull Requests, Issues oder E-Mails beigetragen haben.
+
+== Von Stefan Wintermeyer
+
+Ein besonderer Dank geht an meinen damaligen Lektor *Boris Karnikowski*
+und an meinen langjährigen Kollegen *Philipp Kempgen*. Ohne sie gäbe
+es das Buch in dieser Tiefe nicht. *Friederike Daenecke* hat bei der
+Lektorierung der zweiten Auflage ein kleines Wunder vollbracht. Das
+Sangoma/Digium-Team (insbesondere *Kevin Fleming*, *Konrad Hammel*
+und *Doug Vilim*) hat uns bei Fragen und Problemen oft unkompliziert
+und schnell geholfen.
+
+Und natürlich geht ein besonders liebes Danke an meine Frau, ohne
+deren Unterstützung ich diese vielen Projekte gar nicht bewältigen
+könnte.
+
+== Von Philipp Kempgen
+
+Dem schließe ich mich an. Meine Familie, Jeannie, Coco, Kanji — und
+alle, die eben oft ein bisschen zu kurz kommen.

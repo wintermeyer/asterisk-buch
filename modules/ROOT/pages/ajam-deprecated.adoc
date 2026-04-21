@@ -1,0 +1,42 @@
+[[ajam-deprecated]]
+= AJAM — und warum es durch ARI ersetzt wurde
+:description: AJAM in Asterisk ist deprecated — warum ARI der aktuelle Weg ist.
+
+AJAM (Asynchronous Javascript Asterisk Manager) war der Versuch, das
+klassische AMI über einen HTTP/JSON-Wrapper auch für Webanwendungen
+nutzbar zu machen. Konfiguriert wurde es in `manager.conf` über
+`webenabled=yes` plus einen aktivierten eingebauten HTTP-Server in
+`http.conf`.
+
+[IMPORTANT]
+====
+AJAM ist deprecated. Für alle neuen Projekte sollten Sie stattdessen
+*xref:ari.adoc[ARI (Asterisk REST Interface)]* verwenden.
+AJAM wurde in den Asterisk-Versionen, die noch `app_macro` enthalten,
+zwar nicht entfernt, aber nicht mehr aktiv weiterentwickelt. Einige
+Linux-Distributionen liefern Asterisk ohne AJAM-Unterstützung aus.
+====
+
+Warum die Abkehr?
+
+* AJAM war ein einfacher HTTP-Wrapper — kein "richtiges" REST, keine
+  Call-Control, keine persistenten WebSocket-Events.
+* Die Event-Kommunikation mit AJAM basierte auf Long-Polling, was
+  im Browser-Zeitalter mit WebSockets kein Standard mehr ist.
+* Das Authentifizierungsmodell war dem heutigen Standard (Tokens,
+  Basic-Auth über TLS, CORS) unterlegen.
+
+ARI schließt diese Lücken mit:
+
+* REST-API inklusive OpenAPI/Swagger-Spec
+* WebSocket-Event-Stream
+* Stasis-Integration für direktes Call-Control
+
+Wer bestehenden Code hat, der AJAM benutzt: Der Migrationspfad ist
+fast immer sauber — AMI-Actions, die dahinter lagen, existieren
+weiterhin und lassen sich weiter direkt über AMI aufrufen; was
+Sie tatsächlich ersetzen, ist nur der HTTP-Transport. Browser-nahe
+Features wandern dabei komplett zu ARI + WebSocket.
+
+Zum Weiterlesen: xref:ari.adoc[ARI],
+xref:ami-konfiguration.adoc[AMI].

@@ -1,0 +1,98 @@
+[[tts-text-to-speech]]
+= Text-to-Speech (TTS)
+:description: Text-to-Speech für Asterisk: Piper, Amazon Polly, Google TTS und SSML in Dialplan-Integration.
+
+Text-to-Speech beschreibt die Umwandlung von geschriebenem Text in
+gesprochenen Text. Im Asterisk-Umfeld erzeugt ein TTS-Programm aus
+einer Eingabe eine kurze Audiodatei, die wir dann mit `Playback()`
+oder `Background()` abspielen.
+
+In den letzten zehn Jahren hat sich die Qualität der verfügbaren
+TTS-Engines drastisch verändert. Die alten Namen (Festival, Cepstral)
+sind heute nur noch am Rand relevant; der Standard liegt bei den
+Cloud-APIs der großen Anbieter.
+
+== Empfehlenswerte Optionen
+
+* *Amazon Polly* — gute deutsche Stimmen, neuronale Varianten ("Vicki",
+  "Daniel", "Hans"), bezahlbar im Pay-per-Use-Modell. SSML-Support.
+* *Google Cloud Text-to-Speech* — ebenfalls hochwertig (WaveNet- und
+  Neural-Stimmen), gute deutsche Stimmen, SSML.
+* *Microsoft Azure Speech* — stark in vielen Sprachen, neurale
+  Voice-Varianten.
+* *ElevenLabs* — für Markensprecher-artige Stimmen; geringere
+  "Roboter-Anmutung".
+* *Piper TTS* (https://github.com/rhasspy/piper) — kostenlose
+  Offline-Lösung mit guten neurale deutschen Stimmen. Seit 2023 die
+  erste Wahl, wenn keine Cloud-Daten fließen dürfen.
+* *Mozilla TTS / Coqui.ai* — weitere Open-Source-Alternativen.
+
+*Festival* und das kommerzielle *Cepstral* werden heute praktisch nicht
+mehr eingesetzt; die Qualität ist veraltet und lässt sich nicht mit
+modernen neuralen Stimmen vergleichen.
+
+== Integration in Asterisk
+
+Das Muster ist immer dasselbe: Audiodatei per Shell/CLI der Engine
+erzeugen und per `Playback()` abspielen.
+
+=== Beispiel mit Piper (offline, kostenlos)
+
+Vorbereitung: Piper plus ein deutsches Modell installieren und in
+`/usr/local/bin/piper-de.sh` wrappen.
+
+[source]
+----
+exten => 1234,1,Answer()
+ same => n,Set(TEXT=Willkommen bei der Apfelmus GmbH.)
+ same => n,Set(TMPFILE=/tmp/tts-${UNIQUEID}.wav)
+ same => n,System(echo "${TEXT}" | /usr/local/bin/piper-de.sh > ${TMPFILE})
+ same => n,Playback(${TMPFILE:0:${LEN(${TMPFILE})-4}})
+ same => n,System(rm -f ${TMPFILE})
+ same => n,Hangup()
+----
+
+=== Beispiel mit Amazon Polly
+
+Mit dem AWS-CLI im Shell:
+
+[source,shell]
+----
+aws polly synthesize-speech \
+    --text "Willkommen bei der Apfelmus GmbH." \
+    --output-format pcm \
+    --voice-id Vicki \
+    --language-code de-DE \
+    --sample-rate 8000 \
+    --engine neural \
+    /tmp/ansage.wav
+----
+
+Im Dialplan analog zu Piper.
+
+[TIP]
+====
+*Wichtiges Cache-Pattern:* TTS pro Anruf neu zu erzeugen ist teuer
+(Latenz, Kosten). Speichern Sie generierte Ansagen unter einem
+Hash-Namen im Soundverzeichnis und prüfen Sie mit `STAT()` oder
+einem kleinen Shell-Script, ob die Datei schon existiert — nur dann
+neu generieren. Bei statischen Texten reicht *einmal erzeugen, als
+Datei im sounds/custom/de/ ablegen*.
+====
+
+== SSML
+
+Alle hochwertigen TTS-Engines unterstützen SSML
+(https://www.w3.org/TR/speech-synthesis11/), mit dem man Pausen,
+Tonhöhen, Akzente und Buchstabierungen steuern kann. Beispiel:
+
+[source,xml]
+----
+<speak>
+  Willkommen bei <emphasis level="strong">Apfelmus GmbH</emphasis>.
+  <break time="800ms"/>
+  Drücken Sie die Eins für den Vertrieb.
+</speak>
+----
+
+Die gleiche SSML-Syntax funktioniert über Engine-Grenzen hinweg.

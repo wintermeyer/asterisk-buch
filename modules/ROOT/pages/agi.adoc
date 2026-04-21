@@ -1,0 +1,33 @@
+[[agi]]
+= Asterisk Gateway Interface (AGI)
+:description: AGI in Asterisk: Externe Skripte aus dem Dialplan aufrufen (Python, Bash, Node.js).
+
+In diesem Kapitel:
+
+* xref:agi-datenstroeme.adoc[Datenströme]
+** xref:agi-datenstroeme.adoc#agi-stdin[STDIN]
+** xref:agi-datenstroeme.adoc#agi-stdout[STDOUT]
+** xref:agi-datenstroeme.adoc#agi-stderr[STDERR]
+* xref:agi-verzeichnisse.adoc[Verzeichnisse und Rechte]
+* xref:agi-dialplan.adoc[Aufruf eines AGI-Skripts im Dialplan]
+* xref:agi-beispiele-sprachen.adoc[Beispiele in verschiedenen Programmiersprachen]
+
+Das Asterisk Gateway Interface (AGI) ist vergleichbar mit CGI auf
+Webservern: externe Programme, die aus dem Dialplan heraus aufgerufen
+werden, mit Asterisk kommunizieren (stdin/stdout) und Befehle
+ausführen. AGI-Skripte lassen sich in praktisch jeder Sprache
+schreiben, die Unix-Sockets und Zeilen-I/O kann.
+
+[NOTE]
+====
+AGI ist weiterhin voll funktional und für kleine, synchrone
+Dialplan-Aufrufe ("frage eine Datenbank ab, schreibe eine
+Variable, mach weiter") immer noch das einfachste Werkzeug. Für
+langlebige, Event-getriebene Anwendungen (IVR, Callcenter-Logik,
+Integrationen) ist heute *xref:ari.adoc[ARI]* die bessere
+Wahl.
+====
+
+Die vollständige Referenz aller AGI-Befehle finden Sie im Anhang
+xref:agi-command-referenz.adoc[AGI-Befehle] sowie im CLI unter
+`agi show commands`.

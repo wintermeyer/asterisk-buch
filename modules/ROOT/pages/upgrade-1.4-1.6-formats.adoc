@@ -1,5 +1,0 @@
-[[upgrade-1.4-1.6-formats]]
-= Audio-Formate
-
-* `format_wav`: Der problematische _Gain_-Filter wurde entfernt. Wenn Sie die Lautstärke anpassen wollen, dann geht das mit der Option „`volgain`“ in der `voicemail.conf`.
-* Der iLBC-Codec wurde entfernt, da der Source-Code aus lizenzrechtlichen Gründen nicht direkt mit Asterisk verbreitet werden darf. Wenn man den Codec benutzen will, muss man das Skript `contrib/scripts/get_ilbc_source.sh` ausführen und Asterisk neu kompilieren: `./configure`, dann `make menuselect` und unter „`Codec Translators`“ den iLBC-Codec aktivieren, dann `make` und `make install`.
