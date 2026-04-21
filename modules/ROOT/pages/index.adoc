@@ -1,0 +1,42 @@
+[[vorwort]]
+= Vorwort
+:page-notoc: true
+
+Liebe Leserin, lieber Leser,
+
+dieses Buch ist nur durch den Verkaufserfolg des ersten
+_Asterisk Buches_ (zu den Versionen 1.2 und 1.4)
+möglich geworden. Ich möchte mich dafür bei Ihnen bedanken. Danke auch für
+all die guten Bewertungen auf Amazon.
+
+Es hat sich in den letzten Jahren im VoIP-Bereich sehr viel getan. Die
+Arbeit um und mit Asterisk hat mich diesmal nicht nur nach Huntsville,
+Alabama (Hauptsitz von Digium), sondern auch nach Toronto (Hauptsitz von
+Sangoma), nach Chicago (Cluecon) und nach Bukarest (Yate) gebracht. Dabei
+habe ich nicht nur viel über Asterisk, sondern auch über http://yate.null.ro/[Yate] und http://www.freeswitch.org/[FreeSwitch] gelernt. Beides sind
+interessante Open-Source-Alternativen zu Asterisk.
+
+Da sich Asterisk sehr stark weiterentwickelt hat, enthält das neue
+Buch sehr viel neuen Text. Mein Kollege Philipp Kempgen hat mir noch mehr
+als schon beim ersten Buch geholfen und es entscheidend mitgeprägt. Es ist
+nicht nur umfangreicher, sondern auch besser konzeptioniert als das alte.
+Wir haben uns zum Ziel gesetzt, für den Anfänger einen einfachen und
+schnellen Einstieg und für den Profi ein umfangreiches Nachschlagewerk zu
+realisieren.
+
+Schon beim Schreiben wurde ich oft gefragt, ob es im Buch auch ein
+Kapitel zu http://www.amooma.de/gemeinschaft/[Gemeinschaft] (der fertigen
+GPL-Telefonanlage, die auf Asterisk aufsetzt) geben wird. Im aktuellen Buch
+haben wir uns aus Zeitgründen dagegen entschieden.
+
+Dieses Buch wird gleichzeitig als deutsche und englische Version
+veröffentlicht. In der US-Version wird es dabei ein paar kleine technische
+Änderungen im ISDN-Kapitel geben. Updates zur deutschen Version finden Sie
+wie gewohnt unter http://das-asterisk-buch.de[das-asterisk-buch.de] und
+zur englischen Version unter http://www.the-asterisk-book.com[www.the-asterisk-book.com].
+
+Wie schon beim ersten Mal lade ich Sie hiermit ein, mir Feedback, Lob
+und Kritik per E-Mail an mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de] zu
+schicken.
+
+— Stefan Wintermeyer

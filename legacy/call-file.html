@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>19.2. Call Files</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="asterisk-fernsteuern.html" title="Kapitel 19. Asterisk fernsteuern" /><link rel="prev" href="asterisk-rx.html" title="19.1. asterisk -rx &quot;Befehl&quot;" /><link rel="next" href="asterisk-manager-api.html" title="19.3. Das Manager-Interface (AMI)" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="19.2. Call Files" id="call-file"><div class="titlepage"><div><div><h2 class="title" id="call-file">19.2. Call Files<a id="idp9529840" class="indexterm"></a></h2></div></div></div><div class="para">Call Files lassen sich am ehesten mit Batch-Dateien vergleichen. Sie
+    werden ins Verzeichnis <code class="filename">/var/spool/asterisk/outgoing/</code>
+    verschoben und dort dann von Asterisk abgearbeitet.<div class="important"><h2>Wichtig</h2><div class="para">Ein <code class="command">mv</code> (<span class="emphasis"><em>move</em></span>) ist im
+        Dateisystem ein atomarer Vorgang und deshalb für Call Files ideal
+        geeignet. Bei einem <code class="command">cp</code> (<span class="emphasis"><em>copy</em></span>)
+        wird dagegen die Datei Zeile für Zeile kopiert. Es kann also
+        vorkommen, dass ein halbfertig kopiertes Call File von Asterisk
+        bereits abgearbeitet wird.</div></div></div><div class="para">Der ganze Mechanismus lässt sich anhand eines Beispiels besser
+    erklären. Nehmen wir an, dass an einer Asterisk-Anlage ein SIP-Telefon mit
+    der Nummer 2000 angemeldet ist. Weiterhin haben wir im Dialplan die
+    folgende Extension eingetragen:<pre class="programlisting">[call-file-test]
+exten =&gt; 10,1,Answer()
+exten =&gt; 10,n,Wait(1)
+exten =&gt; 10,n,Playback(hello-world)
+exten =&gt; 10,n,Wait(1)
+exten =&gt; 10,n,Hangup()</pre></div><div class="para">Jetzt generieren wir im Verzeichnis <code class="filename">/tmp/</code> die
+    Datei <code class="filename">ein-test.call</code> mit folgendem
+    Inhalt:<pre class="programlisting">Channel: SIP/2000
+MaxRetries: 2
+RetryTime: 60
+WaitTime: 30
+Context: call-file-test
+Extension: 10</pre></div><div class="para">Danach verschieben wir diese Datei mit <code class="command">mv
+    /tmp/ein-test.call /var/spool/asterisk/outgoing/</code>:<pre class="screen">root@molokai:~&gt; <span class="bold bold"><strong><code class="command">mv /tmp/ein-test.call /var/spool/asterisk/outgoing/</code></strong></span></pre></div><div class="para">Jetzt passiert Folgendes:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">Asterisk überprüft ständig, ob sich im Verzeichnis
+        <code class="filename">/var/spool/asterisk/outgoing/</code> ein Call File
+        befindet, und arbeitet dieses ab, sobald es da ist.</div></li><li class="listitem"><div class="para">Asterisk öffnet eine Verbindung zum Telefon
+        <code class="code">SIP/2000</code>. Wenn das Telefon besetzt sein oder den Anruf
+        nicht annehmen sollte, dann versucht Asterisk das Gleiche noch zweimal
+        (siehe <em class="parameter"><code>MaxRetries</code></em>).</div></li><li class="listitem"><div class="para">Nimmt der Benutzer des Telefons 2000 den Anruf entgegen, dann
+        startet Asterisk im Context <em class="parameter"><code>[call-file-test]</code></em>
+        die Abarbeitung der Extension <code class="code">10</code>. Es wird also der
+        Sprachbaustein <code class="filename">hello-world</code> abgespielt.</div></li></ul></div><div class="section" title="Parameter" id="call-file-parameter"><div class="titlepage"><div><div><h3 class="title" id="call-file-parameter">Parameter</h3></div></div></div><div class="para">Im Call File können folgende Parameter angegeben
+      werden:<div class="variablelist"><dl><dt><span class="term"><code class="code">Channel: &lt;channel&gt; </code></span></dt><dd><div class="para">Der zu benutzende Channel. Dabei gilt die gleiche
+              Syntax wie beim <code class="code">Dial()</code>-Befehl (siehe <a class="xref" href="applications-dial.html" title="C.38. Dial()">Abschnitt C.38, „<code class="literal">Dial()</code>“</a>).</div></dd><dt><span class="term"><code class="code">Callerid: &lt;callerid&gt;</code></span></dt><dd><div class="para">Die zu benutzende Caller-ID</div></dd><dt><span class="term"><code class="code">WaitTime: &lt;number&gt;</code></span></dt><dd><div class="para">Die Anzahl an Sekunden, die das System auf die Annahme
+              des Anrufs warten soll. Wird der Wert nicht angegeben, dann ist
+              der Default 45 Sekunden.</div></dd><dt><span class="term"><code class="code">MaxRetries: &lt;number&gt;</code></span></dt><dd><div class="para">Die Anzahl der weiteren Wählversuche (falls besetzt
+              oder nicht erreichbar). Wird dieser Parameter nicht angegeben,
+              ist der Defaultwert 0 (es wird also nur einmal versucht, den
+              Channel aufzubauen).</div></dd><dt><span class="term"><code class="code">RetryTime: &lt;number&gt;</code></span></dt><dd><div class="para">Die Anzahl an Sekunden, die bis zum nächsten
+              Wählversuch gewartet wird. Wird dieser Parameter nicht
+              angegeben, ist der Defaultwert 300 Sekunden.</div></dd><dt><span class="term"><code class="code">Account: &lt;account&gt;</code></span></dt><dd><div class="para">Der Abrechnungscode für Ihr CDR-System</div></dd><dt><span class="term"><code class="code">Context: &lt;context&gt;</code></span></dt><dd><div class="para">Der Ziel-Context</div></dd><dt><span class="term"><code class="code">Extension: &lt;exten&gt;</code></span></dt><dd><div class="para">Die Ziel-Extension, die bei Erfolg aufgerufen
+              wird</div></dd><dt><span class="term"><code class="code">Priority: &lt;priority&gt; </code></span></dt><dd><div class="para">Die Zielpriorität. Wenn sie nicht angegeben ist, dann
+              ist der Default-Wert 1.</div></dd><dt><span class="term"><code class="code">Setvar: &lt;var=value&gt;</code></span></dt><dd><div class="para">Mit <em class="parameter"><code>Setvar:</code></em> können beliebig
+              viele Channel-Variablen definiert werden.</div></dd><dt><span class="term"><code class="code">Archive: &lt;yes|no&gt;</code></span></dt><dd><div class="para">Normalerweise werden Call Files nach der Abarbeitung
+              direkt gelöscht. Ist <em class="parameter"><code>Archive: yes</code></em>
+              gesetzt, werden die Call Files aber stattdessen ins Verzeichnis
+              <code class="filename">/var/spool/asterisk/outgoing_done/</code>
+              verschoben. Dabei wird Asterisk noch eine Zeile zum Call File
+              hinzufügen. Diese beschreibt das Ergebnis des Call Files und
+              sieht so aus:</div><pre class="literallayout">Status: &lt;Expired|Completed|Failed&gt;</pre></dd></dl></div></div></div><div class="section" title="Call Files in der Zukunft aufrufen" id="call-file-zukunft"><div class="titlepage"><div><div><h3 class="title" id="call-file-zukunft">Call Files in der Zukunft aufrufen</h3></div></div></div><div class="para">Beim Aufruf eines Call Files vergleicht Asterisk die Zeit der
+      letzten Änderung der Datei mit der aktuellen Uhrzeit. Liegt dieser
+      Eintrag in der Zukunft, wird das Call File noch nicht abgearbeitet. So
+      kann man leicht Call Files zeitgesteuert abarbeiten.</div></div><div class="section" title="Beispiel Weckruf" id="call-file-weckruf"><div class="titlepage"><div><div><h3 class="title" id="call-file-weckruf">Beispiel Weckruf</h3></div></div></div><div class="para">Nehmen wir an, ein Hotel möchte über Asterisk ein einfaches
+      Weckrufsystem erstellen. Kunden sollen einen Weckruf über die
+      Servicerufnummer *77* aktivieren können. Nach der *77* soll das genaue
+      Datum und die Weckuhrzeit gewählt werden.<pre class="programlisting">[hotel-intern]
+exten =&gt; _*77*XXXXXXXXXXXX,1,Answer()
+exten =&gt; _*77*XXXXXXXXXXXX,n,Set(Jahr=${EXTEN:4:4})
+exten =&gt; _*77*XXXXXXXXXXXX,n,Set(Monat=${EXTEN:8:2})
+exten =&gt; _*77*XXXXXXXXXXXX,n,Set(Tag=${EXTEN:10:2})
+exten =&gt; _*77*XXXXXXXXXXXX,n,Set(Stunden=${EXTEN:12:2})
+exten =&gt; _*77*XXXXXXXXXXXX,n,Set(Minuten=${EXTEN:14:2})
+exten =&gt; _*77*XXXXXXXXXXXX,n,NoOp(Weckruf soll fuer die Rufnummer ${CALLERID(num)} soll um ${Stunden}:${Minuten} Uhr am ${Tag}.${Monat}.${Jahr} erfolgen.)
+exten =&gt; _*77*XXXXXXXXXXXX,n,System(echo -e "Channel: SIP/${CALLERID(num)}\\nContext: Weckruf\\nExtension: 23" &gt; /tmp/${UNIQUEID}.call)
+exten =&gt; _*77*XXXXXXXXXXXX,n,System(touch -t ${Jahr}${Monat}${Tag}${Stunden}${Minuten} /tmp/${UNIQUEID}.call)
+exten =&gt; _*77*XXXXXXXXXXXX,n,System(mv /tmp/${UNIQUEID}.call /var/spool/asterisk/outgoing/)
+exten =&gt; _*77*XXXXXXXXXXXX,n,Playback(rqsted-wakeup-for)
+exten =&gt; _*77*XXXXXXXXXXXX,n,SayNumber(${Stunden})
+exten =&gt; _*77*XXXXXXXXXXXX,n,SayNumber(${Minuten})
+exten =&gt; _*77*XXXXXXXXXXXX,n,Playback(digits/oclock)
+exten =&gt; _*77*XXXXXXXXXXXX,n,Hangup()
+
+[Weckruf]
+exten =&gt; 23,1,Answer()
+exten =&gt; 23,n,Wait(1)
+exten =&gt; 23,n,Playback(this-is-yr-wakeup-call)
+exten =&gt; 23,n,Wait(1)
+exten =&gt; 23,n,Hangup()</pre></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="asterisk-rx.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">asterisk -rx "<em xmlns="http://www.w3.org/1999/xhtml" class="replaceable"><code>Befehl</code></em>"</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Call Files</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="call-file.html#call-file-parameter" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Parameter</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="call-file.html#call-file-zukunft" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Call Files in der Zukunft aufrufen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="call-file.html#call-file-weckruf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Beispiel Weckruf</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="asterisk-manager-api.html" title="pfc level3 breadcrumb-link section sectlevel1">Das Manager-Interface (AMI)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="manager-interface-ajam.html" title="pfc level3 breadcrumb-link section sectlevel1">Der Asynchronous Javascript Asterisk Manager (AJAM)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="asterisk-rx.html"><strong>Zurück</strong>19.1. asterisk -rx "Befehl"</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="asterisk-manager-api.html"><strong>Weiter</strong>19.3. Das Manager-Interface (AMI)</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

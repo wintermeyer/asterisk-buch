@@ -1,0 +1,114 @@
+[[asterisk-datenbank]]
+= Die Asterisk-Datenbank
+
+Asterisk bringt standardmäßig eine Datenbank mit, die die Berkeley
+DB (BDB)footnote:[Die Berkeley-Datenbank (Berkeley DB) ist eine hochperformante, eingebettete Datenbank-Bibliothek mit Programmierschnittstellen zu C, C++, Java, Perl, Python, Tcl und vielen weiteren Programmiersprachen. Die Berkeley DB speichert beliebige Schlüssel- oder Datenpaare und unterstützt mehrere Datenelemente für einen einzelnen Schlüssel. Die Berkeley DB ermöglicht Tausende von simultanen Threads zum Manipulieren der Datenbanken, die bis zu 256 Terabyte groß sein können, und läuft auf einer großen Anzahl von Systemen, unter anderem auf den meisten UNIX-artigen und Windows-Systemen und auch auf Echtzeitbetriebssystemen. [Zitiert aus http://de.wikipedia.org/wiki/Berkeley_DB[_http://de.wikipedia.org/wiki/Berkeley_DB_\]\]] als Datenbank-Engine einsetzt. In dieser Datenbank-Engine
+wird immer einem Schlüssel (_key_) ein Wert
+(_value_) zugeordnet, wobei Schlüssel in Familien
+(_family_) zusammengefasst werden.
+
+[WARNING]
+====
+Bis einschließlich Asterisk Version 1.2 wurden die folgenden
+Befehle eingesetzt:
+
+* `DBput(family/key=value)`
++
+Zum Speichern eines Werts in der Datenbank
+* `DBget(var=family/key)`
++
+Um einen Wert aus der Datenbank auszulesen. Wird der
+aufgerufene Key in der Datenbank nicht gefunden, erhöht sich die
+Priorität um 101.
+Diese Befehle werden ab der Version 1.4 nicht mehr unterstützt.
+Aus diesem Grund wird hier nur die neue Variante über die Funktion
+`DB()` besprochen. Diese Variante funktioniert auch in der
+Version 1.2.
+====
+
+Auf diese Datenbank kann mit der Funktion `DB()`
+zugegriffen werden (siehe xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]).
+
+[[datenbank-schreiben]]
+== Werte in die Datenbank schreiben
+
+Die Funktion `DB()` kann innerhalb der Applikation
+`Set()` aufgerufen werden. Soll in der Family
+`obst` der Eintrag `apfel` den Wert
+`20` bekommen, so geschieht das mit folgendem
+Aufruf:
+
+[source]
+----
+exten => 1234,1,Set(DB(obst/apfel)=20)
+----
+
+[[datenbank-lesen]]
+== Werte aus der Datenbank lesen
+
+Die Werte in der Datenbank können mit der Funktion
+`DB()` in der Form `${DB(family/key)}` abgerufen
+werden. Um den Inhalt des Eintrags `apfel` in der Family
+`obst` auf dem Command Line Interface auszugeben, kann man
+folgenden Aufruf ausführen:
+
+[source]
+----
+exten => 1234,1,NoOp(obst/apfel hat den Wert ${DB(obst/apfel)})
+----
+
+Soll der Inhalt dieses Datenbankfeldes in der Variablen
+`apfelmenge` gespeichert werden, so kann dies mit
+`Set()` erfolgen:
+
+[source]
+----
+exten => 1234,1,Set(apfelmenge=${DB(obst/apfel)})
+----
+
+[[datenbank-loeschen]]
+== Werte aus der Datenbank löschen
+
+Die beiden Applikationen `DBdel()` und
+`DBdeltree()` können zum Löschen von Datenbankeinträgen
+genutzt werden.
+
+[[datenbank-dbdel]]
+=== DBdel() und ${DB_DELETE()}
+
+In der Asterisk-Version 1.2 löscht `DBdel()` einen
+einzelnen Eintrag in der Datenbank. Soll der Key `apfel` in
+der Family `obst` gelöscht werden, so geschieht das wie
+folgt:
+
+[source]
+----
+exten => 1234,1,DBdel(obst/apfel)
+----
+
+In der Asterisk-Version 1.4 ist DBdel() _deprecated_, und man soll
+die Funktion `DB_DELETE()` benutzen. Der Aufruf
+kann wie folgt erfolgen:
+
+[source]
+----
+exten => 1234,1,NoOp(${DB_DELETE(obst/apfel)})
+----
+
+Siehe
+auch xref:applications-dbdel.adoc[Abschnitt C.33, „`DBdel()`“] und xref:functions-db_delete.adoc[Abschnitt D.18, „`DB_DELETE()`“].
+
+[[datenbank-dbdeltree]]
+=== DBdeltree()
+
+Soll eine ganze Family gelöscht werden, so verwendet man
+`DBdeltree()`. Die Family `obst` kann mit
+
+[source]
+----
+exten => 1234,1,DBdeltree(obst)
+----
+
+gelöscht werden.
+
+Siehe auch: xref:applications-dbdeltree.adoc[Abschnitt C.34, „`DBdeltree()`“]

@@ -1,0 +1,50 @@
+[[functions-uriencode]]
+= `URIENCODE()`
+
+[source]
+----
+URIENCODE(String)
+----
+
+URI-kodiertfootnote:[http://de.wikipedia.org/wiki/URL_Encoding] einen String, d. h., dass Zeichen, die nicht in einer URI
+vorkommen dürfen, durch Escape-Sequenzen der Form
++%_`XX`_+ ersetzt werden, wobei
+`XX` der hexadezimale Wert des Zeichens ist.
+
+[source]
+----
+; "Hallo Welt" kodieren:
+exten => 123,1,Set(foo=${URIENCODE("Hallo Welt")})
+; ergibt "Hallo%20Welt"
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'URIENCODE' =-
+
+[Syntax]
+URIENCODE(<data>)
+
+[Synopsis]
+Encodes a string to URI-safe encoding according to RFC 2396.
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,7 +4,7 @@
+URIENCODE(<data>)
+
+[Synopsis]
+- Encodes a string to URI-safe encoding.
++ Encodes a string to URI-safe encoding according to RFC 2396.
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

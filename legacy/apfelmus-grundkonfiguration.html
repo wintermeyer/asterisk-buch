@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5.5. Die Grundkonfiguration</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="case-study.html" title="Kapitel 5. Case-Study einer Beispielfirma" /><link rel="prev" href="apfelmus-infrastruktur.html" title="5.4. Auswahl der Infrastruktur" /><link rel="next" href="apfelmus-weiter.html" title="5.6. Wie geht es weiter?" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="5.5. Die Grundkonfiguration" id="apfelmus-grundkonfiguration"><div class="titlepage"><div><div><h2 class="title" id="apfelmus-grundkonfiguration">5.5. Die Grundkonfiguration</h2></div></div></div><div class="para">Als Erstes wird die Telefonanlage so konfiguriert, dass alle
+    Teilnehmer intern miteinander telefonieren können und jeder eine
+    persönliche Voicemailbox hat. Danach kann die Anlage mit einzelnen
+    Bausteinen erweitert werden.</div><div class="section" title="sip.conf für fast 100 Teilnehmer" id="apfelmus-sip.conf"><div class="titlepage"><div><div><h3 class="title" id="apfelmus-sip.conf">sip.conf für fast 100 Teilnehmer</h3></div></div></div><div class="para">Der Aufbau einer <code class="filename">/etc/asterisk/sip.conf</code> für 2
+      Teilnehmer unterscheidet sich nicht vom Aufbau für 100 Teilnehmer. In
+      der <code class="filename">sip.conf</code> müssen alle SIP-Telefone eingetragen
+      werden. Im Folgenden finden Sie die gekürzte Fassung der
+      Konfigurationsdatei <code class="filename">sip.conf</code> für die Apfelmus GmbH.
+      Kommentare werden hier immer mit <code class="code">;</code> eingeleitet. Diese
+      Konfigurationsdatei ist analog zum Beispiel in <a class="xref" href="kapitel-hello-world.html" title="Kapitel 2. „Hello World“">Kapitel 2, <i><span class="quote">„<span class="quote">Hello World</span>“</span></i></a> aufgebaut. Bei der Auswahl der
+      Rufnummern wurden an die Teilnehmer vornehmlich Nummern vergeben, die
+      nicht auf die Ziffer 0 enden. Der Grund hierfür ist, dass die Endziffer
+      0 an späterer Stelle für die Zuteilung von Gruppenrufnummern dienen
+      soll. Lediglich beim Hausmeister wurde eine Ausnahme gemacht, da für ihn
+      keine Gruppenrufnummer vorgesehen ist.</div><pre class="programlisting">[general]
+port = 5060
+bindaddr = 0.0.0.0
+context = sonstige
+
+; Hausmeister
+;
+[150]  ; normales Telefon im Büro
+context=hausmeister
+secret=1234
+callerid="Hausmeister" &lt;150&gt;
+type=friend
+host=dynamic
+
+[151]  ; Mobiltelefon
+context=hausmeister
+secret=1234
+callerid="Hausmeister" &lt;150&gt;
+type=friend
+host=dynamic
+
+; Interne IT-Abteilung
+;
+[161]  ; Mitarbeiter 1
+context=it
+secret=1234
+type=friend
+host=dynamic
+
+[162]  ; Mitarbeiter 2
+context=it
+secret=1234
+type=friend
+host=dynamic
+
+[165]  ; Mobiles Telefon
+context=it
+secret=1234
+type=friend
+host=dynamic
+
+; Geschäftsführung
+;
+[201]  ; Geschäftsführer 1
+context=geschaeftsfuehrung
+secret=1234
+type=friend
+host=dynamic
+
+[202]  ; Geschäftsführer 2
+context=geschaeftsfuehrung
+secret=1234
+type=friend
+host=dynamic
+
+; Sekretariat
+;
+[231]  ; Assistentin 1
+context=sekretariat
+secret=1234
+type=friend
+host=dynamic
+
+[232]  ; Assistentin 2
+context=sekretariat
+secret=1234
+type=friend
+host=dynamic
+
+[233]  ; Assistentin 3
+context=sekretariat
+secret=1234
+type=friend
+host=dynamic
+
+; Verkauf National
+;
+[301]  ; Verkäufer 1
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+[302]  ; Verkäufer 2
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+[303]  ; Verkäufer 3
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+[304]  ; Verkäufer 4
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+[305]  ; Verkäufer 5
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+[306]  ; Verkäufer 6
+context=verkauf-national
+secret=1234
+type=friend
+host=dynamic
+
+; Verkauf Ausland
+;
+[351]  ; Verkäufer 1
+context=verkauf-ausland
+secret=1234
+type=friend
+host=dynamic
+
+[352]  ; Verkäufer 2
+context=verkauf-ausland
+secret=1234
+type=friend
+host=dynamic
+
+[353]  ; Verkäufer 3
+context=verkauf-ausland
+secret=1234
+type=friend
+host=dynamic
+
+[354]  ; Verkäufer 4
+context=verkauf-ausland
+secret=1234
+type=friend
+host=dynamic
+
+; Versand
+;
+[401]  ; Mitarbeiter 1
+context=versand
+secret=1234
+type=friend
+host=dynamic
+
+; die weiteren 9 Einträge für den 
+; Versand sind hier ausgelassen.
+
+; Produktion
+;
+[501]  ; Mitarbeiter 1
+context=produktion
+secret=1234
+type=friend
+host=dynamic
+
+; die weiteren 49 Einträge für die 
+; Produktion sind hier ausgelassen.</pre><div class="para">Wer die <code class="filename">sip.conf</code> komfortabler mit Templates
+      gestalten will, findet im <a class="xref" href="anhang-conf-templates.html" title="Anhang G. Konfigurations-Templates">Anhang G, <i>Konfigurations-Templates</i></a>
+      weitere Informationen dazu.</div><div class="section" title="CallerID" id="apfelmus-callerid"><div class="titlepage"><div><div><h4 class="title" id="apfelmus-callerid">CallerID</h4></div></div></div><div class="para">In der <code class="filename">sip.conf</code> kommt zweimal die Variable
+        <code class="code">callerid</code> vor. Mit dieser Variable wird festgelegt, was
+        beim Angerufenen auf dem Display angezeigt wird. Im konkreten
+        Beispiel:<pre class="programlisting">callerid = "Hausmeister" &lt;150&gt;</pre>Dies
+        sagt aus, dass sich beide Telefone (150 und 151) mit der Caller-ID 150
+        und dem Text <span class="quote">„<span class="quote">Hausmeister</span>“</span> zu erkennen geben. Dadurch ist
+        sichergestellt, dass Rückrufe immer nur auf die 150 gehen.</div></div></div><div class="section" title="Der Wählplan (Dialplan)" id="apfelmus-dialplan"><div class="titlepage"><div><div><h3 class="title" id="apfelmus-dialplan">Der Wählplan (Dialplan)</h3></div></div></div><div class="para">Im <a class="xref" href="kapitel-hello-world.html" title="Kapitel 2. „Hello World“">Kapitel 2, <i><span class="quote">„<span class="quote">Hello World</span>“</span></i></a> haben wir schon einen
+      einfachen Dialplan für zwei Telefone erstellt. Diesmal haben wir jedoch
+      deutlich mehr Teilnehmer, und obwohl es im Grunde lediglich Fleißarbeit
+      bedeutet, ist die Pflege einer Konfiguration mit einigen Hundert
+      Teilnehmern zeitaufwendig. Deshalb benutzen wir in der
+      <code class="filename">extensions.conf</code> die in <a class="xref" href="einleitung-regex.html" title="3.3. Pattern Matching">Abschnitt 3.3, „Pattern Matching“</a> beschriebenen Patterns und die in <a class="xref" href="includes-im-dialplan.html" title="3.4. Includes im Dialplan">Abschnitt 3.4, „Includes im Dialplan“</a> beschriebenen Includes.</div><div class="section" title="Die extensions.conf für die Apfelmus GmbH" id="apfelmus-extensions.conf"><div class="titlepage"><div><div><h4 class="title" id="apfelmus-extensions.conf">Die extensions.conf für die Apfelmus GmbH</h4></div></div></div><div class="para">Der für die Apfelmus GmbH passende Rufnummernplan<sup>[<a id="idp7553168" href="#ftn.idp7553168" class="footnote">22</a>]</sup> lässt sich wie folgt in eine übersichtliche
+        <code class="filename">extensions.conf</code> übertragen:<pre class="programlisting">[sonstige]
+
+[hausmeister]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[it]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+;
+; Aus Debugging-Gründen ist es für
+; die IT-Abteilung teilweise nützlich,
+; auf alle Voicemailboxen zugreifen 
+; zu können.
+;
+include =&gt; voicemailsystem-normal
+
+[geschaeftsfuehrung]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[sekretariat]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[verkauf-national]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[verkauf-ausland]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[versand]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[produktion]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[interne-gespraeche]
+exten =&gt; _[1-5]XX,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _[1-5]XX,2,VoiceMail(${EXTEN},u)
+
+[voicemailsystem-komfort]
+;
+; Der User muss nicht die Nummer der 
+; Voicemailbox eingeben.
+;
+exten =&gt; 800,1,VoicemailMain(${CALLERID(num)})
+
+[voicemailsystem-normal]
+exten =&gt; 801,1,VoicemailMain()</pre>Der Context
+        <code class="code">[interne-gespraeche]</code> definiert, dass alle Anrufe an die
+        Nummern 100 bis 599 mit dem Programm
+        <span class="application"><strong><code class="code">Dial()</code></strong></span> auch mit dieser
+        Nebenstelle verbunden werden. Wer die 800 anruft, bekommt die
+        Voicemailbox für sein eigenes Telefon. Nur die IT-Abteilung kann die
+        801 anrufen und wird dann vom System erst nach der gewünschten
+        Nebenstelle (Extension) gefragt. Da die IT-Abteilung auch den internen
+        Support der Telefonanlage zur Verfügung stellt, benötigt sie diese
+        Funktion zur Störungsermittlung (Debugging).</div><div class="section" title="Schwarze Löcher im Rufnummernplan" id="schwarze-loecher-im-dialplan"><div class="titlepage"><div><div><h5 class="title" id="schwarze-loecher-im-dialplan">Schwarze Löcher im Rufnummernplan</h5></div></div></div><div class="para">Genau genommen müsste dieser Dialplan noch etwas komplexer
+          sein, da es ja laut Rufnummernplan Bereiche gibt (z. B. 270 bis
+          299), die gar nicht mit Telefonen belegt sind. Da wir dies nicht
+          beachten, kann es zu Missverständnissen kommen. Ein Anrufer kann
+          eine nicht vergebene Rufnummer anrufen und dort auf dem
+          Anrufbeantworter eine Nachricht hinterlassen. Diese Nachricht würde
+          aber nie abgehört werden. Um dies zu vermeiden, müsste man
+          korrekterweise den Context <code class="code">[interne-gespraeche]</code> wie
+          folgt gestalten:<pre class="programlisting">[interne-gespraeche]
+exten =&gt; _1[5-6]X,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _1[5-6]X,2,VoiceMail(${EXTEN},u)
+
+exten =&gt; _2[0-6]X,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _2[0-6]X,2,VoiceMail(${EXTEN},u)
+
+exten =&gt; _[358]XX,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _[358]XX,2,VoiceMail(${EXTEN},u)
+
+exten =&gt; _4[0-4]X,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _4[0-4]X,2,VoiceMail(${EXTEN},u)
+</pre>Wir verzichten bei der Apfelmus GmbH der Einfachheit halber
+          auf diese ausführlichere Variante und benutzen nur den folgenden
+          Context:<pre class="programlisting">[interne-gespraeche]
+exten =&gt; _[1-5]XX,1,Dial(SIP/${EXTEN},60)
+exten =&gt; _[1-5]XX,2,VoiceMail(${EXTEN},u)
+</pre></div></div></div><div class="section" title="voicemail.conf" id="apfelmus-voicemail.conf"><div class="titlepage"><div><div><h4 class="title" id="apfelmus-voicemail.conf">voicemail.conf</h4></div></div></div><div class="para">Die <code class="filename">voicemail.conf</code> bleibt so, wie schon in
+        <a class="xref" href="minimale-telefonanlage.html#min-anlage-ab" title="... und jetzt mit einem Anrufbeantworter">„... und jetzt mit einem
+      Anrufbeantworter“</a> beschrieben. Es werden einfach nur
+        ein paar Einträge mehr eingefügt:</div><pre class="programlisting">[general]
+format = gsm
+serveremail = voicemail@apfelmus-gmbh.de
+maxmessage = 600
+
+[local]
+150 =&gt; 999999,Hans Hausmeister,hausmeister@apfelmus-gmbh.de
+200 =&gt; 999999,Ernst Wichtig,ernst.wichtig@apfelmus-gmbh.de
+201 =&gt; 999999,Hans Toll,hans.toll@apfelmus-gmbh.de
+
+; Ich verzichte hier darauf, die restlichen Einträge aufzulisten, sie sind analog zu den aufgeführten Zeilen</pre></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp7553168" href="#idp7553168" class="para">22</a>] </sup>Mit Ausnahme der Notrufnummern, die wir später behandeln, da
+            wir jetzt noch keine Verbindung zur Außenwelt eingerichtet
+            haben.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="case-study.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="grosse-anlage-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="personen-der-apfelmus-gmbh.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Die Apfelmus GmbH</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="apfelmus-rufnummernplan.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Der Rufnummernplan</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="apfelmus-infrastruktur.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Auswahl der Infrastruktur</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Die Grundkonfiguration</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="apfelmus-grundkonfiguration.html#apfelmus-sip.conf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">sip.conf für fast 100 Teilnehmer</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="apfelmus-grundkonfiguration.html#apfelmus-dialplan" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Der Wählplan (Dialplan)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="apfelmus-weiter.html" title="pfc level3 breadcrumb-link section sectlevel1">Wie geht es weiter?</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="apfelmus-faq.html" title="pfc level3 breadcrumb-link section sectlevel1">FAQ</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="pfc level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="ael.html" title="pfc level2 breadcrumb-link chapter">AEL</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="apfelmus-infrastruktur.html"><strong>Zurück</strong>5.4. Auswahl der Infrastruktur</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="apfelmus-weiter.html"><strong>Weiter</strong>5.6. Wie geht es weiter?</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

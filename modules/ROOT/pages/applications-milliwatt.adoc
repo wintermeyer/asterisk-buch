@@ -1,0 +1,58 @@
+[[applications-milliwatt]]
+= `Milliwatt()`
+
+Erzeugt einen 1000-Hz-Ton.
+
+[source]
+----
+Milliwatt()
+----
+
+Erzeugt einen konstanten 1000-Hz-Ton bei 0 dbm (ulaw). Diese
+Anwendung wird häufig verwendet, um die Audioeigenschaften eines bestimmten
+Channels zu testen. Allerdings ist die Bezeichnung etwas irreführend,
+sinnvoller schiene „Kilohertz()“.
+
+[source]
+----
+; einen 1000-Hz-Ton erzeugen:
+exten => 123,1,Milliwatt()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Milliwatt' =-
+
+[Synopsis]
+Generate a Constant 1004Hz tone at 0dbm (mu-law)
+
+[Description]
+Milliwatt([options]): Generate a Constant 1004Hz tone at 0dbm.
+Previous versions of this application generated the tone at 1000Hz. If for
+some reason you would prefer that behavior, supply the 'o' option to get the
+old behavior.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,10 @@
+-= Info about application 'Milliwatt' =-
+
+[Synopsis]
+- Generate a Constant 1000Hz tone at 0dbm (mu-law)
++ Generate a Constant 1004Hz tone at 0dbm (mu-law)
+
+[Description]
+- Milliwatt(): Generate a Constant 1000Hz tone at 0dbm (mu-law)
++ Milliwatt([options]): Generate a Constant 1004Hz tone at 0dbm.
++ Previous versions of this application generated the tone at 1000Hz. If for
++ some reason you would prefer that behavior, supply the 'o' option to get the
++ old behavior.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-echo.adoc[Abschnitt C.46, „`Echo()`“]

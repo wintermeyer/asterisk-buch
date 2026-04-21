@@ -1,0 +1,52 @@
+[[functions-sprintf]]
+= `SPRINTF()`
+
+[source]
+----
+SPRINTF(format,arg1[,arg2[,argN]])
+----
+
+Führt Ersetzungen in einem String durch. Siehe
++`man 3 sprintf`+.
+
+[source]
+----
+exten => 123,1,Verbose(1,${SPRINTF(%d Grad in den Alpen bis %d Grad im Breisgau,3,8)})
+exten => 123,n,Set(beispiel=${SPRINTF(Ich esse gerne %s,Nusskuchen)})
+exten => 123,n,Verbose(1,beispiel: ${beispiel})
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SPRINTF' =-
+
+[Syntax]
+SPRINTF(<format>|<arg1>[|...<argN>])
+
+[Synopsis]
+Format a variable according to a format string
+
+[Description]
+Parses the format string specified and returns a string matching that format.
+Supports most options supported by sprintf(3). Returns a shortened string if
+a format specifier is not recognized.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,7 +1,7 @@
+-= Info about function 'SPRINTF' =-
+
+[Syntax]
+- SPRINTF(<format>|<arg1>[|...<argN>])
++ SPRINTF(<format>,<arg1>[,...<argN>])
+
+[Synopsis]
+Format a variable according to a format string
+
+.Siehe auch

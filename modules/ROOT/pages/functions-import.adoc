@@ -1,0 +1,31 @@
+[[functions-import]]
+= `IMPORT()`
+
+[source]
+----
+IMPORT(channel,variablenname)
+----
+
+Fragt den Wert einer Channel-Variablen eines anderen Channels
+ab.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'IMPORT' =-
+
+[Syntax]
+IMPORT(channel,variable)
+
+[Synopsis]
+Retrieve the value of a variable from another channel
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-global.adoc[Abschnitt D.38, „`GLOBAL()`“], xref:functions-shared.adoc[Abschnitt D.87, „`SHARED()`“]

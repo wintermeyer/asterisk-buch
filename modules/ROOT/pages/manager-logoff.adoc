@@ -1,0 +1,18 @@
+[[manager-logoff]]
+= `Logoff`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Logoff
+Synopsis: Logoff Manager
+Privilege: <none>
+Description: Logoff this manager session
+Variables: NONE
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

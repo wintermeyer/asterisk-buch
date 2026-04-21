@@ -1,0 +1,20 @@
+[[manager-sipnotify]]
+= `SIPnotify`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: SIPnotify
+Synopsis: Send a SIP notify
+Privilege: system,all
+Description: Sends a SIP Notify event
+All parameters for this event must be specified in the body of this request
+via multiple Variable: name=value sequences.
+Variables:
+*Channel: <peername> Peer to receive the notify. Required.
+*Variable: <name>=<value> At least one variable pair must be specified.
+ActionID: <id> Action ID for this transaction. Will be returned.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

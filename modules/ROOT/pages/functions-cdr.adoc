@@ -1,0 +1,158 @@
+[[functions-cdr]]
+= `CDR()`
+
+[source]
+----
+CDR(Feld)
+----
+
+Liest oder setzt CDRfootnote:[Call Data Record, siehe xref:glossar.adoc#glossar-cdr[CDR\]]-Felder. `Feld` ist eines der folgenden (wenn nichts
+anders angegeben ist, ist nur Lesen möglich):
+
+`clid`:: Caller-ID
+`src`:: Source, die Caller-ID-Nummer
+`dst`:: Destination, Ziel-Extension
+`dcontext`:: Destination Context, der Ziel-Context
+`channel`:: Der Kanalname
+`dstchannel`:: Destination Channel, der Ziel-Kanal, falls zutreffend
+`lastapp`:: Die letzte ausgeführte Applikation
+`lastdata`:: Die Argumente der zuletzt ausgeführten Applikation
+`start`:: Die Start-Zeit des Anrufs
+`answer`:: Die Zeit, zu der der Anruf beantwortet wurde
+`end`:: Die Zeit, zu der der Anruf beendet wurde
+`duration`:: Die Dauer des Anrufs (in Sekunden)
+`billsec`:: Die Dauer des Anrufs seit der Anruf beantwortet wurde, also die zu berechnende Zeit (in Sekunden)
+`disposition`:: Der Status des Anrufs: `ANSWERED`, `NO ANSWER`, `BUSY` oder `FAILED`
+`amaflags`:: Die AMAfootnote:[Automated Message Accounting]-Flags: `DEFAULT` (System-Default), `BILLING` (zur Abrechnung), `DOCUMENTATION` (zur Dokumentierung) oder `OMIT` (keine Aufzeichnung). (Manchmal findet man statt `BILLING` und `OMIT` auch die Angaben `BILL` und `IGNORE` – was eventuell von der Asterisk-Version abhängt.)
+`accountcode`:: Die alphanumerische Nummer des Abrechnungskontos, max. 20 Zeichen. (Sie kann hier auch eingetragen werden.)
+`uniqueid`:: Die einmalige alphanumerische ID des Kanals (max. 32 Zeichen)
+`userfield`:: Das User-Feld, in das beliebige Informationen (max. 255 Zeichen) geschrieben werden können. (Die Informationen können hier auch eingetragen werden.)
+
+[source]
+----
+; foo auf die Dauer des Anrufs setzen:
+exten => 123,1,Set(foo=${CDR(duration)})
+
+; das User-Feld auf "meine Infos" setzen:
+exten => 123,1,Set(CDR(userfield)=meine Infos)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'CDR' =-
+
+[Syntax]
+CDR(<name>[|options])
+
+[Synopsis]
+Gets or sets a CDR variable
+
+[Description]
+Options:
+'l' uses the most recent CDR on a channel with multiple records
+'r' searches the entire stack of CDRs on the channel
+'u' retrieves the raw, unprocessed value
+For example, 'start', 'answer', and 'end' will be retrieved as epoch
+values, when the 'u' option is passed, but formatted as YYYY-MM-DD HH:MM:SS
+otherwise. Similarly, disposition and amaflags will return their raw
+integral values.
+Here is a list of all the available cdr field names:
+clid lastdata disposition
+src start amaflags
+dst answer accountcode
+dcontext end uniqueid
+dstchannel duration userfield
+lastapp billsec channel
+All of the above variables are read-only, except for accountcode,
+userfield, and amaflags. You may, however, supply
+a name not on the above list, and create your own
+variable, whose value can be changed with this function,
+and this variable will be stored on the cdr.
+raw values for disposition:
+1 = NO ANSWER
+2 = BUSY
+3 = FAILED
+4 = ANSWERED
+raw values for amaflags:
+1 = OMIT
+2 = BILLING
+3 = DOCUMENTATION
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -7,4 +7,32 @@
+Gets or sets a CDR variable
+
+[Description]
+- Option 'r' searches the entire stack of CDRs on the channel
++ Options:
++ 'l' uses the most recent CDR on a channel with multiple records
++ 'r' searches the entire stack of CDRs on the channel
++ 'u' retrieves the raw, unprocessed value
++ For example, 'start', 'answer', and 'end' will be retrieved as epoch
++ values, when the 'u' option is passed, but formatted as YYYY-MM-DD HH:MM:SS
++ otherwise. Similarly, disposition and amaflags will return their raw
++ integral values.
++ Here is a list of all the available cdr field names:
++ clid lastdata disposition
++ src start amaflags
++ dst answer accountcode
++ dcontext end uniqueid
++ dstchannel duration userfield
++ lastapp billsec channel
++ All of the above variables are read-only, except for accountcode,
++ userfield, and amaflags. You may, however, supply
++ a name not on the above list, and create your own
++ variable, whose value can be changed with this function,
++ and this variable will be stored on the cdr.
++ raw values for disposition:
++ 1 = NO ANSWER
++ 2 = BUSY
++ 3 = FAILED
++ 4 = ANSWERED
++ raw values for amaflags:
++ 1 = OMIT
++ 2 = BILLING
++ 3 = DOCUMENTATION
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,7 +1,7 @@
+-= Info about function 'CDR' =-
+
+[Syntax]
+- CDR(<name>[|options])
++ CDR(<name>[,options])
+
+[Synopsis]
+Gets or sets a CDR variable
+@@ -10,6 +10,8 @@
+Options:
+'l' uses the most recent CDR on a channel with multiple records
+'r' searches the entire stack of CDRs on the channel
++ 's' skips any CDR's that are marked 'LOCKED' due to forkCDR() calls.
++ (on setting/writing CDR vars only)
+'u' retrieves the raw, unprocessed value
+For example, 'start', 'answer', and 'end' will be retrieved as epoch
+values, when the 'u' option is passed, but formatted as YYYY-MM-DD HH:MM:SS
+@@ -27,11 +29,13 @@
+a name not on the above list, and create your own
+variable, whose value can be changed with this function,
+and this variable will be stored on the cdr.
++ For setting CDR values, the 'l' flag does not apply to
++ setting the accountcode, userfield, or amaflags.
+raw values for disposition:
+1 = NO ANSWER
+- 2 = BUSY
+- 3 = FAILED
+- 4 = ANSWERED
++ 2 = BUSY
++ 3 = FAILED
++ 4 = ANSWERED
+raw values for amaflags:
+1 = OMIT
+2 = BILLING

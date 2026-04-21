@@ -1,0 +1,33 @@
+[[codecs-trunking]]
+= Bandbreite und Trunking
+
+Wer viele Gespräche gleichzeitig über eine Netzwerkverbindung führen
+will (z. B., wenn zwei Asterisk-Anlagen miteinander verbunden werden), der
+bekommt sehr schnell ein Bandbreitenproblem. Je nach Codec und Länge des
+Frames kann es sein, dass der IP-Overhead genauso oder sogar größer ist
+als die Nutzlast (also die übertragene Sprache). So bekommen Sie mit dem
+SIP-Protokoll und der Verwendung des GSM-Codecs auf einer
+2-MBit/s-Datenleitung nur ungefähr 35 gleichzeitige Gespräche (wobei beide
+Gesprächspartner gleichzeitig reden können). 35 Gespräche über eine
+2-MBit/s-Leitung ist aber nicht gerade viel. Da wären Sie mit einem
+normalen Mulitplex-Anschluss besser bedient, da dort die Sprachqualität
+wesentlich besser ist.
+
+Die geniale Idee am Trunking-Verfahren ist, nicht pro Nutzlastpaket
+auch einen Overhead zu erzeugen, sondern mehrere Nutzlastpakete
+zusammenzufassen und diese als ein Paket mit entsprechend nur einem
+Overhead zu versenden. Dadurch lässt sich die Bandbreite sehr stark
+reduzieren. So können Sie auf der gleichen 2-MBit/s-Datenleitung 77
+simultane Gespräche führen (mit dem GSM-Codec). Möchten wir auf der
+gleichen Verbindung eine ISDN-Sprachqualität bekommen, können wir unter
+Einsatz von Trunking und dem G.726-Codec immer noch 44 simultane Gespräche
+führen.
+
+Trunking wird nur im IAX2-Protokoll (siehe xref:iax.adoc[Abschnitt 8.7, „IAX“])
+angeboten und sollte nur bei Verbindungen mit mindestens 2 simultanen
+Verbindungen benutzt werden, da der Overhead bei einer Verbindung
+geringfügig höher ist als ohne Trunking.
+
+Wer sich intensiv mit der Bandbreitenproblematik auseinandersetzen
+will, der kann auf http://www.asteriskguru.com/tools/bandwidth_calculator.php[_http://www.asteriskguru.com/tools/bandwidth_calculator.php_]
+online verschiedene Szenarien durchrechnen.

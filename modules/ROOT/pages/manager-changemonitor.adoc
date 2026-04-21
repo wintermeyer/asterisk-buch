@@ -1,0 +1,22 @@
+[[manager-changemonitor]]
+= `ChangeMonitor`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: ChangeMonitor
+Synopsis: Change monitoring filename of a channel
+Privilege: call,all
+Description: The 'ChangeMonitor' action may be used to change the file
+started by a previous 'Monitor' action. The following parameters may
+be used to control this:
+Channel - Required. Used to specify the channel to record.
+File - Required. Is the new name of the file created in the
+monitor spool directory.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

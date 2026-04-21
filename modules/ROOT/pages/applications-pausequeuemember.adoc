@@ -1,0 +1,103 @@
+[[applications-pausequeuemember]]
+= `PauseQueueMember()`
+
+Lässt ein Warteschlangenmitglied pausieren, sodass es keine Anrufe
+empfangen kann.
+
+[source]
+----
+PauseQueueMember([Schlange],Interface[,Optionen])
+----
+
+Setzt die Durchstellung von Anrufen zu einem Warteschlangenmitglied
+vorübergehend aus. Das spezifizierte Interface wird in der gegebenen
+Warteschlange zeitweilig angehalten. Dadurch wird verhindert, dass Anrufe
+aus der Warteschlange zu diesem Interface durchgestellt werden, solange es
+nicht wieder durch `UnpauseQueueMember()` oder das
+Manager-Interface freigegeben wurde. Wenn kein Warteschlangenname angegeben
+ist, wird das Interface in jeder Warteschlange angehalten, in der es ein
+Mitglied ist. Befindet sich das Interface nicht in der benannten
+Warteschlange oder wenn keine Warteschlange angegeben ist und das Interface
+nicht Mitglied irgendeiner Warteschlange ist, wird – bei Angabe der Option
+`j` – die Ausführung bei der Priorität n+101 fortgesetzt, falls
+diese existiert.
+
+Gibt -1 zurück, falls das Interface nicht gefunden wurde oder keine
+Extension existiert, zu der gesprungen werden kann, sonst 0. Setzt die
+Channel-Variable `PQMSTATUS` auf `PAUSED` (pausiert)
+oder `NOTFOUND` (nicht gefunden).
+
+[source]
+----
+; wenn *111002 gewählt wird, wird Agent/1002 auf allen Warteschlangen zum Pausieren gezwungen:
+exten => *11ZXXX,1,PauseQueueMember(,Agent/${EXTEN:3})
+
+; mit *121002 wird Agent/1002 wieder aktiviert:
+exten => *12ZXXX,1,UnpauseQueueMember(,Agent/${EXTEN:3})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'PauseQueueMember' =-
+
+[Synopsis]
+Pauses a queue member
+
+[Description]
+PauseQueueMember([queuename]|interface[|options]):
+Pauses (blocks calls for) a queue member.
+The given interface will be paused in the given queue. This prevents
+any calls from being sent from the queue to the interface until it is
+unpaused with UnpauseQueueMember or the manager interface. If no
+queuename is given, the interface is paused in every queue it is a
+member of. If the interface is not in the named queue, or if no queue
+is given and the interface is not in any queue, it will jump to
+priority n+101, if it exists and the appropriate options are set.
+The application will fail if the interface is not found and no extension
+to jump to exists.
+The option string may contain zero or more of the following characters:
+'j' -- jump to +101 priority when appropriate.
+This application sets the following channel variable upon completion:
+PQMSTATUS The status of the attempt to pause a queue member as a
+text string, one of
+PAUSED | NOTFOUND
+Example: PauseQueueMember(|SIP/3000)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,21 +4,17 @@
+Pauses a queue member
+
+[Description]
+- PauseQueueMember([queuename]|interface[|options]):
++ PauseQueueMember([queuename],interface[,options[,reason]]):
+Pauses (blocks calls for) a queue member.
+The given interface will be paused in the given queue. This prevents
+any calls from being sent from the queue to the interface until it is
+unpaused with UnpauseQueueMember or the manager interface. If no
+queuename is given, the interface is paused in every queue it is a
+- member of. If the interface is not in the named queue, or if no queue
+- is given and the interface is not in any queue, it will jump to
+- priority n+101, if it exists and the appropriate options are set.
+- The application will fail if the interface is not found and no extension
+- to jump to exists.
+- The option string may contain zero or more of the following characters:
+- 'j' -- jump to +101 priority when appropriate.
++ member of. The application will fail if the interface is not found.
++ The reason string is entirely optional and is used to add extra information
++ to the appropriate queue_log entries and manager events.
+This application sets the following channel variable upon completion:
+PQMSTATUS The status of the attempt to pause a queue member as a
+text string, one of
+PAUSED | NOTFOUND
+- Example: PauseQueueMember(|SIP/3000)
++ Example: PauseQueueMember(,SIP/3000)
+
+.Siehe auch
+xref:applications-unpausequeuemember.adoc[Abschnitt C.182, „`UnpauseQueueMember()`“]

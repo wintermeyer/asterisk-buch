@@ -1,0 +1,46 @@
+[[applications-mp3player]]
+= `MP3Player()`
+
+Gibt eine MP3-Datei oder einen MP3-Stream wieder.
+
+[source]
+----
+MP3Player(Dateiname)
+----
+
+Verwendet das Programm `mpg123`footnote:[http://mpg123.org/, http://sourceforge.net/projects/mpg123/, für Mac OS X siehe auch http://sourceforge.net/projects/mosx-mpg123/], um dem Anrufer eine MP3-Datei vorzuspielen. Der angegebene
+Dateiname kann auch eine URL sein. Der Anrufer kann die Wiedergabe durch
+Betätigung einer beliebigen Taste stoppen.
+
+Die richtige Version von `mpg123` muss installiert sein,
+damit diese Anwendung ordnungsgemäß funktioniert. Asterisk arbeitet momentan
+mit der Version 0.59r ideal.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'MP3Player' =-
+
+[Synopsis]
+Play an MP3 file or stream
+
+[Description]
+MP3Player(location) Executes mpg123 to play the given location,
+which typically would be a filename or a URL. User can exit by pressing
+any key on the dialpad, or by hanging up.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,6 @@
+Play an MP3 file or stream
+
+[Description]
+- MP3Player(location) Executes mpg123 to play the given location,
++ MP3Player(location): Executes mpg123 to play the given location,
+which typically would be a filename or a URL. User can exit by pressing
+any key on the dialpad, or by hanging up.

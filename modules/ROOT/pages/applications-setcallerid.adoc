@@ -1,0 +1,43 @@
+[[applications-setcallerid]]
+= `SetCallerID()`
+
+Setzt die Caller-ID.
+
+[source]
+----
+SetCallerID(CallerID[,Optionen])
+----
+
+[IMPORTANT]
+====
+`SetCIDName()` wurde durch die Funktion
+`CALLERID()` (xref:functions-callerid.adoc[Abschnitt D.8, „`CALLERID()`“])
+ersetzt:
+
+[source]
+----
+Set(CALLERID(all)=Name <Nummer>)
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SetCallerID' =-
+
+[Synopsis]
+Set CallerID
+
+[Description]
+SetCallerID(clid[|a]): Set Caller*ID on a call to a new
+value. Sets ANI as well if a flag is used.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:functions-callerid.adoc[Abschnitt D.8, „`CALLERID()`“]

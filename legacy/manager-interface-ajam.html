@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>19.4. Der Asynchronous Javascript Asterisk Manager (AJAM)</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="asterisk-fernsteuern.html" title="Kapitel 19. Asterisk fernsteuern" /><link rel="prev" href="asterisk-manager-api.html" title="19.3. Das Manager-Interface (AMI)" /><link rel="next" href="kapitel-agi.html" title="Kapitel 20. Asterisk Gateway Interface (AGI)" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="19.4. Der Asynchronous Javascript Asterisk Manager (AJAM)" id="manager-interface-ajam"><div class="titlepage"><div><div><h2 class="title" id="manager-interface-ajam">19.4. Der Asynchronous Javascript Asterisk Manager (AJAM)<a id="idp10662432" class="indexterm"></a><a id="idp10663440" class="indexterm"></a><a id="idp10664416" class="indexterm"></a></h2></div></div></div><div class="para">Seit Version 1.4 bringt Asterisk einen kleinen Webserver mit,
+    AJAM genannt, über den man per HTTP auf das Asterisk Manager Interface
+    (AMI) zugreifen kann. Die Bezeichnung <span class="quote">„<span class="quote">AJAM</span>“</span> ist eindeutig
+    von <span class="quote">„<span class="quote">AJAX</span>“</span><sup>[<a id="idp10667168" href="#ftn.idp10667168" class="footnote">107</a>]</sup> (Asynchronous JavaScript and XML) abgeleitet.</div><div class="para">Zur Einrichtung sind die Schritte wie in <a class="xref" href="asterisk-manager-api.html" title="19.3. Das Manager-Interface (AMI)">Abschnitt 19.3, „Das Manager-Interface (AMI)“</a> Voraussetzung. Zusätzlich stellt man in
+    der <code class="filename">manager.conf</code> im Abschnitt <code class="code">[general]</code>
+    den Parameter <code class="code">webenabled</code> auf <code class="code">yes</code> ein. Beachten
+    Sie auch den Parameter <code class="code">httptimeout</code>, der festlegt, nach
+    welcher Inaktivität (in Sekunden) man im Web-Interface automatisch
+    ausgeloggt wird. Um dann den Webserver zu aktivieren, setzt man in der
+    <code class="filename">http.conf</code> folgende Einstellungen:<pre class="programlisting">[general]
+enabled=yes
+enablestatic=yes
+bindaddr=127.0.0.1
+bindport=8088
+prefix=asterisk</pre><code class="code">enablestatic</code> muss man nur dann
+    aktivieren, wenn der AJAM auch als Webserver für statische Dateien im
+    Verzeichnis <code class="filename">/var/lib/asterisk/static-http/</code> fungieren
+    soll. Normalerweise stellt man das auf <code class="code">no</code>, es ist aber
+    Voraussetzung für die Asterisk-AJAM-Demo (<a class="xref" href="manager-interface-ajam.html#manager-interface-ajam-demo" title="AJAM Demo">„AJAM Demo“</a>).</div><div class="para">Vergessen Sie nicht, Asterisk neu zu starten!</div><div class="caution"><h2>Achtung</h2><div class="para">Nach meiner Einschätzung ist es in den seltensten Fällen
+      empfehlenswert, andere Webapplikationen, also solche, die ausschließlich
+      für den Administrator zugänglich sind, direkt auf die AJAM-Schnittstelle
+      zugreifen zu lassen, und das ist wohl auch nicht so gedacht, denn dazu
+      lassen sich die Rechte mit <code class="code">read</code> und <code class="code">write</code>
+      (siehe <a class="xref" href="asterisk-manager-api.html" title="19.3. Das Manager-Interface (AMI)">Abschnitt 19.3, „Das Manager-Interface (AMI)“</a>) einfach nicht granular
+      genug einstellen. Denken Sie daran, dass ein User absichtlich oder
+      unabsichtlich auch andere Aktionen ausführen kann, als Sie ihm in der
+      GUI zur Verfügung stellen. Besser wäre es, Ihre Applikation auf z. B.
+      ein PHP-Skript zugreifen zu lassen, das nur vordefinierte erlaubte
+      Befehle auf dem AMI ausführt; und zur Sicherheit muss noch nicht mal
+      dieses Skript alle AMI-Rechte haben.</div></div><div class="section" title="Beispiel: Anzahl der Mailbox-Nachrichten per AJAM abfragen" id="manager-interface-beispiel-ajam"><div class="titlepage"><div><div><h3 class="title" id="manager-interface-beispiel-ajam">Beispiel: Anzahl der Mailbox-Nachrichten per AJAM
+      abfragen</h3></div></div></div><div class="para">Wir betrachten wieder die aus <a class="xref" href="asterisk-manager-api.html#manager-interface-beispiel-expect" title="Beispiel: Anzahl der Mailbox-Nachrichten mit Expect abfragen">„Beispiel: Anzahl der Mailbox-Nachrichten mit Expect
+      abfragen“</a> und <a class="xref" href="asterisk-manager-api.html#manager-interface-beispiel-php" title="Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen">„Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen“</a> bekannte einfache Aufgabe,
+      die Anzahl der Nachrichten auf einer Mailbox abzufragen. Der AJAM bietet
+      hier folgende Möglichkeiten:</div><div class="section" title="HTML" id="ajam-format-html"><div class="titlepage"><div><div><h4 class="title" id="ajam-format-html">HTML<a id="idp20158016" class="indexterm"></a></h4></div></div></div><div class="para">Unter der URL</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/manager</pre></div><div class="para">wartet das Manager-Interface auf unsere Anfragen. Dabei werden
+        die Felder eines Pakets als Parameter an die URL gehängt. Probieren
+        Sie die folgenden beiden Adressen im Webbrowser aus:</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/manager?action=Login&amp;username=admin&amp;secret=geheim</pre></div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/manager?action=MailboxCount&amp;mailbox=123</pre></div><div class="para">Die Antwort erfolgt jeweils als HTML-Seite, ist also für den
+        Zugriff durch Skripte denkbar ungeeignet.</div></div><div class="section" title="Plain-Text" id="ajam-format-text"><div class="titlepage"><div><div><h4 class="title" id="ajam-format-text">Plain-Text<a id="idp18189728" class="indexterm"></a></h4></div></div></div><div class="para">Man kann in der URL <code class="code">manager</code> durch
+        <code class="code">rawman</code> ersetzen, dann erfolgt die Antwort als Plain-Text.
+        Zum Einloggen und Abfragen der Mailbox-Nachrichten schreiben Sie
+        also:</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/rawman?action=Login&amp;username=admin&amp;secret=geheim</pre></div><pre class="screen">Response: Success
+Message: Authentication accepted</pre><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/rawman?action=MailboxCount&amp;mailbox=123</pre></div><pre class="screen">Response: Success
+Message: Mailbox Message Count
+Mailbox: 123
+NewMessages: 0
+OldMessages: 0</pre><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/rawman?action=Logoff</pre></div><pre class="screen">Response: Goodbye
+Message: Thanks for all the fish.</pre><div class="para">Diese Text-Ausgabe kann man also gut in automatisierten
+        Skripten verwenden.</div></div><div class="section" title="XML" id="ajam-format-xml"><div class="titlepage"><div><div><h4 class="title" id="ajam-format-xml">XML<a id="idp18199904" class="indexterm"></a></h4></div></div></div><div class="para">Will man stattdessen lieber XML verwenden, dann ruft man
+        <code class="code">mxml</code> auf. Die XML-Ausgabe ist hier zur leichteren
+        Lesbarkeit formatiert dargestellt; der AJAM macht keine Zeilenumbrüche
+        innerhalb der Tags. Einen korrekten XML-Parser würde das aber auch so,
+        wie es hier dargestellt ist, nicht stören.</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/mxml?action=Login&amp;username=admin&amp;secret=geheim</pre></div><pre class="screen">&lt;ajax-response&gt;
+    &lt;response type='object' id='unknown'&gt;
+        &lt;generic
+            response='Success'
+            message='Authentication accepted' /&gt;
+    &lt;/response&gt;
+&lt;/ajax-response&gt;</pre><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/mxml?action=MailboxCount&amp;mailbox=123</pre></div><pre class="screen">&lt;ajax-response&gt;
+    &lt;response type='object' id='unknown'&gt;
+        &lt;generic
+            response='Success'
+            message='Mailbox Message Count'
+            mailbox='123'
+            newmessages='0'
+            oldmessages='0' /&gt;
+    &lt;/response&gt;
+&lt;/ajax-response&gt;</pre><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/mxml?action=Logoff</pre></div><pre class="screen">&lt;ajax-response&gt;
+    &lt;response type='object' id='unknown'&gt;
+        &lt;generic
+            response='Goodbye'
+            message='Thanks for all the fish.' /&gt;
+    &lt;/response&gt;
+&lt;/ajax-response&gt;</pre></div></div><div class="section" title="Hinweise zu AJAX und AJAM" id="manager-interface-ajam-hinweise"><div class="titlepage"><div><div><h3 class="title" id="manager-interface-ajam-hinweise">Hinweise zu AJAX und AJAM</h3></div></div></div><div class="section" title="JSON" id="ajam-format-json"><div class="titlepage"><div><div><h4 class="title" id="ajam-format-json">JSON</h4></div></div></div><div class="para">Bei AJAX-Anwendungen – das erkennt man leicht am Namen
+        <span class="quote">„<span class="quote">Asynchronous JavaScript and XML</span>“</span> – ist XML das
+        übliche Format, obwohl es wegen seiner aufgeblähten Struktur vielfach
+        kritisiert wird. Für AJAX können aber auch andere Formate wie
+        JSON<sup>[<a id="idp18687680" href="#ftn.idp18687680" class="footnote">108</a>]</sup> zum Einsatz kommen. JSON (JavaScript Object Notation)
+        ist – der Name verrät es – besonders gut für
+        JavaScript-Anwendungen geeignet, da die Datenstruktur hier nativ mit
+        <code class="code">eval()</code> in ein Objekt umgewandelt werden kann und wenig
+        Overhead hat. Es existieren aber auch zahlreiche Implementierungen für
+        PHP, Perl etc. Eine Ausgabe in JSON fehlt dem AJAM bisher jedoch
+        leider. Sie könnten aber beispielsweise die Plain-Text-Ausgabe
+        clientseitig in JSON umwandeln, wenn Ihnen das leichter fällt oder
+        wenn es sich besser in vorhandene JS-Libs integrieren lässt. Hier der
+        Ansatz als Idee:<pre class="programlisting">// angenommen, in responseText ist der empfangene Antwort-Text
+// gespeichert, was wir hier nur simulieren:
+var responseText = 'Response: Success\n'
++'Message: Mailbox Message Count\n'
++'Mailbox: 123\n'
++'NewMessages: 0\n'
++'OldMessages: 0\n';
+
+// einfache Anführungszeichen escapen:
+responseText = responseText.replace( /\'/g, "\\'" );
+// Felder quoten:
+responseText = responseText.replace( /^([a-z\d]*):\s*(.*)/gmi, "'$1':'$2'," );
+// in Objekt umwandeln:
+eval('var packet = {'+ responseText +'}');
+
+// jetzt kann man wie bei jedem Objekt so auf die Felder zugreifen:
+alert( packet['NewMessages'] );   // gibt "0" aus</pre></div></div><div class="section" title="Ping" id="manager-interface-ajam-ping"><div class="titlepage"><div><div><h4 class="title" id="manager-interface-ajam-ping">Ping</h4></div></div></div><div class="para">Für Zugriffe von AJAX-Anwendungen auf den AJAM ist der
+        Ping-Befehl besonders hilfreich, der dazu dient, die Verbindung und
+        Authentifizierung offen zu halten:</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/rawman?action=Ping</pre></div><div class="para"><pre class="screen">Response: Pong</pre></div></div><div class="section" title="AJAM Demo" id="manager-interface-ajam-demo"><div class="titlepage"><div><div><h4 class="title" id="manager-interface-ajam-demo">AJAM Demo</h4></div></div></div><div class="para">Unter der URL</div><div class="para"><pre class="literallayout">http://localhost:8088/asterisk/static/ajamdemo.html</pre></div><div class="para">ist eine kleine Beispielanwendung mitgeliefert, die den Zugriff
+        per AJAX demonstriert. Sie verwendet die äußerst praktische
+        JavaScript-Library <span class="emphasis"><em>Prototype</em></span><sup>[<a id="idp14470912" href="#ftn.idp14470912" class="footnote">109</a>]</sup> für die AJAX-Zugriffe und zeigt mit der Action
+        <code class="code">Status</code> die momentan aktiven Kanäle an. Sie können die
+        AJAM-Demo als Basis für eigene AJAX-Anwendungen heranziehen.</div></div><div class="section" title="Apache" id="manager-interface-ajam-apache"><div class="titlepage"><div><div><h4 class="title" id="manager-interface-ajam-apache">Apache</h4></div></div></div><div class="para">Der Webserver von Asterisk ist sehr minimalistisch und ersetzt
+        keinesfalls einen <span class="quote">„<span class="quote">richtigen</span>“</span> Server wie den Apache, der
+        auch PHP-Skripte ausführt etc. Um beides zu vereinen, könnten Sie z.
+        B. in der <code class="filename">httpd.conf</code> des Apache an der
+        entsprechenden Stelle den Eintrag<pre class="programlisting">ProxyPass /ajam http://localhost:8088/asterisk</pre>verwenden,
+        um für alle Zugriffe auf den URL-Pfad <code class="code">/ajam</code> nur als Proxy
+        zu fungieren und die Anfragen zum AJAM durchzuschleusen.</div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><div class="para"><a href="http://de.wikipedia.org/wiki/Ajax_(Programmierung)">http://de.wikipedia.org/wiki/Ajax_(Programmierung)</a></div></div><div class="footnote"><div class="para"><a href="http://de.wikipedia.org/wiki/JSON">http://de.wikipedia.org/wiki/JSON</a></div></div><div class="footnote"><div class="para"><a href="http://prototype.conio.net/">http://prototype.conio.net/</a>,
+            mittlerweile auch <a href="http://www.prototypejs.org/">http://www.prototypejs.org/</a>,
+            siehe <a href="http://en.wikipedia.org/wiki/Prototype_Javascript_Framework">http://en.wikipedia.org/wiki/Prototype_Javascript_Framework</a>
+            oder <a href="http://de.wikipedia.org/wiki/Prototype">http://de.wikipedia.org/wiki/Prototype</a></div></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="asterisk-rx.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">asterisk -rx "<em xmlns="http://www.w3.org/1999/xhtml" class="replaceable"><code>Befehl</code></em>"</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="call-file.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Call Files</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="asterisk-manager-api.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Das Manager-Interface (AMI)</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Der Asynchronous Javascript Asterisk Manager (AJAM)</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="manager-interface-ajam.html#manager-interface-beispiel-ajam" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Beispiel: Anzahl der Mailbox-Nachrichten per AJAM
+      abfragen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="manager-interface-ajam.html#manager-interface-ajam-hinweise" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Hinweise zu AJAX und AJAM</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="asterisk-manager-api.html"><strong>Zurück</strong>19.3. Das Manager-Interface (AMI)</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="kapitel-agi.html"><strong>Weiter</strong>Kapitel 20. Asterisk Gateway Interface (AGI)</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

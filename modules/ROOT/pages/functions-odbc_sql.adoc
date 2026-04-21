@@ -1,0 +1,66 @@
+[[functions-odbc_sql]]
+= `ODBC_SQL()`
+
+[source]
+----
+ODBC_SQL(SQL-Query)
+----
+
+[IMPORTANT]
+====
+Diese Funktion wird vom Anwender in der Datei
+`func_odbc.conf` definiert. Sie ist hier angeführt, da
+sie in der Beispielkonfiguration von Asterisk enthalten ist. Für weitere
+Informationen siehe xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“], speziell
+xref:functions-odbc_function.adoc#func_odbc-sql[Abschnitt D.69, „Beispiel für beliebige
+SQL-Befehle:“].
+====
+
+Führt den angegebenen SQL-Query aus und gibt gegebenenfalls das
+Ergebnis zurück.
+
+[source]
+----
+; abfragen:
+exten => 123,1,Set(ARRAY(vn,nn)=${ODBC_SQL(SELECT `vorname`\, `nachname` FROM `liste` WHERE `nummer`='${SQL_ESC(123)}')})
+
+; setzen:
+exten => 123,1,Set(ODBC_SQL(UPDATE `liste` SET `name`='${SQL_ESC(Peter)}' WHERE `nummer`='${SQL_ESC(123)}'))
+----
+
+[IMPORTANT]
+====
+Bitte beachten Sie, dass alle Kommas
+(„`,`“) im SQL-Befehl maskiert werden
+müssen, also als „`\,`“ geschrieben
+werden.
+====
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'ODBC_SQL' =-
+
+[Syntax]
+ODBC_SQL(<arg1>[...[,<argN>]])
+
+[Synopsis]
+Runs the referenced query with the specified arguments
+
+[Description]
+Runs the following query, as defined in func_odbc.conf, performing
+substitution of the arguments into the query as specified by ${ARG1},
+${ARG2}, ... ${ARGn}. This function may only be read, not set.
+
+SQL:
+${ARG1}
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-sql_esc.adoc[Abschnitt D.96, „`SQL_ESC()`“], xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“], xref:functions-odbc_fetch.adoc[Abschnitt D.68, „`ODBC_FETCH()`“], xref:functions-hash.adoc[Abschnitt D.43, „`HASH()`“]

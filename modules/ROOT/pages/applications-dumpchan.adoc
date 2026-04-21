@@ -1,0 +1,49 @@
+[[applications-dumpchan]]
+= `DumpChan()`
+
+Gibt Informationen über den anrufenden Channel auf der Konsole
+aus.
+
+[source]
+----
+DumpChan([min_verbose_level])
+----
+
+Zeigt Informationen über den anrufenden Channel an und auch eine
+Auflistung aller Channel-Variablen. Falls `min_verbose_level`
+angegeben ist, werden Ausgaben nur im Falle eines aktuell gleich hoch oder
+höher gesetzten Verbosity-Levels angezeigt.
+
+Gibt stets 0 zurück.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,DumpChan()
+exten => 123,n,Background(enter-ext-of-person)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'DumpChan' =-
+
+[Synopsis]
+Dump Info About The Calling Channel
+
+[Description]
+DumpChan([<min_verbose_level>])
+Displays information on channel and listing of all channel
+variables. If min_verbose_level is specified, output is only
+displayed when the verbose level is currently set to that number
+or greater.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-noop.adoc[Abschnitt C.107, „`NoOp()`“], xref:applications-log.adoc[Abschnitt C.78, „`Log()`“], xref:applications-verbose.adoc[Abschnitt C.184, „`Verbose()`“]

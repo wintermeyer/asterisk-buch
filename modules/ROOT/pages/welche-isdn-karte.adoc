@@ -1,0 +1,203 @@
+[[welche-isdn-karte]]
+= Welche ISDN-Karte soll ich nehmen?
+
+Die Frage, welche ISDN-Karte zu empfehlen ist, ist schwer und in
+einem gedruckten Buch eigentlich gar nicht zu beantworten. Dafür sind
+folgende Gründe verantwortlich:
+
+* Ein Buchautor kann mit der Antwort auf eine solche Frage nur verlieren. Gibt man keine Antwort, dann heißt es "Wofür habe ich mir denn dann das Buch gekauft?", und wenn man eine bestimmte Karte herausstellt, dann heißt es "Schleichwerbung!".
+* Eine Karte, die heute gut ist, kann eventuell morgen im Vergleich zu einer neuen Karten nur noch als Durchschnitt angesehen werden.
+* Die Software, speziell die Treiber, werden kontinuierlich verbessert, und was heute zutrifft, kann für einen Leser in einem Jahr vielleicht nicht mehr nachvollziehbar sein.
+* Der Support des Herstellers kann nicht endkundengerecht verglichen werden.
+* Je nach Einsatzzweck ergeben sich unterschiedliche Anforderungen an die Produkte. Hier trennt eine Unterscheidung in gewerbliche und private Nutzung die Produkte in zwei Lager. Bei einer privaten Nutzung kann eine Anlage auch mal durch einen fehlerhaften Treiber für ein paar Stunden ausfallen. Dies ist im gewerblichen Einsatz nicht akzeptabel.
+
+Der Betrieb einer oder mehrerer ISDN-Karten in einem Asterisk-Server
+ist sehr einfach. Allerdings ist die Installation und Konfiguration leider
+immer noch nicht trivial. Es gibt verschiedene Möglichkeiten, ISDN-Karten
+mit Asterisk "zum Laufen" zu bringen. Auf die einzelnen Varianten gehen
+wir in diesem Kapitel in jeweils eigenen Bereichen ein.
+
+[IMPORTANT]
+====
+Alle in diesem Kapitel beschriebenen Installationsmethoden
+werden anhand eines Debian Linux-Systems beschrieben. Die jeweilige
+Installation kann sich auf einem anderen Linux-System ganz anders
+darstellen und auf so manchem BSD-System gar nicht funktionieren. Wir
+empfehlen Ihnen dringend, die hier beschriebenen Wege 1:1 zu
+übernehmen und deshalb auch ein Debian Linux einzusetzen.
+====
+
+[[isdn-empfehlung-privat]]
+== Empfehlung für den Privathaushalt
+
+Die meisten privaten Asterisk-Installationen sind nicht auf
+optimale Sprachqualität und Verfügbarkeit angewiesen. Hier gilt in
+erster Linie der Kaufpreis als Argument. Sollten Sie über die Karte
+nicht faxen wollen und auch nur maximal 2 B-Kanäle benötigen, so können
+Sie ruhig eine billige HFC-Karte kaufen. Diese Karten werden schon für
+20 bis 30 Euro angeboten. Die Installation ist oft umständlich, und von
+der Sprachqualität darf man keine Wunder erwarten. Aber wer mit diesen
+Einschränkungen leben kann, der ist mit einem No-Name-Produkt gut
+bedient.
+
+[[isdn-empfehlung-geschaeft]]
+== Empfehlung für den geschäftlichen Einsatz
+
+Wer mit Asterisk eine alte Telefonanlage ersetzen will, muss eine
+mindestens gleich gute Qualität erzielen. Ansonsten gibt es Ärger mit
+den Usern und mit den Kunden. Diese Qualität kann mit den günstigen
+No-Name-HFC-Karten nicht realisiert werden.
+
+[[isdn-hardware-echo-cancelation]]
+=== Hardware-Echo-Cancelation
+
+Auch wenn man es sich als Enduser wünschen würde, ist das
+Echo-Problem noch lange nicht gelöst. Also braucht man für normale
+Telefonate eine gute Echo-Cancelation, und bei Faxen soll diese
+automatisch deaktiviert werden. Dies ist am besten durch eine
+Onboard-Hardware-Echo-Cancelation-Einheit auf der ISDN-Karte zu
+realisieren. Diese ist qualitativ besser als die nachgeschalteten
+Software-Module und nimmt dem Telefonanlagenserver keine CPU-Zeit weg.
+Da der entsprechende Baustein von den ISDN-Kartenherstellern extern
+eingekauft wird, erhöht sich der Preis der Karte entsprechend.
+Trotzdem sollten Sie alle ISDN-Karten, die von Ihnen aus gesehen mit
+dem öffentlichen Netz kommunizieren, auf jeden Fall mit einer solchen
+Hardware-Echo-Cancelation kaufen. Bei internen ISDN-Karten ist dies
+nicht nötig, da Echo fast nur vom öffentlichen Netz aus kommt.
+
+Ein qualitativer Unterschied bei der Hardware-Echo-Cancellation
+liegt in der Tail-Length des eingesetzten Bausteins. Er bestimmt die
+Länge des Referenzaudiostrangs. Vereinfacht kann man sagen: Je größer
+die Tail-Length ist, desto besser ist die Echo-Cancelation. Allerdings
+sind da die Unterschiede für die meisten Menschen nicht mehr
+hörbar.
+
+[[isdn-interrupts-und-load]]
+=== Interrupts und Load auf dem Server
+
+In den ersten Jahren der Asterisk-Entwicklung gab es keine
+günstige Hardware-Echo-Cancelation. Deshalb hat Mark Spencer (und
+haben andere) diese in Software nachgebildet. Dazu musste er die ein-
+und ausgehenden Audiosteams in Stücke von 1 ms Länge aufteilen. Aus
+diesem Grund geben alle normalen ISDN-Karten für jeden B-Kanal pro 1
+ms Audiostream einen Interrupt an den Server. Dieses historische
+Konstrukt führt heute zu einigen Problemen. Hat man einen normalen
+kleinen ISDN-Anschluss mit 2 B-Kanälen und eine aktuelle
+Serverhardware, so wird man davon nichts mitbekommen. Baut man aber
+ein Embedded-System mit nur wenig CPU-Power, dann kann es auch schon
+bei 2 B-Kanälen zu Engpässen kommen. Das gleiche Problem tritt bei
+großen Systemen mit mehreren Multiplexanschlüssen auf. Irgendwann
+kommen einfach so viele Interrupts herein, dass auch die größte
+aktuell kaufbare PC-Hardware in die Knie geht.
+
+Falls Sie also entweder sehr kleine Embedded-Systeme oder sehr
+große Server mit vielen B-Kanälen betreiben wollen, haben Sie nur
+folgende Möglichkeiten:
+
+* Überprüfen Sie, wie viel Last ein einzelnes System verkraftet, und clustern Sie dann mehrere Systeme parallel.
+* Setzen Sie ein ISDN-to-SIP-Media-Gateway ein. Das sind Blackbox-Systeme, die auf der einen Seite mit dem ISDN-Netz und auf der anderen Seite per SIP mit Ihrem Asterisk-Server verbunden werden. Stellen Sie dabei aber sicher, dass in dieser Blackbox nicht auch ein Asterisk läuft und der Hersteller einfach nur hoch pokert.
+* Kaufen Sie sich eine ISDN-Karte, die das Problem über einen speziellen Treiber löst. So hat z. B. Sangoma aus Kanada das Problem erkannt und liefert einen speziellen Asterisk-Treiber, der nicht pro B-Kanals alle 1 ms, sondern pro ISDN-Port (also 2 B-Kanäle bzw. 30 bei einem PRI) alle 10 ms einen Interrupt zum System gibt. So haben Sie keine Nachteile, kommen aber mit wesentlich kleinerer Server-Hardware aus oder können wesentlich mehr B-Kanäle auf gleicher Hardware zum Laufen bringen.
+
+[[isdn-interne-analoge-faxe]]
+=== Interne analoge Faxgeräte
+
+Sollten Sie extern über ISDN mit dem Festnetz verbunden sein und
+intern noch ein analoges Fax betreiben, so bekommen Sie unweigerlich
+ein Timing-Problem bei längeren Faxen. Der Grund liegt in der
+unterschiedlichen Taktung der Audio-Kanäle. Die ISDN-Karte benutzt
+dafür den Takt aus dem öffentlichen ISDN-Netz. Dieser ist
+atomuhr-genau und sehr verlässlich. Die Karte mit den analogen Ports
+benutzt für die Taktung eine eigene Takteinheit, für die meist sehr
+günstige und entsprechend ungenaue Module verbaut werden. Unabhängig
+von der Genauigkeit der Taktung der Analog-Karte gibt es immer einen
+Taktunterschied zwischen der ISDN- und der Analog-Karte. Dieser
+Taktunterschied wird eine Zeit lang mit einem Puffer abgefedert, aber
+nach einer gewissen Zeit (im Schnitt alle zwei Faxseiten) kommt es zu
+einem Aussetzer, weil der Puffer leer ist und ein Stück Audio verloren
+geht. Die Fehlerkorrektur der Faxe beruht auf analoger Technologie der
+70er- und 80er-Jahre. Damals gab es dieses Problem noch nicht, und
+deshalb können Faxgeräte heute mit diesen Aussetzern nur sehr schlecht
+umgehen. Das Resultat ist meistens eine schwarze Linie oder sonst ein
+Fehler auf dem Fax. Im besten Fall sieht man nichts, und im
+schlimmsten Fall bricht die Übertragung ab.
+
+Auch bei diesem Problem gibt es mehrere
+Lösungsmöglichkeiten:
+
+* Falls Sie auf Ihr analoges Faxgerät verzichten können, ist ein Softwarefax auf dem Server eine preisgünstige und sehr gute Alternative (siehe dazu die xref:faxserver.adoc[Beschreibung im Fax-Kapitel]).
+* An die gleiche ISDN-Karte angeschlossene http://de.wikipedia.org/wiki/Terminaladapter[a/b-Wandler] (auch ISDN-Terminaladapter oder a/b-Adapter genannt) lösen das Problem meistens ebenfalls. Sollten Sie diese an eine andere ISDN-Karte im System anschließen, müssen Sie überprüfen, ob der Takt der beiden Karten intern synchronisiert wird.
+* Die technisch einfachste Lösung hat auch hier wieder Sangoma aus Kanada. Bei Sangoma-Karten kann der Takt einer ISDN-Karte mit einem kleinen Kabel einfach auf eine Analog-Karte übertragen werden. Dann benutzt die Analog-Karte ebenfalls den Atomzeit-Takt aus dem ISDN-Festnetz.
+
+[[isdn-hersteller-und-treiber]]
+== Hersteller und Treiber
+
+ISDN-Kartenhersteller gibt es wie den sprichwörtlichen Sand am
+Meer. Die in diesem Buch beschriebenen Hersteller und Karten sind nur
+eine sehr subjektive Auswahl. Aus diesem Dilemma gibt es keinen Ausweg.
+Ansonsten müsste man ein extra Buch "ISDN-Karten-Übersicht für Asterisk"
+herausbringen.
+
+[IMPORTANT]
+====
+Die Angaben zur Hardware und den Treibern basieren auf dem
+Zeitpunkt der Drucklegung des Buches. Bitte schauen Sie
+sicherheitshalber hin und wieder auf die http://das-asterisk-buch.de[Webseite zum Buch].
+Dort wird es Updates geben.
+====
+
+[[isdn-hersteller-digium]]
+=== Digium
+
+Als die für Asterisk verantwortliche Firma bietet http://www.digium.com[Digium] seit einigen Jahren auch
+ISDN-Karten an. Angefangen hat Digium mit den auf dem amerikanischen
+Markt sehr viel beliebteren Analog-Karten. Der Vorteil von
+Digium-Karten liegt klar auf der Hand: Es gibt fast immer zeitgleich
+auch aktualisierte Treiber. In der Vergangenheit waren diese Treiber
+eher von durchschnittlicher Qualität, und es gab immer mal wieder
+Probleme. Digium hat für die neue Treibergeneration (DAHDI) Besserung
+versprochen.
+
+Ein zentrales Problem von Digium besteht im Support für den
+deutschen Raum. Dass Digium nicht mal eigene deutsche Sprachprompts
+herausbringt, spricht da schon Bände. Es ist zu hoffen, dass der
+Konkurrenzdruck von anderen Herstellern irgendwann so groß wird, das
+Digium dies für den normalen deutschen User verbessert. Das Argument
+"Mit dem Kauf einer Digium-Karte unterstützen Sie die Entwicklung von
+Asterisk" kann nicht über mäßigen Support und suboptimale Treiber
+hinwegtrösten.
+
+[[isdn-hersteller-sangoma]]
+=== Sangoma
+
+http://www.sangoma.com[Sangoma] ist in
+Nordamerika schon lange ein Geheimtipp in der Asterisk-Community.
+Sangoma ist eine Firma, die schon seit 1984 auf dem Telefoniemarkt ist
+und ausschließlich Hardware und entsprechende Treiber herstellt. Die
+angebotenen Analog- und ISDN-Karten sind von einer ausgesprochen guten
+Qualität, und der Support ist exzellent.footnote:[Sicherlich sollte man lieber eine Support-Anfrage in Englisch verfassen, aber im Zweifelsfall wird man auch auf eine deutsche Anfrage Hilfe bekommen.] Sangoma macht sich um viele wichtige Kleinigkeiten
+Gedanken und hat oft sehr gute Ideen. Speziell für den deutschen Markt
+wurde z. B. mit der B700 eine kombinierte Analog- und ISDN-Karte
+entwickelt.
+
+Als Nachteil in der "reinen" Open-Source-Lehre kann man
+allerdings die Verwendung eines Binary-only-ISDN-Stacks einer
+französischen Firma sehen. Sangoma argumentiert dabei, dass dieser
+komerzielle Stack für ISDN zertifiziert ist und entsprechend sauber
+läuft, was für den Open-Source-mISDN-Stack nicht immer gilt.
+
+[[isdn-hersteller-no-name-hfc]]
+=== No-Name-HFC-Karten
+
+Die breite Masse an ISDN-Karten wird in Deutschland von den
+No-Name-Herstellern verkauft. Die Karten werden für unter 100 Euro auf
+den Markt gespült. Ein Support ist bei diesen Herstellern fast nie zu
+bekommen (was bei dem Preis aber auch nicht möglich ist). Die Karten
+werden fast immer mit mISDN in Betrieb genommen. Bitte lesen Sie in
+xref:welche-isdn-karte.adoc[Abschnitt 10.2, „Welche ISDN-Karte soll ich nehmen?“] mehr zu diesen Thema.
+
+[[isdn-installationsanleitungen]]
+== Installationsanleitungen für ISDN-Karten
+
+Installationsanleitungen für Asterisk mit verschiedenen
+ISDN-Karten und entsprechenden Treibern finden Sie in xref:installationsanleitungen-asterisk-karten-isdn-analog.adoc[Anhang B, _Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+Analog-Karten_].

@@ -1,0 +1,105 @@
+[[functions-enumlookup]]
+= `ENUMLOOKUP()`
+
+Asterisk 1.4:
+
+[source]
+----
+ENUMLOOKUP(Nummer[|Dienst[|Optionen|Eintragsnr[|Zonen-Suffix]]])
+----
+
+Asterisk 1.6:
+
+[source]
+----
+ENUMLOOKUP(Nummer[,Dienst[,Optionen,Eintragsnr[,Zonen-Suffix]]])
+----
+
+Schlägt eine Nummer mit ENUM (xref:glossar.adoc#glossar-enum[ENUM]) nach.
++_`Dienst`_+ kann unter anderem
+`sip` (Default), `iax2`, `h323`,
+`tel` oder `ALL` sein. Mit der Option `c`
+wird die Anzahl der Einträge zurückgegeben. Die
++_`Eintragsnr`_+ (Default `1`)
+wählt einen Eintrag aus der Ergebnisliste aus.
++_`Zonen-Suffix`_+ (Default:
+`e164.arpa`) ist die ENUM-Zone. Eine ausführliche Beschreibung
+und Beispiele finden Sie in `doc/README.enum` (1.2) bzw.
+`doc/enum.txt` (1.4).
+
+[source]
+----
+; in Asterisk 1.2:
+exten => 123,1,Set(foo=${ENUMLOOKUP(+${CALLERID(num)},sip,1,freenum.org)})
+
+; in Astarisk 1.4:
+exten => 123,1,Set(foo=${ENUMLOOKUP(+${CALLERID(num)},sip,,1,freenum.org)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'ENUMLOOKUP' =-
+
+[Syntax]
+ENUMLOOKUP(number[|Method-type[|options[|record#[|zone-suffix]]]])
+
+[Synopsis]
+ENUMLOOKUP allows for general or specific querying of NAPTR records or counts of NAPTR types for ENUM or ENUM-like DNS pointers
+
+[Description]
+Option 'c' returns an integer count of the number of NAPTRs of a certain RR type.
+Combination of 'c' and Method-type of 'ALL' will return a count of all NAPTRs for the record.
+Defaults are: Method-type=sip, no options, record=1, zone-suffix=e164.arpa
+
+For more information, see doc/enum.txt
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,7 @@
+-= Info about function 'ENUMLOOKUP' =-
+
+[Syntax]
+- ENUMLOOKUP(number[,Method-type[,options|record#[,zone-suffix]]])
++ ENUMLOOKUP(number[|Method-type[|options[|record#[|zone-suffix]]]])
+
+[Synopsis]
+ENUMLOOKUP allows for general or specific querying of NAPTR records or counts of NAPTR types for ENUM or ENUM-like DNS pointers
+@@ -11,4 +11,4 @@
+Combination of 'c' and Method-type of 'ALL' will return a count of all NAPTRs for the record.
+Defaults are: Method-type=sip, no options, record=1, zone-suffix=e164.arpa
+
+- For more information, see README.enum
++ For more information, see doc/enum.txt
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,14 +1,18 @@
+-= Info about function 'ENUMLOOKUP' =-
+
+[Syntax]
+- ENUMLOOKUP(number[|Method-type[|options[|record#[|zone-suffix]]]])
++ ENUMLOOKUP(number[,Method-type[,options[,record#[,zone-suffix]]]])
+
+[Synopsis]
+- ENUMLOOKUP allows for general or specific querying of NAPTR records or counts of NAPTR types for ENUM or ENUM-like DNS pointers
++ General or specific querying of NAPTR records for ENUM or ENUM-like DNS pointers
+
+[Description]
+Option 'c' returns an integer count of the number of NAPTRs of a certain RR type.
+Combination of 'c' and Method-type of 'ALL' will return a count of all NAPTRs for the record.
++ Option 'u' returns the full URI and does not strip off the URI-scheme.
++ Option 's' triggers ISN specific rewriting
++ Option 'i' looks for branches into an Infrastructure ENUM tree
++ Option 'd' for a direct DNS lookup without any flipping of digits
+Defaults are: Method-type=sip, no options, record=1, zone-suffix=e164.arpa
+
+- For more information, see doc/enum.txt
++ For more information, see doc/asterisk.pdf
+
+.Siehe auch
+xref:functions-enumquery.adoc[Abschnitt D.28, „`ENUMQUERY()`“],
+`enum.conf`, xref:functions-dundilookup.adoc[Abschnitt D.24, „`DUNDILOOKUP()`“]

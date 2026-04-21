@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2.3. Hello-World im CLI aufrufen</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-hello-world.html" title="Kapitel 2. „Hello World“" /><link rel="prev" href="Asterisk-auf-dem-Server-installieren.html" title="2.2. Asterisk auf dem Server installieren" /><link rel="next" href="hello-world-mit-einem-sip-telefon.html" title="2.4. Hello-World mit einem SIP-Telefon" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="2.3. Hello-World im CLI aufrufen" id="hello-world-im-cli"><div class="titlepage"><div><div><h2 class="title" id="hello-world-im-cli">2.3. Hello-World im CLI aufrufen</h2></div></div></div><div class="para">Im ersten Beispiel werden wir einen einfachen Hello-World-Dialplan
+    programmieren und diesen von der Asterisk-Konsole – dem CLI (Command
+    Line Interface) – aufrufen.</div><div class="section" title="Asterisk konfigurieren" id="asterisk-conf-files"><div class="titlepage"><div><div><h3 class="title" id="asterisk-conf-files">Asterisk konfigurieren</h3></div></div></div><div class="para">Im Verzeichnis <code class="filename">/etc/asterisk/</code> finden Sie nach
+      einer frischen Installation alle Konfigurationsdateien in einer
+      einfachen Standardausführung:</div><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /etc/asterisk/</code></strong></span>
+debian:/etc/asterisk# <span class="bold bold"><strong><code class="command">ls</code></strong></span>
+adsi.conf           features.conf     phone.conf
+adtranvofr.conf     festival.conf     privacy.conf
+agents.conf         followme.conf     queues.conf
+alarmreceiver.conf  func_odbc.conf    res_odbc.conf
+alsa.conf           gtalk.conf        res_pgsql.conf
+amd.conf            h323.conf         res_snmp.conf
+asterisk.adsi       http.conf         rpt.conf
+asterisk.conf       iax.conf          rtp.conf
+cdr.conf            iaxprov.conf      say.conf
+cdr_custom.conf     indications.conf  sip.conf
+cdr_manager.conf    jabber.conf       sip_notify.conf
+cdr_odbc.conf       logger.conf       skinny.conf
+cdr_pgsql.conf      manager.conf      sla.conf
+cdr_tds.conf        meetme.conf       smdi.conf
+codecs.conf         mgcp.conf         telcordia-1.adsi
+dnsmgr.conf         misdn.conf        udptl.conf
+dundi.conf          modules.conf      users.conf
+enum.conf           musiconhold.conf  voicemail.conf
+extconfig.conf      muted.conf        vpb.conf
+extensions.ael      osp.conf          zapata.conf
+extensions.conf     oss.conf
+debian:/etc/asterisk# </pre><div class="para">Dies ist jetzt eine recht umfangreiche Liste, aber – keine
+      Angst – für unser Hello-World-Beispiel müssen wir uns nur mit
+      einer von diesen Dateien näher befassen. Diese mit <code class="command">make
+      samples</code> erstellten und recht komplexen Default-Dateien
+      verschieben wir dazu erst einmal nach
+      <code class="filename">/var/tmp/asterisk-etc-backup/</code> (damit wir später bei
+      Bedarf darauf zugreifen können):</div><pre class="screen">debian:/etc/asterisk# <span class="bold bold"><strong><code class="command">mkdir -p /var/tmp/asterisk-etc-backup</code></strong></span>
+debian:/etc/asterisk# <span class="bold bold"><strong><code class="command">mv extensions.* /var/tmp/asterisk-etc-backup/</code></strong></span>
+debian:/etc/asterisk# </pre><div class="para">Legen Sie mit Ihrem Lieblingseditor<sup>[<a id="idp9329808" href="#ftn.idp9329808" class="footnote">4</a>]</sup> die Datei
+      <code class="filename">/etc/asterisk/extensions.conf</code> mit folgendem Inhalt
+      an:</div><pre class="programlisting">[default]
+exten =&gt; 1001,1,Answer()
+exten =&gt; 1001,2,Playback(hello-world)
+exten =&gt; 1001,3,Hangup()
+</pre></div><div class="section" title="Asterisk starten und Hello-World abrufen" id="asterisk-konfigurieren"><div class="titlepage"><div><div><h3 class="title" id="asterisk-konfigurieren">Asterisk starten und Hello-World
+      abrufen</h3></div></div></div><div class="para">Und diese paar Zeilen sollen ausreichen? Dabei heißt es doch
+      immer, Asterisk sei so kompliziert. Probieren wir es einmal aus! Mit dem
+      Befehl <code class="command">asterisk -c</code> starten Sie Asterisk:</div><pre class="screen">debian:/etc/asterisk# <span class="bold bold"><strong><code class="command">asterisk -c</code></strong></span>
+Asterisk 1.4.21, Copyright (C) 1999 - 2008 Digium, Inc. and others.
+Created by Mark Spencer &lt;markster@digium.com&gt;
+<em class="replaceable"><code>[...]</code></em>
+[ Booting...
+[ Reading Master Configuration ]
+<em class="replaceable"><code>[...]</code></em>
+Asterisk Ready.
+*CLI&gt; </pre><div class="para">Mit dem erfolgreichen Start von Asterisk erhalten wir ebenfalls
+      eine Konsole, auf der wir mit dem laufenden Asterisk-Prozess
+      kommunizieren können. Vor uns sehen wir jetzt das Command Line Interface
+      (CLI) von Asterisk. Hier können wir aktiv in das Geschehen
+      eingreifen.</div><div class="note"><h2>Anmerkung</h2><div class="para">Wer übrigens auf seinem Terminal Probleme mit den
+        Escape-Sequenzen für die Farben hat kann beim Aufrufen zusätzlich den
+        Parameter <code class="code">-n</code> (<span class="quote">„<span class="quote"><span class="bold bold"><strong>n</strong></span>o
+        color</span>“</span>) verwenden um die Farben abzuschalten.</div></div><div class="para">Als erste Handlung rufen wir mit dem Befehl <code class="command">console dial
+      1001</code> das Hello-World-Beispiel ab:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">console dial 1001</code></strong></span>
+*CLI&gt;  &lt;&lt; Console call has been answered &gt;&gt; 
+ &lt;&lt; Hangup on console &gt;&gt; 
+
+*CLI&gt;</pre></div><div class="para">Mit <code class="command">console dial 1001</code> rufen wir die Extension
+      1001 auf. Diese spielt dann den Sprachbaustein
+      <code class="filename">hello-world.gsm</code> aus dem Verzeichnis
+      <code class="filename">/var/lib/asterisk/sounds/</code> ab.<div class="note"><h2>Anmerkung</h2><div class="para"><code class="command">console dial</code> agiert wie ein ganz einfaches
+          Telefon. Man kann eine Extension anrufen und auch über die
+          Soundkarte hören.</div></div></div><div class="section" title="Was ist eine Extension?" id="was-ist-eine-extension"><div class="titlepage"><div><div><h4 class="title" id="was-ist-eine-extension">Was ist eine Extension?</h4></div></div></div><div class="para">Eine Extension ist eine Programmeinheit in einem Dialplan. Jede
+        Extension besteht mindestens aus einer Zeile, die im
+        Format<pre class="programlisting">exten =&gt; Name-der-Extension,Priorität,Applikation</pre></div><div class="para">geschrieben wird. Die Priorität ist dabei die Reihenfolge der
+        einzelnen Programmabschnitte. Unsere Extension 1001 hat drei
+        Prioritäten:<pre class="programlisting">exten =&gt; 1001,1,Answer()
+exten =&gt; 1001,2,Playback(hello-world)
+exten =&gt; 1001,3,Hangup()
+</pre></div><div class="para">Die Applikationen sind selbsterklärend:<div class="itemizedlist"><ul><li class="listitem"><div class="para"><code class="command">Answer()</code></div><div class="para">hebt ab und öffnet damit einen neuen Asterisk-Channel
+              (siehe <a class="link" href="applications-answer.html" title="C.10. Answer()">Hilfetext zu
+              Answer()</a>).</div></li><li class="listitem"><div class="para"><code class="command">Playback(hello-world)</code></div><div class="para">spielt im aktuellen Channel die Datei
+              <code class="filename">hello-world.gsm</code> ab (siehe <a class="link" href="applications-playback.html" title="C.117. Playback()">Hilfetext zu
+              Playback()</a>).</div></li><li class="listitem"><div class="para"><code class="command">Hangup()</code></div><div class="para">legt auf und schließt damit den Channel (siehe <a class="link" href="applications-hangup.html" title="C.68. Hangup()">Hilfetext zu
+              Hangup()</a>).</div></li></ul></div></div></div><div class="section" title="Verbosity erhöhen" id="cli-verbosity"><div class="titlepage"><div><div><h4 class="title" id="cli-verbosity">Verbosity erhöhen</h4></div></div></div><div class="para">Zum Debuggen von Asterisk empfiehlt es sich oft, im CLI die
+        Verbosity (also die "Gesprächigkeit") von Asterisk zu erhöhen. Wenn
+        Asterisk mit <code class="command">asterisk -c</code> gestartet wird, ist der
+        Verbose-Level auf 0 eingestellt (die Range reicht von 0 bis 10). Im
+        CLI können Sie mit dem Befehl <code class="command">core set verbose 5</code>
+        den Level auf 5 stellen (was ein guter Debug-Level ist):<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">core set verbose 5</code></strong></span>
+Verbosity was 0 and is now 5
+*CLI&gt; </pre></div><div class="para">Wenn Sie jetzt den Befehl <code class="command">console dial 1001</code>
+        ausführen, dann bekommen Sie von Asterisk sehr viel mehr Informationen
+        über den Ablauf im Dialplan:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">console dial 1001</code></strong></span>
+  == Console is full duplex
+*CLI&gt;     -- Executing [1001@default:1] Answer("Console/dsp", "") in new stack
+ &lt;&lt; Console call has been answered &gt;&gt; 
+    -- Executing [1001@default:2] Playback("Console/dsp", "hello-world") in new stack
+    -- &lt;Console/dsp&gt; Playing 'hello-world' (language 'en')
+*CLI&gt;     -- Executing [1001@default:3] Hangup("Console/dsp", "") in new stack
+  == Spawn extension (default, 1001, 3) exited non-zero on 'Console/dsp'
+ &lt;&lt; Hangup on console &gt;&gt; 
+
+*CLI&gt; </pre></div><div class="para">Sie können den Verbose-Level aber auch beim Starten von Asterisk
+        mit dem Softwareschalter <code class="code">-vvvvv</code> auf den Level 5
+        setzen.<div class="warning"><h2>Warnung</h2><div class="para">Benutzen Sie bitte im CLI nie <code class="command">core set
+            debug</code>, um den Dialplan zu debuggen! Das ist eine für
+            Asterisk-Entwickler eingebaute Möglichkeit, Fehler im Quellcode
+            von Asterisk zu analysieren. Das hilft beim Dialplan aber
+            nicht.</div></div></div></div><div class="section" title="Asterisk stoppen" id="cli-stop-now"><div class="titlepage"><div><div><h4 class="title" id="cli-stop-now">Asterisk stoppen</h4></div></div></div><div class="para">Geben Sie einfach im CLI den Befehl <code class="command">stop now</code>
+        ein, und Asterisk fährt herunter:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">stop now</code></strong></span>
+debian:/etc/asterisk# </pre></div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp9329808" href="#idp9329808" class="para">4</a>] </sup>Wenn Sie keinen Editor kennen, den Sie in einem
+          Terminalfenster verwenden können, empfehle ich Ihnen
+          <code class="command">nano</code>. Unter Debian ist dieser einfach als
+          Benutzer root mit <code class="command">apt-get -y install nano</code> zu
+          installieren. Danach öffnen Sie mit <code class="command">nano
+          dateiname</code> die Datei. In Nano selbst sehen Sie im unteren
+          Bereich des Bildschirms die wichtigsten Befehle.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="breadcrumb-first-level level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="installation-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="Asterisk-auf-dem-Server-installieren.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Asterisk auf dem Server installieren</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Hello-World im CLI aufrufen</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="hello-world-im-cli.html#asterisk-conf-files" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Asterisk konfigurieren</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="hello-world-im-cli.html#asterisk-konfigurieren" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Asterisk starten und Hello-World
+      abrufen</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="hello-world-mit-einem-sip-telefon.html" title="pfc level3 breadcrumb-link section sectlevel1">Hello-World mit einem
+    SIP-Telefon</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="minimale-telefonanlage.html" title="pfc level3 breadcrumb-link section sectlevel1">Eine Minimal-Telefonanlage mit zwei SIP-Telefonen</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="rechteverwaltung-mit-contexten.html" title="pfc level3 breadcrumb-link section sectlevel1">Rechteverwaltung mit Contexten</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="sip-ins-oeffentliche-netz.html" title="pfc level3 breadcrumb-link section sectlevel1">Telefonate vom und in das öffentliche Netz</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="pfc level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="pfc level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="case-study.html" title="pfc level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="pfc level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="ael.html" title="pfc level2 breadcrumb-link chapter">AEL</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="Asterisk-auf-dem-Server-installieren.html"><strong>Zurück</strong>2.2. Asterisk auf dem Server installieren</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="hello-world-mit-einem-sip-telefon.html"><strong>Weiter</strong>2.4. Hello-World mit einem
+    SIP-Telefon</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

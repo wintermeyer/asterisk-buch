@@ -1,0 +1,57 @@
+[[functions-agc]]
+= `AGC()`
+
+[source]
+----
+AGC(param)
+----
+
+Setzt die _automatische Verstärkungsregelung_(engl. _automatic gain control_). Dies dient
+der Normalisierung von schwankungsbehafteten eingehenden und ausgehenden
+Sprachsignalen. Damit wird also die Lautstärke vom Channel immer auf einem
+bestimmten Pegel gehalten, sprich _normalisiert_. Der
+Wert, der gesetzt werden darf, muss zwischen 1 und 32768 liegen. Je größer
+die Zahl, desto lauter wird der Channel wiedergegeben. Als Parameter gibt
+man die Richtung an:
+
+`rx`:: Für Sprache, die vom Channel empfangen wird
+`tx`:: Für Sprache, die vom Channel gesendet wird
+
+[source]
+----
+; Normalisierung auf einem Channel setzen
+exten => 123,1,Answer()
+exten => 123,n,Set(AGC(tx)=15000)
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'AGC' =-
+
+[Syntax]
+Not available
+
+[Synopsis]
+Apply automatic gain control to audio on a channel
+
+[Description]
+The AGC function will apply automatic gain control to audio on the channel
+that this function is executed on. Use rx for audio received from the channel
+and tx to apply AGC to the audio being sent to the channel. When using this
+function, you set a target audio level. It is primarily intended for use with
+analog lines, but could be useful for other channels, as well. The target volume
+is set with a number between 1 and 32768. Larger numbers are louder.
+Example Usage:
+Set(AGC(rx)=8000)
+Set(AGC(tx)=8000)
+Set(AGC(rx)=off)
+Set(AGC(tx)=off)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-denoise.adoc[Abschnitt D.20, „`DENOISE()`“],xref:functions-volume.adoc[Abschnitt D.112, „`VOLUME()`“]

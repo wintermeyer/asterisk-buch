@@ -1,0 +1,70 @@
+[[applications-chanisavail]]
+= `ChanIsAvail()`
+
+Ermittelt, ob ein bestimmter Channel momentan verfügbar
+ist.
+
+[source]
+----
+ChanIsAvail(Technology1/Resource1[&Technology2/Resource2...][,Optionen])
+----
+
+Prüft, ob irgendeiner der angeforderten Kanäle verfügbar ist (in
+der angegebenen Reihenfolge). Liefert 0 zurück bei Erfolg oder -1, falls
+kein Kanal verfügbar ist.
+
+Ist die Option `s` (für _state_)
+angegeben, wird Asterisk den Channel als nicht verfügbar betrachten, wenn er
+in Gebrauch ist – sogar dann, falls er einen weiteren anderen Anruf
+aufnehmen kann. Mit der Option `j` wird, falls der Channel nicht
+verfügbar ist, zur Priorität n+101 gesprungen.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ChanIsAvail' =-
+
+[Synopsis]
+Check channel availability
+
+[Description]
+ChanIsAvail(Technology/resource[&Technology2/resource2...][|options]):
+This application will check to see if any of the specified channels are
+available. The following variables will be set by this application:
+${AVAILCHAN} - the name of the available channel, if one exists
+${AVAILORIGCHAN} - the canonical channel name that was used to create the channel
+${AVAILSTATUS} - the status code for the available channel
+Options:
+s - Consider the channel unavailable if the channel is in use at all
+j - Support jumping to priority n+101 if no channel is available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,12 +4,15 @@
+Check channel availability
+
+[Description]
+- ChanIsAvail(Technology/resource[&Technology2/resource2...][|options]):
++ ChanIsAvail(Technology/resource[&Technology2/resource2...][,options]):
+This application will check to see if any of the specified channels are
+- available. The following variables will be set by this application:
+- ${AVAILCHAN} - the name of the available channel, if one exists
+- ${AVAILORIGCHAN} - the canonical channel name that was used to create the channel
+- ${AVAILSTATUS} - the status code for the available channel
++ available.
+Options:
+- s - Consider the channel unavailable if the channel is in use at all
+- j - Support jumping to priority n+101 if no channel is available
++ a - Check for all available channels, not only the first one.
++ s - Consider the channel unavailable if the channel is in use at all.
++ t - Simply checks if specified channels exist in the channel list
++ (implies option s).
++ This application sets the following channel variable upon completion:
++ AVAILCHAN - the name of the available channel, if one exists
++ AVAILORIGCHAN - the canonical channel name that was used to create the channel
++ AVAILSTATUS - the status code for the available channel

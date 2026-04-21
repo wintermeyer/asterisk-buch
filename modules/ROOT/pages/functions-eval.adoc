@@ -1,0 +1,49 @@
+[[functions-eval]]
+= `EVAL()`
+
+[source]
+----
+EVAL(Variable)
+----
+
+Wertet eine Variable doppelt aus. Das lässt sich am besten an einem
+Beispiel erklären: Wenn die Variable `${VAR}` den String
+"`${VAR2}`" enthält, würde sie ohne `Eval()` zu diesem
+String ausgewertet. Mit `Eval()` wird auch `${VAR2}`
+noch einmal zu ihrem Inhalt ausgewertet.
+
+[source]
+----
+; wenn VAR den String "${VAR2}" enthält und VAR2 den String "Hallo Welt":
+exten => 123,1,Set(foo=${EVAL(${VAR})})
+; dann ist foo jetzt "Hallo Welt"
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'EVAL' =-
+
+[Syntax]
+EVAL(<variable>)
+
+[Synopsis]
+Evaluate stored variables.
+
+[Description]
+Using EVAL basically causes a string to be evaluated twice.
+When a variable or expression is in the dialplan, it will be
+evaluated at runtime. However, if the result of the evaluation
+is in fact a variable or expression, using EVAL will have it
+evaluated a second time. For example, if the variable ${MYVAR}
+contains "${OTHERVAR}", then the result of putting ${EVAL(${MYVAR})}
+in the dialplan will be the contents of the variable, OTHERVAR.
+Normally, by just putting ${MYVAR} in the dialplan, you would be
+left with "${OTHERVAR}".
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

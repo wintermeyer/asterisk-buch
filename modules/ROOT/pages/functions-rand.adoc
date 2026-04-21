@@ -1,0 +1,75 @@
+[[functions-rand]]
+= `RAND()`
+
+[source]
+----
+RAND(min,max)
+----
+
+Gibt eine Zahl zwischen `min` und `max` (beide
+einschließlich) zurück. Der Default für `min` ist 0, der für
+`max` ist die größte auf dem System darstellbare Ganzzahl (meist
+2147483647).
+
+[source]
+----
+; einen zufälligen Wert zwischen 1 und 10 (einschließlich) wählen:
+exten => 123,1,Set(zufall=${RAND(1,10)})
+
+; Glücksspiel:
+exten => 123,1,GotoIf($[${RAND(0,100)} < 25]?gewonnen:verloren)
+exten => gewonnen,1,Playback(gewonnen)
+exten => gewonnen,n,Goto(123,1)
+exten => verloren,1,Playback(verloren)
+exten => verloren,n,Goto(123,1)
+----
+
+[NOTE]
+====
+Vor Asterisk 1.4 muss man stattdessen die Applikation
+`Random()` verwenden.
+====
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'RAND' =-
+
+[Syntax]
+RAND([min][|max])
+
+[Synopsis]
+Choose a random number in a range
+
+[Description]
+Choose a random number between min and max. Min defaults to 0, if not
+specified, while max defaults to RAND_MAX (2147483647 on many systems).
+Example: Set(junky=${RAND(1|8)});
+Sets junky to a random number between 1 and 8, inclusive.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,7 +1,7 @@
+-= Info about function 'RAND' =-
+
+[Syntax]
+- RAND([min][|max])
++ RAND([min][,max])
+
+[Synopsis]
+Choose a random number in a range
+@@ -9,5 +9,5 @@
+[Description]
+Choose a random number between min and max. Min defaults to 0, if not
+specified, while max defaults to RAND_MAX (2147483647 on many systems).
+- Example: Set(junky=${RAND(1|8)});
++ Example: Set(junky=${RAND(1,8)});
+Sets junky to a random number between 1 and 8, inclusive.
+
+.Siehe auch
+xref:applications-random.adoc[Abschnitt C.125, „`Random()`“]

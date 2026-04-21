@@ -1,0 +1,89 @@
+[[applications-goto]]
+= `Goto()`
+
+Springt zu einer bestimmten Priorität, Extension und einem
+bestimmten Context.
+
+[source]
+----
+Goto([[Context,]Extension,]Priorität)
+----
+
+[source]
+----
+Goto(benannte_Priorität)
+----
+
+Übergibt die Kontrolle des aktuellen Channels ohne Möglichkeit der
+Rückkehr an die spezifizierte Priorität und setzt optional Extension und
+Context des Ziels.
+
+Optional können Sie die Anwendung dazu benutzen, zu der durch den
+Parameter `benannte_Priorität` angegebenen Priorität (also
+Priorität mit Label) zu gelangen. Benannte Prioritäten funktionieren
+ausschließlich in der aktuellen Extension.
+
+Liefert immer 0 zurück, auch falls der gegebene Context, die
+gegebene Extension oder Priorität nicht gültig sind.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,2,Set(COUNT=1)
+exten => 123,3,SayNumber(${COUNT})
+exten => 123,4,Set(COUNT=$[ ${COUNT} + 1 ])
+exten => 123,5,Goto(3)
+
+; das gleiche mit einer benannten Priorität:
+exten => 124,1,Answer()
+exten => 124,2,Set(COUNT=1)
+exten => 124,3(ansage),SayNumber(${COUNT})
+exten => 124,4,Set(COUNT=$[ ${COUNT} + 1 ])
+exten => 124,5,Goto(ansage)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Goto' =-
+
+[Synopsis]
+Jump to a particular priority, extension, or context
+
+[Description]
+Goto([[context|]extension|]priority): This application will set the current
+context, extension, and priority in the channel structure. After it completes, the
+pbx engine will continue dialplan execution at the specified location.
+If no specific extension, or extension and context, are specified, then this
+application will just set the specified priority of the current extension.
+At least a priority is required as an argument, or the goto will return a -1,
+and the channel and call will be terminated.
+If the location that is put into the channel information is bogus, and asterisk cannot
+find that location in the dialplan,
+then the execution engine will try to find and execute the code in the 'i' (invalid)
+extension in the current context. If that does not exist, it will try to execute the
+'h' extension. If either or neither the 'h' or 'i' extensions have been defined, the
+channel is hung up, and the execution of instructions on the channel is terminated.
+What this means is that, for example, you specify a context that does not exist, then
+it will not be possible to find the 'h' or 'i' extensions, and the call will terminate!
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Jump to a particular priority, extension, or context
+
+[Description]
+- Goto([[context|]extension|]priority): This application will set the current
++ Goto([[context,]extension,]priority): This application will set the current
+context, extension, and priority in the channel structure. After it completes, the
+pbx engine will continue dialplan execution at the specified location.
+If no specific extension, or extension and context, are specified, then this
+
+.Siehe auch
+xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“], xref:applications-gotoiftime.adoc[Abschnitt C.67, „`GotoIfTime()`“], xref:applications-gosub.adoc[Abschnitt C.63, „`Gosub()`“], xref:applications-gosubif.adoc[Abschnitt C.64, „`GosubIf()`“],
+xref:applications-macro.adoc[Abschnitt C.81, „`Macro()`“], xref:extensions.ael.adoc#ael-labels-goto-jump[„Labels, goto und jump“]

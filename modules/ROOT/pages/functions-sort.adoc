@@ -1,0 +1,41 @@
+[[functions-sort]]
+= `SORT()`
+
+[source]
+----
+SORT(Schlüssel1:Wert1[,Schlüssel2:Wert2[,...]])
+----
+
+Sortiert eine Liste von Schlüsseln und Werten anhand der Werte (als
+Fließkommazahlen) und gibt eine durch Komma getrennte Liste der Schlüssel
+zurück.
+
+[source]
+----
+; Liste sortieren:
+exten => 123,1,Set(foo=${SORT(vier:4|haelfte:.5|hundert:100|pi:3.14|e:2.71828|minuseins:-1)})
+; foo ist jetzt "minuseins,haelfte,e,pi,vier,hundert"
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SORT' =-
+
+[Syntax]
+SORT(key1:val1[...][,keyN:valN])
+
+[Synopsis]
+Sorts a list of key/vals into a list of keys, based upon the vals
+
+[Description]
+Takes a comma-separated list of keys and values, each separated by a colon, and returns a
+comma-separated list of the keys, sorted by their values. Values will be evaluated as
+floating-point numbers.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

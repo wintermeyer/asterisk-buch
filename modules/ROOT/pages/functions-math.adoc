@@ -1,0 +1,70 @@
+[[functions-math]]
+= `MATH()`
+
+[source]
+----
+MATH(Zahl1 Operator Zahl2[,Ergebnistyp])
+----
+
+Berechnet einfache mathematische Ausdrücke. Mögliche Operatoren sind:
+`+`, `-`, `/`, `*`,
+`<`, `>`, `<=`,
+`>=`, `==`, `%` (Modulo). Ergebnistyp:
+`f`, `float` (Fließkommazahl, Default),
+`i`, `int` (Ganzzahl), `h`,
+`hex` (Wert im Hexadezimal-System), `c`,
+`char` (Byte).
+
+[source]
+----
+; 3*8 als Ganzzahl berechnen:
+exten => 123,1,Set(i=${MATH(3*8,int)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'MATH' =-
+
+[Syntax]
+MATH(<number1><op><number 2>[,<type_of_result>])
+
+[Synopsis]
+Performs Mathematical Functions
+
+[Description]
+Perform calculation on number 1 to number 2. Valid ops are:
++,-,/,*,%%%%,<,>,>=,<=,==
+and behave as their C equivalents.
+<type_of_result> - wanted type of result:
+f, float - float(default)
+i, int - integer,
+h, hex - hex,
+c, char - char
+Example: Set(i=${MATH(123%%%%16,int)}) - sets var i=11
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,14 +1,14 @@
+-= Info about function 'MATH' =-
+
+[Syntax]
+- MATH(<number1><op><number 2>[,<type_of_result>])
++ MATH(<number1><op><number2>[,<type_of_result>])
+
+[Synopsis]
+Performs Mathematical Functions
+
+[Description]
+- Perform calculation on number 1 to number 2. Valid ops are:
+- +,-,/,*,%%%%,<,>,>=,<=,==
++ Perform calculation on number1 to number2. Valid ops are:
++ +,-,/,*,%%%%,<<,>>,^,AND,OR,XOR,<,>,>=,<=,==
+and behave as their C equivalents.
+<type_of_result> - wanted type of result:
+f, float - float(default)

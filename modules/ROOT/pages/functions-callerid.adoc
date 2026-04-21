@@ -1,0 +1,83 @@
+[[functions-callerid]]
+= `CALLERID()`
+
+[source]
+----
+CALLERID(Feld)
+----
+
+Gibt Informationen über den Anrufer zurück oder setzt diese.
+`Feld` ist einer der folgenden Parameter:
+
+`name`:: Name des Anrufers, alphanumerischer String. Sie sollten sich auf wenige Zeichen – z. B. 15 – beschränken.
+`num`:: Nummer, nur Ziffern. (Manchmal findet man auch `number`, was eventuell von der Asterisk-Version abhängt.)
+`all`:: Name und Nummer mit der Nummer in spitzen Klammern, z. B.: "`Peter Meier <012345>`"
+`ani`:: ANIfootnote:[Automatic Number Identification]-Nummer für ausgehende Anrufe
+`dnid`:: DNIDfootnote:[Dialed/Destination Number Identification Service]-Nummer. Die gewählte Nummer. (Manchmal findet man auch `dnis`, was eventuell von der Asterisk-Version abhängt.)
+`rdnis`:: RDNISfootnote:[Redirected Dialed Number Identification Service]-Nummer. Die Nummer, die auf die aktuelle Extension umgeleitet hat, z. B., falls die Nummer einer Voicemailbox nicht die gewählte Extension ist.
+
+Ab Asterisk 1.4 muss z. B. statt der Variablen
+`${CALLERIDNUM}` die Funktion `${CALLERID(num)}`
+verwendet werden, statt `${RDNIS}`
+`$(CALLERID(rdnis))` etc. Die Applikation
+`SetCIDName()` wird durch
++Set(CALLERID(name)=_`Name`_)+ ersetzt,
+`SetCallerID()` durch
++Set(CALLERID(all)=_`Name`_
+<_`Nummer`_>)+ etc.
+
+[source]
+----
+; die Variable foo auf die Anruferkennung setzen:
+exten => 123,1,Set(foo=${CALLERID(all)})
+
+; den Anrufernamen auf "Peter Meier" setzen:
+exten => 123,1,Set(CALLERID(name)="Peter Meier") 
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'CALLERID' =-
+
+[Syntax]
+CALLERID(datatype[,<optional-CID>])
+
+[Synopsis]
+Gets or sets Caller*ID data on the channel.
+
+[Description]
+Gets or sets Caller*ID data on the channel. The allowable datatypes
+are "all", "name", "num", "ANI", "DNID", "RDNIS".
+Uses channel callerid by default or optional callerid, if specified.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,7 @@
+-= Info about function 'CALLERID' =-
+
+[Syntax]
+- CALLERID(datatype)
++ CALLERID(datatype[,<optional-CID>])
+
+[Synopsis]
+Gets or sets Caller*ID data on the channel.
+@@ -9,3 +9,4 @@
+[Description]
+Gets or sets Caller*ID data on the channel. The allowable datatypes
+are "all", "name", "num", "ANI", "DNID", "RDNIS".
++ Uses channel callerid by default or optional callerid, if specified.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -8,5 +8,6 @@
+
+[Description]
+Gets or sets Caller*ID data on the channel. The allowable datatypes
+- are "all", "name", "num", "ANI", "DNID", "RDNIS".
++ are "all", "name", "num", "ANI", "DNID", "RDNIS", "pres",
++ and "ton".
+Uses channel callerid by default or optional callerid, if specified.

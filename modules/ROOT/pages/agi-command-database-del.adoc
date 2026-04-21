@@ -1,0 +1,40 @@
+[[agi-command-database-del]]
+= `DATABASE DEL`
+
+[source]
+----
+DATABASE DEL Familie Schlüssel
+----
+
+Löscht den durch _`Familie`_ und
+_`Schlüssel`_ definierten Eintrag in der
+Asterisk-Datenbank.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| 0 | Fehler
+| 1 | Erfolgreich
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: DATABASE DEL <family> <key>
+Deletes an entry in the Asterisk database for a
+given family and key.
+Returns 1 if successful, 0 otherwise.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -2,3 +2,4 @@
+Deletes an entry in the Asterisk database for a
+given family and key.
+Returns 1 if successful, 0 otherwise.
++ Runs Dead : Yes

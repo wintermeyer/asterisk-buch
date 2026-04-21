@@ -1,0 +1,57 @@
+[[applications-return]]
+= `Return()`
+
+Kehrt aus einem Unterprogramm zurück.
+
+[source]
+----
+Return()
+----
+
+Kehrt aus einem Unterprogramm, das mit `Gosub()` oder
+`GosubIf()` aufgerufen wurde, zu der Anweisung zurück, die im
+Dialplan auf den Sprungbefehl folgt.
+
+[source]
+----
+exten => 123,1,Playback(tt-monkeys)
+exten => 123,n,Gosub(mein-unterprogramm,s,1)
+exten => 123,n,Playback(tt-monkeys)
+exten => 123,n,Hangup()
+
+[mein-unterprogramm]
+exten => s,1,Playback(tt-weasels)
+exten => s,n,Return()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Return' =-
+
+[Synopsis]
+Return from gosub routine
+
+[Description]
+Return()
+Jumps to the last label on the stack, removing it.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,6 @@
+Return from gosub routine
+
+[Description]
+- Return()
+- Jumps to the last label on the stack, removing it.
++ Return([return-value]):
++ Jumps to the last label on the stack, removing it. The return value, if
++ any, is saved in the channel variable GOSUB_RETVAL.
+
+.Siehe auch
+xref:applications-gosub.adoc[Abschnitt C.63, „`Gosub()`“], xref:applications-gosubif.adoc[Abschnitt C.64, „`GosubIf()`“]

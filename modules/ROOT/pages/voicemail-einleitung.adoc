@@ -1,0 +1,11 @@
+[[voicemail-einleitung]]
+= Einleitung
+
+In diesem Kapitel beschäftigen wir uns mit den Möglichkeiten des
+eingebauten Voicemail-Systems
+von Asterisk. Dies ist nicht mit einem _Interactive Voice
+Response System_ (IVR) zu verwechseln, dem Thema von xref:kapitel-ivr.adoc[Kapitel 14, _Interactive-Voice-Response-Systeme (IVR)_].
+
+Da jede Telefonanlage einen Anrufbeantworter (oder auf
+Neudeutsch: ein Voicemail-System)footnote:[In diesem Buch wird das Wort _Voicemail-System_ oder kurz _Voicemail_ anstelle von _Anrufbeantworter_ benutzt. Ein Anrufbeantworter ist nach allgemeinem Verständnis eher ein schwarzer Kasten mit einem Kassettenrekorder neben dem Telefon. Ein Voicemail-System bietet viel mehr Möglichkeiten als ein Anrufbeantworter im herkömmlichen Sinne.] benötigt, haben die Asterisk-Entwickler ein solches System
+als Grundausstattung eingebaut.footnote:[Das Voicemail-System wurde übrigens von den Asterisk-Entwicklern scherzhaft _Comedian Voicemail_ genannt und meldet sich im englischen Original auch so.].

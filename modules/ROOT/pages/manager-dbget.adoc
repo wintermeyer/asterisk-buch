@@ -1,0 +1,22 @@
+[[manager-dbget]]
+= `DBGet`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: DBGet
+Synopsis: Get DB Entry
+Privilege: system,all
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,3 @@
+Action: DBGet
+Synopsis: Get DB Entry
+- Privilege: system,all
++ Privilege: system,reporting,all

@@ -1,0 +1,52 @@
+[[applications-minivmrecord]]
+= `MinivmRecord()`
+
+Nachricht in Mini-VoiceMail hinterlassen.
+
+[source]
+----
+MinivmRecord(benutzer@domain[,optionen])
+----
+
+Dient zum Hinterlassen einer Sprachnachricht eines Anrufers im
+Mini-VoiceMail-System (xref:minivm.adoc[Abschnitt 13.7, „Mini-VoiceMail (MiniVM)“]), ist also gewissermaßen
+die Entsprechung zu `VoiceMail()` (xref:applications-voicemail.adoc[Abschnitt C.186, „`VoiceMail()`“]).
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'MinivmRecord' =-
+
+[Synopsis]
+Receive Mini-Voicemail and forward via e-mail
+
+[Description]
+MinivmRecord(username@domain[,options]):
+This application is part of the Mini-Voicemail system, configured in minivm.conf.
+MiniVM records audio file in configured format and forwards message to e-mail and pager.
+If there's no user account for that address, a temporary account will
+be used with default options.
+The recorded file name and path will be stored in MINIVM_FILENAME and the
+duration of the message will be stored in MINIVM_DURATION
+
+Note: If the caller hangs up after the recording, the only way to send
+the message and clean up is to execute in the "h" extension.
+
+The application will exit if any of the following DTMF digits are
+received and the requested extension exist in the current context.
+0 - Jump to the 'o' extension in the current dialplan context.
+* - Jump to the 'a' extension in the current dialplan context.
+
+Result is given in channel variable MINIVM_RECORD_STATUS
+The possible values are: SUCCESS | USEREXIT | FAILED
+
+Options:
+g(#) - Use the specified amount of gain when recording the voicemail
+message. The units are whole-number decibels (dB).
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-minivmaccmess.adoc[Abschnitt C.94, „`MinivmAccMess()`“], xref:applications-minivmdelete.adoc[Abschnitt C.95, „`MinivmDelete()`“], xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“], xref:applications-minivmnotify.adoc[Abschnitt C.97, „`MinivmNotify()`“], xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“], xref:functions-minivmcounter.adoc[Abschnitt D.65, „`MINIVMCOUNTER()`“]

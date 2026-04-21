@@ -1,0 +1,40 @@
+[[functions-tolower]]
+= `TOLOWER()`
+
+[source]
+----
+TOLOWER(String)
+----
+
+Wandelt die mit dem Parameter übergebene Zeichenkette in
+Kleinbuchstaben um und gibt diese zurück.
+
+[source]
+----
+; ; Wandle den Namen des Anrufers in Kleinbuchstaben um
+exten => 123,1,Answer()
+exten => 123,n,Set(Foo=${TOLOWER(${CALLERID(name)})})
+exten => 123,n,Hangup()
+    
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'TOLOWER' =-
+
+[Syntax]
+TOLOWER(<string>)
+
+[Synopsis]
+Convert the string to lower case.
+
+[Description]
+Example: ${TOLOWER(Example)} returns "example"
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-toupper.adoc[Abschnitt D.103, „`TOUPPER()`“]

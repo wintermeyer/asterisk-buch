@@ -1,0 +1,18 @@
+[[manager-sendtext]]
+= `SendText`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: SendText
+Synopsis: Send text message to channel
+Privilege: call,all
+Description: Sends A Text Message while in a call.
+Variables: (Names marked with * are required)
+*Channel: Channel to send message to
+*Message: Message to send
+ActionID: Optional Action id for message matching.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

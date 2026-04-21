@@ -1,0 +1,48 @@
+[[functions-local]]
+= `LOCAL()`
+
+[source]
+----
+LOCAL(variablenname)
+----
+
+Setzt eine lokale Variabe, die nur im lokalen Gültigkeitsbereich
+des Gosub-Stacks definiert ist.
+
+[source]
+----
+macro beispiel( x ) {
+    Verbose(1,x ist ${x});
+    LOCAL(y)=x+x;
+    Verbose(1,y ist ${y});
+}
+context default {
+    123 => {
+        &beispiel(4);
+        // y wird zwar im Makro gesetzt, ist
+        // aber hier nicht definiert
+        Verbose(1,y ist ${y});
+    }
+}
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'LOCAL' =-
+
+[Syntax]
+LOCAL(<varname>)
+
+[Synopsis]
+Variables local to the gosub stack frame
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-global.adoc[Abschnitt D.38, „`GLOBAL()`“], xref:functions-shared.adoc[Abschnitt D.87, „`SHARED()`“], xref:functions-import.adoc[Abschnitt D.52, „`IMPORT()`“]

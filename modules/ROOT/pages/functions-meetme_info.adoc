@@ -1,0 +1,44 @@
+[[functions-meetme_info]]
+= `MEETME_INFO()`
+
+[source]
+----
+MEETME_INFO(schlüsselwort,konferenznummer)
+----
+
+Gibt Informationen über die Konferenz mit der angegebenen Nummer
+zurück.
+
+_`schlüsselwort`_ kann eines der folgenden
+sein:
+
+`lock`:: Gibt an, ob der Konferenzraum gesperrt ist (siehe xref:applications-meetmeadmin.adoc[Abschnitt C.90, „`MeetMeAdmin()`“]).
+`parties`:: Anzahl der Teilnehmer
+`activity`:: Dauer in Sekunden
+`dynamic`:: Gibt an, ob der Konferenzraum dynamisch erzeugt wurde.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'MEETME_INFO' =-
+
+[Syntax]
+MEETME_INFO(<keyword>,<confno>)
+
+[Synopsis]
+Query a given conference of various properties.
+
+[Description]
+Returns information from a given keyword. (For booleans 1-true, 0-false)
+Options:
+lock - boolean of whether the corresponding conference is locked
+parties - number of parties in a given conference
+activity - duration of conference in seconds
+dynamic - boolean of whether the corresponding coference is dynamic
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-meetme.adoc[Abschnitt C.89, „`MeetMe()`“], xref:applications-meetmecount.adoc[Abschnitt C.92, „`MeetMeCount()`“]

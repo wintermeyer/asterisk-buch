@@ -1,0 +1,42 @@
+[[functions-shell]]
+= `SHELL()`
+
+[source]
+----
+SHELL(Befehl)
+----
+
+Führt einen Shell-Befehl aus und gibt die Ausgabe zurück.
+
+[source]
+----
+exten => 123,1,Set(ausgabe=${SHELL(id -un)})
+exten => 123,n,Verbose(1,Asterisk laeuft als User ${ausgabe})
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'SHELL' =-
+
+[Syntax]
+SHELL(<command>)
+
+[Synopsis]
+Executes a command as if you were at a shell.
+
+[Description]
+Returns the value from a system command
+Example: Set(foo=${SHELL(echo "bar")})
+Note: When using the SHELL() dialplan function, your "SHELL" is /bin/sh,
+which may differ as to the underlying shell, depending upon your production
+platform. Also keep in mind that if you are using a common path, you should
+be mindful of race conditions that could result from two calls running
+SHELL() simultaneously.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-system.adoc[Abschnitt C.176, „`System()`“], xref:applications-trysystem.adoc[Abschnitt C.179, „`TrySystem()`“]

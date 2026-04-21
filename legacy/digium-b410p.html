@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.3. Installation der Digium B410p</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="Anhang B. Spezielle Installationsanleitungen für Asterisk mit ISDN- oder Analog-Karten" /><link rel="prev" href="sangoma-a500.html" title="B.2. Installation der Sangoma A500 ISDN-Karte" /><link rel="next" href="digium-tdm400p-analog.html" title="B.4. Installation der Digium TDM400p Analog-Karte" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="B.3. Installation der Digium B410p" id="digium-b410p" lang="de"><div class="titlepage"><div><div><h2 class="title" id="digium-b410p">B.3. Installation der Digium B410p</h2></div></div></div><a id="idp17689216" class="indexterm"></a><a id="idp17690800" class="indexterm"></a><div class="para">Diese Installationsanleitung dient zur Installation eines
+  Asterisk-Systems mit Treibern für eine Digium B410p ISDN-Karte. Die Karte
+  muss dafür bereits in dem System eingebaut sein.</div><div class="important"><h2>Wichtig</h2><div class="para">Asterisk verwendet ab Version 1.4.22 bzw. 1.6 Dahdi statt Zaptel
+    (für mehr Informationen dazu siehe <a class="xref" href="zaptel-to-dahdi.html" title="Anhang I. Zaptel zu DAHDI">Anhang I, <i>Zaptel zu DAHDI</i></a>).
+    Dahdi unterstützt von Haus aus Basis-ISDN (BRI) – jedenfalls, soweit
+    es die Digium B410p betrifft (siehe <a class="xref" href="zaptel-dahdi-b410p-misdn.html" title="I.4. Interview mit Kevin P. Fleming">Abschnitt I.4, „Interview mit Kevin P. Fleming“</a>). Für eine aktuelle
+    Versionsanleitung mit Dahdi siehe <a class="xref" href="installation-1.4-debian.html" title="A.1. Installation von Asterisk 1.4.x auf Debian Linux">Abschnitt A.1, „Installation von Asterisk 1.4.x auf Debian Linux“</a> bzw. <a class="xref" href="installation-1.6-debian.html" title="A.2. Installation von Asterisk 1.6.x auf Debian Linux">Abschnitt A.2, „Installation von Asterisk 1.6.x auf Debian Linux“</a>.</div><div class="para">Diese Anleitung bleibt aber hier stehen für den Fall, dass Sie eine
+    Asterisk-Version vor 1.4.22 mit Zaptel installieren wollen. Zaptel lädt
+    – wie unten genau beschrieben – durch den Befehl
+    <code class="literal"><code class="command">make b410p</code></code> mISDN herunter und
+    kompiliert es.</div><div class="para">Überprüfen Sie bitte auch die Online-Version des Buchs (<a href="http://das-asterisk-buch.de/">http://das-asterisk-buch.de</a>)
+    auf entsprechende Aktualisierungen zu diesem Kapitel.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">Die hier aufgeführte Installationsanleitung gilt für ein
+    Asterisk-System mit allen in diesem Buch beschriebenen Features (bei
+    Ausnahmen wird dies gesondert besprochen). Deshalb ist die Installation
+    etwas umfangreicher. Das hat aber auch den Vorteil, dass Sie in der
+    Zukunft nicht noch einmal etwas nachinstallieren müssen.</div></div><div class="para">Es wird ein frisch installiertes Debian GNU/Linux 4
+  (<span class="quote">„<span class="quote">Etch</span>“</span>) vorausgesetzt. Ein ISO-Image für die Installation
+  finden Sie auf <a href="http://www.debian.org/releases/etch/debian-installer/">http://www.debian.org/releases/etch/debian-installer/</a>.
+  Ich empfehle das etwa 140 MB große Netzinstallations-CD-Image. Eine Debian
+  GNU/Linux-Installationsanleitung befindet sich unter <a href="http://www.debian.org/releases/etch/i386/">http://www.debian.org/releases/etch/i386/</a>.
+  Ein allgemeines Anwenderhandbuch steht unter <a href="http://debiananwenderhandbuch.de/">http://debiananwenderhandbuch.de</a>.</div><div class="note"><h2>Anmerkung</h2><div class="para">Bitte loggen Sie sich nach der Installation als Benutzer
+    <code class="literal">root</code> am System ein, und führen Sie alle hier
+    angegebenen Befehle mit diesem Benutzer aus.</div></div><div class="para">Als Erstes stellen Sie sicher, dass <code class="code">apt</code> alle aktuellen
+  Paketlisten zur Verfügung hat:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get update</code></strong></span>
+Hole:1 http://ftp.de.debian.org etch Release.gpg [378B]
+Hole:2 http://security.debian.org etch/updates Release.gpg [189B]
+OK   http://ftp.de.debian.org etch Release                      
+<em class="replaceable"><code>[...]</code></em>
+Es wurden 2B in 0s geholt (3B/s)   
+Paketlisten werden gelesen... Fertig
+debian:~# </pre></div><div class="para">Um sicherzugehen, dass alle Pakete auf dem neuesten Stand sind, führen
+  Sie noch ein Upgrade aus:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get -y upgrade</code></strong></span>
+Paketlisten werden gelesen... Fertig
+Abhängigkeitsbaum wird aufgebaut... Fertig
+0 aktualisiert, 0 neu installiert, 0 zu entfernen und 0 nicht aktualisiert.
+debian:~# </pre></div><div class="para">Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+  installiert wurde, müssen Sie jetzt das System rebooten:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">shutdown -r now</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+The system is going down for reboot NOW!</pre></div><div class="para">Loggen Sie sich nach dem Booten bitte wieder als
+  <code class="filename">root</code> ein.</div><div class="para">Jetzt müssen Sie noch ein paar Pakete nachinstallieren, damit das
+  Kompilieren von Asterisk erfolgreich durchgeführt werden kann:</div><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get -y install build-essential \
+    libncurses5-dev libcurl3-dev libnewt-dev libusb-dev \
+    libvorbis-dev libspeex-dev unixodbc unixodbc-dev \
+    libiksemel-dev linux-headers-`uname -r` flex bc pciutils</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden installiert:
+  bc binutils build-essential ca-certificates 
+  comerr-dev cpp cpp-4.1 defoma dpkg-dev file flex 
+  fontconfig fontconfig-config g++ g++-4.1 gcc gcc-4.1
+<em class="replaceable"><code>[...]</code></em>
+debian:~# </pre><div class="para">Als Nächstes wechseln Sie in das Verzeichnis
+  <code class="filename">/usr/src:</code><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src</code></strong></span>
+debian:/usr/src# </pre></div><div class="para">Auf der Asterisk-Homepage <a href="http://www.asterisk.org/">http://www.asterisk.org/</a> finden Sie
+  die notwendigen Quellen, um Asterisk mit allen sinnvollen Extras zu
+  installieren. Nehmen Sie bitte eine <span class="bold bold"><strong>stabile</strong></span>
+  und keine Entwickler-Version, und laden Sie diese in das Verzeichnis
+  <code class="filename">/usr/src/</code> herunter:</div><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.19.2.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+18:53:47 (227.00 KB/s) - »asterisk-1.4.19.2.tar.gz« gespeichert
+debian:/usr/src# </pre><div class="para">Weiterhin benötigen Sie noch die aktuelle Zaptel-Version:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+19:14:12 (115.45 KB/s) - »zaptel-1.4.12.tar.gz« gespeichert
+debian:/usr/src# </pre></div><div class="para">Die komprimierten Dateien werden jetzt entpackt:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf asterisk-1.4.19.2.tar.gz</code></strong></span>
+asterisk-1.4.19.2/
+asterisk-1.4.19.2/build_tools/
+asterisk-1.4.19.2/build_tools/menuselect-deps.in
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf zaptel-1.4.12.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+zaptel-1.4.12/fxstest.c
+zaptel-1.4.12/zaptel-base.c
+debian:/usr/src# </pre></div><div class="para">Als Erstes wechseln Sie in das Zaptel-Verzeichnis und kompilieren und
+  installieren Zaptel und mISDN. Die Abarbeitung der einzelnen Skripte wird
+  eine Weile dauern. Zeit für einen Tee.<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">cd zaptel-1.4.12</code></strong></span>
+debian:/usr/src/zaptel-1.4.12# <span class="bold bold"><strong><code class="command">./configure &amp;&amp; make &amp;&amp; make install &amp;&amp; make b410p</code></strong></span>
+checking for gcc... gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/zaptel-1.4.7.1/mISDNuser-1_1_3'
+debian:/usr/src/zaptel-1.4.12# </pre></div><div class="para">Danach gehen Sie in das Asterisk-Verzeichnis und kompilieren und
+  installieren Asterisk:<pre class="screen">debian:/usr/src/zaptel-1.4.12# <span class="bold bold"><strong><code class="command">cd /usr/src/asterisk-1.4.19.2</code></strong></span>
+debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">./configure &amp;&amp; make &amp;&amp; make install</code></strong></span>
+checking build system type... i686-pc-linux-gnu
+checking host system type... i686-pc-linux-gnu
+checking for gcc... gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/asterisk-1.4.19.2/main'
+ +---- Asterisk Installation Complete -------+
+ +                                           +
+ +    YOU MUST READ THE SECURITY DOCUMENT    +
+ +                                           +
+ + Asterisk has successfully been installed. +
+ + If you would like to install the sample   +
+ + configuration files (overwriting any      +
+ + existing config files), run:              +
+ +                                           +
+ +               make samples                +
+ +                                           +
+ +-----------------  or ---------------------+
+ +                                           +
+ + You can go ahead and install the asterisk +
+ + program documentation now or later run:   +
+ +                                           +
+ +              make progdocs                +
+ +                                           +
+ + **Note** This requires that you have      +
+ + doxygen installed on your local system    +
+ +-------------------------------------------+
+debian:/usr/src/asterisk-1.4.19.2# </pre></div><div class="para">Die eben kompilierten Programmdateien sind jetzt auf dem System
+  installiert. Allerdings finden Sie im Asterisk-Konfigurationsverzeichnis
+  <code class="filename">/etc/asterisk/</code> noch gähnende Leere vor. In diesem
+  Verzeichnis liegen die Konfigurationsdateien von Asterisk. Da Sie sicher
+  nicht bei null beginnen möchten, lassen Sie sich die Standarddateien
+  erstellen:</div><pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">make samples</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src/asterisk-1.4.19.2# </pre><div class="para">Damit Asterisk beim Booten des Rechners auch automatisch gestartet und
+  bei einem Shutdown auch ordentlich heruntergefahren wird, benötigen wir noch
+  entsprechende Init-Skripte. Diese können mit dem von den Entwicklern etwas
+  unglücklich benannten Befehl <code class="command">make config</code> erstellt
+  werden:<pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+ Adding system startup for /etc/init.d/asterisk ...
+   /etc/rc2.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc2.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/S50asterisk -&gt; ../init.d/asterisk
+debian:/usr/src/asterisk-1.4.19.2# </pre></div><div class="para">Fertig! Asterisk ist auf Ihrem System installiert. Mit dem Befehl
+  <code class="command">asterisk -V</code> können Sie die installierte Version
+  herausfinden (bitte achten Sie auf das großgeschriebene V):<pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">asterisk -V</code></strong></span>
+Asterisk 1.4.19.2
+debian:/usr/src/asterisk-1.4.19.2# cd
+debian:~# </pre></div><div class="section" title="Konfiguration der ISDN-Karte" id="digium-b410p-konfiguration"><div class="titlepage"><div><div><h3 class="title" id="digium-b410p-konfiguration">Konfiguration der ISDN-Karte</h3></div></div></div><div class="para">Ob die von Ihnen eingebaute B410p-ISDN-Karte auch richtig erkannt
+    wird, können Sie mit dem Kommando <code class="command">/usr/sbin/misdn-init
+    scan</code> überprüfen:</div><div class="para"><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">/usr/sbin/misdn-init scan</code></strong></span>
+[OK] found the following devices:
+card=1,0x4
+[ii] run "/usr/sbin/misdn-init config" to store this information to /etc/misdn-init.conf
+debian:~# </pre>Die für den Betrieb der Karte notwendige
+    Konfigurationsdatei kann mit dem Kommando <code class="command">/usr/sbin/misdn-init
+    config</code> erstellt werden:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">/usr/sbin/misdn-init config</code></strong></span>
+[OK] /etc/misdn-init.conf created. It's now safe to run "/usr/sbin/misdn-init start"
+[ii] make your ports (1-4) available in asterisk by editing "/etc/asterisk/misdn.conf"
+debian:~# </pre></div><div class="para">Die erstellte Standardkonfiguration können Sie mit
+    <code class="command">/etc/init.d/misdn-init start</code> in Betrieb nehmen:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">/etc/init.d/misdn-init start</code></strong></span>
+-----------------------------------------
+ Loading module(s) for your misdn-cards:
+-----------------------------------------
+/sbin/modprobe --ignore-install hfcmulti type=0x4 protocol=0x2,0x2,0x2,0x2 layermask=0xf,0xf,0xf,0xf poll=128 debug=0
+/sbin/modprobe mISDN_dsp debug=0x0 options=0 poll=128 dtmfthreshold=100
+[i] creating device node: /dev/mISDN
+debian:~# </pre></div><div class="para">Die Konfigurationsdateien <code class="filename">/etc/misdn-init.conf</code>
+    und <code class="filename">/etc/asterisk/misdn.conf</code> sind sehr gut
+    dokumentiert. Für den ersten Test sollten Sie nur sicherstellen, dass in
+    der <code class="filename">/etc/misdn-init.conf</code> der Eintrag <span class="quote">„<span class="quote">Port
+    settings</span>“</span> für Ihre Bedürfnisse passend ist. <div class="tip"><h2>Tipp</h2><div class="para">Die Portnummern stehen auf der Karte klein neben den
+        entsprechenden Ports.</div></div></div></div><div class="section" title="Konfiguration der ISDN-Anschlussart" id="digium-b410p-isdn-te-ptp-ptmp"><div class="titlepage"><div><div><h3 class="title" id="digium-b410p-isdn-te-ptp-ptmp">Konfiguration der ISDN-Anschlussart</h3></div></div></div><div class="para">Bitte erkundigen Sie sich vor dem nächsten Schritt über die Art
+    Ihres ISDN-Anschlusses. Mit der hier besprochenen B410P-ISDN-Karte können
+    Sie Anlagen- und Mehrgeräteanschlüsse betreiben. Um alle 4 Ports im Modus
+    <span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Point-to-Multi-Point</em></span>
+    (Mehrgeräteanschluss) zu betreiben, konfiguriert man sie in der
+    <code class="filename">/etc/misdn-init.conf</code> wie folgt:<pre class="programlisting">te_ptmp=1,2,3,4</pre>Für
+    den Modus <span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Point-to-Point</em></span>
+    (Anlagenanschluss) sieht das so aus:<pre class="programlisting">te_ptp=1,2,3,4</pre></div><div class="para">Bitte vergessen Sie nach einer Anpassung dieser Datei nicht das
+    <code class="literal"><code class="command">/etc/init.d/misdn-init
+    restart</code></code>.</div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="danksagungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Danksagungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link glossary"><a href="glossar.html" title="print-previous-main-loop-first level2 breadcrumb-link glossary">Glossar</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="print-previous-main-loop-first level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="breadcrumb-first-level level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="breadcrumb-first-level level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="sangoma-b700-flexbri.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Sangoma B700 FlexBRI</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="sangoma-a500.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Sangoma A500 ISDN-Karte</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Installation der Digium B410p</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="digium-b410p.html#digium-b410p-konfiguration" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Konfiguration der ISDN-Karte</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="digium-b410p.html#digium-b410p-isdn-te-ptp-ptmp" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Konfiguration der ISDN-Anschlussart</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="digium-tdm400p-analog.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation der Digium TDM400p Analog-Karte</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="beronet-berofix.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation einer BeroFix-Karte</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="sangoma-a500.html"><strong>Zurück</strong>B.2. Installation der Sangoma A500 ISDN-Karte</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="digium-tdm400p-analog.html"><strong>Weiter</strong>B.4. Installation der Digium TDM400p Analog-Karte</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

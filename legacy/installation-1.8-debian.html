@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>A.3. Installation von Asterisk 1.8 auf Debian Linux</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="installationsanleitungen-asterisk.html" title="Anhang A. Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0" /><link rel="prev" href="installation-1.6-debian.html" title="A.2. Installation von Asterisk 1.6.x auf Debian Linux" /><link rel="next" href="installation-10.0-debian.html" title="A.4. Installation von Asterisk 10.0 auf Debian Linux" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="A.3. Installation von Asterisk 1.8 auf Debian Linux" id="installation-1.8-debian" lang="de"><div class="titlepage"><div><div><h2 class="title" id="installation-1.8-debian">A.3. Installation von Asterisk 1.8 auf Debian Linux</h2></div></div></div><a id="idp20508240" class="indexterm"></a><div class="para">Die hier aufgeführte Installationsanleitung gilt für ein normales
+  Asterisk-System mit dem Sie schnell anfangen können zu arbeiten.<div class="note"><h2>Anmerkung</h2><div class="para">Diese Anleitung kann auch als Screencast unter <a href="http://www.youtube.com/watch?v=h6BZk_Cx0lw">http://www.youtube.com/watch?v=h6BZk_Cx0lw</a>
+      abgerufen werden.</div></div></div><div class="para">Es wird ein frisch installiertes Debian GNU/Linux 6.0
+  (<span class="quote">„<span class="quote">Squeeze</span>“</span>) vorausgesetzt. Ein ISO-Image für die Installation
+  finden Sie auf <a href="http://www.debian.org/releases/lenny/debian-installer/">http://www.debian.org/releases/squeeze/debian-installer/</a>.
+  Wir empfehlen das etwa 175 MByte große Netzinstallations-CD-Image<sup>[<a id="idp21387840" href="#ftn.idp21387840" class="footnote">159</a>]</sup>. Eine Debian GNU/Linux-Installationsanleitung für i386
+  kompatible Systeme findet sich unter <a href="http://www.debian.org/releases/squeeze/i386/">http://www.debian.org/releases/squeeze/i386/</a>.
+  Ein allgemeines Anwenderhandbuch steht unter <a href="http://debiananwenderhandbuch.de">http://debiananwenderhandbuch.de</a>.</div><div class="note"><h2>Anmerkung</h2><div class="para">Bitte loggen Sie sich nach der Installation als Benutzer
+    <code class="literal">root</code> am System ein, und führen Sie alle hier
+    angegebenen Befehle mit diesem Benutzer aus.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">Einige Anwender werden wohl direkt einen SSH-Server installieren
+    wollen, um von ihrem normalen Arbeitsplatz aus im Terminal auf dem Server
+    arbeiten zu können. Der Befehl dazu lautet: <code class="literal"><code class="command">aptitude
+    install ssh</code></code>. Dann kann man hier im Folgenden auch
+    wunderbar mit Kopieren und Einsetzen der meisten Befehle arbeiten. Wir
+    setzen voraus, dass Sie entweder mit der grundsätzlichen Verwendung von
+    <code class="command">ssh</code> vertraut sind oder direkt am System selbst
+    arbeiten.</div></div><div class="para">Es versteht sich von selbst, dass man auf jedem System (egal ob
+  neuinstalliert oder bereits bestehend) erst einmal sicherstellt, dass die
+  Paketverwaltung (APT<sup>[<a id="idp21838496" href="#ftn.idp21838496" class="footnote">160</a>]</sup> bzw. <code class="literal">aptitude</code>) die aktuellen Paketlisten
+  zur Verfügung hat ...<pre class="screen">root@debian6:~# <code class="command">aptitude update</code>
+Treffer http://ftp.de.debian.org squeeze Release.gpg
+Treffer http://ftp.de.debian.org/debian/ squeeze/main Translation-de
+
+[...]
+
+Treffer http://security.debian.org squeeze/updates/main Sources
+Treffer http://security.debian.org squeeze/updates/main i386 Packages
+119 kB wurden in 0 s heruntergeladen (151 kB/s)
+                                 
+root@debian6:~#</pre></div><div class="para">... und dass alle Pakete auf dem neusten Stand sind:<pre class="screen">root@debian6:~# <code class="command">aptitude -y upgrade</code>
+Es werden keine Pakete installiert, aktualisiert oder entfernt.
+0 Pakete aktualisiert, 0 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 0 B an Archiven herunterladen. Nach dem Entpacken werden 0 B zusätzlich belegt sein.
+                                            
+root@debian6:~#</pre></div><div class="para">Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+  installiert wurde, müssen wir jetzt das System mit
+  <code class="literal"><code class="command">shutdown -r now</code></code> (oder mit
+  <code class="literal"><code class="command">reboot</code></code>) neu starten:<pre class="screen">root@debian6:~# <code class="command">shutdown -r now</code>
+
+Broadcast message from root@debian6 (pts/0) (Sun Nov 13 06:24:43 2011):
+
+The system is going down for reboot NOW!</pre></div><div class="para">Nach dem Booten loggen Sie sich bitte wieder als
+  <code class="literal">root</code> ein.</div><div class="note"><h2>Anmerkung</h2><div class="para">Das hat zwar nichts mit Asterisk zu tun, aber typischerweise
+    installiert man auch NTP, um immer die aktuelle Zeit zu haben:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y install ntp ntpdate</code></strong></span></pre>Ein
+    Muss ist das natürlich nicht.</div></div><div class="para">Zuerst installieren wir eine Build-Umgebung – d.h. Compiler usw. – und
+  diverse Abhängigkeiten, damit das Kompilieren von Asterisk erfolgreich
+  durchgeführt werden kann.<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y install build-essential libxml2-dev libncurses5-dev</code></strong></span>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  binutils{a} build-essential bzip2{a} cpp{a} cpp-4.3{a} 
+  dpkg-dev{a} g++{a} g++-4.3{a} gcc{a} gcc-4.3{a} 
+<em class="replaceable"><code>[...]</code></em>
+</pre></div><div class="para">Jetzt haben Sie ein System, auf dem man problemlos Asterisk
+  kompilieren kann.</div><h3>Asterisk</h3><div class="para">Auf der Asterisk-Homepage <a href="http://www.asterisk.org/">http://www.asterisk.org</a> finden Sie
+  die notwendigen Quellen, um Asterisk zu installieren.</div><div class="important"><h2>Wichtig</h2><div class="para">Bitte suchen Sie auf <a href="http://www.asterisk.org/">http://www.asterisk.org</a> immer nach
+    der aktuellen 10.0er Version für das folgenden <code class="command">wget</code>
+    Kommando.</div></div><div class="para"><pre class="screen">root@debian6:~# <code class="command">cd /usr/src</code>
+root@debian6:/usr/src# <code class="command">wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-1.8-current.tar.gz</code>
+--2011-11-13 11:14:59--  http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-1.8-current.tar.gz
+Auflösen des Hostnamen downloads.asterisk.org... 76.164.171.233, 2001:470:e0d4::e9
+Verbindungsaufbau zu downloads.asterisk.org|76.164.171.233|:80... verbunden.
+HTTP-Anforderung gesendet, warte auf Antwort... 200 OK
+Länge: 28557326 (27M) [application/x-gzip]
+In »asterisk-1.8-current.tar.gz« speichern.
+
+100%[======================================&gt;] 28.557.326   423K/s   in 69s     
+
+2011-11-13 11:16:10 (405 KB/s) - »asterisk-1.8-current.tar.gz« gespeichert [28557326/28557326]
+
+root@debian6:/usr/src#</pre></div><div class="para">Entpacken:<pre class="screen">root@debian6:/usr/src# <code class="command">tar xzf asterisk-1.8-current.tar.gz</code> 
+root@debian6:/usr/src#</pre></div><div class="para">Kompilierung vorbereiten:<pre class="screen">root@debian6:/usr/src# <code class="command">cd asterisk-1.8.7.1</code>
+root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">./configure</code> 
+checking build system type... i686-pc-linux-gnu
+checking host system type... i686-pc-linux-gnu
+checking for gcc... gcc
+
+[...]
+
+configure: OS type  : linux-gnu
+configure: Host CPU : i686
+configure: build-cpu:vendor:os: i686 : pc : linux-gnu :
+configure: host-cpu:vendor:os: i686 : pc : linux-gnu :
+root@debian6:/usr/src/asterisk-1.8.7.1#</pre></div><div class="para">Kompilieren<sup>[<a id="idp21955376" href="#ftn.idp21955376" class="footnote">161</a>]</sup>:<pre class="screen">root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">make</code>
+CC="cc" CXX="" LD="" AR="" RANLIB="" CFLAGS="" make -C menuselect CONFIGURE_SILENT="--silent" menuselect
+make[1]: Entering directory `/usr/src/asterisk-1.8.7.1/menuselect'
+gcc -g -c -D_GNU_SOURCE -Wall   -c -o menuselect.o menuselect.c
+
+
+[...]
+
+Building Documentation For: channels pbx apps codecs formats cdr cel bridges funcs tests main res addons 
+ +--------- Asterisk Build Complete ---------+
+ + Asterisk has successfully been built, and +
+ + can be installed by running:              +
+ +                                           +
+ +                make install               +
+ +-------------------------------------------+
+root@debian6:/usr/src/asterisk-1.8.7.1#</pre></div><div class="para">Installieren:<pre class="screen">root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">make install</code>
+/usr/bin/install -c -d "/usr/lib/asterisk/modules"
+/usr/bin/install -c -d "/usr/sbin"
+/usr/bin/install -c -d "/etc/asterisk"
+
+[...]
+
+make[1]: Leaving directory `/usr/src/asterisk-1.8.7.1/sounds'
+ +---- Asterisk Installation Complete -------+
+ +                                           +
+ +    YOU MUST READ THE SECURITY DOCUMENT    +
+ +                                           +
+ + Asterisk has successfully been installed. +
+ + If you would like to install the sample   +
+ + configuration files (overwriting any      +
+ + existing config files), run:              +
+ +                                           +
+ +                make samples               +
+ +                                           +
+ +-----------------  or ---------------------+
+ +                                           +
+ + You can go ahead and install the asterisk +
+ + program documentation now or later run:   +
+ +                                           +
+ +               make progdocs               +
+ +                                           +
+ + **Note** This requires that you have      +
+ + doxygen installed on your local system    +
+ +-------------------------------------------+
+root@debian6:/usr/src/asterisk-1.8.7.1#</pre></div><div class="para">Die eben kompilierten Programmdateien sind jetzt auf dem System
+  installiert. Allerdings finden wir im Asterisk-Konfigurationsverzeichnis
+  <code class="filename">/etc/asterisk/</code> noch gähnende Leere vor. Da wir nicht
+  von Grund auf beginnen möchten, lassen wir uns die Standard-Beispieldateien
+  erstellen:<pre class="screen">root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">make samples</code>
+Installing adsi config files...
+/usr/bin/install -c -d "/etc/asterisk"
+Installing configs/asterisk.adsi
+Installing configs/telcordia-1.adsi
+Installing other config files...
+
+[...]
+
+Installing file phoneprov/polycom.xml
+Installing file phoneprov/snom-mac.xml
+root@debian6:/usr/src/asterisk-1.8.7.1#</pre></div><div class="para">Damit Asterisk beim Booten des Rechners auch automatisch gestartet und
+  bei einem Shutdown ordentlich gestoppt wird, benötigen wir noch
+  entsprechende Init-Skripte:<pre class="screen">root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">make config</code>
+update-rc.d: using dependency based boot sequencing
+root@debian6:/usr/src/asterisk-1.8.7.1# </pre></div><div class="para">Fertig! Asterisk ist auf Ihrem System installiert. Mit dem Befehl
+  <code class="literal"><code class="command">asterisk -V</code></code> können Sie die
+  installierte Version herausfinden (bitte achten Sie auf das großgeschriebene
+  V):<pre class="screen">root@debian6:/usr/src/asterisk-1.8.7.1# <code class="command">asterisk -V</code>
+Asterisk 1.8.7.1
+root@debian6:/usr/src/asterisk-1.8.7.1# </pre></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp21387840" href="#idp21387840" class="para">159</a>] </sup>In der Regel werden Sie das für die Architektur
+      <code class="literal">i386</code> benötigen.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp21838496" href="#idp21838496" class="para">160</a>] </sup><a href="http://de.wikipedia.org/wiki/Advanced_Packaging_Tool">http://de.wikipedia.org/wiki/Advanced_Packaging_Tool</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp21955376" href="#idp21955376" class="para">161</a>] </sup>An dieser Stelle vor dem Kompilieren könnte man als erfahrenerer
+      Asterisk-Benutzer mit <code class="literal"><code class="command">make
+      menuselect</code></code> in einem interaktiven Dialog bestimmte
+      Module deaktivieren.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="danksagungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Danksagungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link glossary"><a href="glossar.html" title="print-previous-main-loop-first level2 breadcrumb-link glossary">Glossar</a></li><li class="breadcrumb-first-level level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="breadcrumb-first-level level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="installation-1.4-debian.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation von Asterisk 1.4.x auf Debian Linux</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="installation-1.6-debian.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation von Asterisk 1.6.x auf Debian Linux</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Installation von Asterisk 1.8 auf Debian Linux</li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="installation-10.0-debian.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation von Asterisk 10.0 auf Debian Linux</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="installation-1.6-debian.html"><strong>Zurück</strong>A.2. Installation von Asterisk 1.6.x auf Debian L...</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="installation-10.0-debian.html"><strong>Weiter</strong>A.4. Installation von Asterisk 10.0 auf Debian Li...</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

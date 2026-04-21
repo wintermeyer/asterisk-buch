@@ -1,0 +1,5 @@
+[[upgrade-1.4-1.6-configuration]]
+= Konfiguration
+
+* `dundi.conf`: Der Parameter „`tos`“ akzeptiert jetzt nicht mehr die alten Werte wie „`lowdelay`“ oder „`lowcost`“. Eine Beschreibung der möglichen neuen Werte finden Sie in `doc/tex/qos.tex`.
+* `queues.conf`: Der Parameter „`queue-lessthan`“ ist nicht mehr verfügbar. Für den Parameter „`queue-round-seconds`“ ist „`1`“ kein gültiger Wert mehr.

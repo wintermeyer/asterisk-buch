@@ -1,0 +1,41 @@
+[[functions-valid_exten]]
+= `VALID_EXTEN()`
+
+[source]
+----
+VALID_EXTEN([context],extension[,priority])
+----
+
+Diese Funktion prüft, ob die angegebene Extension in Context
+existiert. Wenn kein `context` übergeben wurde, wird der
+momentane benutzt. Wenn kein `priority` angegeben wurde, wird
+`1` benutzt.
+
+[source]
+----
+; Prüfe, ob eine gültige Nummer gewählt wurde, ansonsten spiele "invalid" ab
+exten => _20X,1,GotoIf(${VALID_EXTEN(,${EXTEN},)}?inval,1)
+exten => _20X,n,Dial(...)
+exten => black,1,Playback(invalid)
+exten => black,n,Hangup()
+    
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'VALID_EXTEN' =-
+
+[Syntax]
+VALID_EXTEN([<context>],<extension>[,<priority>])
+
+[Synopsis]
+Determine whether an extension exists or not
+
+[Description]
+Returns a true value if the indicated context, extension, and priority exist.
+Context defaults to the current context, priority defaults to 1.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

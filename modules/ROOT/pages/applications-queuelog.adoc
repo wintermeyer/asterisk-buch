@@ -1,0 +1,51 @@
+[[applications-queuelog]]
+= `QueueLog()`
+
+Schreibt einen Eintrag in das Queue-Log.
+
+[source]
+----
+QueueLog(Warteschlangenname,UniqueID,AgentenNr,Event[,weitere Infos])
+----
+
+Schreibt einen Eintrag in das Queue-Log (normalerweise
+`/var/log/asterisk/queue_log`). Damit können Sie z. B.
+selbst definierte Ereignisse aufzeichnen. Lesen Sie xref:warteschleifen-log.adoc[Abschnitt 16.6, „Log-Datei“] für ausführlichere Informationen.
+
+[source]
+----
+QueueLog(supportschlange,${UNIQUEID},${AGENT},MITTAGSPAUSE,Guten Appetit)
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'QueueLog' =-
+
+[Synopsis]
+Writes to the queue_log
+
+[Description]
+QueueLog(queuename|uniqueid|agent|event[|additionalinfo]):
+Allows you to write your own events into the queue log
+Example: QueueLog(101|${UNIQUEID}|${AGENT}|WENTONBREAK|600)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,6 @@
+Writes to the queue_log
+
+[Description]
+- QueueLog(queuename|uniqueid|agent|event[|additionalinfo]):
++ QueueLog(queuename,uniqueid,agent,event[,additionalinfo]):
+Allows you to write your own events into the queue log
+- Example: QueueLog(101|${UNIQUEID}|${AGENT}|WENTONBREAK|600)
++ Example: QueueLog(101,${UNIQUEID},${AGENT},WENTONBREAK,600)
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:warteschleifen-log.adoc[Abschnitt 16.6, „Log-Datei“]

@@ -1,0 +1,31 @@
+[[Asterisk-auf-dem-Server-installieren]]
+= Asterisk auf dem Server installieren
+
+Bei der Wahl der Linux-Distribution und der Entscheidung für eine
+Asterisk-Version gehen die Meinungen wie so oft im Open-Source-Lager
+auseinander. Die einen installieren einfach die in ihrer
+Lieblings-Linux-Distribution vorhandenen Pakete (z. B. RPMs), und die
+anderen kompilieren Asterisk aus den Quellen. Für die Beispiele in diesem
+Kapitel sollten beide Wege möglich sein. Für den Rest des Buches sieht es
+allerdings teilweise anders aus. Deshalb sollten Sie im Zweifelsfall den
+langen Weg (das Kompilieren aus den Quellen) vorziehen. Der Grund ist
+einfach: Die in den Distributionen verwendeten Asterisk-Versionen sind
+fast nie aktuell.footnote:[Man kann den Distributionen dabei aber keinen Vorwurf machen. Es kommen fast jeden Monat neue Asterisk-Versionen heraus. Mit diesem Tempo kann keine Distribution Schritt halten.]Bitte schlagen Sie dazu xref:installationsanleitungen-asterisk.adoc[Anhang A, _Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0_] auf, und installieren Sie
+ein Asterisk 1.4.x auf einem frischen Debian Linux. Dies kann zu
+Übungszwecken auch auf einem virtuellen x86-kompatiblen PC (z. B. mit
+http://www.vmware.com/[VMware]) geschehen.
+
+Für dieses Hello-World-Beispiel ist es bei beiden Varianten von
+Vorteil, wenn der Rechner über eine Soundkarte und ein Ausgabe-Device (z.
+B. Lautsprecher) verfügt.
+
+[WARNING]
+====
+Wenn Sie an dieser oder einer anderen Stelle des Buches eine
+andere Distribution verwenden oder einen anderen Installationsweg als
+den beschriebenen einschlagen, sollten Sie bei Problemen immer als
+Erstes das hier aufgeführte Verfahren ausprobieren. Es ist oft
+einfacher, mit einem fertigen Kochrezept zu arbeiten, als den Fehler
+in einer hier nicht behandelten Konfiguration bzw. Umgebung zu
+finden.
+====

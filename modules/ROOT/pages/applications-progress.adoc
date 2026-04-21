@@ -1,0 +1,42 @@
+[[applications-progress]]
+= `Progress()`
+
+Signalisiert Fortschritt.
+
+[source]
+----
+Progress()
+----
+
+Signalisiert dem Teilnehmer, dass ein Fortschritt stattfindet (...
+dass sich „was tut“ ;-)).
+
+Liefert stets 0 zurück.
+
+[source]
+----
+; Fortschritt anzeigen:
+exten => 123,1,Progress()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Progress' =-
+
+[Synopsis]
+Indicate progress
+
+[Description]
+Progress(): This application will request that in-band progress information
+be provided to the calling channel.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-busy.adoc[Abschnitt C.16, „`Busy()`“], xref:applications-congestion.adoc[Abschnitt C.23, „`Congestion()`“], xref:applications-playtones.adoc[Abschnitt C.118, „`Playtones()`“], xref:applications-ringing.adoc[Abschnitt C.138, „`Ringing()`“], xref:applications-proceeding.adoc[Abschnitt C.120, „`Proceeding()`“]

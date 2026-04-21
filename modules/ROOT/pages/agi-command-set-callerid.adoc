@@ -1,0 +1,34 @@
+[[agi-command-set-callerid]]
+= `SET CALLERID`
+
+[source]
+----
+SET CALLERID Nummer
+----
+
+Setzt die Caller-ID des aktuellen Kanals.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| 1 | Erfolgreich (Die Caller-ID wurde gesetzt.)
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: SET CALLERID <number>
+Changes the callerid of the current channel.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,2 +1,3 @@
+Usage: SET CALLERID <number>
+Changes the callerid of the current channel.
++ Runs Dead : No

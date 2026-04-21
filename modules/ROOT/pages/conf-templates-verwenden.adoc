@@ -1,0 +1,53 @@
+[[conf-templates-verwenden]]
+= Templates verwenden
+
+Templates verwendet man durch Angabe von
++(_`Templatename`_)+ direkt – ohne
+Leerzeichen – hinter dem Abschnittsbeginn. Dadurch wird zuerst das
+angegebene Template eingebunden und dann die weiteren Parameter im
+Abschnitt ausgewertet. Abschnitte können sogar von mehreren Templates
+erben, z. B. so:
+
+[source]
+----
+[201](meine-telefone,verkauf)
+username=201
+secret=1111
+----
+
+Hier erbt der Abschnitt `201` von den Templates
+`meine-telefone` und `verkauf`.
+
+Bei Bedarf kann man pro Abschnitt die Einstellungen aus dem Template
+überschreiben.
+
+[[conf-templates-beispiel]]
+== Beispiel
+
+[source]
+----
+[telefone](!) ; Template "telefone"
+type=friend
+qualify=yes
+dtmfmode=rfc2833
+disallow=all
+allow=alaw
+
+[snom](!,telefone) ; Template "snom", erbt von "telefone"
+dtmfmode=inband
+
+[linksys](!,telefone) ; Template "linksys", erbt von "telefone"
+qualify=no
+
+[snom1](snom) ; Abschnitt "snom1", erbt von "snom"
+username=101
+secret=123
+
+[snom2](snom) ; Abschnitt "snom2", erbt von "snom"
+username=102
+secret=123
+
+[linksys1](linksys) ; Abschnitt "linksys1", erbt von "linksys"
+username=103
+secret=123
+----

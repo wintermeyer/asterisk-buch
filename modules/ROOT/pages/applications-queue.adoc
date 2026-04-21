@@ -1,0 +1,196 @@
+[[applications-queue]]
+= `Queue()`
+
+Legt den aktuellen Anruf in der spezifizierten Anrufwarteschlange
+ab.
+
+[source]
+----
+Queue(Warteschlange[,Optionen[,URL[,Ankündigung[,Timeout]]]])
+----
+
+Fügt der angegebenen Warteschlange so, wie in
+`queues.conf` definiert, einen eingehenden Anruf
+hinzu.
+
+Folgende Optionen sind möglich (auch in Kombination):
+
+`t`:: Erlaubt es dem angerufenen Teilnehmer, den Anruf weiterzuleiten.
+`T`:: Erlaubt es dem anrufenden Teilnehmer, den Anruf weiterzuleiten.
+`d`:: Spezifiziert einen Anruf mit Datenqualität (Modem, minimale Verzögerung).
+`h`:: Erlaubt es dem Angerufenen, durch Drücken von `*` aufzulegen.
+`H`:: Erlaubt es dem Anrufer, durch Drücken von `*` aufzulegen.
+`n`:: Verbietet eine Wiederholung des Timeouts; beendet diese Anwendung und geht weiter zum nächsten Schritt.
+`r`:: Klingelt, statt Wartemusik zu spielen.
+
+Außer dass ein Anruf weitergeleitet werden kann, kann er auch
+geparkt und dann von einem anderen Teilnehmer aufgenommen werden.
+
+Der Parameter `Ankündigung` überschreibt die
+Standardankündigung, die Warteschlangenagenten vorgespielt wird, bevor sie
+den angegebenen Anruf beantworten.
+
+Die optionale `URL` wird dem angerufenen Teilnehmer
+übersendet, falls dies vom Channel unterstützt wird.
+
+Nach einer angegebenen Zahl von Sekunden, die zwischen jedem
+`queues.conf`-Timeout und Retry-Kreislauf überprüft wird,
+wird `Timeout` die `Queue()` zu einem
+Fehlschlagen zwingen.
+
+Liefert -1 zurück, falls der ursprüngliche Channel aufgelegt wird
+oder falls der Anruf durchgestellt wird und einer der Teilnehmer den Anruf
+beendet. Ist die Warteschlange voll, existiert sie nicht oder hat sie keine
+Mitglieder, wird 0 zurückgeliefert.
+
+[source]
+----
+; den Anrufer zur "supportschlange" hinzufügen:
+exten => 123,1,Answer()
+exten => 123,n,Queue(supportschlange,t)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Queue' =-
+
+[Synopsis]
+Queue a call for a call queue
+
+[Description]
+Queue(queuename[|options[|URL][|announceoverride][|timeout][|AGI]):
+Queues an incoming call in a particular call queue as defined in queues.conf.
+This application will return to the dialplan if the queue does not exist, or
+any of the join options cause the caller to not enter the queue.
+The option string may contain zero or more of the following characters:
+'d' -- data-quality (modem) call (minimum delay).
+'h' -- allow callee to hang up by hitting *.
+'H' -- allow caller to hang up by hitting *.
+'n' -- no retries on the timeout; will exit this application and
+go to the next step.
+'i' -- ignore call forward requests from queue members and do nothing
+when they are requested.
+'r' -- ring instead of playing MOH
+'t' -- allow the called user transfer the calling user
+'T' -- to allow the calling user to transfer the call.
+'w' -- allow the called user to write the conversation to disk via Monitor
+'W' -- allow the calling user to write the conversation to disk via Monitor
+In addition to transferring the call, a call may be parked and then picked
+up by another user.
+The optional URL will be sent to the called party if the channel supports
+it.
+The optional AGI parameter will setup an AGI script to be executed on the
+calling party's channel once they are connected to a queue member.
+The timeout will cause the queue to fail out after a specified number of
+seconds, checked between each queues.conf 'timeout' and 'retry' cycle.
+This application sets the following channel variable upon completion:
+QUEUESTATUS The status of the call as a text string, one of
+TIMEOUT | FULL | JOINEMPTY | LEAVEEMPTY | JOINUNAVAIL | LEAVEUNAVAIL
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,7 +4,7 @@
+Queue a call for a call queue
+
+[Description]
+- Queue(queuename[|options[|URL][|announceoverride][|timeout]]):
++ Queue(queuename[|options[|URL][|announceoverride][|timeout][|AGI]):
+Queues an incoming call in a particular call queue as defined in queues.conf.
+This application will return to the dialplan if the queue does not exist, or
+any of the join options cause the caller to not enter the queue.
+@@ -13,7 +13,9 @@
+'h' -- allow callee to hang up by hitting *.
+'H' -- allow caller to hang up by hitting *.
+'n' -- no retries on the timeout; will exit this application and
+- go to the next step.
++ go to the next step.
++ 'i' -- ignore call forward requests from queue members and do nothing
++ when they are requested.
+'r' -- ring instead of playing MOH
+'t' -- allow the called user transfer the calling user
+'T' -- to allow the calling user to transfer the call.
+@@ -23,6 +25,8 @@
+up by another user.
+The optional URL will be sent to the called party if the channel supports
+it.
++ The optional AGI parameter will setup an AGI script to be executed on the
++ calling party's channel once they are connected to a queue member.
+The timeout will cause the queue to fail out after a specified number of
+seconds, checked between each queues.conf 'timeout' and 'retry' cycle.
+This application sets the following channel variable upon completion:
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,31 +4,56 @@
+Queue a call for a call queue
+
+[Description]
+- Queue(queuename[|options[|URL][|announceoverride][|timeout][|AGI]):
++ Queue(queuename[,options[,URL][,announceoverride][,timeout][,AGI][,macro][,gosub][,rule]):
+Queues an incoming call in a particular call queue as defined in queues.conf.
+This application will return to the dialplan if the queue does not exist, or
+any of the join options cause the caller to not enter the queue.
+The option string may contain zero or more of the following characters:
++ 'c' -- continue in the dialplan if the callee hangs up.
+'d' -- data-quality (modem) call (minimum delay).
+- 'h' -- allow callee to hang up by hitting *.
+- 'H' -- allow caller to hang up by hitting *.
++ 'h' -- allow callee to hang up by hitting '*', or whatver disconnect sequence
++ that is defined in the featuremap section in features.conf.
++ 'H' -- allow caller to hang up by hitting '*', or whatever disconnect sequence
++ that is defined in the featuremap section in features.conf.
+'n' -- no retries on the timeout; will exit this application and
+go to the next step.
+'i' -- ignore call forward requests from queue members and do nothing
+when they are requested.
+- 'r' -- ring instead of playing MOH
+- 't' -- allow the called user transfer the calling user
+- 'T' -- to allow the calling user to transfer the call.
++ 'r' -- ring instead of playing MOH. Periodic Announcements are still made, if applicable.
++ 't' -- allow the called user transfer the calling user by pressing '#' or
++ whatever blindxfer sequence defined in the featuremap section in
++ features.conf
++ 'T' -- to allow the calling user to transfer the call by pressing '#' or
++ whatever blindxfer sequence defined in the featuremap section in
++ features.conf
+'w' -- allow the called user to write the conversation to disk via Monitor
++ by pressing the automon sequence defined in the featuremap section in
++ features.conf
+'W' -- allow the calling user to write the conversation to disk via Monitor
+- In addition to transferring the call, a call may be parked and then picked
+- up by another user.
++ by pressing the automon sequence defined in the featuremap section in
++ features.conf
++ 'k' -- Allow the called party to enable parking of the call by sending
++ the DTMF sequence defined for call parking in features.conf.
++ 'K' -- Allow the calling party to enable parking of the call by sending
++ the DTMF sequence defined for call parking in features.conf.
++ 'x' -- allow the called user to write the conversation to disk via MixMonitor
++ by pressing the automixmon sequence defined in the featuremap section in
++ features.conf
++ 'X' -- allow the calling user to write the conversation to disk via MixMonitor
++ by pressing the automixmon sequence defined in the featuremap section in
++ features.conf
+The optional URL will be sent to the called party if the channel supports
+it.
+The optional AGI parameter will setup an AGI script to be executed on the
+calling party's channel once they are connected to a queue member.
++ The optional macro parameter will run a macro on the
++ calling party's channel once they are connected to a queue member.
++ The optional gosub parameter will run a gosub on the
++ calling party's channel once they are connected to a queue member.
++ The optional rule parameter will cause the queue's defaultrule to be
++ overridden by the rule specified.
+The timeout will cause the queue to fail out after a specified number of
+seconds, checked between each queues.conf 'timeout' and 'retry' cycle.
+This application sets the following channel variable upon completion:
+QUEUESTATUS The status of the call as a text string, one of
+- TIMEOUT | FULL | JOINEMPTY | LEAVEEMPTY | JOINUNAVAIL | LEAVEUNAVAIL
++ TIMEOUT | FULL | JOINEMPTY | LEAVEEMPTY | JOINUNAVAIL | LEAVEUNAVAIL | CONTINUE
+
+.Siehe auch
+xref:applications-queuelog.adoc[Abschnitt C.123, „`QueueLog()`“], xref:warteschleifen.adoc[Kapitel 16, _Warteschleifen für Call-Center_], xref:functions-queue_member_count.adoc[Abschnitt D.73, „`QUEUE_MEMBER_COUNT()`“], xref:functions-queue_waiting_count.adoc[Abschnitt D.77, „`QUEUE_WAITING_COUNT()`“], xref:functions-queue_member_penalty.adoc[Abschnitt D.75, „`QUEUE_MEMBER_PENALTY()`“], xref:functions-queue_member.adoc[Abschnitt D.72, „`QUEUE_MEMBER()`“], xref:functions-queue_member_list.adoc[Abschnitt D.74, „`QUEUE_MEMBER_LIST()`“], xref:functions-queue_variables.adoc[Abschnitt D.76, „`QUEUE_VARIABLES()`“]

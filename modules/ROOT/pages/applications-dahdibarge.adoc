@@ -1,0 +1,55 @@
+[[applications-dahdibarge]]
+= `DAHDIBarge()`
+
+Tritt in einen DAHDI-Channel ein und überwacht ihn.
+
+[source]
+----
+DAHDIBarge([Kanal])
+----
+
+[NOTE]
+====
+Diese Applikation ist durch die Umbenennung von Zaptel in
+DAHDIfootnote:[xref:glossar.adoc#glossar-dahdi[DAHDI\]] entstanden. Für eine Beschreibung siehe xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“].
+====
+
+.Asterisk-Versionen:
+————————| *1.2**|————————| *1.4**|————————| *1.6* |————————
+(* anderer Name)
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'DAHDIBarge' =-
+
+[Synopsis]
+Barge in (monitor) DAHDI channel
+
+[Description]
+DAHDIBarge([channel]): Barges in on a specified DAHDI
+channel or prompts if one is not specified. Returns
+-1 when caller user hangs up and is independent of the
+state of the channel being monitored.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 (xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“]) zu 1.4 (xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“]):
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 (xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“]) zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,10 +1,10 @@
+- -= Info about application 'ZapBarge' =-
++ -= Info about application 'DAHDIBarge' =-
+
+[Synopsis]
+- Barge in (monitor) Zap channel
++ Barge in (monitor) DAHDI channel
+
+[Description]
+- ZapBarge([channel]): Barges in on a specified zap
++ DAHDIBarge([channel]): Barges in on a specified DAHDI
+channel or prompts if one is not specified. Returns
+-1 when caller user hangs up and is independent of the
+state of the channel being monitored.
+
+.Siehe auch
+xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“]

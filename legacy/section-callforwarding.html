@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>15.6. Anwendungsbeispiel Call-Forwarding</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-datenbank.html" title="Kapitel 15. Die Asterisk-Datenbank (AstDB)" /><link rel="prev" href="datenbank-backup.html" title="15.5. Backup der Datenbank" /><link rel="next" href="beispiel-callingcard.html" title="15.7. Anwendungsbeispiel Calling-Card" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="15.6. Anwendungsbeispiel Call-Forwarding" id="section-callforwarding"><div class="titlepage"><div><div><h2 class="title" id="section-callforwarding">15.6. Anwendungsbeispiel Call-Forwarding</h2></div></div></div><a id="idp14820960" class="indexterm"></a><div class="para">Wer bei Abwesenheit alle Anrufe, die an seine Durchwahl gerichtet
+    sind, z. B. an sein Handy weiterleiten will, benötigt eine
+    Call-Forwarding-Funktionalität. Diese kann entweder vom Endgerät (also dem
+    SIP-Telefon) oder zentral von der Telefonanlage realisiert werden.
+    Letztere Variante ist in der Praxis vorzuziehen, da man dadurch unabhängig
+    von den Endgeräten ist (diese also im Zweifelsfall auch austauschen kann)
+    und zusätzlich die gesamte Kontrolle auf dem Server behält. Außerdem ist
+    im Falle eines Stromausfalls die Konfiguration nicht verloren und wird
+    beim nächsten Start der Telefonanlage automatisch
+    wiederhergestellt.</div><div class="section" title="Einfaches Call-Forwarding" id="einfaches-callforwarding"><div class="titlepage"><div><div><h3 class="title" id="einfaches-callforwarding">Einfaches Call-Forwarding</h3></div></div></div><div class="para">Bei der Apfelmus GmbH soll jeder Mitarbeiter die Möglichkeit
+      bekommen, Gespräche zu seinem Telefon an eine beliebige andere Nummer
+      weiterzuleiten. Um diese Weiterleitung zu aktivieren, muss die interne
+      Rufnummer 44, gefolgt von der Zielrufnummer, angerufen werden. Zum
+      Deaktivieren der Weiterleitung muss wieder die 44 (aber diesmal ohne
+      eine weitere Nummer) angerufen werden. Dies wird mit folgendem Wählplan
+      realisiert:</div><pre class="programlisting">[from-intern]
+; Call-Forwarding für einen einzelnen Anschluss
+;
+; aktivieren
+exten =&gt; _44X.,1,Answer()
+exten =&gt; _44X.,n,Set(DB(CF/${CALLERID(num)})=${EXTEN:2})
+exten =&gt; _44X.,n,SayDigits(${EXTEN:2})
+exten =&gt; _44X.,n,NoOp(Weiterleitung fuer ${CALLERID(num)} auf ${EXTEN:2} aktiviert.) 
+exten =&gt; _44X.,n,Hangup()
+
+; deaktivieren
+exten =&gt; 44,1,Answer()
+exten =&gt; 44,n,DBdel(CF/${CALLERID(num)})
+exten =&gt; 44,n,Playback(auth-thankyou)
+exten =&gt; 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.) 
+exten =&gt; 44,n,Hangup()
+
+[from-extern]
+exten =&gt; _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
+exten =&gt; _X.,n,GotoIf($[foo${DB(CF/${EXTEN})} != foo]?normal:forward)
+exten =&gt; _X.,n(normal),Dial(SIP/${EXTEN})
+exten =&gt; _X.,n(forward),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
+exten =&gt; _X.,n,Dial(local/${DB(CF/${EXTEN})})</pre></div><div class="section" title="Komplexes Call-Forwarding" id="komplexes-callforwarding"><div class="titlepage"><div><div><h3 class="title" id="komplexes-callforwarding">Komplexes Call-Forwarding</h3></div></div></div><div class="para">Diesmal soll in der Apfelmus GmbH jeder Mitarbeiter ein
+      Call-Forwarding aktivieren können, allerdings soll es ein weiteres
+      Call-Forwarding für die gesamte Firma geben, damit bei einem
+      Betriebsausflug alle Gespräche an eine andere Niederlassung geleitet
+      werden können. Diese Weiterleitung wird über die Funktionsnummer 55
+      aktiviert (gefolgt von der Zielrufnummer). Die große Weiterleitung für
+      die gesamte Anlage hat dabei eine höhere Priorität als die einzelnen
+      Regeln. Eine Realisierung kann wie folgt aussehen:<pre class="programlisting">[from-intern]
+; Call-Forwarding für einen einzelnen Anschluss
+;
+; aktivieren
+exten =&gt; _44X.,1,Answer()
+exten =&gt; _44X.,n,Set(DB(CF/${CALLERID(num)})=${EXTEN:2})
+exten =&gt; _44X.,n,SayDigits(${EXTEN:2})
+exten =&gt; _44X.,n,NoOp(Weiterleitung fuer ${CALLERID(num)} auf ${EXTEN:2} aktiviert.) 
+exten =&gt; _44X.,n,Hangup()
+
+; deaktivieren
+exten =&gt; 44,1,Answer()
+exten =&gt; 44,n,DBdel(CF/${CALLERID(num)})
+exten =&gt; 44,n,Playback(auth-thankyou)
+exten =&gt; 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.) 
+exten =&gt; 44,n,Hangup()
+
+; Call-Forwarding für die gesamte Telefonanlage
+;
+; aktivieren
+exten =&gt; _55X.,1,Answer()
+exten =&gt; _55X.,n,Set(DB(CF/anlage)=${EXTEN:2})
+exten =&gt; _55X.,n,SayDigits(${EXTEN:2})
+exten =&gt; _55X.,n,NoOp(Weiterleitung der Anlage auf ${EXTEN:2} aktiviert.) 
+exten =&gt; _55X.,n,Hangup()
+
+; deaktivieren
+exten =&gt; 55,1,Answer()
+exten =&gt; 55,n,DBdel(CF/anlage)
+exten =&gt; 55,n,Playback(auth-thankyou)
+exten =&gt; 55,n,NoOp(Weiterleitung der Anlage deaktiviert.) 
+exten =&gt; 55,n,Hangup()
+
+[from-extern]
+exten =&gt; _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
+exten =&gt; _X.,n,GotoIf($[foo${DB(CF/anlage)} != foo]?cfanlage:zweiteregel)
+exten =&gt; _X.,n(zweiteregel),GotoIf($[foo${DB(CF/${EXTEN})} != foo]?cfnormal:normal)
+exten =&gt; _X.,n(normal),Dial(SIP/${EXTEN})
+exten =&gt; _X.,n(cfnormal),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
+exten =&gt; _X.,n,Dial(local/${DB(CF/${EXTEN})})
+exten =&gt; _X.,n(cfanlage),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/anlage)})
+exten =&gt; _X.,n,Dial(local/${DB(CF/anlage)})
+</pre></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="datenbank-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="asterisk-datenbank.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Die Asterisk-Datenbank</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="datenbank-via-cli.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Datenbankzugriff vom CLI</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="datenbank-von-shell.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Datenbankzugriff von der Shell</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="datenbank-backup.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Backup der Datenbank</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Anwendungsbeispiel Call-Forwarding</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="section-callforwarding.html#einfaches-callforwarding" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Einfaches Call-Forwarding</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="section-callforwarding.html#komplexes-callforwarding" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Komplexes Call-Forwarding</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="beispiel-callingcard.html" title="pfc level3 breadcrumb-link section sectlevel1">Anwendungsbeispiel Calling-Card</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="datenbank-backup.html"><strong>Zurück</strong>15.5. Backup der Datenbank</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="beispiel-callingcard.html"><strong>Weiter</strong>15.7. Anwendungsbeispiel Calling-Card</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

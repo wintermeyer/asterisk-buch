@@ -1,0 +1,24 @@
+[[manager-zapdialoffhook]]
+= `ZapDialOffhook`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6**|————————
+(* anderer Name)
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: ZapDialOffhook
+Synopsis: Dial over Zap channel while offhook
+Privilege: <none>
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6 (xref:manager-dahdidialoffhook.adoc[Abschnitt F.15, „`DAHDIDialOffhook`“]):
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,3 @@
+- Action: ZapDialOffhook
+- Synopsis: Dial over Zap channel while offhook
++ Action: DAHDIDialOffhook
++ Synopsis: Dial over DAHDI channel while offhook
+Privilege: <none>

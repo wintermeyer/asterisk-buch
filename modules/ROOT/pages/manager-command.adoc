@@ -1,0 +1,20 @@
+[[manager-command]]
+= `Command`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Command
+Synopsis: Execute Asterisk CLI Command
+Privilege: command,all
+Description: Run a CLI command.
+Variables: (Names marked with * are required)
+*Command: Asterisk CLI command to run
+ActionID: Optional Action id for message matching.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

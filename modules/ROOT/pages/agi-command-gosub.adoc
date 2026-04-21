@@ -1,0 +1,21 @@
+[[agi-command-gosub]]
+= `GOSUB`
+
+[source]
+----
+GOSUB Context Extension Priority [Argument]
+----
+
+Führt die angegebene Dialplan-Subroutine aus.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.6:
+Usage: GOSUB <context> <extension> <priority> [<optional-argument>]
+Cause the channel to execute the specified dialplan subroutine, returning
+to the dialplan with execution of a Return()
+Runs Dead : No
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

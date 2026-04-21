@@ -1,0 +1,57 @@
+[[applications-resetcdr]]
+= `ResetCDR()`
+
+Setzt das Anrufprotokoll (Call Detail Record) zurück.
+
+[source]
+----
+ResetCDR([Optionen])
+----
+
+Setzt das Anrufprotokoll (Call Detail Record) zurück. Ist die
+Option `w` angegeben, wird eine Kopie des aktuellen
+Anrufprotokolls gespeichert, bevor das aktuelle CDR gelöscht
+wird.
+
+Liefert stets 0 zurück.
+
+[source]
+----
+; das aktuelle CDR speichern und dann zurücksetzen:
+exten => 123,1,Answer()
+exten => 123,n,Playback(tt-monkeys)
+exten => 123,n,ResetCDR(w)
+exten => 123,n,Playback(tt-monkeys)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ResetCDR' =-
+
+[Synopsis]
+Resets the Call Data Record
+
+[Description]
+ResetCDR([options]): This application causes the Call Data Record to be
+reset.
+Options:
+w -- Store the current CDR record before resetting it.
+a -- Store any stacked records.
+v -- Save CDR variables.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -10,3 +10,4 @@
+w -- Store the current CDR record before resetting it.
+a -- Store any stacked records.
+v -- Save CDR variables.
++ e -- Enable CDR only (negate effects of NoCDR).
+
+.Siehe auch
+xref:applications-forkcdr.adoc[Abschnitt C.59, „`ForkCDR()`“], xref:applications-nocdr.adoc[Abschnitt C.106, „`NoCDR()`“]

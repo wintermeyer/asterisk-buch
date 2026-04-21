@@ -1,0 +1,12 @@
+[[apfelmus-faq]]
+= FAQ
+
+[cols="2*"]
+|===
+| *F:* | Welche Kosten kommen auf die Apfelmus GmbH zu?
+| *A:* | Das hängt ganz von den Entscheidern in dieser Firma ab. Folgende Faktoren spielen dabei eine Rolle:Soll der Asterisk-Server ausfallsicher sein? Reicht ein Cold-Standby, oder soll es ein Hot-Standby sein?Welche Server-Hardware wird gekauft? Für eine solche Telefonanlage reicht ein relativ normaler Rechner. Es muss also nicht das allerneueste und damit oft auch teuerste System gekauft werden.Welche Telefone werden eingesetzt? Hierbei kann man von 30 bis weit über 300 Euro pro Telefon ausgeben.
+| *F:* | Lohnt sich Asterisk für die Apfelmus GmbH, oder handelt es sich vielmehr um eine Arbeitsbeschaffungsmaßnahme für die IT-Abteilung?
+| *A:* | Das hängt stark von den Angeboten der klassischen Telefonanlagenhersteller und von den Bedürfnissen der Apfelmus GmbH ab. Oft bieten klassische Telefonanlagenhersteller extreme Sonderrabatte, wenn sie erfahren, dass als Alternative das kostenlose Asterisk in Erwägung gezogen wird. Allerdings ist man dann meistens in einem starren Vertrag und kann die nächsten 5 Jahre nur bei diesem Hersteller einkaufen.Einer der großen Vorteile von Asterisk ist die Wahl des Supports und des Consultings. Man kann entweder alles selbst machen oder einen externen Consultant einkaufen. Sollte dieser nicht den Ansprüchen genügen, kann man ihn gegen einen anderen austauschen (das ist so mit einer klassischen Telefonanlage wegen der Vertragsbindung nicht möglich).Ob sich Asterisk betriebswirtschaftlich lohnt, muss jeder für seinen individuellen Fall ausrechnen. Die Erfahrung zeigt, dass dies in den meisten Fällen so ist. Berücksichtigt man noch die Möglichkeiten einer Erweiterung um neue Funktionen durch ein einfaches Software-Update, dann entwickeln sich die mittel- bis langfristigen Unterhalts- und Investitionskosten äußerst günstig.
+| *F:* | Wäre es für die Apfelmus GmbH nicht besser, eine fertige Asterisk-Lösung wie _Gemeinschaft_ (http://www.amooma.de/gemeinschaft/) zu nehmen?
+| *A:* | Ja, aber in diesem Buch geht es darum, wie man eine solche Anlage von Grund auf selbst aufbaut.
+|===

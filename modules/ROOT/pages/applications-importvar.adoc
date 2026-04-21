@@ -1,0 +1,60 @@
+[[applications-importvar]]
+= `ImportVar()`
+
+Setzt eine Variable basierend auf einer Channel-Variable eines
+anderen Channels.
+
+[source]
+----
+ImportVar(NeueVariable=Channel,Variable)
+----
+
+Setzt die Variable `NeueVariable` auf den Wert von
+`Variable` des angegebenen Channels. Falls
+`NeueVariable` mit dem Zeichen `_` beginnt, wird eine
+einfache Vererbung angenommen. Falls `NeueVariable` mit
+`__` beginnt, wird eine unbeschränkte Vererbung
+angenommen.
+
+[source]
+----
+; Caller-ID vom Channel Zap/1 importieren:
+exten => 123,1,Answer()
+exten => 123,n,ImportVar(cid=Zap/1,CALLERID)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ImportVar' =-
+
+[Synopsis]
+Import a variable from a channel into a new variable
+
+[Description]
+ImportVar(newvar=channelname|variable): This application imports a variable
+from the specified channel (as opposed to the current one) and stores it as
+a variable in the current channel (the channel that is calling this
+application). Variables created by this application have the same inheritance
+properties as those created with the Set application. See the documentation for
+Set for more information.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Import a variable from a channel into a new variable
+
+[Description]
+- ImportVar(newvar=channelname|variable): This application imports a variable
++ ImportVar(newvar=channelname,variable): This application imports a variable
+from the specified channel (as opposed to the current one) and stores it as
+a variable in the current channel (the channel that is calling this
+application). Variables created by this application have the same inheritance
+
+.Siehe auch
+xref:applications-set.adoc[Abschnitt C.149, „`Set()`“]

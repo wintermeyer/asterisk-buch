@@ -1,0 +1,93 @@
+[[functions-realtime]]
+= `REALTIME()`
+
+Zum Lesen:
+
+[source]
+----
+REALTIME(family|fieldmatch[|value[|delim1[|delim2]]])
+----
+
+Zum Schreiben:
+
+[source]
+----
+REALTIME(family|fieldmatch|value|field)
+----
+
+Mit dieser Funktion kann man Werte mithilfe des
+RealTime-Konfigurationssteuerprogramms auslesen und auch schreiben. Wenn mit
+der Funktion ein Wert ausgelesen wird, dann wird eine separierte
+Zeichenkette zurückgegeben. Der Separator zwischen dem Namen und dem Wert
+kann mit _`delim2`_ angegeben werden. Die einzelnen
+Ergebnisse werden mit _`delim1`_ separiert. Der
+Standard für _`delim2`_ ist
+„`=`“ und für
+_`delim1`_ „`|`“ in
+Asterisk 1.4 bzw. „`,`“ in Asterisk 1.6. Wenn
+nichts gefunden wird, liefert die Funktion NULL zurück. Wenn mit der
+Funktion geschrieben wird, wird immer NULL zurückgegeben.
+
+[source]
+----
+; Lesen und Schreiben mit REALTIME()
+exten => 123,1,Answer()
+exten => 123,n,Set(data=${REALTIME(sipusers,ext,5678)})
+exten => 123,n,Set(${REALTIME(sipusers,ext,5678)}=1234)
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'REALTIME' =-
+
+[Syntax]
+REALTIME(family|fieldmatch[|value[|delim1[|delim2]]]) on read
+REALTIME(family|fieldmatch|value|field) on write
+
+[Synopsis]
+RealTime Read/Write Functions
+
+[Description]
+This function will read or write values from/to a RealTime repository.
+REALTIME(....) will read names/values from the repository, and
+REALTIME(....)= will write a new value/field to the repository. On a
+read, this function returns a delimited text string. The name/value
+pairs are delimited by delim1, and the name and value are delimited
+between each other with delim2. The default for delim1 is '|' and
+the default for delim2 is '='. If there is no match, NULL will be
+returned by the function. On a write, this function will always
+return NULL.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,9 +1,8 @@
+-= Info about function 'REALTIME' =-
+
+[Syntax]
+- REALTIME(family|fieldmatch[|value[|delim1[|delim2]]]) on read
+- REALTIME(family|fieldmatch|value|field) on write
+-
++ REALTIME(family,fieldmatch[,value[,delim1[,delim2]]]) on read
++ REALTIME(family,fieldmatch,value,field) on write
+
+[Synopsis]
+RealTime Read/Write Functions
+@@ -14,7 +13,7 @@
+REALTIME(....)= will write a new value/field to the repository. On a
+read, this function returns a delimited text string. The name/value
+pairs are delimited by delim1, and the name and value are delimited
+- between each other with delim2. The default for delim1 is '|' and
++ between each other with delim2. The default for delim1 is ',' and
+the default for delim2 is '='. If there is no match, NULL will be
+returned by the function. On a write, this function will always
+return NULL.
+
+.Siehe auch
+xref:functions-realtime.adoc[Abschnitt D.81, „`REALTIME()`“], xref:functions-realtime_store.adoc[Abschnitt D.83, „`REALTIME_STORE()`“], xref:functions-realtime_destroy.adoc[Abschnitt D.82, „`REALTIME_DESTROY()`“], xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“], xref:applications-realtime.adoc[Abschnitt C.129, „`RealTime()`“]

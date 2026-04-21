@@ -1,0 +1,92 @@
+[[agi-datenstroeme]]
+= Datenströme
+
+Für AGI-Skripte ist ein Verständnis des Unix-Datenstrom-Models
+unabdingbar. Im Anhang dieses Buches finden Sie Informationen zu diesem
+Prinzip.
+
+[[agi-stdin]]
+== STDIN
+
+Das AGI-Skript bekommt über den „standard input“
+(STDIN) einige Informationen von Asterisk. Das Format sieht
+folgendermaßen aus:
+
+[source]
+----
+agi_request: programmname.php
+agi_channel: Zap/1-2
+agi_language: de
+agi_callerid: Hans Beispiel
+agi_context: extern
+agi_extension: 1234
+agi_priority: 2
+----
+
+Nach dem Übergeben dieser Grundinformationen sendet Asterisk
+noch eine Leerzeile, um dem AGI-Skript mitzuteilen, dass die Übertragung
+beendet ist.
+
+[[agi-headers]]
+=== AGI-Header
+
+Die folgende Aufstellung listet alle von Asterisk
+weitergegebenen Header auf:
+
+* `agi_request`
++
+Der Dateiname des aufgerufenen AGI-Programms
+* `agi_channel`
++
+Der Channel
+* `agi_language`
++
+Die eingestellte Sprache (z. B. `en` für Englisch
+oder `de` für Deutsch)
+* `agi_type`
++
+Die Channel-Art (z. B. `sip` für SIP oder
+`zap` für ISDN)
+* `agi_uniqueid`
++
+Eine im System unique (einmalige) ID für das Gespräch
+* `agi_callerid`
++
+Die Caller-ID (z. B. `Hans Meier
+<2000>`)
+* `agi_context`
++
+Der Ursprungs-Context
+* `agi_extension`
++
+Die Ursprungs-Extension
+* `agi_priority`
++
+Die Priorität in der Extension beim Aufruf des
+AGI-Skripts
+* `agi_accountcode`
++
+Abrechnungscode
+* `agi_calleridname`
++
+Name aus der Caller-ID (z. B. `Hans
+Meier`)
+* `agi_callingpres`
++
+Die Caller-ID im ZAP-Channel
+
+[[agi-stdout]]
+== STDOUT
+
+Nachdem das AGI-Skript die Grundinformationen von Asterisk
+erhalten hat, beginnt es mit seiner Arbeit und gibt Befehle über
+„standard out“ (STDOUT) zurück an Asterisk. Um sich diese
+Kommunikation anzuschauen, kann man im CLI mit `set verbose
+5` den Verbosity-Level entsprechend hochsetzen.
+
+[[agi-stderr]]
+== STDERR
+
+„Standard error“ (STDERR) ist der formale Weg, um
+Fehler- oder Debug-Meldungen vom AGI-Skript auf die Console (das CLI)
+von Asterisk zu bringen.

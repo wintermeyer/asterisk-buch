@@ -1,0 +1,52 @@
+[[functions-smdi_msg_retrieve]]
+= `SMDI_MSG_RETRIEVE()`
+
+[source]
+----
+SMDI_MSG_RETRIEVE(smdiPort,schluessel[,timeout[,optionen]])
+----
+
+Ruft eine eingehende SMDIfootnote:[Simplified Message Desk Interface, http://en.wikipedia.org/wiki/Simplified_Message_Desk_Interface. Sie finden es z. B. bei älteren Cisco-Telefonanlagen.]-Nachricht aus der SMDI-Queue ab und gibt die ID der Nachricht
+zurück. Die Weiterverarbeitung der Nachricht erfolgt dann mit
+`SMDI_MSG()` (xref:functions-smdi_msg.adoc[Abschnitt D.92, „`SMDI_MSG()`“]). Die
+SMDI-Konfiguration für Asterisk befindet sich in der
+`smdi.conf`. Für Beispiele siehe
+`doc/smdi.txt` im Asterisk-Source-Verzeichnis.
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SMDI_MSG_RETRIEVE' =-
+
+[Syntax]
+SMDI_MSG_RETRIEVE(<smdi port>,<search key>[,timeout[,options]])
+
+[Synopsis]
+Retrieve an SMDI message.
+
+[Description]
+This function is used to retrieve an incoming SMDI message. It returns
+an ID which can be used with the SMDI_MSG() function to access details of
+the message. Note that this is a destructive function in the sense that
+once an SMDI message is retrieved using this function, it is no longer in
+the global SMDI message queue, and can not be accessed by any other Asterisk
+channels. The timeout for this function is optional, and the default is
+3 seconds. When providing a timeout, it should be in milliseconds.
+The default search is done on the forwarding station ID. However, if
+you set one of the search key options in the options field, you can change
+this behavior.
+Options:
+t - Instead of searching on the forwarding station, search on the message
+desk terminal.
+n - Instead of searching on the forwarding station, search on the message
+desk number.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-smdi_msg.adoc[Abschnitt D.92, „`SMDI_MSG()`“]

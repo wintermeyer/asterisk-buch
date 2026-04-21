@@ -1,0 +1,48 @@
+[[applications-readexten]]
+= `ReadExten()`
+
+Extension per DTMF einlesen.
+
+[source]
+----
+ReadExten(variable,soundprompt,context,option,timeout)
+----
+
+Fordert den Anrufer zur Eingabe einer Extension auf und speichert
+diese in einer Variablen.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'ReadExten' =-
+
+[Synopsis]
+Read an extension into a variable
+
+[Description]
+ReadExten(<variable>[,[<filename>][,[<context>][,[<option>][,<timeout>]]]])
+
+Reads a #-terminated string of digits from the user into the given variable.
+filename file to play before reading digits or tone with option i
+context context in which to match extensions
+option options are:
+s - Return immediately if the channel is not answered,
+i - Play filename as an indication tone from your
+indications.conf
+n - Read digits even if the channel is not answered.
+timeout An integer number of seconds to wait for a digit response. If
+greater than 0, that value will override the default timeout.
+
+ReadExten will set READEXTENSTATUS on exit with one of the following statuses:
+OK A valid extension exists in ${variable}
+TIMEOUT No extension was entered in the specified time
+INVALID An invalid extension, ${INVALID_EXTEN}, was entered
+SKIP Line was not up and the option 's' was specified
+ERROR Invalid arguments were passed
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-read.adoc[Abschnitt C.126, „`Read()`“]

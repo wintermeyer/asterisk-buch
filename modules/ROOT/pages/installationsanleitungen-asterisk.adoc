@@ -1,0 +1,17 @@
+[[installationsanleitungen-asterisk]]
+= Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0
+
+[NOTE]
+====
+Die in diesem Anhang aufgeführten Installationsanleitungen sind als
+„Kochrezepte“ für die Installation von Asterisk auf einem
+frischen Betriebssystem anzusehen. Sobald man von diesem Kochrezept
+abweicht (z. B. kein frisch installiertes, sondern ein bereits
+existierendes Betriebssystem einsetzt), kann es je nach Konstellation zu
+Problemen kommen. Deshalb sollten Sie bei einem dann auftretenden Problem
+zuerst das Kochrezept Stück für Stück abarbeiten.
+Es liegt in der Natur eines Buches zu sich ständig
+weiterentwickelnder Software, dass irgendwann die Software den hier
+beschriebenen Stand der Dinge „überholt“. Bitte überprüfen
+Sie deswegen die Online-Version auf http://das-asterisk-buch.de.
+====

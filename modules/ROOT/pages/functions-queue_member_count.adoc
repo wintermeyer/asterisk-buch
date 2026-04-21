@@ -1,0 +1,47 @@
+[[functions-queue_member_count]]
+= `QUEUE_MEMBER_COUNT()`
+
+[source]
+----
+QUEUE_MEMBER_COUNT(warteschlange)
+----
+
+Gibt die Anzahl der Agenten (im Gegensatz zu den Anrufern) auf der
+Warteschlange zurück.
+
+[source]
+----
+; Anzahl der Agenten in der Warteschlange "support":
+exten => 123,1,Set(foo=${QUEUE_MEMBER_COUNT(support)}) 
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'QUEUE_MEMBER_COUNT' =-
+
+[Syntax]
+QUEUE_MEMBER_COUNT(<queuename>)
+
+[Synopsis]
+Count number of members answering a queue
+
+[Description]
+Returns the number of members currently associated with the specified queue.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -8,3 +8,5 @@
+
+[Description]
+Returns the number of members currently associated with the specified queue.
++
++ This function has been deprecated in favor of the QUEUE_MEMBER function
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:functions-queueagentcount.adoc[Abschnitt D.78, „`QUEUEAGENTCOUNT()`“], xref:functions-queue_waiting_count.adoc[Abschnitt D.77, „`QUEUE_WAITING_COUNT()`“], xref:functions-queue_member_penalty.adoc[Abschnitt D.75, „`QUEUE_MEMBER_PENALTY()`“], xref:functions-queue_member.adoc[Abschnitt D.72, „`QUEUE_MEMBER()`“], xref:functions-queue_member_list.adoc[Abschnitt D.74, „`QUEUE_MEMBER_LIST()`“], xref:functions-queue_variables.adoc[Abschnitt D.76, „`QUEUE_VARIABLES()`“]

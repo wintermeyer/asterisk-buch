@@ -1,0 +1,81 @@
+[[applications-dictate]]
+= `Dictate()`
+
+Virtuelles Diktiergerät.
+
+[source]
+----
+Dictate([Verzeichnis[,Dateiname]])
+----
+
+Startet ein virtuelles Diktiergerät. Mit den Parametern lassen sich
+das Verzeichnis für die Aufzeichnungen (Default:
+`/var/spool/asterisk/dictate/`) und der Dateiname
+(numerisch!) bestimmen. Aufgezeichnet wird im Format
+`raw`.
+
+Der User kann das Diktiergerät mit folgenden Tasten
+steuern:
+
+`0`:: Hilfe
+`1`:: Schaltet zwischen Aufnahme- und Abspielmodus hin und her.
+`*`:: Pause bzw. Weiter
+`#`:: Datei wählen bzw. neuen Dateinamen eingeben (z. B. `1234#`)
+
+Im Abspielmodus:
+
+`2`:: Schaltet die Abspielgeschwindigkeit um (1x, 2x, 3x, 4x).
+`7`:: Ein Stück zurück springen
+`8`:: Ein Stück weiter springen
+
+Im Aufnahmemodus:
+
+`8`:: Aufnahme löschen und neu anfangen
+
+[source]
+----
+; Diktiergerät starten:
+exten => 123,1,Dictate()
+----
+
+Um jedem User sein eigenes Diktiergerät zu geben, könnte man z. B.
+als Pfad `/var/spool/asterisk/dictate/${EXTEN}`
+angeben.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Dictate' =-
+
+[Synopsis]
+Virtual Dictation Machine
+
+[Description]
+Dictate([<base_dir>[|<filename>]])
+Start dictation machine using optional base dir for files.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,5 +4,5 @@
+Virtual Dictation Machine
+
+[Description]
+- Dictate([<base_dir>])
++ Dictate([<base_dir>[|<filename>]])
+Start dictation machine using optional base dir for files.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,5 @@
+Virtual Dictation Machine
+
+[Description]
+- Dictate([<base_dir>[|<filename>]])
++ Dictate([<base_dir>[,<filename>]])
+Start dictation machine using optional base dir for files.
+
+.Siehe auch
+xref:applications-record.adoc[Abschnitt C.132, „`Record()`“]

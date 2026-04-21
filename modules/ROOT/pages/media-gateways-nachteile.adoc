@@ -1,0 +1,15 @@
+[[media-gateways-nachteile]]
+= Nachteile
+
+Media Gateways werden fast immer über den Preis und selten über die
+Qualität der verbauten Hardware verkauft. Entsprechend werden dort oft
+qualitativ minderwertige ISDN- oder Analog-Karten verbaut. Das kann zu
+Problemen führen (siehe auch xref:welche-isdn-karte.adoc[Abschnitt 10.2, „Welche ISDN-Karte soll ich nehmen?“]). Ein
+weiteres Problem ist, das Asterisk mit dem Takt aus dem ISDN-Netz am
+besten arbeitet. Dies liegt an der Genauigkeit dieses Taktes, der an
+vielen Stellen im System (z. B. bei Konferenzschaltungen) essenziell ist.
+Bei einer im Server verbauten ISDN-Karte wird dieser Takt vom ISDN-Treiber
+übernommen. Dies ist bei einem Media Gateway nicht möglich, und deshalb
+muss auf die Serveruhr zurückgegriffen werden (die systembedingt ungenau
+ist). Weiterhin lassen sich Media Gateways meistens sehr viel schlechter
+updaten als Treiber für ISDN-Karten auf Servern.

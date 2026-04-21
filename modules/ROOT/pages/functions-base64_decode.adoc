@@ -1,0 +1,35 @@
+[[functions-base64_decode]]
+= `BASE64_DECODE()`
+
+[source]
+----
+BASE64_DECODE(Base64_String)
+----
+
+Dekodiert einen Base64-kodiertenfootnote:[http://de.wikipedia.org/wiki/Base64] String.
+
+[source]
+----
+exten => 123,1,Set(foo=${BASE64_DECODE("SGFsbG8gV2VsdA==")})
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'BASE64_DECODE' =-
+
+[Syntax]
+BASE64_DECODE(<base64_string>)
+
+[Synopsis]
+Decode a base64 string
+
+[Description]
+Returns the plain text string
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

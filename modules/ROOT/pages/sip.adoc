@@ -1,0 +1,986 @@
+[[sip]]
+= SIP
+
+SIP hat sich de facto als Standardprotokoll im VoIP-Umfeld etabliert.
+Warum?footnote:[Das fragen sich viele! ;-)]
+
+Wahrscheinlich liegt es an folgenden Punkten:
+
+* Es ist ein offenes Protokoll.
+* Die Spezifikation war von Anfang an als http://www.ietf.org/rfc/rfc3261.txt[_RFC 3261_] für jeden Entwickler kostenlos einsehbar.
+
+Vom rein technischen Standpunkt ist das IAX-Protokoll dem
+SIP-Protokoll in einzelnen Aspekten (siehe die E-Mail von Mark Spencer)
+mindestens leicht überlegen. Bei vielen Installationen würde man mit IAX
+sogar sehr viel weniger Probleme haben als mit SIP. Ein Grund hierfür ist
+das NAT-Problem bei SIP, das bei IAX in dieser Form nicht auftritt und das
+bei der Verwendung von SIP und einer Firewall dazu führt, dass bei der
+Firewall sehr viele UDP-Ports freigeschaltet werden müssen. Weiterhin können
+über einen IAX-Channel mehrere Gespräche gleichzeitig geführt werden. Bei
+SIP muss für jedes Gespräch ein eigener Channel aufgebaut werden (was einen
+großen Verwaltungsoverhead bedeutet).
+
+[NOTE]
+====
+Das IP-Protokoll unterscheidet zwei wesentliche
+Transportmöglichkeiten: TCP und UDP. TCP unterstützt eine sichere
+Übertragung von Daten, da nach der Übertragung durch Checksummen
+überprüft wird, ob eventuell ein Paket fehlt. Dieses kann dann noch
+einmal angefordert werden. TCP wird zum Beispiel beim Abruf von
+Webseiten benutzt. Bei den meisten Übertragungen von Ton- und
+Bildinformation benötigt man diesen Overhead allerdings nicht. Falls bei
+einer Videoübertragung ein Bild ausfällt, dann kann man dieses Bild
+nicht ein paar Sekunden später einfügen. Es wird also einfach
+weggelassen – Vergleichbares passiert bei Audiostreams. Für die
+Übertragung von Multimediadaten wird in der Regel UDP verwendet. Es
+garantiert zwar keine lückenlose Übertragung der Daten, besitzt dafür
+aber einen geringeren Verwaltungsoverhead und ist in dieser Hinsicht
+„schneller“ als TCP.
+====
+
+[[sip-nat-problem]]
+== Das SIP-NAT-Problem
+
+Die wenigsten Büro- und Privat-PCs haben eine eigene feste
+IP-Adresse aus dem öffentlichen Adressbereich des Internets. Diese wäre
+mit dem jetzigen IPv4-Standard wahrscheinlich auch nicht für jedes
+TCP/IP-taugliche Gerät verfügbar, da der IPv4-Adressraum zu klein für alle
+bereits vorhandenen Geräte ist.
+
+[NOTE]
+====
+Der IPv4-Adressraum verfügt „nur“ über
+232 einzelne Adressen. Das Problem ist
+auch, dass die Adressen nicht wahllos vergeben werden können, sondern
+nur innerhalb sinnvoller Broadcastdomains und bereits ganze
+Class-A-Bereiche (ca. 17 Millionen Adressen) in den Anfangstagen des
+Internets großzügig auch einzelnen Firmen zugeteilt wurden.
+====
+
+Eine Lösung dieses Problems besteht darin, Rechner bzw. gesamte
+Rechnernetze über ein sogenanntes NAT-Gateway mit dem Internet zu
+verbinden. NAT ist das Akronym für _Network Address
+Translation_. Mithilfe von NAT teilt ein einzelner Rechner
+(NAT-Gateway) seine feste offizielle IP-Adresse mit allen verbundenen
+Rechnern, die in der Regel über eine IP-Adresse aus dem privaten, im
+Internet nicht gerouteten Bereichfootnote:[IP-Adressen aus dem privaten Bereich beginnen beispielsweise mit 10. oder mit 192.168., lauten also zum Beispiel 10.128.1.16 oder 192.168.1.3.] verfügen. Ein NAT-Gateway nimmt alle Anfragen von Rechnern
+aus dem privaten Netz (meist Intranet genannt) entgegen und leitet diese
+dann mit der eigenen offiziellen IP-Adresse ins Internet weiter. Kommen
+die angeforderten Daten aus dem Internet zurück, leitet das NAT-Gateway
+die Daten entsprechend ins Intranet.footnote:[Es gibt mittlerweile viele unterschiedliche Formen von NAT-Gateways, mit zum Teil sehr spezieller Funktionsweise. Hier werden lediglich das grundlegende Funktionsprinzip eines NAT-Gateways und die damit verbundenen Auswirkungen beschrieben.] TCP/IP-Datenpakete bestehen in der Regel aus einem Envelope
+(Umschlag) und dem Content/Payload (Inhalt/Nutzlast). Im Envelope stehen
+Informationen über Ursprung und Ziel des Contents, also auch die
+IP-Adresse des Rechners, von dem die Kommunikation gestartet wurde. Diese
+Daten werden vom NAT-Gateway umgeschrieben. Es merkt sich die
+ursprüngliche IP-Adresse (für die Rückantwort) und schreibt für den
+öffentlichen Bereich des Internets seine eigene offizielle IP-Adresse in
+den Envelope. Kommen die angeforderten Daten zurück, schreibt das
+NAT-Gateway wieder die ursprüngliche IP-Adresse in den Envelope und leitet
+die Daten entsprechend an den Rechner zurück, der eigentlich die
+Kommunikaton gestartet hatte. Dies funktioniert bei den meisten
+Protokollen sehr gut. Allerdings benutzt SIP nicht den Umschlag, sondern
+schreibt die für das Protokoll benötigte IP-Adresse in den Inhalt des
+Pakets. Normale NAT-Gateways können nur mit IP-Adressen im Envelope
+umgehen, nicht aber im Content. Der gängige Fehler ist nun folgender: Der
+Zielrechner verfügt über eine offizielle IP-Adresse und der Quellrechner
+über eine private Adresse. Der anfordernde Rechner adressiert die Pakete
+mit der offiziellen IP-Adresse und schreibt seine Absenderadresse direkt
+in den Content und nicht in den Envelope. Die Pakete werden korrekt
+geroutet und landen beim Zielrechner. Da die Quell-IP nicht im Envelope
+gesetzt war, konnte das NAT-Gateway die private Adresse nicht in eine
+offizielle IP-Adresse umschreiben. Daher versucht der Zielrechner, die
+Daten an die in den Paketen angegebene IP-Adresse zu senden. IP-Adressen
+aus dem privaten Adressbereich werden jedoch nicht geroutet, und der
+Quellrechner erhält keine Daten vom Zielrechner. In der Regel besitzen die
+Rechner im Intranet eines Unternehmens IP-Adressen aus dem privaten
+Adressbereich und müssen für die Kommunikation mit Rechnern im Internet
+auf die Dienste eines NAT-Gateways zurückgreifen.footnote:[In seltenen Fällen nutzen Firmen trotz der Verwendung von offiziellen IP-Adressen auch für interne Rechner ein NAT-Gateway. Oft tun sie das, weil sie zum Beispiel die Größe des Netzes nach außen maskieren möchten und sich generell gewisse Sicherheitsvorteile davon erhoffen.] Für Telefone im Intranet ist diese Adressproblematik ohne
+Belang, da ja im Intranet alle IP-Adressen geroutet und IP-Pakete korrekt
+verteilt werden. Verbindungen ins Internet sind jedoch mit SIP
+standardmäßig über ein NAT-Gateway nicht möglich. Eine genaue Beschreibung
+des NAT-Problems, das auch für einige andere Anwendungen relevant ist,
+finden Sie in der Wikipedia unter http://de.wikipedia.org/wiki/Network_Address_Translation.
+
+[NOTE]
+====
+Auf welchen Ports Asterisk nach eingehenden RTP-Verbindungen
+lauscht, kann in der `rtp.conf` eingestellt
+werden.
+====
+
+[[sip-extensions.conf]]
+== SIP-Geräte in der extensions.conf
+
+In der `extensions.conf` werden Kanäle zu
+SIP-Geräten in der Form
++SIP/_`Gerätename`_+ angegeben. Um einen
+beliebigen SIP-User über das Internet zu erreichen, verwendet man
++SIP/_`user`_@_`domain`_+,
+für einen User auf einem Proxy gibt man
++SIP/_`proxy`_/_`user`_+
+oder
++SIP/_`user`_@_`proxy`_+
+an, wobei der Proxy als Abschnitt definiert sein muss (siehe xref:sip.adoc#sip.conf-channels[„Geräte-Einstellungen“]).
+
+Nützliche CLI-Befehle:
+
+`sip show peers`:: Listet alle SIP-Peers auf (auch Friends).
+`sip show users`:: Listet alle SIP-User auf (auch Friends).
+`sip show registry`:: Zeigt den Status der Hosts, bei denen wir uns anmelden.
+`sip debug` bzw. `sip set debug`:: Zeigt SIP-Debug-Meldungen.
+
+[[sip.conf-general]]
+== Globale Einstellungen
+
+Diese Einstellungen werden in der `sip.conf`
+im Abschnitt `[general]` vorgenommen. Hier sollen aber nur die
+wichtigsten und gebräuchlichsten Parameter beschrieben werden; weitere
+Erklärungen zu exotischen Parametern finden Sie in der
+`sip.conf`.
+
+In der Regel ist es möglich, diese Einstellungen auch für
+einzelne User/Peers vorzunehmen.
+
+[[sip-general-context]]
+=== `context`
+
+[source]
+----
+context = Contextname
+----
+
+Bestimmt den Context im Dialplan für eingehende Anrufe.
+
+[source]
+----
+context=default
+----
+
+[[sip-general-allowguest]]
+=== `allowguest`
+
+[source]
+----
+allowguest = [yes|no]
+----
+
+Anrufe von Gästen erlauben. Default: `yes`
+
+[source]
+----
+allowguest=no
+----
+
+[[sip-general-allowtransfer]]
+=== `allowtransfer`
+
+[source]
+----
+allowtransfer = [yes|no]
+----
+
+Transfer von Verbindungen erlauben. Default: yes
+
+[source]
+----
+allowtransfer=yes
+----
+
+[[sip-general-realm]]
+=== `realm`
+
+[source]
+----
+realm = Hostname
+----
+
+Der Systemname des Asterisk-Servers zur Authentifizierung.
+Default: `asterisk` oder ein ggf. in
+`asterisk.conf` eingestellter Systemname. Verwenden
+Sie hier den Host- oder Domain-Namen Ihres Servers.
+
+[source]
+----
+realm=ast1.beispiel.de
+----
+
+[[sip-general-bindport]]
+=== `bindport`
+
+[source]
+----
+bindport = Portnummer
+----
+
+Der UDP-Port, auf dem SIP-Verbindungen entgegengenommen werden
+sollen. Default: 5060.
+
+[source]
+----
+bindport=5060
+----
+
+[[sip-general-bindaddr]]
+=== `bindaddr`
+
+[source]
+----
+bindaddr = IP-Adresse
+----
+
+Die IP-Adresse, auf der SIP-Verbindungen entgegengenommen werden
+sollen. Default: 0.0.0.0 für alle Adressen des Rechners.
+
+[source]
+----
+bindaddr=0.0.0.0
+----
+
+[[sip-general-tos]]
+=== TOS-Flags (`tos_sip`, `tos_audio`, `tos_video`)
+
+Für SIP können 3 TOSfootnote:[Type of Service, siehe xref:glossar.adoc#glossar-tos[ToS\] und xref:glossar.adoc#glossar-dscp[DSCP\]]-Parameter angegeben werden, um SIP-Paketen im Netzwerk
+eine andere Priorität als z. B. Datenübertragungen zu geben. Eine
+genauere Beschreibung finden Sie unter xref:iax.adoc#iax-globalekonf-tos[„`tos`“]. In der Regel sollte man diese Werte
+angeben (per Default sind sie nicht gesetzt):
+
+[source]
+----
+tos_sip=cs3      ; für SIP-Pakete (Kommunikationsaufbau)
+tos_audio=ef     ; für RTP-Audio-Pakete
+tos_video=af41   ; für RTP-Video-Pakete
+----
+
+[[sip-general-allow]]
+=== Sprach-Codecs (`allow`, `disallow`)
+
+Mit `allow` und `disallow` können bestimmte
+Sprachcodecs erlaubt oder nicht erlaubt werden. Außer den bekannten
+Codecs gibt es `all` für alle. Dabei ist die Reihenfolge
+wichtig.
+
+[source]
+----
+; Beispiel: Alle Codecs außer ilbc erlauben:
+allow=all
+disallow=ilbc
+
+; Beispiel: nur die Codecs gsm und ulaw erlauben:
+disallow=all
+allow=gsm
+allow=ulaw
+----
+
+[[sip-general-language]]
+=== `language`
+
+[source]
+----
+language = Sprachkürzel
+----
+
+Stellt die Default-Sprache ein.
+
+[source]
+----
+language=de
+----
+
+[[sip-general-dtmfmode]]
+=== `dtmfmode`
+
+[source]
+----
+dtmfmode = Modus
+----
+
+Verfahren, wie DTMF-Töne gesendet werden. Mögliche
+Werte:
+
+`rfc2833`:: (Default) Informationsnachrichten nach RFC 2833 senden.
+`info`:: Als SIP-INFO-Nachrichten senden.
+`inband`:: DTMF-Töne „inband“ als Audio senden.
+`auto`:: Verwendet `rfc2833` wenn möglich, sonst `inband`.
+
+[source]
+----
+dtmfmode=rfc2833
+----
+
+[[sip-general-videosupport]]
+=== `videosupport`
+
+[source]
+----
+videosupport = [yes|no]
+----
+
+Schaltet die generelle Unterstützung von Video-Übertragungen ein
+(nicht getestet). Video-Unterstützung kann in den einzelnen Kanälen
+ausgeschaltet werden, kann aber dort ohne diese globale Einstellung
+nicht aktiviert werden.
+
+[source]
+----
+videosupport=yes
+----
+
+[[sip-general-maxcallbitrate]]
+=== `maxcallbitrate`
+
+[source]
+----
+maxcallbitrate = Übertragungsrate
+----
+
+Bestimmt die maximale Übertragungsrate für Video-Telefonate in
+Kilobit pro Sekunde. Default: `384` (für 384 Kbit/s).
+
+[source]
+----
+maxcallbitrate=384
+----
+
+[[sip-general-g726nonstandard]]
+=== `g726nonstandard`
+
+[source]
+----
+g726nonstandard = [yes|no]
+----
+
+Mit dieser Option stellen Sie ein, dass, wenn ein Peer G726-32
+Audio aushandelt, _AAL2 packing_ statt
+_RFC3551 packing_ verwendet wird (siehe
+`doc/rtp-packetization.txt`, ab Asterisk 1.4). Dies
+sollte nur eingestellt werden, wenn Sie Probleme mit z. B. Grandstream-
+oder Sipura-Telefonen haben, die fälschlicherweise G726-32 aushandeln,
+obwohl sie AAL2-G726-32 meinen.
+
+[source]
+----
+g726nonstandard=no
+----
+
+[[sip-general-rtpkeepalive]]
+=== `rtpkeepalive`
+
+[source]
+----
+rtpkeepalive = Intervall
+----
+
+Sendet im in Sekunden angegebenen Intervall Keep-Alive-Pakete im
+RTP-Stream, um NATfootnote:[_Network Address Translation_, wird häufig von Routern verwendet, die zwischen einem privaten Netz und dem öffentlichen Internet vermitteln.]-Routen offen zu halten.
+
+[source]
+----
+rtpkeepalive=5   ; alle 5 Sekunden Keep-Alive-Pakete senden
+----
+
+[[sip-general-t38pt_udptl]]
+=== `t38pt_udptl`
+
+[source]
+----
+t38pt_udptl = [yes|no]
+----
+
+Erlaubt das Durchschleifen von T.38-Fax-Übertragungen von SIP- zu
+SIP-Kanälen. Default: `no`. Kann pro Kanal deaktiviert, aber
+nicht ohne diese Einstellung aktiviert werden.
+
+[source]
+----
+t38pt_udptl=yes
+----
+
+[[sip-general-register]]
+=== `register`
+
+[source]
+----
+register => user[:passwort[:authuser]]@host[:port][/extension]
+----
+
+Damit kann sich Asterisk als SIP-User bei einem anderen
+SIP-Proxy (z. B. einem externen Provider) registrieren.
+
+Der Host ist entweder ein normaler Hostname, der per DNS
+aufgelöst werden kann, oder der Name eines Abschnitts, der weiter unten
+definiert ist.
+
+Die Extension muss in der `extensions.conf`
+definiert sein, damit Anrufe von diesem Proxy empfangen werden können.
+Ohne Angabe der Extension gilt `s`.
+
+[source]
+----
+; eingehende Anrufe von sip-provider.de an die Extension 999 leiten:
+register => 123456:passwort@sip-provider.de/999
+
+; eingehende Anrufe von sip-provider an die Extension 999 leiten:
+register => 123456:passwort@sip-provider/999
+[sip-provider]
+...
+----
+
+[[sip-general-externip]]
+=== `externip`
+
+[source]
+----
+externip = IP-Adresse
+----
+
+Diese Einstellungen kann wichtig sein, wenn sich Asterisk hinter
+einem NAT-Router befindet. Die angegebene IP-Adresse wird in ausgehenden
+SIP-Nachrichten verwendet, damit die Empfänger unsere korrekte
+öffentliche Adresse wissen (statt unserer Adresse aus dem privaten
+Netz).
+
+[source]
+----
+externip=123.45.67.89
+----
+
+[[sip-general-externhost]]
+=== `externhost`
+
+[source]
+----
+externhost = Hostname
+----
+
+Wie xref:sip.adoc#sip-general-externip[„`externip`“], nur dass stattdessen
+der eigene öffentliche Hostname angegeben wird (der natürlich per DNS
+auflösbar sein muss).
+
+[source]
+----
+externhost=hanspeter.dyndns.net
+----
+
+[[sip-general-localnet]]
+=== `localnet`
+
+[source]
+----
+localnet = Adressraum
+----
+
+Gibt die lokalen, privaten Netzwerke an. Meist kann man Folgendes
+verwenden (nach RFC 1918 und Zeroconf):
+
+[source]
+----
+localnet=192.168.0.0/255.255.0.0
+localnet=10.0.0.0/255.0.0.0
+localnet=172.16.0.0/12
+localnet=169.254.0.0/255.255.0.0
+----
+
+[[sip-general-canreinvite]]
+=== `canreinvite`
+
+[source]
+----
+canreinvite = [yes|nonat|update|update,nonat]
+----
+
+Normalerweise versucht Asterisk den optimalsten „audio
+path“ zu wählen, d. h., bei 2 hergestellten Channels die beiden
+Gesprächsteilnehmer direkt zu verbinden ohne Asterisk als Mittelsmann.
+Das funktioniert aber nicht, wenn sich ein User in einem NAT
+befindet.
+
+yes:: (Default) Normale Einstellung. Asterisk versucht, den kürzesten Audio-Pfad zu verwenden.
+nonat:: Nur umleiten, wenn sich die Teilnehmer nicht hinter einem NAT befinden (sofern das für Asterisk erkennbar ist).
+update:: Statt `INVITE`- sollen `UPDATE`-Pakete zum Umleiten verwendet werden. Kann mit `nonat` als `update,nonat` kombiniert werden.
+
+[source]
+----
+canreinvite=nonat
+----
+
+[[sip-general-jbenable]]
+=== `jbenable`
+
+[source]
+----
+jbenable = [yes|no]
+----
+
+Schaltet den „Jitter-Buffer“ für eingehendes Audio
+ein, wenn das nötig ist. Dadurch können unterschiedliche Latenzen von
+IP-Paketen ausgeglichen werden (siehe xref:glossar.adoc#glossar-jitter[Jitter]). Default: `no`
+
+[source]
+----
+jbenable=yes
+----
+
+[[sip-general-jbforce]]
+=== `jbforce`
+
+[source]
+----
+jbforce = [yes|no]
+----
+
+Schaltet den Jitter-Buffer immer ein. (Natürlich muss auch
+`jbenable` aktiviert sein.) Default: `no`
+
+[source]
+----
+jbforce=no
+----
+
+[[sip-general-jbmaxsize]]
+=== `jbmaxsize`
+
+[source]
+----
+jbmaxsize = Länge
+----
+
+Maximale Größe des Jitter-Buffers in Millisekunden. Default:
+200.
+
+[source]
+----
+jbmaxsize=200
+----
+
+[[sip-general-jbresyncthreshold]]
+=== `jbresyncthreshold`
+
+[source]
+----
+jbresyncthreshold = Länge
+----
+
+Resynchronisationsrahmen des Jitter-Buffers. Default: 1000.
+
+[source]
+----
+jbresyncthreshold=500
+----
+
+[[sip-general-jbimpl]]
+=== `jbimpl`
+
+[source]
+----
+jbimpl = [fixed|adaptive]
+----
+
+Bestimmt, welcher Jitter-Buffer-Algorithmus verwendet wird. Bisher
+sind zwei Algorithmen implementiert:
+
+`fixed`:: (default) Der klassische Jitter-Buffer mit fester Größe (immer `jbmaxsize`).
+`adaptive`:: Der neue Algorithmus mit variabler Größe (das ist auch der Jitter-Buffer von IAX2).
+
+[source]
+----
+jbimpl=adaptive
+----
+
+[[sip.conf-channels]]
+== Geräte-Einstellungen
+
+Nach den allgemeinen Einstellungen können Verbindungen zu anderen
+Geräten in Abschnitten definiert werden. Das sind entweder User, Peers
+oder Friends (Friend ist die Kombination aus User und Peer).
+
+In der Regel können hier auch die in xref:sip.adoc#sip.conf-general[„Globale Einstellungen“] beschriebenen Parameter verwendet und so für
+einzelne Kanäle abgeändert werden.
+
+Ein Abschnitt könnte z. B. so aussehen:
+
+[source]
+----
+[sip-provider-in]
+; für Anrufe, die über unseren SIP-Provider eingehen
+; Wir kennen die Caller-ID der eingehenden Anrufe noch nicht, daher
+; wird type=peer und der Abgleich per Hostname verwendet
+type=peer
+host=sip.provider.de
+context=from-provider
+----
+
+oder so:
+
+[source]
+----
+[sip-provider-out]
+type=peer                ; da nur ausgehende Anrufe
+secret=geheim
+username=apfelmus       ; unser User
+fromuser=apfelmus       ; brauchen viele SIP-Provider
+host=sip.provider.de    ; Host des Providers
+port=5060               ; Port auf dem Host des Providers
+call-limit=5            ; max. 5 gleichzeitige ausgehende Anrufe zulassen
+----
+
+Bitte beachten Sie auch, dass je nach `type` des
+Kanals (`user` | `peer`) nicht alle Parameter
+sinnvoll sind. In der `sip.conf` finden sich Beispiele
+zu exotischen Parametern.
+
+[[sip-channel-type]]
+=== `type`
+
+[source]
+----
+type = [user|peer|friend]
+----
+
+Die Art des Geräts
+
+`user`:: Ein Gerät, das sich zum Anrufen mit uns verbindet (z. B. ein lokales Telefon).
+`peer`:: Ein Gerät, mit dem wir uns verbinden, oder ein Gerät, das sich mit uns verbindet, und das wir anhand des Host-Namens zuordnen.
+`friend`:: `user` und `peer` in einem Abschnitt.
+
+[source]
+----
+type=peer
+----
+
+[[sip-channel-context]]
+=== `context`
+
+[source]
+----
+context = Contextname
+----
+
+Der Context im Dialplan für eingehende Anrufe.
+
+[source]
+----
+context=from-birnenbrei
+----
+
+[[sip-channel-secret]]
+=== `secret`
+
+[source]
+----
+secret = Passwort
+----
+
+Unser Passwort, mit dem wir uns authentifizieren, bzw. das
+Passwort des anderen Geräts, um sich bei uns zu authentifizieren.
+
+[source]
+----
+secret=geheim
+----
+
+[[sip-channel-username]]
+=== `username`
+
+[source]
+----
+username = Benutzername
+----
+
+Unser Benutzername/Account auf dem anderen Rechner.
+
+[source]
+----
+username=apfelmus
+----
+
+[[sip-channel-fromuser]]
+=== `fromuser`
+
+[source]
+----
+fromuser = Benutzername
+----
+
+Wird von einigen SIP-Providern benötigt.
+
+[source]
+----
+fromuser=apfelmus
+----
+
+[[sip-channel-host]]
+=== `host`
+
+[source]
+----
+host = [Hostname|dynamic]
+----
+
+Hostname (oder Adresse) des anderen Rechners. `dynamic`
+wird angegeben, wenn der Hostname des Geräts nicht bekannt ist, da er
+dynamisch vergeben wird (oft zusammen mit `defaultip`
+gebraucht).
+
+[source]
+----
+host=siphost.provider.de
+----
+
+[[sip-channel-defaultip]]
+=== `defaultip`
+
+[source]
+----
+defaultip = IP-Adresse
+----
+
+Unter der angegebenen Adresse wird versucht, einen Host
+(`host=dynamic`) zu erreichen, der sich noch nicht bei uns
+registriert hat.
+
+[source]
+----
+defaultip=192.168.0.33
+----
+
+[[sip-channel-port]]
+=== `port`
+
+[source]
+----
+port = Portnummer
+----
+
+Port auf dem anderen Rechner, mit dem wir uns verbinden.
+
+[source]
+----
+port=5060
+----
+
+[[sip-channel-call-limit]]
+=== `call-limit`
+
+[source]
+----
+call-limit = Anzahl
+----
+
+Limitiert die Anzahl der gleichzeitigen Telefonate mit diesem
+Gerät. (Nicht für Realtime-Peers!) Bei `type=friend` wäre
+`call-limit=1` ein Anruf für den `peer` und einer
+für den `user`.
+
+[source]
+----
+call-limit=1
+----
+
+[[sip-channel-callerid]]
+=== `callerid`
+
+[source]
+----
+callerid = Vorname Nachname <Nummer>
+----
+
+Überschreibt die Caller-ID, die vom Gerät gesendet wird (und damit
+oft nicht vertrauenswürdig ist).
+
+[source]
+----
+callerid=Hans Meier <1234>
+----
+
+[[sip-channel-nat]]
+=== `nat`
+
+[source]
+----
+nat = [yes|no]
+----
+
+Gibt Asterisk einen Hinweis, ob sich zwischen Server und dem Gerät
+ein NAT-Router befindet.
+
+[source]
+----
+host=192.168.0.42
+nat=no
+----
+
+[[sip-channel-mailbox]]
+=== `mailbox`
+
+[source]
+----
+mailbox = Nummer[@Context][,Nummer[@Context][,...]]
+----
+
+Ordnet dem User eine Mailbox im angegebenen Voicemail-Context
+(oder `default`) zu. Dadurch werden die entsprechenden
+MWIfootnote:[Message Waiting Indicator]-Nachrichten an das Gerät geschickt – z. B. für ein
+Blinklicht bei neuen Nachrichten. Es können auch mehrere Mailboxen
+angegeben werden.
+
+[source]
+----
+mailbox=1234@default
+----
+
+[[sip-channel-subscribemwi]]
+=== `subscribemwi`
+
+[source]
+----
+subscribemwi = [yes|no]
+----
+
+Schickt MWI-Nachrichten (siehe xref:sip.adoc#sip-channel-mailbox[„`mailbox`“]) nur dann, wenn das Gerät danach
+fragt.
+
+[source]
+----
+subscribemwi=yes
+----
+
+[[sip-channel-vmexten]]
+=== `vmexten`
+
+[source]
+----
+vmexten = Extension
+----
+
+Übergibt die Dialplan-Extension, unter der die Mailbox zu
+erreichen ist. Default: `asterisk` (so auch in einigen
+Endgeräten, z. B. snom, voreingestellt).
+
+[source]
+----
+vmexten=asterisk
+----
+
+[[sip-channel-allow]]
+=== Sprach-Codecs (`allow`, `disallow`)
+
+Mit `allow` und `disallow` können bestimmte
+Sprachcodecs erlaubt oder nicht erlaubt werden (siehe xref:sip.adoc#sip-general-allow[„Sprach-Codecs (`allow`, `disallow`)“]).
+
+[[sip-channel-regexten]]
+=== `regexten`
+
+[source]
+----
+regexten = Extension
+----
+
+Erzeugt dynamisch eine Extension, wenn sich das Gerät
+anmeldet.
+
+[source]
+----
+regexten=1234
+----
+
+[[sip-channel-qualify]]
+=== `qualify`
+
+[source]
+----
+qualify = [yes|no|Wartezeit]
+----
+
+Schickt dem anderen Gerät regelmäßig Pings; wenn das Gerät
+innerhalb der angegebenen Wartezeit (oder der Default-Zeit bei
+`yes`) nicht mit einem Pong antwortet, gilt es als nicht
+erreichbar.
+
+[source]
+----
+qualify=5000
+----
+
+[[sip-channel-callgroup]]
+=== `callgroup`
+
+[source]
+----
+callgroup = Gruppen
+----
+
+Setzt für das Gerät die angegebene Call-Group. Es können auch
+mehrere Gruppen durch Komma getrennt oder eine Reihe von Gruppen mit
+`-` (Bindestrich) angegeben werden. Gruppennummern gehen von
+0 bis 63.
+
+[source]
+----
+callgroup=2,4-7   ; setzt die Gruppen 2,4,5,6,7
+----
+
+[[sip-channel-pickupgroup]]
+=== `pickupgroup`
+
+[source]
+----
+pickupgroup = Gruppen
+----
+
+Bestimmt die Pickup-Groups für das Gerät, gibt also an, für welche
+der durch `callgroup` angegebenen Gruppen Pickup (das
+Heranholen von Gesprächen) erlaubt ist.
+
+[source]
+----
+pickupgroup=2,4-6   ; Pickup für die Gruppen 2,4,5,6 erlauben
+----
+
+[[sip-channel-permit]]
+=== IP-Adressen-Beschränkung (`deny`, `permit`)
+
+Mit `permit` und `deny` können
+IP-Adressräume, aus denen sich das Gerät bei uns registrieren kann,
+erlaubt oder verboten werden (nicht zu verwechseln mit
+`allow` / `disallow`!). Dabei ist die Reihenfolge
+wichtig.
+
+[source]
+----
+; Verbinden nur von 192.168.0.* erlauben geht so:
+deny=0.0.0.0/0.0.0.0                ; alle verbieten
+permit=192.168.0.0/255.255.255.0   ; 192.168.0.* erlauben
+----
+
+[[sip-channel-setvar]]
+=== `setvar`
+
+[source]
+----
+setvar = Variablenname=Wert
+----
+
+Setzt eine Channel-Variable für alle Anrufe von diesem
+Gerät.
+
+[source]
+----
+setvar=KUNDENNR=1234
+----
+
+[[sip-channel-rfc2833compensate]]
+=== `rfc2833compensate`
+
+[source]
+----
+rfc2833compensate = [yes|no]
+----
+
+(Ab Asterisk 1.4) Ermöglicht Rückwärtskompatibilität zum Erkennen
+von DTMF-Tönen, die von einem verbundenen Asterisk-Gerät vor Version 1.4
+gesendet werden.
+
+[source]
+----
+rfc2833compensate=yes
+----

@@ -1,0 +1,534 @@
+[[einleitung-regex]]
+= Pattern Matching
+
+Mit unserem bisher erworbenen Wissen müssen wir pro möglicher
+Rufnummer immer eine eigene Extension schreiben. Dies würde schon nach
+kurzer Zeit sehr lange und fehleranfällige Dialpläne nach sich ziehen.
+Sollen z. B. die Rufnummern 100 bis 109 jeweils immer den Sprachbaustein
+hello-world abspielen, so würde die `extensions.conf`
+wie folgt aussehen:
+
+[source]
+----
+[general]
+
+[apfelmus]
+exten => 100,1,Answer()
+exten => 100,2,Playback(hello-world)
+exten => 100,3,Hangup()
+
+exten => 101,1,Answer()
+exten => 101,2,Playback(hello-world)
+exten => 101,3,Hangup()
+
+exten => 102,1,Answer()
+exten => 102,2,Playback(hello-world)
+exten => 102,3,Hangup()
+
+exten => 103,1,Answer()
+exten => 103,2,Playback(hello-world)
+exten => 103,3,Hangup()
+
+exten => 104,1,Answer()
+exten => 104,2,Playback(hello-world)
+exten => 104,3,Hangup()
+
+exten => 105,1,Answer()
+exten => 105,2,Playback(hello-world)
+exten => 105,3,Hangup()
+
+exten => 106,1,Answer()
+exten => 106,2,Playback(hello-world)
+exten => 106,3,Hangup()
+
+exten => 107,1,Answer()
+exten => 107,2,Playback(hello-world)
+exten => 107,3,Hangup()
+
+exten => 108,1,Answer()
+exten => 108,2,Playback(hello-world)
+exten => 108,3,Hangup()
+
+exten => 109,1,Answer()
+exten => 109,2,Playback(hello-world)
+exten => 109,3,Hangup()
+----
+
+Wenn wir ein Pattern in Form einer Regular Expression (auch Regex
+genannt) verwenden,
+
+[TIP]
+====
+Definition _Regular Expression_:
+"Reguläre Ausdrücke (Abkürzung: _RegExp_ oder
+_Regex_, engl. _regular
+expressions_) dienen zur Beschreibung von (Unter-)Mengen von
+Zeichenketten mithilfe syntaktischer Regeln. Sie finden vor allem in
+der Softwareentwicklung Verwendung. Für fast alle Programmiersprachen
+existieren Implementierungen." (zitiert aus http://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck[_http://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck_])
+====
+
+sieht der gleiche Dialplan gleich viel handlicher
+aus:
+
+[source]
+----
+[general]
+
+[apfelmus]
+exten => _10X,1,Answer()
+exten => _10X,2,Playback(hello-world)
+exten => _10X,3,Hangup()
+----
+
+Das Pattern `_10X` beschreibt den Zahlenraum von 100 bis
+109.
+
+[IMPORTANT]
+====
+Man benutzt für die Beschreibung dieses Prozesses häufig das
+englische Verb _match_ und das Substantiv
+_Pattern_. "Pattern" kann mit "Suchmuster"
+übersetzt werden. "match" lässt sich in etwa mit "zutreffen"
+übersetzen und die Verwendung dieser Begriffe ist am einfachsten mit
+einem Beispiel zu beschreiben: Ein Pattern ist "_10X", und dieses
+Pattern "matcht" auf den Zahlenraum 100 bis 109. Es trifft also nicht
+auf die Zahl 110 zu.
+====
+
+[NOTE]
+====
+Die Begriffe _Pattern_ und _Regular
+Expression_ werden in vielen Dokumentationen sehr beliebig
+eingesetzt. Auch dieses Buch leidet unter diesem Problem. Formal
+korrekt ist sicherlich der Begriff _Pattern_, aber
+die meisten Programmierer werden den Begriff _Regular
+Expression_ benutzen.
+====
+
+[[regular-expression-syntax]]
+== Syntax
+
+Ein Pattern wird immer mit einem Unterstrich (`_`) vor
+dem eigentlichen Suchmuster eingeleitet:
+
+[source]
+----
+exten => _Regular Expression,Prioritaet,Applikation
+----
+
+Eine Regular Expression kann in Asterisk aus den folgenden
+Elementenfootnote:[Es gibt noch weitere Elemente, die im deutschen Sprachraum aber im Allgemeinen wenig Sinn machen. Aus diesem Grund werden sie hier nicht aufgeführt.] bestehen:
+
+`[ABC]`:: Die Ziffern A, B und C. Beispiel für die Zahlen 34, 37 und 38:
++
+[source]
+----
+exten => _3[478],1,NoOp(Test)
+----
+`[A-B]`:: Beliebige Ziffer von A bis B. Beispiel für alle Zahlen von 31 bis 35:
++
+[source]
+----
+exten => _3[1-5],1,NoOp(Test)
+----
+
+(Zum
+Beispiel wäre auch `[25-8]` für folgende Ziffern
+möglich: 2,5,6,7,8.)
+`X`:: Beliebige Ziffer von 0 bis 9. Beispiel für alle Zahlen von 300 bis 399:
++
+[source]
+----
+exten => _3XX,1,NoOp(Test)
+----
+`Z`:: Beliebige Ziffer von 1 bis 9. Beispiel für alle Zahlen von 31 bis 39:
++
+[source]
+----
+exten => _3Z,1,NoOp(Test)
+----
+`N`:: Beliebige Ziffer von 2 bis 9. Beispiel für alle Zahlen von 32 bis 39:
++
+[source]
+----
+exten => _3N,1,NoOp(Test)
+----
+`.`:: Eine oder mehrere beliebige Ziffer(n). Beispiel für alle Nummern, die mit einer 0 beginnen:
++
+[source]
+----
+exten => _0.,1,NoOp(Test)
+----
++
+[NOTE]
+====
+Das Pattern `_.` sollten Sie nicht verwenden!
+Es trifft auch auf besondere Extensions wie `i`,
+`t` oder `h` zu. Benutzen Sie
+stattdessen `_X.` oder `_X` falls
+nötig.
+====
+`!`:: Eine oder mehrere beliebige Ziffer(n) – ab Asterisk 1.4. Dieser besondere Platzhalter trifft zu, sobald unzweifelhaft nicht eine andere explizite Nummer im Dialplan gewählt wird. Dann hebt sofort die Leitung für „overlap dialing“ ab. Dieses Element wird hier nur der Vollständigkeit halber erwähnt.
+
+[IMPORTANT]
+====
+Ein beliebter Fehler ist es, am Anfang einer Regular
+Expression das Underscore-Zeichen "_" zu vergessen. Für Asterisk ist
+aber die Extension XXX ebenfalls eine vollkommen sinnvolle Extension
+(da SIP ja nicht nur Zahlen, sondern auch Buchstaben als Zieladresse
+kennt). Entsprechend wird es auch keine Fehlermeldung geben.
+Dummerweise wird das Pattern aber auch nie matchen, weil es nicht
+als Pattern (also mit dem `_`) eingegeben wurde.
+====
+
+[[dialplan-show]]
+== Testen mit `dialplan show`
+
+Nehmen wir einmal an, dass in unserer
+`extensions.conf` der folgende Dialplan
+steht:
+
+[source]
+----
+[general]
+
+[meine-telefone]
+exten => 23,1,Answer()
+exten => 23,2,Playback(hello-world)
+exten => 23,3,Hangup()
+----
+
+Dann können wir im CLI von Asterisk (das ist das Interface, das
+bei einem bereits laufenden Asterisk mit `asterisk -r`
+gestartet werden kann) mit dem Befehl `dialplan show`
+(auf Asterisk 1.2: `show dialplan`) den aktuellen
+Dialplan anzeigen:
+
+[source,shell]
+----
+*CLI> dialplan show
+[ Context 'default' created by 'pbx_config' ]
+
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+[ Context 'parkedcalls' created by 'res_features' ]
+  '700' =>          1. Park()                                     [res_features]
+
+-= 2 extensions (4 priorities) in 3 contexts. =-
+*CLI>
+----
+
+Das CLI zeigt jetzt alle Wählregeln an, die Asterisk bekannt sind.
+Deshalb gibt es auch noch einen Context "parkedcalls", den wir gar nicht
+wissentlich aktiviert haben (dieser wird standardmäßig in der
+`features.conf` aktiviert und stört uns jetzt nicht
+weiter). Wenn wir uns nur für den Dialplan für den Context
+`meine-telefone` interessieren, so können wir diesen mit
+`dialplan show meine-telefone` abrufen:
+
+[source,shell]
+----
+*CLI> dialplan show meine-telefone
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI> 
+----
+
+Der Befehl `*dialplan* show`
+kann aber nicht nur ganze Contexte anzeigen, sondern auch sagen, was
+passiert, wenn ich eine bestimmte Nummer wähle. Wenn ich mit einem
+Telefon, das im Context `meine-telefone` ist, die Nummer 25
+anrufe, dann kann ich mit `dialplan show
+25@meine-telefone` anzeigen, was passiert:
+
+[source,shell]
+----
+*CLI> dialplan show 25@meine-telefone
+There is no existence of 25@meine-telefone extension
+*CLI>
+----
+
+Es wird also nichts passieren, weil es keinen Match für die von
+mir gewählte Extension 25 gibt. Wenn ich das Gleiche für die 23 mache,
+dann gibt es folgende Ausgabe:
+
+[source,shell]
+----
+*CLI> dialplan show 23@meine-telefone
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI> 
+----
+
+Wenn ich in allen verfügbaren Contexten nach einem Match für die
+23 suchen möchte, so geht das mit `dialplan show
+23@:`
+
+[source,shell]
+----
+*CLI> dialplan show 23@
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI>
+----
+
+Erweitern wir unseren Dialplan einmal um einen weiteren
+Context:
+
+[source]
+----
+[general]
+
+[meine-telefone]
+exten => 23,1,Answer()
+exten => 23,2,Playback(hello-world)
+exten => 23,3,Hangup()
+
+[abteilung-z]
+exten => _2X,1,Answer()
+exten => _2X,2,Playback(hello-world)
+exten => _2X,3,Hangup()
+----
+
+Und jetzt führen wir noch einmal `dialplan show
+23@` aus (vorher müssen wir natürlich Asterisk mit
+`reload` im CLI sagen, dass es den neuen Dialplan
+einlesen soll):
+
+[source,shell]
+----
+*CLI> dialplan show 23@
+[ Context 'abteilung-z' created by 'pbx_config' ]
+  '_2X' =>          1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =>           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 2 extensions (6 priorities) in 2 contexts. =-
+*CLI> 
+----
+
+Es werden also alle matchenden Extensions anzeigt. Um im obigen
+Beispiel zu bleiben, probieren wir das jetzt auch noch einmal mit
+`dialplan show 25@` aus:
+
+[source,shell]
+----
+*CLI> dialplan show 25@
+[ Context 'abteilung-z' created by 'pbx_config' ]
+  '_2X' =>          1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI>
+----
+
+Logischerweise gibt es dabei nur einen Treffer, und der ist im
+Context `abteilung-z`. Sollten Sie also mit einem Telefon,
+das im Context `meine-telefone` arbeitet, die 25 wählen, so
+werden Sie trotzdem kein hello-world hören, denn dies funktioniert nur
+bei Telefonen, die auch im Context `abteilung-z`
+arbeiten.
+
+[[wann-matcht-welches-pattern]]
+== Wann matcht welches Pattern?
+
+Das Pattern Matching in Asterisk
+ist bei großen Dialplänen eine trickreiche Angelegenheit. Asterisk geht
+nämlich nicht, wie allgemein angenommen wird, plump von oben nach unten
+den Dialplan durch. Nein, es priorisiert innerhalb der Patterns!
+
+Je exakter ein Pattern matcht, desto höher ist die
+Wahrscheinlichkeit, dass es matcht. Asterisk geht allerdings – bevor es
+eine Entscheidung trifft – den ganzen Context durch. Es könnte ja sein,
+das ein anderes Pattern noch besser matcht.
+
+Beispiel:
+
+[source]
+----
+[verkauf]
+exten => _12X.,1,NoOp{12X}
+exten => 12345,1,NoOp(12345}
+exten => _1234.,1,NoOp{1234.}
+----
+
+Um herauszufinden, welches Pattern matcht, wenn die 12345 gewählt
+wird, können wir dies mit `dialplan show
+12345@verkauf` überprüfen:
+
+[source,shell]
+----
+*CLI> dialplan show 12345@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '12345' =>        1. NoOp(12345})                               [pbx_config]
+  '_1234.' =>       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =>        1. NoOp{12X}()                                [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI> 
+----
+
+Asterisk zeigt alle Treffer, aber priorisiert die Zeile, in
+der `12345,1,NoOP{12345}` steht. Die höchste Priorität wird
+immer ganz oben angezeigt.
+
+Jetzt kontrollieren wir das noch für die Nummer 12346 mit dem
+Befehl `dialplan show 12346@verkauf`:
+
+[source,shell]
+----
+*CLI> dialplan show 12346@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =>       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =>        1. NoOp{12X}()                                [pbx_config]
+
+-= 2 extensions (2 priorities) in 1 context. =-
+*CLI> 
+----
+
+Auch hier bekommt das Pattern mit dem "besten" Treffer die höchste
+Priorität.
+
+[IMPORTANT]
+====
+Es ist nicht wichtig, in welcher Reihenfolge Patterns im
+Dialplan geschrieben werden! Es ist nur wichtig, wie genau ein
+Pattern matcht. Je genauer es matcht, desto höher wird es
+priorisiert.
+====
+
+[WARNING]
+====
+Es gibt eine Sonderregel für das Pattern _.
+"_." matcht immer und hat auch immer die höchste Priorität. Es
+ist also egal, was Sie sonst noch in diesem Context für Regeln
+haben! Es wird immer nur die Regel mit dem Pattern "_." ausgeführt.
+Man sollte also lieber ein "_X." nehmen, außer man ist sich absolut
+sicher und weiß, was das Pattern "_." bewirkt.
+====
+
+Auch wenn die Reihenfolge von Pattern nicht immer ganz
+trival ist, gibt es eine einfache Debugging-Möglichkeit. Mit
+`show dialplan 12345@verkauf` lässt sich der Dialplan
+für die gewählte Nummer 12345 im Context `verkauf` auflisten.
+So können Sie für spezielle Nummern überprüfen, ob auch die dafür
+vorgesehene Regel matcht.
+
+[[sonderregel-pattern-asterisk-1-2]]
+=== Sonderregel für das Pattern _. in Asterisk 1.2
+
+Damit das Leben eines Asterisk-Administrators nicht zu einfach
+wird, hat sich Digium noch eine Besonderheit für das Pattern "_." in
+der Asterisk-Version 1.2 ausgedacht. Obwohl dieses Pattern das
+allgemeinste und damit von der Logik her das Pattern mit der
+geringsten Priorität sein müsste, ist es genau andersherum!
+
+[WARNING]
+====
+`_.` bekommt in der Asterisk-Version 1.2 immer
+die höchste Priorität!
+====
+
+[NOTE]
+====
+Bitte beachten Sie, dass der CLI-Befehl `show
+dialplan` zwar auch noch in der Version 1.4 funktioniert,
+aber unerwünscht ist. Deshalb lauten die Aufrufe in der Version
+1.2 `show dialplan` und in der Version 1.4
+`dialplan show`.
+====
+
+Probieren wir noch einmal unseren obigen Dialplan mit einer
+zusätzlichen Extension "`_.`" aus:
+
+[source]
+----
+[verkauf]
+exten => _12X.,1,NoOp{12X}
+exten => 12345,1,NoOp(12345}
+exten => _1234.,1,NoOp{1234.}
+
+exten => _.,1,NoOp{Bingo}
+----
+
+Wenn wir jetzt die Rufnummer 12346 ausprobieren wollen, bekommen
+wir mit dem Befehl `dialplan show 12346@verkauf` in
+der Version 1.4 folgende Ausgabe:
+
+[source,shell]
+----
+*CLI> dialplan show 12346@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =>       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =>        1. NoOp{12X}()                                [pbx_config]
+  '_.' =>           1. NoOp{Bingo}()                              [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI>
+----
+
+In Asterisk 1.2 bekommt der Befehl `show dialplan
+12346@verkauf` aber folgende Ausgabe:
+
+[source,shell]
+----
+*CLI> dialplan show 12346@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_.' =>           1. NoOp{Bingo}()                              [pbx_config]
+  '_1234.' =>       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =>        1. NoOp{12X}()                                [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI>
+----
+
+Deshalb sollte man als "Restesammler" (wenn überhaupt) nur das
+Pattern `_X.` benutzen. Der folgende Dialplan wird in den
+Asterisk-Versionen 1.2 und 1.4 gleich behandelt:
+
+[source]
+----
+[verkauf]
+exten => _12X.,1,NoOp{12X}
+exten => 12345,1,NoOp(12345}
+exten => _1234.,1,NoOp{1234.}
+
+exten => _X.,1,NoOp{Bingo}
+----
+
+Die Prioritäten sind in beiden Asterisk-Versionen wie
+folgt:
+
+[source,shell]
+----
+*CLI> dialplan show 12346@verkauf
+[ Context 'verkauf' created by 'pbx_config' ]
+ '_1234.' => 1. NoOp{1234.}() [pbx_config]
+ '_12X.' => 1. NoOp{12X}() [pbx_config]
+ '_X.' => 1. NoOp{Bingo}() [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI>
+----

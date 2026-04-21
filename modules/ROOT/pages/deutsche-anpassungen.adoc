@@ -1,0 +1,13 @@
+[[deutsche-anpassungen]]
+= Deutsche Anpassungen
+
+In diesem Kapitel:
+
+* xref:toene-und-signale.adoc[Töne und Signale]
+* xref:deutsche-sprachbausteine.adoc[Deutsche Sprachbausteine]
+** xref:deutsche-sprachbausteine.adoc#deutsche-sprachbausteine-download[Download und Installation deutscher Sprachprompts]
+** xref:deutsche-sprachbausteine.adoc#deutsche-sprachbausteine-konfiguration[Konfiguration der deutschen Prompts]
+** xref:deutsche-sprachbausteine.adoc#verzeichnisstruktur-sprachbausteine[Verzeichnisstruktur der Sprachbausteine]
+
+Asterisk ist ein US-amerikanisches Produkt. Allerdings kann man die
+für den Endbenutzer relevanten Teile für deutsche User anpassen.

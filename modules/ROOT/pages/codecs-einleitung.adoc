@@ -1,0 +1,18 @@
+[[codecs-einleitung]]
+= Einleitung
+
+Das Thema Codecs hat bei deutschen Asterisk-Installationen keine so
+große Bedeutung wie bei Installationen in anderen Ländern. Der Grund
+besteht darin, dass wir jahrelang ISDN-verwöhnt sind und die Qualität
+natürlich nicht mehr missen wollen. Entsprechend entscheidet man sich in
+Deutschland fast immer für den ISDN-Codec G.711 (alaw oder ulawfootnote:[Eigentlich µ-law (Das ist der griechische Buchstabe _my_, im physikalischen Einheitensystem als Präfix für _micro_.)]). ulaw ist die in den USA und Japan übliche Form, alaw die
+in Europa übliche. Bei einer mit dem ISDN-Netz verbundenen Asterisk-Anlage
+sollte man immer nur alaw benutzen und ulaw direkt deaktivieren. Dadurch
+spart man sich eine unnötige Umcodierung.
+
+In Amerika sieht die Codec-Diskussion anders aus. Dort hat man
+traditionell eher eine schlechte Sprachübertragungsqualität über das oft
+veraltete Netz und entsprechend niedrigere Ansprüche. Für die meisten
+Amerikaner ist ein Umstieg auf den G.711-Codec immer ein Sprung zu einer
+viel besseren Qualität (einer der Gründe, warum VoIP in Amerika schneller
+populär wurde als in Deutschland).

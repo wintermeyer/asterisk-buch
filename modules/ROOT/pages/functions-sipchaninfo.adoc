@@ -1,0 +1,57 @@
+[[functions-sipchaninfo]]
+= `SIPCHANINFO()`
+
+[source]
+----
+SIPCHANINFO(Feld)
+----
+
+Gibt Daten des aktuellen SIP-Kanals zurück. Gültige Felder
+sind:
+
+`peerip`:: Die IP-Adresse des Peers
+`recvip`:: Die ursprüngliche IP-Adresse des Peers
+`from`:: Die URI aus dem `From:`-Header
+`uri`:: Die URI aus dem `Contact:`-Header
+`useragent`:: Der User-Agent (Client-Programm)
+`peername`:: Der Name des Peers
+
+[source]
+----
+; den Namen des Peers abfragen:
+exten => 123,1,Set(foo=${SIPCHANINFO(peername)}) 
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SIPCHANINFO' =-
+
+[Syntax]
+SIPCHANINFO(item)
+
+[Synopsis]
+Gets the specified SIP parameter from the current channel
+
+[Description]
+Valid items are:
+- peerip The IP address of the peer.
+- recvip The source IP address of the peer.
+- from The URI from the From: header.
+- uri The URI from the Contact: header.
+- useragent The useragent.
+- peername The name of the peer.
+- t38passthrough 1 if T38 is offered or enabled in this channel, otherwise 0
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -14,3 +14,4 @@
+- uri The URI from the Contact: header.
+- useragent The useragent.
+- peername The name of the peer.
++ - t38passthrough 1 if T38 is offered or enabled in this channel, otherwise 0
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

@@ -1,0 +1,66 @@
+[[applications-zapbarge]]
+= `ZapBarge()`
+
+Tritt in einen Zap-Channel ein und überwacht ihn.
+
+[source]
+----
+ZapBarge([Channel])
+----
+
+Tritt in den angegebenen Zap-Channel ein. Die anderen Teilnehmer
+auf dem Channel können Sie dabei nicht hören und werden auch sonst keine
+Anzeichen dafür wahrnehmen, dass ihr Anruf überwacht wird.
+
+Ist der Channel nicht angegeben, werden Sie zunächst zur Eingabe
+einer Channel-Nummer aufgefordert. Geben Sie z. B. `4#` für Zap/4
+ein.
+
+Liefert -1, wenn der Anrufer auflegt. Ist unabhängig von dem
+Zustand, dass der Channel überwacht wird.
+
+[source]
+----
+exten => 123,1,ZapBarge(Zap/2)
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6**|————————
+(* anderer Name)
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ZapBarge' =-
+
+[Synopsis]
+Barge in (monitor) Zap channel
+
+[Description]
+ZapBarge([channel]): Barges in on a specified zap
+channel or prompts if one is not specified. Returns
+-1 when caller user hangs up and is independent of the
+state of the channel being monitored.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6 (xref:applications-dahdibarge.adoc[Abschnitt C.28, „`DAHDIBarge()`“]):
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,10 +1,10 @@
+- -= Info about application 'ZapBarge' =-
++ -= Info about application 'DAHDIBarge' =-
+
+[Synopsis]
+- Barge in (monitor) Zap channel
++ Barge in (monitor) DAHDI channel
+
+[Description]
+- ZapBarge([channel]): Barges in on a specified zap
++ DAHDIBarge([channel]): Barges in on a specified DAHDI
+channel or prompts if one is not specified. Returns
+-1 when caller user hangs up and is independent of the
+state of the channel being monitored.
+
+.Siehe auch
+xref:applications-dahdibarge.adoc[Abschnitt C.28, „`DAHDIBarge()`“], xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“], xref:applications-chanspy.adoc[Abschnitt C.20, „`ChanSpy()`“]

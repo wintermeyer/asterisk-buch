@@ -1,0 +1,55 @@
+[[applications-setmusiconhold]]
+= `SetMusicOnHold()`
+
+Setzt den Wert der Default-Wartemusik-Klasse.
+
+[source]
+----
+SetMusicOnHold(Klasse)
+----
+
+Setzt den Wert der Default-Wartemusik-Klasse.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SetMusicOnHold' =-
+
+[Synopsis]
+Set default Music On Hold class
+
+[Description]
+SetMusicOnHold(class): Sets the default class for music on hold for a given channel. When
+music on hold is activated, this class will be used to select which
+music is played.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,12 @@
+Set default Music On Hold class
+
+[Description]
+- SetMusicOnHold(class): Sets the default class for music on hold for a given channel. When
++ SetMusicOnHold(class):
++
++ !!! DEPRECATED. USe Set(CHANNEL(musicclass)=...) instead !!!
++
++ Sets the default class for music on hold for a given channel. When
+music on hold is activated, this class will be used to select which
+music is played.
++
++ !!! DEPRECATED. USe Set(CHANNEL(musicclass)=...) instead !!!
+
+[IMPORTANT]
+====
+Bitte verwenden Sie ab Asterisk 1.4
+`CHANNEL(musicclass)`.
+====
+
+.Siehe auch
+xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]

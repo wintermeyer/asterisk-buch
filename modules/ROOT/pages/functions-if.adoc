@@ -1,0 +1,52 @@
+[[functions-if]]
+= `IF()`
+
+[source]
+----
+IF(Ausdruck?trueVal:falseVal)
+----
+
+Gibt abhängig von der Bedingung (siehe xref:glossar.adoc#glossar-expressions[Expression]) den ersten oder zweiten Wert zurück. Ist
+die Bedingung wahr, wird der Wert nach `?`, sonst der Wert nach
+`:` zurückgegeben.
+
+[source]
+----
+; wenn ${Var}=123 ist, dann 5 zurückgeben, sonst 9:
+exten => 123,1,Set(foo=${IF($[ ${Var} = 123]?5:9)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'IF' =-
+
+[Syntax]
+IF(<expr>?[<true>][:<false>])
+
+[Synopsis]
+Conditional: Returns the data following '?' if true else the data following ':'
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+IF(<expr>?[<true>][:<false>])
+
+[Synopsis]
+- Conditional: Returns the data following '?' if true else the data following ':'
++ Conditional: Returns the data following '?' if true, else the data following ':'
+
+[Description]
+Not available
+
+.Siehe auch
+xref:functions-iftime.adoc[Abschnitt D.51, „`IFTIME()`“], xxref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“], xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“],
+xref:applications-gotoiftime.adoc[Abschnitt C.67, „`GotoIfTime()`“]

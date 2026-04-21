@@ -1,0 +1,68 @@
+[[was-ist-asterisk]]
+= Was ist Asterisk?
+
+Asterisk ist eine Telefonanlage. Diese wird allerdings nicht, wie
+bei klassischen Industrie-Telefonanlagen mit einem LKW angeliefert,
+sondern kann als Software aus dem Internet geladen werden. Alles, was Sie
+benötigen, um auch in den Genuss der Funktionalität einer ausgewachsenen
+Industrie-Telefonanlage zu kommen, ist ein handelsüblicher
+Personalcomputer, die Asterisk-Software, dieses Buch und Spaß an dem
+Thema. Im Prinzip müssen Sie die Software lediglich installieren und
+danach geeignet konfigurieren.
+
+Asterisk kann sowohl mit Analog-, ISDN- als auch auch VoIP-Telefonie
+arbeiten und sogar alle drei einfach miteinander verbinden. So kann ein
+Mitarbeiter im per VoIP angebundenen Home-Office genauso über den
+ISDN-Anschluss der Firma telefonieren wie jemand der in der Firma sitzt.
+Die Möglichkeiten von Asterisk sind nahezu grenzenlos, und im Vergleich zu
+klassischen Telefonanlagen, die für fast alle Funktionen Hardware
+benötigen, kann man oft viel Geld sparen. Allerdings ist moderne Telefonie
+keine einfache Angelegenheit: Neben dem Einstieg in das Thema im
+Allgemeinen muss man sich natürlich auch mit der Software
+„Asterisk“ selbst näher befassen, und der Alltag eines
+Asterisk-Administrators ist nicht immer einfach.
+
+[[unterschied-klassisch-und-asterisk]]
+== Unterschied zwischen klassischer Telefonanlage und Asterisk
+
+Um den Unterschied zwischen einer klassischen Telefonanlage im
+herkömmlichen Sinne und einer Telefonanlagensoftware wie Asterisk zu
+erklären, möchte ich mich eines bildhaften Vergleichs aus meiner
+Kindheit bedienen. Es gab Spielzeuge, die wurden fertig geliefert (z. B.
+Modellautos), und es gab Baukastensysteme, mit denen man fast alles
+machen konnte. Der Spielspaß bei den fertigen Spielzeugen war direkt da,
+aber man war im Spiel sehr auf die vom Hersteller erdachten Funktionen
+beschränkt. Bei den Baukastensystemen hatte man zwar am Anfang kein
+fertiges Spielzeug, aber man konnte sich beliebig viele Spielzeuge
+daraus bauen. Dummerweise musste man dazu aber selber nachdenken.
+
+Genauso ist es auch mit Asterisk. Es wird in einzelnen Bausteinen
+geliefert, und wenn man es virtuell auspackt, hat man nur Einzelteile.
+Wenn man sich aber eine Bauanleitung überlegt hat, ist auf einmal alles
+möglich. Und man kann das bestehende „Spielzeug“ jederzeit
+durch neue Bausteine umbauen und verbessern.
+
+Beide Varianten haben ihre Vor- und Nachteile, und beide haben
+ihre Fans.
+
+_Die Hauptvorteile der klassischen Telefonanlage
+sind:_
+
+* Auspacken und fertig! Man kann direkt loslegen.
+* Es ist keine oder nur eine kurze Bauanleitung notwendig.
+
+_Die Hauptnachteile der klassischen Telefonanlage
+sind:_
+
+* Erweiterungen sind meistens nicht oder nur für viel Geld möglich.
+* Man hat keinen Einblick in die Funktionsweise.
+
+_Die Hauptvorteile der Asterisk-Software
+sind:_
+
+* Sie können selbst neue Lösungen erstellen. Dazu benötigen Sie nur eine neue Bauanleitung.
+* Mehrere Baukästen können zu einem großen Baukasten kombiniert werden. Um bei unserem Spielzeug-Beispiel zu bleiben: Ich kann zwei Lego-Flughäfen kaufen und daraus einen großen Flughafen bauen. Wenn ich zwei Playmobil-Flughäfen kaufe, habe ich zwei Flughäfen. Ich kann jedoch aus zwei Playmobil-Flughäfen keinen neuen Playmobil-Großflughafen bauen.
+
+_Der Hauptnachteil von Asterisk ist:_
+
+* Nach dem Auspacken hat man erst mal nur Einzelteile. Das Zusammenbauen erfordert Geduld und etwas Geschick. Es gibt kein schnelles Erfolgserlebnis.

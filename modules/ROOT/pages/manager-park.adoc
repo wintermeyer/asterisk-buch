@@ -1,0 +1,21 @@
+[[manager-park]]
+= `Park`
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Park
+Synopsis: Park a channel
+Privilege: call,all
+Description: Park a channel.
+Variables: (Names marked with * are required)
+*Channel: Channel name to park
+*Channel2: Channel to announce park info to (and return to if timeout)
+Timeout: Number of milliseconds to wait before callback.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

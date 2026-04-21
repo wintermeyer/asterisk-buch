@@ -1,0 +1,46 @@
+[[applications-setlanguage]]
+= `SetLanguage()`
+
+Setzt die Sprache des Kanals.
+
+[source]
+----
+SetLanguage(Sprache)
+----
+
+[IMPORTANT]
+====
+`SetLanguage()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `CHANNEL()` (xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]) ersetzt:
+
+[source]
+----
+Set(CHANNEL(language)=de)
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'SetLanguage' =-
+
+[Synopsis]
+Set the channel's preferred language
+
+[Description]
+SetLanguage(language): This will set the channel language to the given value.
+This information is used for the syntax in generation of numbers, and to choose
+a sound file in the given language, when it is available.
+For example, if language is set to 'fr' and the file 'demo-congrats' is
+requested to be played, if the file 'fr/demo-congrats' exists, then
+it will play that file. If not, it will play the normal 'demo-congrats'.
+For some language codes, SetLanguage also changes the syntax of some
+Asterisk functions, like SayNumber.
+SetLanguage has been deprecated in favor of Set(LANGUAGE()=language)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]

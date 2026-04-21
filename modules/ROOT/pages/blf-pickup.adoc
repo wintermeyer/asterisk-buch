@@ -1,0 +1,237 @@
+[[blf-pickup]]
+= Heranholen eines Anrufs („Pickup“)
+
+In der bisherigen Konfiguration werden Gespräche des überwachten
+Teilnehmers nur angezeigt. Wir wollen aber auch die Möglichkeit schaffen,
+ein Gespräch heranholen zu können, das an einem anderen Apparat
+eingeht.footnote:[Die Telefonanlagen-Funktion _Pickup_ wird im Deutschen meist als _Heranholen_ oder _Rufübernahme_ bezeichnet.]
+
+Man unterscheidet dabei zwischen dem gezielten Heranholen eines
+Anrufs von einem einzelnen Benutzer (_Directed
+Pickup_) und dem Heranholen eines Anrufs von einer
+Benutzergruppe (_Group Pickup_).
+Hier betrachten wir zunächst den ersten, einfacheren Fall.
+
+[[blf-pickup-extensions.conf]]
+== extensions.conf für Pickup
+
+Für das Pickup ist es notwendig, noch einen weiteren Eintrag in
+der `extensions.conf` hinzuzufügen:
+
+[source]
+----
+[interne-benutzer]
+
+; ...
+
+; Gesprächsübernahme (PickUp)
+exten => _*8X.,1,Set(nst=${EXTEN:2})
+exten => _*8X.,n,Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen)
+exten => _*8X.,n,Pickup(${nst}@interne-benutzer)
+----
+
+bzw. `extensions.ael`:
+
+[source]
+----
+context interne-benutzer {
+  
+  // ...
+  
+  // Gesprächsübernahme (PickUp)
+  _*8X. => {
+    Set(nst=${EXTEN:2});
+    Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen);
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    Pickup(${nst}@interne-benutzer);
+  }
+}
+----
+
+Damit haben wir in Asterisk eine Extension definiert, die besagt,
+dass beim Wählen von
+`*8`_`<Nebenstelle>`_ (also z.
+B. `*821`) der Anruf herangeholt wird, der gerade auf dieser
+_`<Nebenstelle>`_ (z. B. `21`)
+im Context `interne-benutzer` klingelt.footnote:[Zur Beschreibung der Applikation `Pickup()` siehe auch: xref:applications-pickup.adoc[Abschnitt C.115, „`Pickup()`“\]]footnote:[Die Applikation `Pickup()` darf nicht verwechselt werden mit der Bristuff-Applikation `PickUp()` bzw. `DPickup()`, `PickUp2()` oder anderen Applikationen ähnlichen Namens, die in den diversen Internet-Foren usw. als Patches herumgeistern, auch wenn sie ungefähr das Gleiche bewirken.]
+
+[[blf-pickup-telefon]]
+== Konfiguration des Telefons für Pickup
+
+Dem Snom-Telefon muss jetzt noch mitgeteilt werden, welche Nummer
+zur Gesprächsübernahme gewählt werden muss. Anstatt wie oben beschrieben
+(xref:blf-telefon-konfiguration-snom.adoc[Abschnitt 23.3, „Konfiguration der Telefone für BLF“]) bei
+„Ziel“/„Nebenstelle“ bzw. „BLF“
+nur die zu überwachende Nummer einzutragen, tragen Sie nun die Nummer
+gefolgt von einem „`|`“ (Pipe-Symbol) und der
+oben definierten Zeichekette „`*8`“ für das
+Pickup ein – also für obiges Beispiel
+„`21|*8`“. Das Telefon wandelt dies wieder in
+die passende SIP-URI um. Das Snom wird durch diesen Zusatz, der streng
+genommen nicht zur SIP-URI gehört, angewiesen, zum Heranholen
+`*8` vor der Nebenstellennummer zu wählen, obwohl es ihm von
+Asterisk in der Status-Benachrichtigung nicht so mitgeteilt
+wird.footnote:[Das wird vermutlich in neueren Versionen von Asterisk behoben, siehe http://bugs.digium.com/view.php?id=5014[_Asterisk Bug 5014_\].] (Eine detaillierte technische Beschreibung, wie das Snom
+auf verschiedene Formen der SIP-`NOTIFY`-Nachrichten
+reagiert, finden Sie unter http://wiki.snom.com/Features/Call_Pick-Up.)
+Andere Telefone haben ähnliche Mechanismen (Grandstream z. B.
+`**` statt `*8`, dafür muss man gegebenenfalls die
+in diesem Kapitel beschriebenen Extensions anpassen).
+
+[IMPORTANT]
+====
+Ab den Firmware-Versionen 7.1.33 und 7.3 muss als Tastenfunktion
+„BLF“footnote:[+_`blf`_+ (http://wiki.snom.com/Settings/fkey/blf)] statt „Nebenstelle“footnote:[+_`dest`_+ (http://wiki.snom.com/Settings/fkey/dest)] verwendet werden. Weitere Informationen dazu von Snom
+auf http://wiki.snom.com/Features/Extension_Monitoring,
+http://wiki.snom.com/Features/Busy_Lamp_Field_(BLF)
+und http://wiki.snom.com/Features/Call_Pick-Up.
+====
+
+Jetzt können Sie am überwachenden Telefon einfach die Anrufe
+annehmen, die am überwachten Telefon eingehen, indem Sie die zur
+blinkenden LED passende Taste drücken.
+
+[NOTE]
+====
+Um die Anzeige- und Übernahme-Funktionalität korrekt zu nutzen,
+müssen Sie in den „Erweiterten Einstellungen“ des Snoms
+zwei Einstellungen anpassen. Das Setting „Dialog-Info Call
+Pickup“ muss aktiviert sein, und „Pakete vom Registrar
+filtern“ muss deaktiviert werden. Die erweiterten Einstellungen
+sind nur im Admin-Modus des Telefons verfügbar.
+====
+
+[NOTE]
+====
+Es wäre natürlich auch schön, wenn man sehen könnte, wer gerade
+auf der überwachten Leitung anruft, bevor man den Anruf entgegennimmt.
+Dies bietet Asterisk von sich aus leider nicht an. Im Internet gibt es
+aber diverse Patches, die auch das ermöglichen.
+====
+
+Sollen die erläuterten Einstellungen in Form einer automatischen
+Konfiguration ins Snom geladen werden, müssen beispielsweise folgende
+Parameter in der gerätespezifischen Konfiguration
+stehen:
+
+[source]
+----
+filter_registrar: off
+callpickup_dialoginfo: on
+fkey5: dest 22|*8
+fkey6: dest 23|*8
+----
+
+[NOTE]
+====
+Die Funktionstasten sind 0-indiziert. Um wie im Beispiel die
+Funktionstaste 6 zu belegen, muss der Parameter `fkey5`
+gesetzt werden usw. Die Funktionstaste 1 wird mit `fkey0`
+angesprochen.
+====
+
+[[blf-group-pickup]]
+== Heranholen von einer Gruppe
+
+Das Heranholen eines Anrufs von einer Gruppe von Teilnehmern
+(_group pickup_) ist sehr ähnlich
+und schnell beschrieben. Entweder baut man sich Pickup-Extensions wie z.
+B. die folgende:
+
+[source]
+----
+context interne-benutzer {
+  
+  // Verkaufsabteilung
+  hint(SIP/21&SIP/22&SIP/23) 20 => {
+    Dial(SIP/21&SIP/22&SIP/23,40);
+  }
+  
+  // Gesprächsübernahme (PickUp) von der Gruppe Verkauf
+  _*820 => {
+    Verbose(1,${CALLERID(num)} will Anruf von Gruppe Verkauf holen);
+    Pickup(21@interne-benutzer&22@interne-benutzer&23@interne-benutzer);
+  }
+}
+----
+
+Als zu überwachende Nebenstelle würde man dann am Telefon die
+`20` eintragen (Snom: `20|*8`).
+
+Als gute Alternative bietet sich die
+`PICKUPMARK`-Funktionalität der
+`Pickup()`-Applikation (xref:applications-pickup.adoc[Abschnitt C.115, „`Pickup()`“]) an, mit der man flexibler ist.
+Beispiel:
+
+[source]
+----
+context interne-benutzer {
+  
+  // Verkaufsmitarbeiter
+  _2X => {
+    Set(__PICKUPMARK=verkauf);
+    Dial(SIP/${EXTEN},40);
+  }
+  hint(SIP/21) 21 => {}
+  hint(SIP/22) 22 => {}
+  hint(SIP/23) 23 => {}
+  
+  // Verkaufsabteilung
+  hint(SIP/21&SIP/22&SIP/23) 20 => {
+    Set(__PICKUPMARK=verkauf);
+    Dial(SIP/21&SIP/22&SIP/23,40);
+  }
+  
+  // Gesprächsübernahme von der Gruppe Verkauf
+  _*820 => {
+    Verbose(1,${CALLERID(num)} will Anruf von Gruppe Verkauf holen);
+    Pickup(verkauf@PICKUPMARK);
+  }
+}
+----
+
+Will man keine Extra-Nebenstelle (im obigen Beispiel die
+`20`) für die Pickup-Gruppe verbrauchen, so bietet sich für
+fortgeschrittene Anwender z. B. folgende Konfiguration an:
+
+[source]
+----
+context interne-benutzer {
+  
+  // Verkaufsmitarbeiter
+  _2X => {
+    Set(__PICKUPMARK=200);
+    // welcher Mitarbeiter zu welcher Pickup-Gruppe gehört, ließe sich
+    // z. B. über ein ausgefeiltes AGI-Skript setzen
+    Dial(SIP/${EXTEN}&Local/**${PICKUPMARK},40);
+  }
+  hint(SIP/21) 21 => {}
+  hint(SIP/22) 22 => {}
+  hint(SIP/23) 23 => {}
+  
+  // Pickup-Gruppen
+  _**X. => {
+    Verbose(1,Es klingelt in Pickup-Gruppe ${EXTEN:2});
+  }
+  hint(SIP/21&SIP/22&SIP/23) **200 => {}
+  
+  // Gesprächsübernahme direkt
+  _*8X. => {
+    Set(nst=${EXTEN:2});
+    Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen);
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    Pickup(${nst}@interne-benutzer);
+  }
+  
+  // Gesprächsübernahme von einer Gruppe
+  _*8**X. => {
+    Set(pmark=${EXTEN:4});
+    Verbose(1,${CALLERID(num)} will Anruf von Pickup-Gruppe ${pmark} holen);
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    Pickup(${pmark}@PICKUPMARK);
+  }
+}
+----
+
+Als zu überwachende Nebenstelle würde man dann am Telefon die
+`**200` eintragen (Snom: `**200|*8`).

@@ -1,0 +1,73 @@
+[[applications-pickup]]
+= `Pickup()`
+
+Einen Anruf an eine andere Extension entgegennehmen.
+
+[source]
+----
+Pickup(Extension[@Context][&Extension2@Context2[&...]])
+----
+
+Mit `Pickup()` kann ein Gespräch, das an einem anderen
+Telefon auf Entgegennahme wartet, übernommen werden
+(„Heranholen“).
+
+[source]
+----
+exten => 1234,1,Pickup(2000@verkauf)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Pickup' =-
+
+[Synopsis]
+Directed Call Pickup
+
+[Description]
+Pickup(extension[@context][&extension2@context...]): This application can pickup any ringing channel
+that is calling the specified extension. If no context is specified, the current
+context will be used. If you use the special string "PICKUPMARK" for the context parameter, for example
+10@PICKUPMARK, this application tries to find a channel which has defined a channel variable with the same content
+as "extension".
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,6 +4,8 @@
+Directed Call Pickup
+
+[Description]
+- Pickup(extension[@context]): This application can pickup any ringing channel
++ Pickup(extension[@context][&extension2@context...]): This application can pickup any ringing channel
+that is calling the specified extension. If no context is specified, the current
+- context will be used.
++ context will be used. If you use the special string "PICKUPMARK" for the context parameter, for example
++ 10@PICKUPMARK, this application tries to find a channel which has defined a channel variable with the same content
++ as "extension".
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,8 +4,11 @@
+Directed Call Pickup
+
+[Description]
+- Pickup(extension[@context][&extension2@context...]): This application can pickup any ringing channel
+- that is calling the specified extension. If no context is specified, the current
+- context will be used. If you use the special string "PICKUPMARK" for the context parameter, for example
+- 10@PICKUPMARK, this application tries to find a channel which has defined a channel variable with the same content
+- as "extension".
++ Pickup([extension[@context][&extension2@[context]...]]): This application can
++ pickup any ringing channel that is calling the specified extension. If no
++ context is specified, the current context will be used. If you use the special
++ string "PICKUPMARK" for the context parameter, for example 10@PICKUPMARK,
++ this application tries to find a channel which has defined a ${PICKUPMARK}
++ channel variable with the same value as "extension" (in this example, "10").
++ When no parameter is specified, the application will pickup a channel matching
++ the pickup group of the active channel.
+
+.Siehe auch
+xref:applications-pickupchan.adoc[Abschnitt C.116, „`PickupChan()`“]

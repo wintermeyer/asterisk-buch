@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>16.6. Log-Datei</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="warteschleifen.html" title="Kapitel 16. Warteschleifen für Call-Center" /><link rel="prev" href="warteschleifen-extensions.conf.html" title="16.5. extensions.conf" /><link rel="next" href="features.html" title="Kapitel 17. Features" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="16.6. Log-Datei" id="warteschleifen-log"><div class="titlepage"><div><div><h2 class="title" id="warteschleifen-log">16.6. Log-Datei<a id="idp14880304" class="indexterm"></a><a id="idp11317760" class="indexterm"></a></h2></div></div></div><div class="para">Ereignisse, die auf den Warteschlangen auftreten, werden im
+    Queue-Log, normalerweise <code class="filename">/var/log/asterisk/queue_log</code>
+    detailliert festgehalten (natürlich werden auch Einträge im CDR-Log
+    gemacht). Im <code class="filename">queue_log</code> steht ein Eintrag pro Zeile im
+    Format:<pre class="programlisting"><em class="replaceable"><code>Timestamp</code></em>|<em class="replaceable"><code>Anruf-ID</code></em>|<em class="replaceable"><code>Schlange</code></em>|<em class="replaceable"><code>Channel</code></em>|<em class="replaceable"><code>Event</code></em>|<em class="replaceable"><code>Param1</code></em>[|<em class="replaceable"><code>Param2</code></em>[|<em class="replaceable"><code>Param3</code></em>]]</pre></div><div class="variablelist"><dl><dt><span class="term"><code class="code">Timestamp</code></span></dt><dd><div class="para">Die Unix-Zeit, zu der der Event aufgetreten ist</div></dd><dt><span class="term"><code class="code">Anruf-ID</code></span></dt><dd><div class="para">Die einmalige ID des Anrufs (alphanumerisch). Kann auch
+          <code class="code">NULL</code> oder <code class="code">NONE</code> sein (z. B. bei dem
+          Ereignis <code class="literal">QUEUESTART</code>).</div></dd><dt><span class="term"><code class="code">Schlange</code></span></dt><dd><div class="para">Der Name der Warteschlange, z. B. <code class="code">support</code>.
+          Kann auch <code class="code">NULL</code> oder <code class="code">NONE</code> sein.</div></dd><dt><span class="term"><code class="code">Channel</code></span></dt><dd><div class="para">Der Name des überbrückten Kanals, z. B.
+          <code class="code">Agent/1001</code>. Kann auch <code class="code">NULL</code> oder
+          <code class="code">NONE</code> sein.</div></dd><dt><span class="term"><code class="code">Event</code></span></dt><dd><div class="para">Der Name des aufgetretenen Ereignisses (siehe unten).
+          Abhängig vom Event sind <code class="code">Param1</code>, <code class="code">Param2</code> und
+          <code class="code">Param3</code> angegeben.</div></dd></dl></div><div class="para">Die möglichen Ereignisse sind unter anderen (siehe auch
+    <code class="filename">doc/queuelog.txt</code>):<div class="variablelist"><dl><dt><span class="term"><code class="code">ABANDON</code></span></dt><dd><div class="para">Der Anrufer hat seine Position in der Warteschlange durch
+            Auflegen aufgegeben. Parameter: Position, Einstiegsposition,
+            Wartezeit.</div></dd><dt><span class="term"><code class="code">AGENTDUMP</code></span></dt><dd><div class="para">Der Agent hat den Anrufer während der Ankündigung der
+            Warteschlange abgewiesen.</div></dd><dt><span class="term"><code class="code">AGENTLOGIN</code></span></dt><dd><div class="para">Der Agent hat sich eingeloggt. Parameter: Kanal (z. B.
+            <code class="code">SIP/127.0.0.1-0181ac00</code>).</div></dd><dt><span class="term"><code class="code">AGENTCALLBACKLOGIN</code></span></dt><dd><div class="para">Der Callback-Agent hat sich eingeloggt. Parameter:
+            Login-Extension[@Context].</div></dd><dt><span class="term"><code class="code">AGENTLOGOFF</code></span></dt><dd><div class="para">Der Agent hat sich ausgeloggt. Parameter: Kanal,
+            Login-Dauer.</div></dd><dt><span class="term"><code class="code">AGENTCALLBACKLOGOFF</code></span></dt><dd><div class="para">Der Agent hat sich (bzw. wurde) ausgeloggt. Parameter:
+            Login-Extension[@Context], Login-Dauer, Grund (z. B.
+            Autologoff).</div></dd><dt><span class="term"><code class="code">COMPLETEAGENT</code></span></dt><dd><div class="para">Das Gespräch zwischen Anrufer und Agent wurde vom Agenten
+            beendet. Parameter: Wartezeit, Anruf-Dauer,
+            Einstiegsposition.</div></dd><dt><span class="term"><code class="code">COMPLETECALLER</code></span></dt><dd><div class="para">Das Gespräch zwischen Anrufer und Agent wurde vom Anrufer
+            beendet. Parameter: Wartezeit, Anruf-Dauer,
+            Einstiegsposition.</div></dd><dt><span class="term"><code class="code">CONFIGRELOAD</code></span></dt><dd><div class="para">Die Konfiguration wurde neu eingelesen (z. B. durch
+            <code class="command">asterisk -rx "module reload"</code>).</div></dd><dt><span class="term"><code class="code">CONNECT</code></span></dt><dd><div class="para">Der Anrufer wurde zu einem Agenten durchgestellt.
+            Parameter: Wartezeit.</div></dd><dt><span class="term"><code class="code">ENTERQUEUE</code></span></dt><dd><div class="para">Der Anrufer wurde in die Warteschlange aufgenommen.
+            Parameter: URL (falls verfügbar), Caller-ID.</div></dd><dt><span class="term"><code class="code">EXITEMPTY</code></span></dt><dd><div class="para">Der Anrufer wurde aus der Warteschlange geworfen, weil
+            keine Agenten verfügbar waren.<sup>[<a id="idp12153120" href="#ftn.idp12153120" class="footnote">87</a>]</sup> Parameter: Position zum Zeitpunkt des Verlassens der
+            Warteschlange, ursprüngliche Position beim Eintritt,
+            Wartezeit.</div></dd><dt><span class="term"><code class="code">EXITWITHKEY</code></span></dt><dd><div class="para">Der Anrufer hat die Warteschlange durch Drücken einer
+            Taste verlassen. Parameter: Taste, Position.</div></dd><dt><span class="term"><code class="code">EXITWITHTIMEOUT</code></span></dt><dd><div class="para">Der Anrufer war zu lange in der Warteschlange, und der
+            Timeout ist abgelaufen. Parameter: Position.</div></dd><dt><span class="term"><code class="code">QUEUESTART</code></span></dt><dd><div class="para">Das Warteschlangensystem wurde gestartet. Dabei haben die
+            Felder <code class="code">Anruf-ID</code>, <code class="code">Schlange</code> und
+            <code class="code">Kanal</code> den Wert <code class="code">NULL</code>.</div></dd><dt><span class="term"><code class="code">RINGNOANSWER</code></span></dt><dd><div class="para">Ein verfügbarer Agent wurde angeklingelt, hat aber nicht
+            abgenommen (Timeout). Parameter: Klingeldauer (in
+            Millisekunden).</div></dd><dt><span class="term"><code class="code">SYSCOMPAT</code></span></dt><dd><div class="para">Der Agent hat den Anruf angenommen, aber die Kanäle waren
+            nicht kompatibel, und der Anruf wurde beendet.</div></dd><dt><span class="term"><code class="code">TRANSFER</code></span></dt><dd><div class="para">Der Anrufer wurde auf eine andere Extension umgeleitet.
+            Parameter: Extension, Context.</div></dd></dl></div>Kommerzielle Log-Analyse- und Echtzeitüberwachungssysteme
+    sind QueueMetrics<sup>[<a id="idp11376384" href="#ftn.idp11376384" class="footnote">88</a>]</sup> oder Easy PABX<sup>[<a id="idp11377712" href="#ftn.idp11377712" class="footnote">89</a>]</sup>. Siehe auch <a class="xref" href="applications-queuelog.html" title="C.123. QueueLog()">Abschnitt C.123, „<code class="literal">QueueLog()</code>“</a>.</div><div class="section" title="Queue-Log in MySQL importieren" id="queue-log-mysql"><div class="titlepage"><div><div><h3 class="title" id="queue-log-mysql">Queue-Log in MySQL importieren</h3></div></div></div><div class="para">Leider kann Asterisk derzeit das Queue-Log noch nicht direkt in
+      eine SQL-Datenbank-Tabelle schreiben. Dass die Daten in einer
+      SQL-Datenbank liegen, ist aber für alle bekannten Statistik-Tools eine
+      Grundvoraussetzung. Zu diesem Zweck existieren verschiedene
+      Skripte<sup>[<a id="idp18204560" href="#ftn.idp18204560" class="footnote">90</a>]</sup> (meist in Perl) bzw. werden mit den Tools mitgeliefert.
+      Sie alle gehen den Weg, der im unten angefügten Skript beschrieben ist,
+      die Datei <code class="filename">queue_log</code> durch eine Named-Pipe (FIFO) zu
+      ersetzen. Das Skript öffnet die FIFO zum Lesen, und sobald Asterisk eine
+      Log-Meldung hineinschreibt, wird diese in die Datenbank
+      eingetragen.</div><div class="warning"><h2>Warnung</h2><div class="para">Diese Methode wird vermutlich in 99 % aller Fälle problemlos
+        funktionieren. Allerdings besteht die Gefahr, dass das Skript, falls
+        es aus irgendwelchen Gründen nicht vor Asterisk gestartet sein sollte
+        oder vorzeitig beendet wird, nicht mehr aus der Named-Pipe liest und
+        Asterisk beim Versuch, zu schreiben, ein
+        <code class="literal">SIGPIPE</code>-Signal erhält, was Asterisk zum Absturz
+        bringen würde!</div></div><div class="para">Da aber ohne Unterstützung durch Asterisk keine wirkliche
+      Alternative besteht, soll hier trotz der Gefahr, die theoretisch
+      besteht, ein Perl-Skript von William Lloyd den Ansatz
+      beschreiben<sup>[<a id="idp18209792" href="#ftn.idp18209792" class="footnote">91</a>]</sup>:</div><pre class="programlisting">#!/usr/bin/perl -w
+#
+# wlloyd at slap.net
+
+# The asterisk version indpendant way to get queue stats into Mysql,  
+Postgres
+# or whatever is supported by Perl DBI
+
+# It's all about named pipes
+
+# to setup this software
+# stop asterisk
+# rm /var/log/asterisk/queue_log
+# mkfifo /var/log/asterisk/queue_log
+
+# make sure permissions are setup
+# chmod 777 /var/log/asterisk/queue_log
+
+# run this program as root or under another user as you see fit.
+# should start BEFORE asterisk.  Add to /etc/rc.d/rc.local or whatever
+
+# restart asterisk
+
+# requires a DB table like the following..
+# CREATE TABLE csr_queue (
+#  qname varchar(30) default NULL,
+#  agent varchar(30) default NULL,
+#  action text,
+#  info1 text,
+#  info2 text,
+#  info3 text,
+#  timestamp int(11) NOT NULL default '0',
+#  id tinytext NOT NULL
+#) TYPE=MyISAM;
+
+use DBI;
+use IO::File;
+
+my $opt_debug = 0;
+
+# if you want postgres change this to "Pg"
+my $db_type = "mysql";
+my $db_host = "127.0.0.1";
+my $db_user_name = 'username';
+my $db_password = 'password';
+my $db_database = 'asteriskstat';
+
+my $dbh = DBI-&gt;connect("DBI:$db_type:dbname=$db_database;host= 
+$db_host;", $db_user_name, $db_password);
+
+open(FIFO, "&lt; /var/log/asterisk/queue_log")        or die "Can't open  
+queue_log : $!\n";
+
+while (1) {
+
+     $message = &lt;FIFO&gt;;
+     next unless defined $message;   # interrupted or nothing logged
+     chomp $message;
+
+     # remove chars that will cause DB problems
+     $message =~ s/\"\'//g;
+
+     @data = split(/\|/,$message);
+
+     # these messages are almost useless for my purposes
+     next if ($data[4] eq "QUEUESTART" );
+     next if ($data[4] eq "CONFIGRELOAD" );
+
+     if (!defined($data[5])) {
+       $data[5] = '';
+     }
+     if (!defined($data[6])) {
+       $data[6] = '';
+     }
+     if (!defined($data[7])) {
+       $data[7] = '';
+     }
+
+     my $sql = "INSERT INTO csr_queue (timestamp, id, qname, agent,  
+action, info1, info2, info3) VALUES ('$data[0]', '$data[1]', '$data 
+[2]', '$data[3]', '$data[4]', '$data[5]', '$data[6]', '$data[7]')";
+
+     print "$sql \n\n" if ($opt_debug);
+
+     $dbh-&gt;do($sql);
+
+# if you want an actual logfile you might want to uncomment this
+#        if ( open(LOG, "&gt;&gt; /var/log/asterisk/queue_log_real") ) {
+#            print LOG "$message\n";
+#            close(LOG);
+#        } else {
+#            warn "Couldn't log to /var/log/asterisk_queue_log: $!\n";
+#        }
+#
+}
+
+$dbh-&gt;disconnect();
+
+exit 0;</pre><div class="para">Bei QueueMetrics (kostenlose Demo-Version) wird ebenfalls ein
+      Perl-Skript namens <code class="filename">queueLoader.pl</code> mitgeliefert
+      (siehe aber die Warnung oben!).</div><div class="para">Alternativ dazu kann man die Datei auch regelmäßig (z. B.
+      minütlich per Cron-Job) rotieren und in die Datenbank einlesen.
+      <sup>[<a id="idp18216592" href="#ftn.idp18216592" class="footnote">92</a>]</sup></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp12153120" href="#idp12153120" class="para">87</a>] </sup>siehe <a class="xref" href="queues.conf.html#queues.conf-leavewhenempty" title="leavewhenempty">„<code class="code">leavewhenempty</code>“</a></p></div><div class="footnote"><div class="para"><a href="http://queuemetrics.loway.it/">http://queuemetrics.loway.it/</a></div></div><div class="footnote"><div class="para"><a href="http://easypabx.com/">http://easypabx.com/</a></div></div><div class="footnote"><p><sup>[<a id="ftn.idp18204560" href="#idp18204560" class="para">90</a>] </sup>siehe <a href="http://www.voip-info.org/wiki/view/Asterisk+queue_log+on+MySQL">http://www.voip-info.org/wiki/view/Asterisk+queue_log+on+MySQL</a></p></div><div class="footnote"><div class="para">wlloyd at slap.net, veröffentlicht auf der
+          Digium-Mailingliste <code class="code">asterisk-users</code>, siehe: <a href="http://lists.digium.com/pipermail/asterisk-users/2005-July/109892.html">http://lists.digium.com/pipermail/asterisk-users/2005-July/109892.html</a></div></div><div class="footnote"><p><sup>[<a id="ftn.idp18216592" href="#idp18216592" class="para">92</a>] </sup>Einen ähnlichen Ansatz findet man bei dem Hilfsprogramm
+          <code class="literal">asterisk-qsync</code> von André Herrmann: <a href="http://fisi-itse.de/index.php?option=com_content&amp;task=view&amp;id=24&amp;Itemid=3">http://fisi-itse.de/index.php?option=com_content&amp;task=view&amp;id=24&amp;Itemid=3</a></p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="warteschleifen-musikextension.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Extension zum Musiktest</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="musiconhold.conf.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">musiconhold.conf</code></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="queues.conf.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">queues.conf</code></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="agents.conf.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">agents.conf</code></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="warteschleifen-extensions.conf.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">extensions.conf</code></a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Log-Datei</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="warteschleifen-log.html#queue-log-mysql" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Queue-Log in MySQL importieren</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="warteschleifen-extensions.conf.html"><strong>Zurück</strong>16.5. extensions.conf</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="features.html"><strong>Weiter</strong>Kapitel 17. Features</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

@@ -1,0 +1,67 @@
+[[functions-iftime]]
+= `IFTIME()`
+
+[source]
+----
+IFTIME(Zeit-Ausdruck?trueVal:falseVal)
+----
+
+Gibt – wie `IF()` – abhängig von der Bedingung den ersten
+oder zweiten Wert zurück, nur dass hier ein spezieller Zeit-Ausdruck
+angegeben wird.
+
+Der Zeit-Ausdruck ist im Format
++_`Uhrzeit`_|_`Wochentag`_|_`Monatstag`_|_`Monat`_+
+aufgebaut, wobei jeder Teil auch eine Spanne (mit `-`) oder das
+immer passende Wildcard `*` sein kann. Die Zeit wird im
+24-Stunden-Format (z. B. `08:00-18:00`), Wochentage und
+Monatsnamen werden als 3-buchstabige englische Abkürzung (`mon`,
+`tue`, `wed`, `thu`, `fri`,
+`sat`, `sun` bzw. `jan`, `feb`,
+`mar`, `apr`, `may`, `jun`,
+`jul`, `aug`, `sep`, `oct`,
+`nov`, `dec`) angegeben.
+
+[source]
+----
+; gültig 8-18 Uhr, montags, 1.-15. Dezember:
+exten => 123,1,Set(foo=${IFTIME(08:00-18:00|mon|1-15|dec?5:0)})
+
+; gültig jeden Samstag und Sonntag:
+exten => 123,1,Set(foo=${IFTIME(*|sat-sun|*|*?5:0)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'IFTIME' =-
+
+[Syntax]
+IFTIME(<timespec>?[<true>][:<false>])
+
+[Synopsis]
+Temporal Conditional: Returns the data following '?' if true else the data following ':'
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+IFTIME(<timespec>?[<true>][:<false>])
+
+[Synopsis]
+- Temporal Conditional: Returns the data following '?' if true else the data following ':'
++ Temporal Conditional: Returns the data following '?' if true, else the data following ':'
+
+[Description]
+Not available
+
+.Siehe auch
+xref:functions-if.adoc[Abschnitt D.49, „`IF()`“], xref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“], xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“],
+xref:applications-gotoiftime.adoc[Abschnitt C.67, „`GotoIfTime()`“], xref:extensions.ael.adoc#ael-iftime[Abschnitt , „???TITLE???“]

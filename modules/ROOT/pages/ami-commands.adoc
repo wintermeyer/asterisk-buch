@@ -1,0 +1,5 @@
+[[ami-commands]]
+= AMI-Befehle
+__Befehle („Actions“) auf dem „Asterisk Manager Interface“ (AMI)__
+
+Folgende Befehle können als `Action` an die AMI-Schnittstelle gesendet werden.

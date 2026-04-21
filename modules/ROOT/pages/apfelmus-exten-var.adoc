@@ -1,0 +1,70 @@
+[[apfelmus-exten-var]]
+= Die Variable ${EXTEN} und die Funktion ${CALLERID(num)}
+
+Obwohl wir im Buch erst später über Variablen (siehe xref:programmierer-howto.adoc#programmierer-howto-variablen[„Variablen“]) und Funktionen (siehe xref:functions.adoc[Anhang D, _Funktionen im Dialplan_]) sprechen, möchte ich zwei sehr einfache und
+intuitiv zu benutzende Elemente schon hier vorstellen. Es handelt sich um
+die Systemvariable `${EXTEN}` und die Funktion
+`${CALLERID(num)}`.
+
+[[systemvariable-exten]]
+== ${EXTEN}
+
+In der Systemvariable `${EXTEN}` wird von Asterisk
+automatisch die gewählte Rufnummer (also die Extension) gespeichert.
+Mann kann also in der `extensions.conf`
+anstatt
+
+[source]
+----
+exten => 2000,1,Dial(SIP/2000)
+----
+
+auch
+einfach
+
+[source]
+----
+exten => 2000,1,Dial(SIP/${EXTEN})
+----
+
+schreiben.
+Bei einer Zeile ist das natürlich noch wenig sinnvoll, aber wenn man
+diese Funktionalität mit Pattern Matching (siehe xref:einleitung-regex.adoc#regular-expression-syntax[„Syntax“]) kombiniert, dann kann man sehr
+viel Zeit und Aufwand sparen und bekommt zusätzlich auch noch eine viel
+übersichtlichere Konfiguration.
+
+Um somit alle SIP-Telefone mit den Durchwahlen 2000 bis 2999 in
+der `extensions.conf` anwählbar zu machen, reicht
+folgende Zeile:
+
+[source]
+----
+exten => _2XXX,1,Dial(SIP/${EXTEN})
+----
+
+[TIP]
+====
+Eine ausführliche Beschreibung zum Thema Variablen finden Sie
+unter xref:variablen.adoc[Abschnitt 6.2, „Variablen“].
+====
+
+[[funktion-callerid-num]]
+== ${CALLERID(num)}
+
+Der Funktionsaufruf `${CALLERID(num)}` gibt als
+Ergebnis die Nummer des Anrufers aus. Dies ist besonders bei der
+Applikation `VoiceMailMain()` praktisch, da man dort als
+ersten Parameter die gewünschte Mailboxnummer angeben kann. So könnte
+man mit folgendem Dialplan-Eintrag eine komfortable Abfrage der
+Voicemailbox realisieren:
+
+[source]
+----
+exten => 99,1,VoiceMailMain(${CALLERID(num)})
+----
+
+[TIP]
+====
+Eine ausführliche Beschreibung zur Funktion ${CALLERID(num)}
+finden Sie unter xref:functions-callerid.adoc[Abschnitt D.8, „`CALLERID()`“].
+====

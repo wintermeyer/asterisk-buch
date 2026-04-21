@@ -1,0 +1,41 @@
+[[functions-checksipdomain]]
+= `CHECKSIPDOMAIN()`
+
+[source]
+----
+CHECKSIPDOMAIN(Domain)
+----
+
+Prüft, ob die angegebene Domain (kann auch eine IP-Adresse sein)
+eine SIP-Domain ist, die Asterisk als lokal behandelt (siehe Datei
+`sip.conf`). Gibt den Domain-Namen oder einen leeren
+String zurück.
+
+[source]
+----
+exten => 123,1,Set(foo=${CHECKSIPDOMAIN(123.45.67.89)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'CHECKSIPDOMAIN' =-
+
+[Syntax]
+CHECKSIPDOMAIN(<domain|IP>)
+
+[Synopsis]
+Checks if domain is a local domain
+
+[Description]
+This function checks if the domain in the argument is configured
+as a local SIP domain that this Asterisk server is configured to handle.
+Returns the domain name if it is locally handled, otherwise an empty string.
+Check the domain= configuration in sip.conf
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

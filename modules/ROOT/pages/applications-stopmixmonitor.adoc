@@ -1,0 +1,46 @@
+[[applications-stopmixmonitor]]
+= `StopMixMonitor()`
+
+Beendet die Aufzeichnung eines Gespächs.
+
+[source]
+----
+StopMixMonitor()
+----
+
+Stoppt die mit `MixMonitor()` gestartete
+Aufzeichnung eines Gesprächs auf dem aktuellen Kanal.
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'StopMixMonitor' =-
+
+[Synopsis]
+Stop recording a call through MixMonitor
+
+[Description]
+StopMixMonitor()
+
+Stops the audio recording that was started with a call to MixMonitor()
+on the current channel.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,6 @@
+Stop recording a call through MixMonitor
+
+[Description]
+- StopMixMonitor()
+-
++ StopMixMonitor():
+Stops the audio recording that was started with a call to MixMonitor()
+on the current channel.
+
+.Siehe auch
+xref:applications-mixmonitor.adoc[Abschnitt C.99, „`MixMonitor()`“]

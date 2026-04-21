@@ -1,0 +1,185 @@
+[[warteschleifen-log]]
+= Log-Datei
+
+Ereignisse, die auf den Warteschlangen auftreten, werden im
+Queue-Log, normalerweise `/var/log/asterisk/queue_log`
+detailliert festgehalten (natürlich werden auch Einträge im CDR-Log
+gemacht). Im `queue_log` steht ein Eintrag pro Zeile im
+Format:
+
+[source]
+----
+Timestamp|Anruf-ID|Schlange|Channel|Event|Param1[|Param2[|Param3]]
+----
+
+`Timestamp`:: Die Unix-Zeit, zu der der Event aufgetreten ist
+`Anruf-ID`:: Die einmalige ID des Anrufs (alphanumerisch). Kann auch `NULL` oder `NONE` sein (z. B. bei dem Ereignis `QUEUESTART`).
+`Schlange`:: Der Name der Warteschlange, z. B. `support`. Kann auch `NULL` oder `NONE` sein.
+`Channel`:: Der Name des überbrückten Kanals, z. B. `Agent/1001`. Kann auch `NULL` oder `NONE` sein.
+`Event`:: Der Name des aufgetretenen Ereignisses (siehe unten). Abhängig vom Event sind `Param1`, `Param2` und `Param3` angegeben.
+
+Die möglichen Ereignisse sind unter anderen (siehe auch
+`doc/queuelog.txt`):
+
+`ABANDON`:: Der Anrufer hat seine Position in der Warteschlange durch Auflegen aufgegeben. Parameter: Position, Einstiegsposition, Wartezeit.
+`AGENTDUMP`:: Der Agent hat den Anrufer während der Ankündigung der Warteschlange abgewiesen.
+`AGENTLOGIN`:: Der Agent hat sich eingeloggt. Parameter: Kanal (z. B. `SIP/127.0.0.1-0181ac00`).
+`AGENTCALLBACKLOGIN`:: Der Callback-Agent hat sich eingeloggt. Parameter: Login-Extension[@Context].
+`AGENTLOGOFF`:: Der Agent hat sich ausgeloggt. Parameter: Kanal, Login-Dauer.
+`AGENTCALLBACKLOGOFF`:: Der Agent hat sich (bzw. wurde) ausgeloggt. Parameter: Login-Extension[@Context], Login-Dauer, Grund (z. B. Autologoff).
+`COMPLETEAGENT`:: Das Gespräch zwischen Anrufer und Agent wurde vom Agenten beendet. Parameter: Wartezeit, Anruf-Dauer, Einstiegsposition.
+`COMPLETECALLER`:: Das Gespräch zwischen Anrufer und Agent wurde vom Anrufer beendet. Parameter: Wartezeit, Anruf-Dauer, Einstiegsposition.
+`CONFIGRELOAD`:: Die Konfiguration wurde neu eingelesen (z. B. durch `asterisk -rx "module reload"`).
+`CONNECT`:: Der Anrufer wurde zu einem Agenten durchgestellt. Parameter: Wartezeit.
+`ENTERQUEUE`:: Der Anrufer wurde in die Warteschlange aufgenommen. Parameter: URL (falls verfügbar), Caller-ID.
+`EXITEMPTY`:: Der Anrufer wurde aus der Warteschlange geworfen, weil keine Agenten verfügbar waren.footnote:[siehe xref:queues.conf.adoc#queues.conf-leavewhenempty[„`leavewhenempty`“\]] Parameter: Position zum Zeitpunkt des Verlassens der Warteschlange, ursprüngliche Position beim Eintritt, Wartezeit.
+`EXITWITHKEY`:: Der Anrufer hat die Warteschlange durch Drücken einer Taste verlassen. Parameter: Taste, Position.
+`EXITWITHTIMEOUT`:: Der Anrufer war zu lange in der Warteschlange, und der Timeout ist abgelaufen. Parameter: Position.
+`QUEUESTART`:: Das Warteschlangensystem wurde gestartet. Dabei haben die Felder `Anruf-ID`, `Schlange` und `Kanal` den Wert `NULL`.
+`RINGNOANSWER`:: Ein verfügbarer Agent wurde angeklingelt, hat aber nicht abgenommen (Timeout). Parameter: Klingeldauer (in Millisekunden).
+`SYSCOMPAT`:: Der Agent hat den Anruf angenommen, aber die Kanäle waren nicht kompatibel, und der Anruf wurde beendet.
+`TRANSFER`:: Der Anrufer wurde auf eine andere Extension umgeleitet. Parameter: Extension, Context.
+
+Kommerzielle Log-Analyse- und Echtzeitüberwachungssysteme
+sind QueueMetricsfootnote:[http://queuemetrics.loway.it/] oder Easy PABXfootnote:[http://easypabx.com/]. Siehe auch xref:applications-queuelog.adoc[Abschnitt C.123, „`QueueLog()`“].
+
+[[queue-log-mysql]]
+== Queue-Log in MySQL importieren
+
+Leider kann Asterisk derzeit das Queue-Log noch nicht direkt in
+eine SQL-Datenbank-Tabelle schreiben. Dass die Daten in einer
+SQL-Datenbank liegen, ist aber für alle bekannten Statistik-Tools eine
+Grundvoraussetzung. Zu diesem Zweck existieren verschiedene
+Skriptefootnote:[siehe http://www.voip-info.org/wiki/view/Asterisk+queue_log+on+MySQL] (meist in Perl) bzw. werden mit den Tools mitgeliefert.
+Sie alle gehen den Weg, der im unten angefügten Skript beschrieben ist,
+die Datei `queue_log` durch eine Named-Pipe (FIFO) zu
+ersetzen. Das Skript öffnet die FIFO zum Lesen, und sobald Asterisk eine
+Log-Meldung hineinschreibt, wird diese in die Datenbank
+eingetragen.
+
+[WARNING]
+====
+Diese Methode wird vermutlich in 99 % aller Fälle problemlos
+funktionieren. Allerdings besteht die Gefahr, dass das Skript, falls
+es aus irgendwelchen Gründen nicht vor Asterisk gestartet sein sollte
+oder vorzeitig beendet wird, nicht mehr aus der Named-Pipe liest und
+Asterisk beim Versuch, zu schreiben, ein
+`SIGPIPE`-Signal erhält, was Asterisk zum Absturz
+bringen würde!
+====
+
+Da aber ohne Unterstützung durch Asterisk keine wirkliche
+Alternative besteht, soll hier trotz der Gefahr, die theoretisch
+besteht, ein Perl-Skript von William Lloyd den Ansatz
+beschreibenfootnote:[wlloyd at slap.net, veröffentlicht auf der Digium-Mailingliste `asterisk-users`, siehe: http://lists.digium.com/pipermail/asterisk-users/2005-July/109892.html]:
+
+[source]
+----
+#!/usr/bin/perl -w
+#
+# wlloyd at slap.net
+
+# The asterisk version indpendant way to get queue stats into Mysql,  
+Postgres
+# or whatever is supported by Perl DBI
+
+# It's all about named pipes
+
+# to setup this software
+# stop asterisk
+# rm /var/log/asterisk/queue_log
+# mkfifo /var/log/asterisk/queue_log
+
+# make sure permissions are setup
+# chmod 777 /var/log/asterisk/queue_log
+
+# run this program as root or under another user as you see fit.
+# should start BEFORE asterisk.  Add to /etc/rc.d/rc.local or whatever
+
+# restart asterisk
+
+# requires a DB table like the following..
+# CREATE TABLE csr_queue (
+#  qname varchar(30) default NULL,
+#  agent varchar(30) default NULL,
+#  action text,
+#  info1 text,
+#  info2 text,
+#  info3 text,
+#  timestamp int(11) NOT NULL default '0',
+#  id tinytext NOT NULL
+#) TYPE=MyISAM;
+
+use DBI;
+use IO::File;
+
+my $opt_debug = 0;
+
+# if you want postgres change this to "Pg"
+my $db_type = "mysql";
+my $db_host = "127.0.0.1";
+my $db_user_name = 'username';
+my $db_password = 'password';
+my $db_database = 'asteriskstat';
+
+my $dbh = DBI->connect("DBI:$db_type:dbname=$db_database;host= 
+$db_host;", $db_user_name, $db_password);
+
+open(FIFO, "< /var/log/asterisk/queue_log")        or die "Can't open  
+queue_log : $!\n";
+
+while (1) {
+
+     $message = <FIFO>;
+     next unless defined $message;   # interrupted or nothing logged
+     chomp $message;
+
+     # remove chars that will cause DB problems
+     $message =~ s/\"\'//g;
+
+     @data = split(/\|/,$message);
+
+     # these messages are almost useless for my purposes
+     next if ($data[4] eq "QUEUESTART" );
+     next if ($data[4] eq "CONFIGRELOAD" );
+
+     if (!defined($data[5])) {
+       $data[5] = '';
+     }
+     if (!defined($data[6])) {
+       $data[6] = '';
+     }
+     if (!defined($data[7])) {
+       $data[7] = '';
+     }
+
+     my $sql = "INSERT INTO csr_queue (timestamp, id, qname, agent,  
+action, info1, info2, info3) VALUES ('$data[0]', '$data[1]', '$data 
+[2]', '$data[3]', '$data[4]', '$data[5]', '$data[6]', '$data[7]')";
+
+     print "$sql \n\n" if ($opt_debug);
+
+     $dbh->do($sql);
+
+# if you want an actual logfile you might want to uncomment this
+#        if ( open(LOG, ">> /var/log/asterisk/queue_log_real") ) {
+#            print LOG "$message\n";
+#            close(LOG);
+#        } else {
+#            warn "Couldn't log to /var/log/asterisk_queue_log: $!\n";
+#        }
+#
+}
+
+$dbh->disconnect();
+
+exit 0;
+----
+
+Bei QueueMetrics (kostenlose Demo-Version) wird ebenfalls ein
+Perl-Skript namens `queueLoader.pl` mitgeliefert
+(siehe aber die Warnung oben!).
+
+Alternativ dazu kann man die Datei auch regelmäßig (z. B.
+minütlich per Cron-Job) rotieren und in die Datenbank einlesen.
+footnote:[Einen ähnlichen Ansatz findet man bei dem Hilfsprogramm `asterisk-qsync` von André Herrmann: http://fisi-itse.de/index.php?option=com_content&task=view&id=24&Itemid=3]

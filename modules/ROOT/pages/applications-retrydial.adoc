@@ -1,0 +1,85 @@
+[[applications-retrydial]]
+= `RetryDial()`
+
+Versucht, einen Anruf zu tätigen, und wiederholt den Versuch bei
+einem Fehlschlag.
+
+[source]
+----
+RetryDial(Ankündigung,Wartezeit,Versuche,Tech/Res[&Tech2/Res2...][,Timeout[,Optionen[,URL]]])
+----
+
+Versucht, wie `Dial()`, einen Anruf zu tätigen. Kann
+kein Channel erreicht werden, wird die Datei `Ankündigung` (ohne
+Endung!) abgespielt und `Wartezeit` Sekunden gewartet, bis der
+Versuch wiederholt wird. Per Default wird 10 Sekunden gewartet. Nach
+`Versuche` Versuchen wird der Anruf mit der nächsten Priorität im
+Wählplan fortgesetzt. Ist `Versuche` auf 0 oder -1 gesetzt, wird
+der Anrufversuch endlos wiederholt.
+
+In der Wartezeit kann eine einziffrige Extension gewählt werden.
+Existiert diese Extension im durch `${EXITCONTEXT}`
+spezifizierten Context (oder im aktuellen), wird der Anruf unmittelbar an
+diese Extension weitergeleitet.
+
+Alle Parameter nach `Versuche` werden direkt an die
+`Dial()`-Anwendung weitergeleitet.
+
+[source]
+----
+; 3-mal versuchen, die Nummer zu erreichen, Wdh. nach 5 Sekunden:
+exten => 123,1,RetryDial(versuche-zu-verbinden,5,3,IAX2/VOIP/012345678,30)
+; wenn der Anrufer während des Wählens 0 drückt, auf Zap/4 versuchen:
+exten => 0,1,RetryDial(versuche-zu-verbinden,5,3,Zap/4/012345678,30)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'RetryDial' =-
+
+[Synopsis]
+Place a call, retrying on failure allowing optional exit extension.
+
+[Description]
+RetryDial(announce|sleep|retries|dialargs): This application will attempt to
+place a call using the normal Dial application. If no channel can be reached,
+the 'announce' file will be played. Then, it will wait 'sleep' number of
+seconds before retrying the call. After 'retries' number of attempts, the
+calling channel will continue at the next priority in the dialplan. If the
+'retries' setting is set to 0, this application will retry endlessly.
+While waiting to retry a call, a 1 digit extension may be dialed. If that
+extension exists in either the context defined in ${EXITCONTEXT} or the current
+one, The call will jump to that extension immediately.
+The 'dialargs' are specified in the same format that arguments are provided
+to the Dial application.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -7,7 +7,7 @@
+RetryDial(announce|sleep|retries|dialargs): This application will attempt to
+place a call using the normal Dial application. If no channel can be reached,
+the 'announce' file will be played. Then, it will wait 'sleep' number of
+- seconds before retying the call. After 'retires' number of attempts, the
++ seconds before retrying the call. After 'retries' number of attempts, the
+calling channel will continue at the next priority in the dialplan. If the
+'retries' setting is set to 0, this application will retry endlessly.
+While waiting to retry a call, a 1 digit extension may be dialed. If that
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Place a call, retrying on failure allowing optional exit extension.
+
+[Description]
+- RetryDial(announce|sleep|retries|dialargs): This application will attempt to
++ RetryDial(announce,sleep,retries,dialargs): This application will attempt to
+place a call using the normal Dial application. If no channel can be reached,
+the 'announce' file will be played. Then, it will wait 'sleep' number of
+seconds before retrying the call. After 'retries' number of attempts, the
+
+.Siehe auch
+xref:applications-dial.adoc[Abschnitt C.38, „`Dial()`“]

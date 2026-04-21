@@ -1,0 +1,36 @@
+[[functions-iconv]]
+= `ICONV()`
+
+[source]
+----
+ICONV(vonCharset,nachCharset,string)
+----
+
+Konvertiert einen String mittels
+*`iconv`*footnote:[http://de.wikipedia.org/wiki/Iconv, http://www.gnu.org/software/libiconv/, http://www.gnu.org/software/libiconv/documentation/libiconv/iconv.1.html] von einer Zeichen-Kodierung („charset“) in eine
+andere. Eine Liste aller unterstützten Zeichenkodierungen können Sie auf der
+Shell mit +`iconv --list`+
+ausgeben.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'ICONV' =-
+
+[Syntax]
+ICONV(in-charset,out-charset,string)
+
+[Synopsis]
+Converts charsets of strings.
+
+[Description]
+Converts string from in-charset into out-charset. For available charsets,
+use 'iconv -l' on your shell command line.
+Note: due to limitations within the API, ICONV will not currently work with
+charsets with embedded NULLs. If found, the string will terminate.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch

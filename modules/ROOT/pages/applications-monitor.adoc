@@ -1,0 +1,173 @@
+[[applications-monitor]]
+= `Monitor()`
+
+Schneidet das Gespräch auf dem aktuellen Channel mit (zwei
+Dateien).
+
+[source]
+----
+Monitor([Format[,Basisname[,Optionen]]])
+----
+
+Startet die Audio-Aufzeichnung des aktuellen Channels. Die auf dem
+Channel eingehenden und ausgehenden Sprachpakete werden in separaten Dateien
+aufgezeichnet, bis der Channel aufgelegt oder die Überwachung durch die
+`StopMonitor()`-Anwendung beendet wird.
+
+`Format` gibt das Dateiformat (d. h. die Dateiendung)
+an. Ohne Angabe wird `wav` verwendet.
+
+`Basisname` gibt den Basis-Dateinamen an (also ohne
+Dateiendung). Ohne Angabe wird der Name aus dem Channel-Namen und einer
+Nummer zusammengesetzt, z. B. `IAX2[foo@bar]-3`. Das eingehende
+Audio wird in
++_`Basisname`_-in._`Format`_+,
+das ausgehende in
++_`Basisname`_-out._`Format`_+
+im Verzeichnis `/var/spool/asterisk/monitor/`
+gespeichert.
+
+Eine der beiden Optionen kann angegeben werden:
+
+`m`:: Nach dem Beenden der Aufnahme werden die Dateien für In und Out zu einer Datei zusammengefasst und die ursprünglichen Dateien gelöscht. Dazu muss das Programm `soxmix` aus dem Paket `sox` installiert sein.footnote:[http://sox.sourceforge.net/, siehe Beschreibung in xref:musiconhold.conf.adoc[Abschnitt 16.2, „`musiconhold.conf`“\], mindestens Version 12.17.7, Ihre installierte Version erfahren Sie mit `soxmix -help.`]Falls die Variable `${MONITOR_EXEC}` definiert ist, wird statt `soxmix` die angegebene Anwendung ausgeführt, und die ursprünglichen Dateien für beide Richtungen werden nicht automatisch gelöscht.footnote:[Das hängt von der Asterisk-Version ab; ältere Versionen löschen nicht automatisch.] `soxmix` (bzw. `${MONITOR_EXEC}`) werden drei Parameter übergeben: die beiden Aufzeichnungsdateien und der Dateiname für die zu erstellende gemischte Datei, der dem Basisnamen ohne `-in`/`-out` entspricht. Ist `${MONITOR_EXEC_ARGS}` gesetzt, wird der Inhalt als zusätzliche Argumente an `${MONITOR_EXEC}` übergeben.
++
+[IMPORTANT]
+====
+Bei der Verwendung von `soxmix` ist zu
+beachten, dass `soxmix` ohne explizite Angabe der
+Dateitypen diese aus den Endungen erkennt. `gsm` und
+`wav` bereiten z. B. keine Probleme, aber für die
+Formate `alaw` und `ulaw` werden als
+Endungen `al` bzw. `ul` erwartet. Lesen Sie
+also ggf. die Anleitung von `sox`
+(`/soxmix`), und verwenden Sie
+`${MONITOR_EXEC_ARGS},` oder benutzen Sie ein kleines
+Wrapper-Skript als `${MONITOR_EXEC}`, das die
+Datei-Parameter liest und `soxmix` mit Angabe
+der Typen aufruft.
+====
++
+[NOTE]
+====
+Wenn Sie eine kombinierte Aufzeichnung wollen, ist meist
+`MixMonitor()` die bessere Alternative, da es die
+Kanäle direkt während der Aufnahme mischt und dadurch Lastspitzen
+am Ende der Aufzeichnung vermeidet.
+====
+`b`:: Startet die Aufnahme erst, nachdem ein Anruf zu einem anderen Channel verbunden wurde, also nachdem z. B. durch `Dial()` tatsächlich ein Gespräch zustande kommt.
+
+Gibt 0 bei Erfolg zurück oder -1 bei einem Fehler
+(Überwachungsdateien konnten nicht geöffnet werden, Channel wird bereits
+aufgezeichnet, ...).
+
+[source]
+----
+; das Gespräch aufzeichnen und hinterher die Audio-Kanäle mixen:
+exten => 123,1,Answer()
+exten => 123,n,Monitor(gsm,,mb)
+exten => 123,n,SayDigits(123456789)
+exten => 123,n,Hangup()
+
+; wie oben, aber mit einem eigenen Wrapper, der soxmix aufruft:
+exten => 123,1,Answer()
+exten => 123,n,Set(MONITOR_EXEC=/pfad/zu/mein-soxmix-wrapper.sh)
+exten => 123,n,Monitor(gsm,,mb)
+exten => 123,n,SayDigits(123456789)
+exten => 123,n,Hangup()
+----
+
+[IMPORTANT]
+====
+Stellen Sie vor dem Mitschneiden von Gesprächen sicher, dass die
+rechtlichen Voraussetzungen erfüllt sind. Meist müssen beide Teilnehmer
+über die Aufzeichnung informiert sein.footnote:[siehe auch http://www.voip-info.org/wiki/view/Monitor+Recording+Legal+Issues]
+====
+
+[NOTE]
+====
+Einige Anwender, die viele (50 bis 500) Gespräche gleichzeitig
+aufnehmen, berichten von _stark_ verbesserter
+Performance, wenn man auf eine RAM-Disk aufzeichnet (weniger
+Suchoperationen) und die Dateien erst nach dem Gesprächsende auf die
+Festplatte (lokal oder gemountet) kopiert.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Monitor' =-
+
+[Synopsis]
+Monitor a channel
+
+[Description]
+Monitor([file_format[:urlbase]|[fname_base]|[options]]):
+Used to start monitoring a channel. The channel's input and output
+voice packets are logged to files until the channel hangs up or
+monitoring is stopped by the StopMonitor application.
+file_format optional, if not set, defaults to "wav"
+fname_base if set, changes the filename used to the one specified.
+options:
+m - when the recording ends mix the two leg files into one and
+delete the two leg files. If the variable MONITOR_EXEC is set, the
+application referenced in it will be executed instead of
+sox and the raw leg files will NOT be deleted automatically.
+sox or MONITOR_EXEC is handed 3 arguments, the two leg files
+and a target mixed file name which is the same as the leg file names
+only without the in/out designator.
+If MONITOR_EXEC_ARGS is set, the contents will be passed on as
+additional arguements to MONITOR_EXEC
+Both MONITOR_EXEC and the Mix flag can be set from the
+administrator interface
+
+b - Don't begin recording unless a call is bridged to another channel
+
+Returns -1 if monitor files can't be opened or if the channel is already
+monitored, otherwise 0.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -14,8 +14,8 @@
+m - when the recording ends mix the two leg files into one and
+delete the two leg files. If the variable MONITOR_EXEC is set, the
+application referenced in it will be executed instead of
+- soxmix and the raw leg files will NOT be deleted automatically.
+- soxmix or MONITOR_EXEC is handed 3 arguments, the two leg files
++ sox and the raw leg files will NOT be deleted automatically.
++ sox or MONITOR_EXEC is handed 3 arguments, the two leg files
+and a target mixed file name which is the same as the leg file names
+only without the in/out designator.
+If MONITOR_EXEC_ARGS is set, the contents will be passed on as
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Monitor a channel
+
+[Description]
+- Monitor([file_format[:urlbase]|[fname_base]|[options]]):
++ Monitor([file_format[:urlbase],[fname_base],[options]]):
+Used to start monitoring a channel. The channel's input and output
+voice packets are logged to files until the channel hangs up or
+monitoring is stopped by the StopMonitor application.
+@@ -19,11 +19,13 @@
+and a target mixed file name which is the same as the leg file names
+only without the in/out designator.
+If MONITOR_EXEC_ARGS is set, the contents will be passed on as
+- additional arguements to MONITOR_EXEC
++ additional arguments to MONITOR_EXEC
+Both MONITOR_EXEC and the Mix flag can be set from the
+administrator interface
+
+b - Don't begin recording unless a call is bridged to another channel
++ i - Skip recording of input stream (disables m option)
++ o - Skip recording of output stream (disables m option)
+
+Returns -1 if monitor files can't be opened or if the channel is already
+monitored, otherwise 0.
+
+.Siehe auch
+xref:applications-changemonitor.adoc[Abschnitt C.17, „`ChangeMonitor()`“], xref:applications-stopmonitor.adoc[Abschnitt C.173, „`StopMonitor()`“], xref:applications-pausemonitor.adoc[Abschnitt C.113, „`PauseMonitor()`“], xref:applications-unpausemonitor.adoc[Abschnitt C.181, „`UnpauseMonitor()`“], xref:applications-mixmonitor.adoc[Abschnitt C.99, „`MixMonitor()`“], xref:applications-record.adoc[Abschnitt C.132, „`Record()`“]

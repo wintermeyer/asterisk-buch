@@ -1,0 +1,235 @@
+[[applications-disa]]
+= `DISA()`
+
+DISA, _Direct Inward System Access_, erlaubt
+auswärtigen Anrufern Anrufe mit internem System-Wählton.
+
+[source]
+----
+DISA(Passwort[,Context[,CallerID[,Mailbox[@VM-Context]]]])
+----
+
+[source]
+----
+DISA(Passwort-Datei[,CallerID[,Mailbox[@VM-Context]]])
+----
+
+Erlaubt es Anrufern von außen, einen internen System-Wählton zu
+erhalten und entsprechend Anrufe zu tätigen, als würden diese von innerhalb
+des Switches aus getätigt. Dem Teilnehmer wird ein Wählton zur Verfügung
+gestellt, nach dem er einen Zugangskode eingeben muss, gefolgt von der
+Rautetaste (`#`). Ist der Zugangskode korrekt, erhält er einen
+System-Wählton, auf dem er einen Anruf tätigen kann.
+
+[CAUTION]
+====
+Diese Art von Zugang kann ein ernstes Sicherheitsrisiko sein und
+sollte sorgfältig überlegt werden, damit die Sicherheit Ihres Systems
+nicht gefährdet ist!
+====
+
+Der `Passwort`-Parameter ist ein numerischer
+Zugangskode, den der Benutzer eingeben muss, um Anrufe tätigen zu können.
+Mit dieser Syntax werden alle Benutzer dieser Extension das gleiche Passwort
+benutzen. Möchten Sie Benutzern erlauben, `DISA()` ohne Passwort
+zu verwenden, übergeben Sie die Zeichenkette `no-password` an der
+Stelle des Passwortes.
+
+Der `Context`-Parameter spezifiziert den Context, in dem
+sich ein Benutzer einwählen wird. Wird kein Context spezifiziert, nimmt die
+`DISA()`-Anwendung den Context `disa` an.
+
+Die `CallerID` ist die Mailbox-Nummer (und optional
+Voicemail-Context `VM-Context`) einer Voicemailbox. Der Anrufer
+wird einen sogenannten „stuttered dial-tone“ (das ist ein
+regelmäßig kurz unterbrochener, eben „stotternder“ Wählton)
+hören, falls neue Nachrichten in der angegebenen Voicemailbox
+vorliegen.
+
+Außerdem können Sie eine alternative Syntax benutzen und den Namen
+einer global verfügbaren Passwortdatei statt der Parameter
+`Passwort` und `Context` übergeben. In jeder Zeile
+kann diese Datei entweder einen Zugangskode oder eine Kombination aus
+Zugangskode und Context, getrennt durch das Zeichen `|`,
+enthalten. Ist kein Context mit angegeben, wird standardmäßig der Context
+`disa` verwendet.
+
+Ist das Einloggen des Teilnehmers erfolgreich, wird die Anwendung
+die gewählte Nummer in dem spezifizierten Context interpretieren.
+
+[source]
+----
+; Anrufern von außen erlauben, 0800er-Nummern zu wählen, sofern sie
+; das Passwort (1234) wissen. Dabei ihre Caller-ID so setzen, dass
+; es aussieht, als riefen sie von innerhalb der Firma an:
+[incoming]
+exten => 123,1,DISA(1234,disa,Apfelmus GmbH <(0261) 1234567>)
+[disa]
+exten => _0800XXXXXXXX,1,Dial(Zap/4/${EXTEN})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'DISA' =-
+
+[Synopsis]
+DISA (Direct Inward System Access)
+
+[Description]
+DISA(<numeric passcode>[|<context>]) or DISA(<filename>)
+The DISA, Direct Inward System Access, application allows someone from
+outside the telephone switch (PBX) to obtain an "internal" system
+dialtone and to place calls from it as if they were placing a call from
+within the switch.
+DISA plays a dialtone. The user enters their numeric passcode, followed by
+the pound sign (#). If the passcode is correct, the user is then given
+system dialtone on which a call may be placed. Obviously, this type
+of access has SERIOUS security implications, and GREAT care must be
+taken NOT to compromise your security.
+
+There is a possibility of accessing DISA without password. Simply
+exchange your password with "no-password".
+
+Example: exten => s,1,DISA(no-password|local)
+
+Be aware that using this compromises the security of your PBX.
+
+The arguments to this application (in extensions.conf) allow either
+specification of a single global passcode (that everyone uses), or
+individual passcodes contained in a file. It also allows specification
+of the context on which the user will be dialing. If no context is
+specified, the DISA application defaults the context to "disa".
+Presumably a normal system will have a special context set up
+for DISA use with some or a lot of restrictions.
+
+The file that contains the passcodes (if used) allows specification
+of either just a passcode (defaulting to the "disa" context, or
+passcode|context on each line of the file. The file may contain blank
+lines, or comments starting with "#" or ";". In addition, the
+above arguments may have |new-callerid-string appended to them, to
+specify a new (different) callerid to be used for this call, for
+example: numeric-passcode|context|"My Phone" <(234) 123-4567> or
+full-pathname-of-passcode-file|"My Phone" <(234) 123-4567>. Last
+but not least, |mailbox[@context] may be appended, which will cause
+a stutter-dialtone (indication "dialrecall") to be used, if the
+specified mailbox contains any new messages, for example:
+numeric-passcode|context||1234 (w/a changing callerid). Note that
+in the case of specifying the numeric-passcode, the context must be
+specified if the callerid is specified also.
+
+If login is successful, the application looks up the dialed number in
+the specified (or default) context, and executes it if found.
+If the user enters an invalid extension and extension "i" (invalid)
+exists in the context, it will be used. Also, if you set the 5th argument
+to 'NOANSWER', the DISA application will not answer initially.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,7 +4,7 @@
+DISA (Direct Inward System Access)
+
+[Description]
+- DISA(<numeric passcode>[|<context>]) or disa(<filename>)
++ DISA(<numeric passcode>[|<context>]) or DISA(<filename>)
+The DISA, Direct Inward System Access, application allows someone from
+outside the telephone switch (PBX) to obtain an "internal" system
+dialtone and to place calls from it as if they were placing a call from
+@@ -24,7 +24,7 @@
+
+The arguments to this application (in extensions.conf) allow either
+specification of a single global passcode (that everyone uses), or
+- individual passcodes contained in a file. It also allow specification
++ individual passcodes contained in a file. It also allows specification
+of the context on which the user will be dialing. If no context is
+specified, the DISA application defaults the context to "disa".
+Presumably a normal system will have a special context set up
+@@ -48,4 +48,5 @@
+If login is successful, the application looks up the dialed number in
+the specified (or default) context, and executes it if found.
+If the user enters an invalid extension and extension "i" (invalid)
+- exists in the context, it will be used.
++ exists in the context, it will be used. Also, if you set the 5th argument
++ to 'NOANSWER', the DISA application will not answer initially.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,49 +4,42 @@
+DISA (Direct Inward System Access)
+
+[Description]
+- DISA(<numeric passcode>[|<context>]) or DISA(<filename>)
++ DISA(<numeric passcode>[,<context>[,<cid>[,mailbox[,options]]]]) or
++ DISA(<filename>[,,,,options])
+The DISA, Direct Inward System Access, application allows someone from
+outside the telephone switch (PBX) to obtain an "internal" system
+dialtone and to place calls from it as if they were placing a call from
+within the switch.
+DISA plays a dialtone. The user enters their numeric passcode, followed by
+the pound sign (#). If the passcode is correct, the user is then given
+- system dialtone on which a call may be placed. Obviously, this type
+- of access has SERIOUS security implications, and GREAT care must be
+- taken NOT to compromise your security.
+-
+- There is a possibility of accessing DISA without password. Simply
+- exchange your password with "no-password".
++ system dialtone within <context> on which a call may be placed. If the user
++ enters an invalid extension and extension "i" exists in the specified
++ context, it will be used.
+
+- Example: exten => s,1,DISA(no-password|local)
++ If you need to present a DISA dialtone without entering a password, simply
++ set <passcode> to "no-password".
+
+- Be aware that using this compromises the security of your PBX.
++ Be aware that using this may compromise the security of your PBX.
+
+The arguments to this application (in extensions.conf) allow either
+specification of a single global passcode (that everyone uses), or
+- individual passcodes contained in a file. It also allows specification
+- of the context on which the user will be dialing. If no context is
+- specified, the DISA application defaults the context to "disa".
+- Presumably a normal system will have a special context set up
+- for DISA use with some or a lot of restrictions.
++ individual passcodes contained in a file.
+
+- The file that contains the passcodes (if used) allows specification
+- of either just a passcode (defaulting to the "disa" context, or
+- passcode|context on each line of the file. The file may contain blank
+- lines, or comments starting with "#" or ";". In addition, the
+- above arguments may have |new-callerid-string appended to them, to
+- specify a new (different) callerid to be used for this call, for
+- example: numeric-passcode|context|"My Phone" <(234) 123-4567> or
+- full-pathname-of-passcode-file|"My Phone" <(234) 123-4567>. Last
+- but not least, |mailbox[@context] may be appended, which will cause
+- a stutter-dialtone (indication "dialrecall") to be used, if the
+- specified mailbox contains any new messages, for example:
+- numeric-passcode|context||1234 (w/a changing callerid). Note that
+- in the case of specifying the numeric-passcode, the context must be
+- specified if the callerid is specified also.
++ The file that contains the passcodes (if used) allows a complete
++ specification of all of the same arguments available on the command
++ line, with the sole exception of the options. The file may contain blank
++ lines, or comments starting with "#" or ";".
+
+- If login is successful, the application looks up the dialed number in
+- the specified (or default) context, and executes it if found.
+- If the user enters an invalid extension and extension "i" (invalid)
+- exists in the context, it will be used. Also, if you set the 5th argument
+- to 'NOANSWER', the DISA application will not answer initially.
++ <context> specifies the dialplan context in which the user-entered extension
++ will be matched. If no context is specified, the DISA application defaults
++ the context to "disa". Presumably a normal system will have a special
++ context set up for DISA use with some or a lot of restrictions.
++
++ <cid> specifies a new (different) callerid to be used for this call.
++
++ <mailbox[@context]> will cause a stutter-dialtone (indication "dialrecall")
++ to be used, if the specified mailbox contains any new messages.
++
++ The following options are available:
++ n - the DISA application will not answer initially.
++ p - the extension entered will be considered complete when a '#' is entered.

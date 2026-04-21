@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.3. Pattern Matching</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="dialplan-grundlagen.html" title="Kapitel 3. Dialplan – die Grundlagen" /><link rel="prev" href="die-extension.html" title="3.2. Extension" /><link rel="next" href="includes-im-dialplan.html" title="3.4. Includes im Dialplan" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="3.3. Pattern Matching" id="einleitung-regex"><div class="titlepage"><div><div><h2 class="title" id="einleitung-regex">3.3. Pattern Matching</h2></div></div></div><a id="idp8869648" class="indexterm"></a><a id="idp8870816" class="indexterm"></a><div class="para">Mit unserem bisher erworbenen Wissen müssen wir pro möglicher
+    Rufnummer immer eine eigene Extension schreiben. Dies würde schon nach
+    kurzer Zeit sehr lange und fehleranfällige Dialpläne nach sich ziehen.
+    Sollen z. B. die Rufnummern 100 bis 109 jeweils immer den Sprachbaustein
+    hello-world abspielen, so würde die <code class="filename">extensions.conf</code>
+    wie folgt aussehen:<pre class="programlisting">[general]
+
+[apfelmus]
+exten =&gt; 100,1,Answer()
+exten =&gt; 100,2,Playback(hello-world)
+exten =&gt; 100,3,Hangup()
+
+exten =&gt; 101,1,Answer()
+exten =&gt; 101,2,Playback(hello-world)
+exten =&gt; 101,3,Hangup()
+
+exten =&gt; 102,1,Answer()
+exten =&gt; 102,2,Playback(hello-world)
+exten =&gt; 102,3,Hangup()
+
+exten =&gt; 103,1,Answer()
+exten =&gt; 103,2,Playback(hello-world)
+exten =&gt; 103,3,Hangup()
+
+exten =&gt; 104,1,Answer()
+exten =&gt; 104,2,Playback(hello-world)
+exten =&gt; 104,3,Hangup()
+
+exten =&gt; 105,1,Answer()
+exten =&gt; 105,2,Playback(hello-world)
+exten =&gt; 105,3,Hangup()
+
+exten =&gt; 106,1,Answer()
+exten =&gt; 106,2,Playback(hello-world)
+exten =&gt; 106,3,Hangup()
+
+exten =&gt; 107,1,Answer()
+exten =&gt; 107,2,Playback(hello-world)
+exten =&gt; 107,3,Hangup()
+
+exten =&gt; 108,1,Answer()
+exten =&gt; 108,2,Playback(hello-world)
+exten =&gt; 108,3,Hangup()
+
+exten =&gt; 109,1,Answer()
+exten =&gt; 109,2,Playback(hello-world)
+exten =&gt; 109,3,Hangup()
+</pre></div><div class="para">Wenn wir ein Pattern in Form einer Regular Expression (auch Regex
+    genannt) verwenden,<div class="tip"><h2>Tipp</h2><div class="para">Definition <span class="emphasis"><em>Regular Expression</em></span>:</div><div class="para">"Reguläre Ausdrücke (Abkürzung: <span class="emphasis"><em>RegExp</em></span> oder
+        <span class="emphasis"><em>Regex</em></span>, engl. <span class="emphasis"><em>regular
+        expressions</em></span>) dienen zur Beschreibung von (Unter-)Mengen von
+        Zeichenketten mithilfe syntaktischer Regeln. Sie finden vor allem in
+        der Softwareentwicklung Verwendung. Für fast alle Programmiersprachen
+        existieren Implementierungen." (zitiert aus <a href="http://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck">
+        <em class="citetitle">http://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck</em>
+        </a>)</div></div> sieht der gleiche Dialplan gleich viel handlicher
+    aus:<pre class="programlisting">[general]
+
+[apfelmus]
+exten =&gt; _10X,1,Answer()
+exten =&gt; _10X,2,Playback(hello-world)
+exten =&gt; _10X,3,Hangup()
+</pre></div><div class="para">Das Pattern <code class="code">_10X</code> beschreibt den Zahlenraum von 100 bis
+    109.</div><div class="para"><div class="important"><h2>Wichtig</h2><div class="para">Man benutzt für die Beschreibung dieses Prozesses häufig das
+        englische Verb <span class="emphasis"><em>match</em></span> und das Substantiv
+        <span class="emphasis"><em>Pattern</em></span>. "Pattern" kann mit "Suchmuster"
+        übersetzt werden. "match" lässt sich in etwa mit "zutreffen"
+        übersetzen und die Verwendung dieser Begriffe ist am einfachsten mit
+        einem Beispiel zu beschreiben: Ein Pattern ist "_10X", und dieses
+        Pattern "matcht" auf den Zahlenraum 100 bis 109. Es trifft also nicht
+        auf die Zahl 110 zu.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">Die Begriffe <span class="emphasis"><em>Pattern</em></span> und <span class="emphasis"><em>Regular
+        Expression</em></span> werden in vielen Dokumentationen sehr beliebig
+        eingesetzt. Auch dieses Buch leidet unter diesem Problem. Formal
+        korrekt ist sicherlich der Begriff <span class="emphasis"><em>Pattern</em></span>, aber
+        die meisten Programmierer werden den Begriff <span class="emphasis"><em>Regular
+        Expression</em></span> benutzen.</div></div></div><div class="section" title="Syntax" id="regular-expression-syntax"><div class="titlepage"><div><div><h3 class="title" id="regular-expression-syntax">Syntax<a id="idp8887280" class="indexterm"></a><a id="idp8888288" class="indexterm"></a></h3></div></div></div><div class="para">Ein Pattern wird immer mit einem Unterstrich (<code class="code">_</code>) vor
+      dem eigentlichen Suchmuster eingeleitet:<pre class="programlisting">exten =&gt; _Regular Expression,Prioritaet,Applikation</pre></div><div class="para">Eine Regular Expression kann in Asterisk aus den folgenden
+      Elementen<sup>[<a id="idp8891072" href="#ftn.idp8891072" class="footnote">9</a>]</sup> bestehen:<div class="variablelist"><dl><dt><span class="term"><code class="code">[ABC]</code></span></dt><dd><div class="para">Die Ziffern A, B und C. Beispiel für die Zahlen 34, 37 und
+              38:<pre class="programlisting">exten =&gt; _3[478],1,NoOp(Test)</pre></div></dd><dt><span class="term"><code class="code">[A-B]</code></span></dt><dd><div class="para">Beliebige Ziffer von A bis B. Beispiel für alle Zahlen von
+              31 bis 35:<pre class="programlisting">exten =&gt; _3[1-5],1,NoOp(Test)</pre>(Zum
+              Beispiel wäre auch <code class="code">[25-8]</code> für folgende Ziffern
+              möglich: 2,5,6,7,8.)</div></dd><dt><span class="term"><code class="code">X</code></span></dt><dd><div class="para">Beliebige Ziffer von 0 bis 9. Beispiel für alle Zahlen von
+              300 bis 399:<pre class="programlisting">exten =&gt; _3XX,1,NoOp(Test)</pre></div></dd><dt><span class="term"><code class="code">Z</code></span></dt><dd><div class="para">Beliebige Ziffer von 1 bis 9. Beispiel für alle Zahlen von
+              31 bis 39:<pre class="programlisting">exten =&gt; _3Z,1,NoOp(Test)</pre></div></dd><dt><span class="term"><code class="code">N</code></span></dt><dd><div class="para">Beliebige Ziffer von 2 bis 9. Beispiel für alle Zahlen von
+              32 bis 39:<pre class="programlisting">exten =&gt; _3N,1,NoOp(Test)</pre></div></dd><dt><span class="term"><code class="code">.</code></span></dt><dd><div class="para">Eine oder mehrere beliebige Ziffer(n). Beispiel für alle
+              Nummern, die mit einer 0 beginnen:<pre class="programlisting">exten =&gt; _0.,1,NoOp(Test)</pre></div><div class="note"><h2>Anmerkung</h2><div class="para">Das Pattern <code class="code">_.</code> sollten Sie nicht verwenden!
+                Es trifft auch auf besondere Extensions wie <code class="code">i</code>,
+                <code class="code">t</code> oder <code class="code">h</code> zu. Benutzen Sie
+                stattdessen <code class="code">_X.</code> oder <code class="code">_X</code> falls
+                nötig.</div></div></dd><dt><span class="term"><code class="code">!</code></span></dt><dd><div class="para">Eine oder mehrere beliebige Ziffer(n) – ab Asterisk 1.4.
+              Dieser besondere Platzhalter trifft zu, sobald unzweifelhaft
+              nicht eine andere explizite Nummer im Dialplan gewählt wird.
+              Dann hebt sofort die Leitung für <span class="quote">„<span class="quote">overlap dialing</span>“</span>
+              ab. Dieses Element wird hier nur der Vollständigkeit halber
+              erwähnt.</div></dd></dl></div></div><div class="para"><div class="important"><h2>Wichtig</h2><div class="para">Ein beliebter Fehler ist es, am Anfang einer Regular
+          Expression das Underscore-Zeichen "_" zu vergessen. Für Asterisk ist
+          aber die Extension XXX ebenfalls eine vollkommen sinnvolle Extension
+          (da SIP ja nicht nur Zahlen, sondern auch Buchstaben als Zieladresse
+          kennt). Entsprechend wird es auch keine Fehlermeldung geben.
+          Dummerweise wird das Pattern aber auch nie matchen, weil es nicht
+          als Pattern (also mit dem <code class="code">_</code>) eingegeben wurde.</div></div></div></div><div class="section" title="Testen mit dialplan show" id="dialplan-show"><div class="titlepage"><div><div><h3 class="title" id="dialplan-show">Testen mit <code class="command">dialplan show</code><a id="idp5377216" class="indexterm"></a></h3></div></div></div><div class="para">Nehmen wir einmal an, dass in unserer
+      <code class="filename">extensions.conf</code> der folgende Dialplan
+      steht:<pre class="programlisting">[general]
+
+[meine-telefone]
+exten =&gt; 23,1,Answer()
+exten =&gt; 23,2,Playback(hello-world)
+exten =&gt; 23,3,Hangup()</pre></div><div class="para">Dann können wir im CLI von Asterisk (das ist das Interface, das
+      bei einem bereits laufenden Asterisk mit <code class="command">asterisk -r</code>
+      gestartet werden kann) mit dem Befehl <code class="command">dialplan show</code>
+      (auf Asterisk 1.2: <code class="command">show dialplan</code>) den aktuellen
+      Dialplan anzeigen:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show</code></strong></span>
+[ Context 'default' created by 'pbx_config' ]
+
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =&gt;           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+[ Context 'parkedcalls' created by 'res_features' ]
+  '700' =&gt;          1. Park()                                     [res_features]
+
+-= 2 extensions (4 priorities) in 3 contexts. =-
+*CLI&gt;</pre></div><div class="para">Das CLI zeigt jetzt alle Wählregeln an, die Asterisk bekannt sind.
+      Deshalb gibt es auch noch einen Context "parkedcalls", den wir gar nicht
+      wissentlich aktiviert haben (dieser wird standardmäßig in der
+      <code class="filename">features.conf</code> aktiviert und stört uns jetzt nicht
+      weiter). Wenn wir uns nur für den Dialplan für den Context
+      <code class="code">meine-telefone</code> interessieren, so können wir diesen mit
+      <code class="command">dialplan show meine-telefone</code> abrufen:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show meine-telefone</code></strong></span>
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =&gt;           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI&gt; </pre></div><div class="para">Der Befehl <code class="code"><span class="application"><strong>dialplan</strong></span> show</code>
+      kann aber nicht nur ganze Contexte anzeigen, sondern auch sagen, was
+      passiert, wenn ich eine bestimmte Nummer wähle. Wenn ich mit einem
+      Telefon, das im Context <code class="code">meine-telefone</code> ist, die Nummer 25
+      anrufe, dann kann ich mit <code class="command">dialplan show
+      25@meine-telefone</code> anzeigen, was passiert:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 25@meine-telefone</code></strong></span>
+There is no existence of 25@meine-telefone extension
+*CLI&gt;</pre></div><div class="para">Es wird also nichts passieren, weil es keinen Match für die von
+      mir gewählte Extension 25 gibt. Wenn ich das Gleiche für die 23 mache,
+      dann gibt es folgende Ausgabe:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 23@meine-telefone</code></strong></span>
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =&gt;           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI&gt; </pre></div><div class="para">Wenn ich in allen verfügbaren Contexten nach einem Match für die
+      23 suchen möchte, so geht das mit <code class="command">dialplan show
+      23@:</code><pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 23@</code></strong></span>
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =&gt;           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI&gt;</pre></div><div class="para">Erweitern wir unseren Dialplan einmal um einen weiteren
+      Context:<pre class="programlisting">[general]
+
+[meine-telefone]
+exten =&gt; 23,1,Answer()
+exten =&gt; 23,2,Playback(hello-world)
+exten =&gt; 23,3,Hangup()
+
+[abteilung-z]
+exten =&gt; _2X,1,Answer()
+exten =&gt; _2X,2,Playback(hello-world)
+exten =&gt; _2X,3,Hangup()</pre></div><div class="para">Und jetzt führen wir noch einmal <code class="command">dialplan show
+      23@</code> aus (vorher müssen wir natürlich Asterisk mit
+      <code class="command">reload</code> im CLI sagen, dass es den neuen Dialplan
+      einlesen soll):<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 23@</code></strong></span>
+[ Context 'abteilung-z' created by 'pbx_config' ]
+  '_2X' =&gt;          1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+[ Context 'meine-telefone' created by 'pbx_config' ]
+  '23' =&gt;           1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 2 extensions (6 priorities) in 2 contexts. =-
+*CLI&gt; </pre></div><div class="para">Es werden also alle matchenden Extensions anzeigt. Um im obigen
+      Beispiel zu bleiben, probieren wir das jetzt auch noch einmal mit
+      <code class="command">dialplan show 25@</code> aus:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 25@</code></strong></span>
+[ Context 'abteilung-z' created by 'pbx_config' ]
+  '_2X' =&gt;          1. Answer()                                   [pbx_config]
+                    2. Playback(hello-world)                      [pbx_config]
+                    3. Hangup()                                   [pbx_config]
+
+-= 1 extension (3 priorities) in 1 context. =-
+*CLI&gt;</pre></div><div class="para">Logischerweise gibt es dabei nur einen Treffer, und der ist im
+      Context <code class="code">abteilung-z</code>. Sollten Sie also mit einem Telefon,
+      das im Context <code class="code">meine-telefone</code> arbeitet, die 25 wählen, so
+      werden Sie trotzdem kein hello-world hören, denn dies funktioniert nur
+      bei Telefonen, die auch im Context <code class="code">abteilung-z</code>
+      arbeiten.</div></div><div class="section" title="Wann matcht welches Pattern?" id="wann-matcht-welches-pattern"><div class="titlepage"><div><div><h3 class="title" id="wann-matcht-welches-pattern">Wann matcht welches Pattern?</h3></div></div></div><a id="idp5411632" class="indexterm"></a><div class="para">Das Pattern Matching in Asterisk
+      ist bei großen Dialplänen eine trickreiche Angelegenheit. Asterisk geht
+      nämlich nicht, wie allgemein angenommen wird, plump von oben nach unten
+      den Dialplan durch. Nein, es priorisiert innerhalb der Patterns!</div><div class="para">Je exakter ein Pattern matcht, desto höher ist die
+      Wahrscheinlichkeit, dass es matcht. Asterisk geht allerdings – bevor es
+      eine Entscheidung trifft – den ganzen Context durch. Es könnte ja sein,
+      das ein anderes Pattern noch besser matcht.</div><div class="para">Beispiel:<pre class="programlisting">[verkauf]
+exten =&gt; _12X.,1,NoOp{12X}
+exten =&gt; 12345,1,NoOp(12345}
+exten =&gt; _1234.,1,NoOp{1234.}</pre></div><div class="para">Um herauszufinden, welches Pattern matcht, wenn die 12345 gewählt
+      wird, können wir dies mit <code class="command">dialplan show
+      12345@verkauf</code> überprüfen:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 12345@verkauf</code></strong></span>
+[ Context 'verkauf' created by 'pbx_config' ]
+  '12345' =&gt;        1. NoOp(12345})                               [pbx_config]
+  '_1234.' =&gt;       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =&gt;        1. NoOp{12X}()                                [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI&gt; </pre>Asterisk zeigt alle Treffer, aber priorisiert die Zeile, in
+      der <code class="code">12345,1,NoOP{12345}</code> steht. Die höchste Priorität wird
+      immer ganz oben angezeigt.</div><div class="para">Jetzt kontrollieren wir das noch für die Nummer 12346 mit dem
+      Befehl <code class="command">dialplan show 12346@verkauf</code>:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 12346@verkauf</code></strong></span>
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =&gt;       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =&gt;        1. NoOp{12X}()                                [pbx_config]
+
+-= 2 extensions (2 priorities) in 1 context. =-
+*CLI&gt; </pre></div><div class="para">Auch hier bekommt das Pattern mit dem "besten" Treffer die höchste
+      Priorität.<div class="important"><h2>Wichtig</h2><div class="para">Es ist nicht wichtig, in welcher Reihenfolge Patterns im
+          Dialplan geschrieben werden! Es ist nur wichtig, wie genau ein
+          Pattern matcht. Je genauer es matcht, desto höher wird es
+          priorisiert.</div></div></div><div class="para"><div class="warning"><h2>Warnung</h2><div class="para">Es gibt eine Sonderregel für das Pattern _.</div><div class="para">"_." matcht immer und hat auch immer die höchste Priorität. Es
+          ist also egal, was Sie sonst noch in diesem Context für Regeln
+          haben! Es wird immer nur die Regel mit dem Pattern "_." ausgeführt.
+          Man sollte also lieber ein "_X." nehmen, außer man ist sich absolut
+          sicher und weiß, was das Pattern "_." bewirkt.</div></div>Auch wenn die Reihenfolge von Pattern nicht immer ganz
+      trival ist, gibt es eine einfache Debugging-Möglichkeit. Mit
+      <code class="command">show dialplan 12345@verkauf</code> lässt sich der Dialplan
+      für die gewählte Nummer 12345 im Context <code class="code">verkauf</code> auflisten.
+      So können Sie für spezielle Nummern überprüfen, ob auch die dafür
+      vorgesehene Regel matcht.</div><div class="section" title="Sonderregel für das Pattern _. in Asterisk 1.2" id="sonderregel-pattern-asterisk-1-2"><div class="titlepage"><div><div><h4 class="title" id="sonderregel-pattern-asterisk-1-2">Sonderregel für das Pattern _. in Asterisk 1.2<a id="idp5428672" class="indexterm"></a></h4></div></div></div><div class="para">Damit das Leben eines Asterisk-Administrators nicht zu einfach
+        wird, hat sich Digium noch eine Besonderheit für das Pattern "_." in
+        der Asterisk-Version 1.2 ausgedacht. Obwohl dieses Pattern das
+        allgemeinste und damit von der Logik her das Pattern mit der
+        geringsten Priorität sein müsste, ist es genau andersherum! <div class="warning"><h2>Warnung</h2><div class="para"><code class="code">_.</code> bekommt in der Asterisk-Version 1.2 immer
+            die höchste Priorität!</div></div></div><div class="para"><div class="note"><h2>Anmerkung</h2><div class="para">Bitte beachten Sie, dass der CLI-Befehl <code class="command">show
+            dialplan</code> zwar auch noch in der Version 1.4 funktioniert,
+            aber unerwünscht ist. Deshalb lauten die Aufrufe in der Version
+            1.2 <code class="command">show dialplan</code> und in der Version 1.4
+            <code class="command">dialplan show</code>.</div></div></div><div class="para">Probieren wir noch einmal unseren obigen Dialplan mit einer
+        zusätzlichen Extension "<code class="literal">_.</code>" aus:<pre class="programlisting">[verkauf]
+exten =&gt; _12X.,1,NoOp{12X}
+exten =&gt; 12345,1,NoOp(12345}
+exten =&gt; _1234.,1,NoOp{1234.}
+
+exten =&gt; _.,1,NoOp{Bingo}</pre></div><div class="para">Wenn wir jetzt die Rufnummer 12346 ausprobieren wollen, bekommen
+        wir mit dem Befehl <code class="command">dialplan show 12346@verkauf</code> in
+        der Version 1.4 folgende Ausgabe:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 12346@verkauf</code></strong></span>
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =&gt;       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =&gt;        1. NoOp{12X}()                                [pbx_config]
+  '_.' =&gt;           1. NoOp{Bingo}()                              [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI&gt;</pre></div><div class="para">In Asterisk 1.2 bekommt der Befehl <code class="command">show dialplan
+        12346@verkauf</code> aber folgende Ausgabe:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 12346@verkauf</code></strong></span>
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_.' =&gt;           1. NoOp{Bingo}()                              [pbx_config]
+  '_1234.' =&gt;       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =&gt;        1. NoOp{12X}()                                [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI&gt;</pre></div><div class="para">Deshalb sollte man als "Restesammler" (wenn überhaupt) nur das
+        Pattern <code class="code">_X.</code> benutzen. Der folgende Dialplan wird in den
+        Asterisk-Versionen 1.2 und 1.4 gleich behandelt:<pre class="programlisting">[verkauf]
+exten =&gt; _12X.,1,NoOp{12X}
+exten =&gt; 12345,1,NoOp(12345}
+exten =&gt; _1234.,1,NoOp{1234.}
+
+exten =&gt; _X.,1,NoOp{Bingo}</pre></div><div class="para">Die Prioritäten sind in beiden Asterisk-Versionen wie
+        folgt:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">dialplan show 12346@verkauf</code></strong></span>
+[ Context 'verkauf' created by 'pbx_config' ]
+  '_1234.' =&gt;       1. NoOp{1234.}()                              [pbx_config]
+  '_12X.' =&gt;        1. NoOp{12X}()                                [pbx_config]
+  '_X.' =&gt;          1. NoOp{Bingo}()                              [pbx_config]
+
+-= 3 extensions (3 priorities) in 1 context. =-
+*CLI&gt; </pre></div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp8891072" href="#idp8891072" class="para">9</a>] </sup>Es gibt noch weitere Elemente, die im deutschen Sprachraum
+          aber im Allgemeinen wenig Sinn machen. Aus diesem Grund werden sie
+          hier nicht aufgeführt.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="der-context.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Context</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="die-extension.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Extension</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Pattern Matching</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="einleitung-regex.html#regular-expression-syntax" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Syntax</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="einleitung-regex.html#dialplan-show" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Testen mit <code xmlns="http://www.w3.org/1999/xhtml" class="command">dialplan show</code></a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="einleitung-regex.html#wann-matcht-welches-pattern" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Wann matcht welches Pattern?</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="includes-im-dialplan.html" title="pfc level3 breadcrumb-link section sectlevel1">Includes im Dialplan</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="apfelmus-exten-var.html" title="pfc level3 breadcrumb-link section sectlevel1">Die Variable ${EXTEN} und die Funktion ${CALLERID(num)}</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="pfc level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="case-study.html" title="pfc level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="pfc level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="ael.html" title="pfc level2 breadcrumb-link chapter">AEL</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="die-extension.html"><strong>Zurück</strong>3.2. Extension</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="includes-im-dialplan.html"><strong>Weiter</strong>3.4. Includes im Dialplan</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

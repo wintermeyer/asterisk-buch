@@ -1,0 +1,17 @@
+[[manager-sipqualifypeer]]
+= `SIPqualifypeer`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: SIPqualifypeer
+Synopsis: Show SIP peer (text format)
+Privilege: system,reporting,all
+Description: Show one SIP peer with details on current status.
+Variables:
+Peer: <name> The peer name you want to check.
+ActionID: <id> Optional action ID for this AMI transaction.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

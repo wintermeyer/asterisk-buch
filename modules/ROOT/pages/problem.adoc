@@ -1,0 +1,44 @@
+[[problem]]
+= Hilfe, ich habe immer noch ein Problem mit Asterisk!
+
+Sie haben ein Problem und finden in diesem Buch keine entsprechende
+Antwort? Dann gibt es folgende Möglichkeiten:
+
+* http://www.voip-info.org
++
+Das ist eine Webseite, die sich dem Thema VoIP und Asterisk
+widmet. Dort findet man zu vielen Problemen eine passende Antwort.
+Leider sind auch viele Artikel fehlerhaft. Wenn Sie einen Fehler
+finden: Fixen Sie ihn! Der nächste Besucher wird sich freuen.
+* IRC-Channel
++
+Auf dem IRC-Server http://freenode.net/[irc.freenode.net] gibt es den
+Channel `#asterisk`, der in englischer Sprache geführt
+wird. Dort kann man fast immer schnell Hilfe erhalten, selbst bei
+komplizierten Problemen.
++
+Wenn Sie noch nie mit IRC gearbeitet haben, finden Sie auf
+http://de.wikipedia.org/wiki/Internet_Relay_Chat
+eine Beschreibung.
+* Mailinglisten
++
+Die englischen Mailinglisten des Asterisk-Distributors Digium
+sind nicht jedermanns Sache, da gerade der ungeübte
+Mailinglistenbenutzer schnell den Überblick verliert. Allerdings hat
+man hier den Vorteil, dass immer auch Digium-Mitarbeiter mitlesen und
+Fragen beantworten. Informationen zu diesen Mailinglisten finden Sie
+unter http://www.asterisk.org/support/
+und http://lists.digium.com/.
+* E-Mail an Stefan Wintermeyer und Philipp Kempgen
++
+Wenn alle Stricke reißen oder Sie Verständnisprobleme bei den
+englischen Beschreibungen haben, können Sie uns natürlich auch
+jederzeit eine E-Mail an mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de]
+und an mailto:philipp.kempgen@amooma.de[philipp.kempgen@amooma.de] schreiben. Bitte geben
+Sie uns ein paar Tage Zeit, um zu antworten.
+
+_Wichtig: Bitte geben Sie uns Feedback! Wenn es sich bei
+Ihrer Frage um ein allgemeines Problem handelt und es in diesem Buch keine
+ausreichende Erklärung dazu gibt, dann schreiben Sie uns bitte an
+mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de] oder
+mailto:philipp.kempgen@amooma.de[philipp.kempgen@amooma.de] eine E-Mail._

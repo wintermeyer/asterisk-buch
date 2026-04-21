@@ -1,0 +1,34 @@
+[[applications-setvar]]
+= `SetVar()`
+
+Setzt eine Variable.
+
+[source]
+----
+SetVar(Variable=Wert)
+----
+
+[IMPORTANT]
+====
+`SetVar()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Applikation `Set()` (xref:applications-set.adoc[Abschnitt C.149, „`Set()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'SetVar' =-
+
+[Synopsis]
+Set channel variable(s)
+
+[Description]
+SetVar(name1=value1|name2=value2|..[|options]): This application has been
+deprecated in favor of using the Set application.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-set.adoc[Abschnitt C.149, „`Set()`“]

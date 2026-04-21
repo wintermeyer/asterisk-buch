@@ -1,0 +1,40 @@
+[[functions-quote]]
+= `QUOTE()`
+
+[source]
+----
+QUOTE(String)
+----
+
+Schließt einen String in Anführungszeichen
+(„`"`“) ein und maskiert Anführungszeichen innerhalb
+des Strings durch ein Escape-Zeichen
+(„`\`“).
+
+[source]
+----
+; wenn ${var} >>Die "Asterisk"-PBX<< ist
+exten => 123,1,Set(foo=${QUOTE(${var})})
+; dann wird >>"Die \"Asterisk\"-PBX"<< zurückggeben
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'QUOTE' =-
+
+[Syntax]
+QUOTE(<string>)
+
+[Synopsis]
+Quotes a given string, escaping embedded quotes as necessary
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

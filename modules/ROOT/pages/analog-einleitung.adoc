@@ -1,0 +1,43 @@
+[[analog-einleitung]]
+= Einleitung
+
+Auch wenn in Deutschland die ISDN-Telefonie für den normalen
+Asterisk-Administrator wichtiger sein wird, gibt es doch noch einige
+Fälle, in denen Asterisk nach intern oder nach extern analoge Telefonie
+benötigt. Dies kann ein internes Fax oder eine externe analoge Leitung
+sein.
+
+Für die analoge Telefonie gibt es zwei wichtige Begriffe, die als
+Erstes einmal erklärt werden müssen:
+
+* FXO – Foreign Exchange Office
++
+Der Begriff _Foreign eXchange Office_ (FXO)
+ist ein Fachbegriff aus dem Bereich der Telekommunikation und
+bezeichnet alle Geräte, die an ein Telefonsystem angeschlossen werden
+und sich dort wie Benutzer-Endgeräte verhalten, also beispielsweise
+Telefone, Faxgeräte oder Modems. Ein FXO-Gerät muss immer mit einem
+FXS-Gerät verbunden werden. Soll beispielsweise ein Telefon an einen
+PC angeschlossen werden, benötigt dieser eine
+FXS-Schnittstellenkarte.footnote:[Die Beschreibung wurde von http://de.wikipedia.org/wiki/Foreign_Exchange_Office[_http://de.wikipedia.org/wiki/Foreign_Exchange_Office_\] übernommen.]
+* FXS – Foreign Exchange Station
++
+Der Begriff _Foreign eXchange Station_ (FXS)
+bezeichnet in der Telekommunikation ein Gerät, das in einem
+Telefonsystem angeschlossenen Benutzer-Endgeräten (FXO-Geräten) den
+Telefondienst zur Verfügung stellt. Als solches erzeugt es unter
+anderem die Versorgungsspannung für die Endgeräte und das
+Klingelsignal. Telefon-Anschlussbuchsen sind FXS-Anschlüsse. An eine
+solche Buchse angeschlossene Geräte, also beispielsweise Telefone oder
+Modems, haben dagegen selbst FXO-Anschlüsse.footnote:[Die Beschreibung wurde von http://de.wikipedia.org/wiki/Foreign_Exchange_Station[_http://de.wikipedia.org/wiki/Foreign_Exchange_Station_\] übernommen.]
+
+.Warum ist der Unterschied zwischen FXO und FXS so wichtig?
+Ganz einfach: Ein FXS erzeugt eine Versorgungsspannung für das
+Endgerät. Wenn Sie also einen FXS-Port einer entsprechenden Karte an
+einen normalen analogen Telefonanschluss Ihres Providers anschließen,
+dann ist es sehr wahrscheinlich, dass die Karte kaputtgeht und dass der
+Provider Ihren Anschluss erst einmal deaktiviert, weil er einen Fehler
+vermutet.
+
+Deshalb müssen Sie bei der Konfiguration und beim Anschluss einer
+analogen Karte immer sehr aufpassen!

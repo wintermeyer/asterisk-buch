@@ -1,0 +1,54 @@
+[[functions-dundiquery]]
+= `DUNDIQUERY()`
+
+[source]
+----
+DUNDIQUERY(Nummer[|DUNDi-Context[|Optionen]])
+----
+
+Schlägt eine Telefonnummer mit DUNDi (xref:glossar.adoc#glossar-dundi[DUNDi]) nach. Wird kein `DUNDi-Context`
+angegeben, wird `e164` angenommen. Mit der Option `b`
+(_bypass_) wird der interne DUNDi-Cache umgangen. Anders
+als bei `DUNDILOOKUP()` (xref:functions-dundilookup.adoc[Abschnitt D.24, „`DUNDILOOKUP()`“]) wird hier nicht einfach der erste
+Treffer zurückgegeben, sondern eine numerische ID der Ergebnismenge, aus der
+sich die Treffer dann mit `DUNDIRESULT()` (xref:functions-dundiresult.adoc[Abschnitt D.26, „`DUNDIRESULT()`“]) abfragen lassen.
+
+[source]
+----
+; die Nummer 456 nachschlagen:
+123 => {
+    Set(resultid=${DUNDIQUERY(456)});
+    Set(count=${DUNDIRESULT(resultid|getnum)});
+    Verbose(1,Anzahl der DUNDi-Ergebnisse: ${count});
+    for (i=1; i<=${count}; i=${i}+1) {
+        Set(device=${DUNDIRESULT(resultid|${i})});
+        Verbose(1,DUNDi-Ergebnis ${i}: ${device});
+        Dial(${device});
+    }
+}
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'DUNDIQUERY' =-
+
+[Syntax]
+DUNDIQUERY(number[|context[|options]])
+
+[Synopsis]
+Initiate a DUNDi query.
+
+[Description]
+This will do a DUNDi lookup of the given phone number.
+If no context is given, the default will be e164. The result of
+this function will be a numeric ID that can be used to retrieve
+the results with the DUNDIRESULT function. If the 'b' option is
+is specified, the internal DUNDi cache will be bypassed.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-dundiresult.adoc[Abschnitt D.26, „`DUNDIRESULT()`“], xref:functions-dundilookup.adoc[Abschnitt D.24, „`DUNDILOOKUP()`“], `dundi.conf`, xref:functions-enumquery.adoc[Abschnitt D.28, „`ENUMQUERY()`“]

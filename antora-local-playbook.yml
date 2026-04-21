@@ -1,0 +1,24 @@
+site:
+  title: Das Asterisk-Buch
+  start_page: book::index.adoc
+
+content:
+  sources:
+  - url: .
+    branches: HEAD
+    start_path: .
+
+ui:
+  bundle:
+    url: https://github.com/wintermeyer/wincon-antora-ui/releases/latest/download/ui-bundle.zip
+    snapshot: true
+
+asciidoc:
+  extensions:
+  - ./asciidoctor-extensions/terminal-role.js
+
+output:
+  dir: ./build/site
+
+runtime:
+  fetch: true

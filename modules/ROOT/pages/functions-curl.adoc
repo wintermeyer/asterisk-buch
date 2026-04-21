@@ -1,0 +1,50 @@
+[[functions-curl]]
+= `CURL()`
+
+[source]
+----
+CURL(URL[|POST-Daten])
+----
+
+Lädt eine Webseite unter der angegebenen `URL` mit
+HTTP `GET`. Wenn `POST-Daten` angegeben sind, werden
+diese Daten mit `POST` gesendet. Gibt die Seite als String
+zurück.
+
+[source]
+----
+; Die Seite unter der URL http://beispiel.de/seite.php?id=1&action=view abrufen:
+exten => 123,1,Set(foo=${CURL(http://beispiel.de/seite.php?id=1&action=view)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'CURL' =-
+
+[Syntax]
+CURL(url[|post-data])
+
+[Synopsis]
+Retrieves the contents of a URL
+
+[Description]
+url - URL to retrieve
+post-data - Optional data to send as a POST (GET is default action)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,7 +1,7 @@
+-= Info about function 'CURL' =-
+
+[Syntax]
+- CURL(url[|post-data])
++ CURL(url[,post-data])
+
+[Synopsis]
+Retrieves the contents of a URL

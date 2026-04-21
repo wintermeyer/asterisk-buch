@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>A.1. Installation von Asterisk 1.4.x auf Debian Linux</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="installationsanleitungen-asterisk.html" title="Anhang A. Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0" /><link rel="prev" href="installationsanleitungen-asterisk.html" title="Anhang A. Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0" /><link rel="next" href="installation-1.6-debian.html" title="A.2. Installation von Asterisk 1.6.x auf Debian Linux" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="A.1. Installation von Asterisk 1.4.x auf Debian Linux" id="installation-1.4-debian" lang="de"><div class="titlepage"><div><div><h2 class="title" id="installation-1.4-debian">A.1. Installation von Asterisk 1.4.x auf Debian Linux</h2></div></div></div><a id="idp22808544" class="indexterm"></a><div class="para">Die hier aufgeführte Installationsanleitung gilt für ein
+  Asterisk-System mit allen in diesem Buch beschriebenen Features (bei
+  Ausnahmen wird dies gesondert besprochen). Deshalb ist die Installation
+  etwas umfangreicher. Das hat aber auch den Vorteil, dass Sie in Zukunft
+  nicht noch einmal etwas nachinstallieren müssen.</div><div class="para">Es wird ein frisch installiertes Debian GNU/Linux 5.0
+  (<span class="quote">„<span class="quote">Lenny</span>“</span>) vorausgesetzt. Ein ISO-Image für die Installation
+  finden Sie auf <a href="http://www.debian.org/releases/lenny/debian-installer/">http://www.debian.org/releases/lenny/debian-installer/</a>.
+  Wir empfehlen das etwa 150 MByte große Netzinstallations-CD-Image<sup>[<a id="idp19788160" href="#ftn.idp19788160" class="footnote">145</a>]</sup>. Eine Debian GNU/Linux-Installationsanleitung findet sich
+  unter <a href="http://www.debian.org/releases/lenny/i386/">http://www.debian.org/releases/lenny/i386/</a>.
+  Ein allgemeines Anwenderhandbuch steht unter <a href="http://debiananwenderhandbuch.de">http://debiananwenderhandbuch.de</a>.</div><div class="note"><h2>Anmerkung</h2><div class="para">Bitte loggen Sie sich nach der Installation als Benutzer
+    <code class="literal">root</code> am System ein, und führen Sie alle hier
+    angegebenen Befehle mit diesem Benutzer aus.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">Einige Anwender werden wohl direkt einen SSH-Server installieren
+    wollen, um von ihrem normalen Arbeitsplatz aus im Terminal auf dem Server
+    arbeiten zu können. Der Befehl dazu lautet: <code class="literal"><code class="command">aptitude
+    install ssh</code></code>. Dann kann man hier im Folgenden auch
+    wunderbar mit Kopieren und Einsetzen der meisten Befehle arbeiten. Wir
+    setzen voraus, dass Sie entweder mit der grundsätzlichen Verwendung von
+    <code class="command">ssh</code> vertraut sind oder direkt am System selbst
+    arbeiten.</div></div><div class="para">Es versteht sich eigentlich von selbst, dass man auf einem frisch
+  installierten System erst einmal sicherstellt, dass die Paketverwaltung
+  (APT<sup>[<a id="idp19778128" href="#ftn.idp19778128" class="footnote">146</a>]</sup> bzw. <code class="literal">aptitude</code>) die aktuellen Paketlisten
+  zur Verfügung hat ...<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude update</code></strong></span>
+Treffer http://ftp.de.debian.org lenny Release.gpg
+<em class="replaceable"><code>[...]</code></em>
+1820kB wurden in 13s heruntergeladen (138kB/s)
+Paketlisten werden gelesen... Fertig
+
+debian:~# </pre></div><div class="para">... und dass alle Pakete auf dem neusten Stand sind:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y upgrade</code></strong></span>
+Paketlisten werden gelesen... Fertig
+Abhängigkeitsbaum wird aufgebaut
+<em class="replaceable"><code>[...]</code></em>
+Es werden keine Pakete installiert, aktualisiert oder entfernt.
+0 Pakete aktualisiert, 0 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 0B an Archiven herunterladen. Nach dem Entpacken werden 0B zusätzlich belegt sein.
+debian:~# </pre></div><div class="para">Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+  installiert wurde, müssen wir jetzt das System mit
+  <code class="literal"><code class="command">shutdown -r now</code></code> (oder mit
+  <code class="literal"><code class="command">reboot</code></code>) neu starten:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">shutdown -r now</code></strong></span>
+
+Broadcast message from root@debian (pts/0) (Mon Mar 23 17:42:04 2009):
+
+The system is going down for reboot NOW!</pre></div><div class="para">Nach dem Booten loggen Sie sich bitte wieder als
+  <code class="literal">root</code> ein.</div><div class="note"><h2>Anmerkung</h2><div class="para">Das hat zwar nichts mit Asterisk zu tun, aber typischerweise
+    installiert man auch NTP, um immer die aktuelle Zeit zu haben:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y install ntp ntpdate</code></strong></span></pre>Ein
+    Muss ist das natürlich nicht.</div></div><div class="para">Zuerst installieren wir eine Build-Umgebung – d.h. Compiler usw.
+  – und diverse Abhängigkeiten, damit das Kompilieren von Asterisk
+  erfolgreich durchgeführt werden kann.<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y install build-essential</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  binutils{a} build-essential bzip2{a} cpp{a} cpp-4.3{a} 
+  dpkg-dev{a} g++{a} g++-4.3{a} gcc{a} gcc-4.3{a} 
+  libc6-dev{a} libgmp3c2{a} libgomp1{a} libmpfr1ldbl{a} 
+  libstdc++6-4.3-dev{a} libtimedate-perl{a} 
+  linux-libc-dev{a} make{a} patch{a} 
+0 Pakete aktualisiert, 19 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 19,4MB an Archiven herunterladen. Nach dem Entpacken werden 60,4MB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em>
+Richte libstdc++6-4.3-dev ein (4.3.2-1.1) ...
+Richte g++-4.3 ein (4.3.2-1.1) ...
+Richte g++ ein (4:4.3.2-2) ...
+Richte build-essential ein (11.4) ...
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para">Linux-Kernel-Header:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude -y install linux-headers-`uname -r`</code></strong></span>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  cpp-4.1{a} gcc-4.1{a} gcc-4.1-base{a} 
+  linux-headers-2.6.26-1-686 
+  linux-headers-2.6.26-1-common{a} 
+  linux-kbuild-2.6.26{a} 
+0 Pakete aktualisiert, 6 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 7326kB an Archiven herunterladen. Nach dem Entpacken werden 41,3MB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em></pre></div><h3>LibPRI</h3><div class="para">Die LibPRI-Bibliothek enthält den PRI<sup>[<a id="idp15465936" href="#ftn.idp15465936" class="footnote">147</a>]</sup>-Stack, allerdings auch Funktionen für BRI<sup>[<a id="idp15463808" href="#ftn.idp15463808" class="footnote">148</a>]</sup>-ISDN-Anschlüsse. Sie ist nicht für alle Einsatzzwecke
+  notwendig, schadet dann aber auch nicht.<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/libpri/libpri-1.4-current.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+2009-03-23 10:24:55 (108 KB/s) - »libpri-1.4-current.tar.gz« gespeichert [94075/94075]</pre></div><div class="para">Entpacken Sie sie wie folgt:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf libpri-1.4-current.tar.gz</code></strong></span>
+libpri-1.4.9/
+libpri-1.4.9/build_tools/
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm libpri-1.4-current.tar.gz</code></strong></span> </pre></div><div class="para">Kompilieren und installieren:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">cd libpri-1.4.9/</code></strong></span>
+debian:/usr/src/libpri-1.4.9# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src/libpri-1.4.9# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+<em class="replaceable"><code>[...]</code></em></pre></div><h3>Dahdi</h3><div class="para">Dahdi<sup>[<a id="idp18556976" href="#ftn.idp18556976" class="footnote">149</a>]</sup> ist für die Kommunikation zwischen Asterisk und
+  ISDN/Analog-Karten zuständig. Aber auch ohne solche Karten lohnt sich die
+  Installation, denn Dahdi erfüllt z. B. auch die Aufgabe, einen Zeittakt für
+  Konferenzräume bereitzustellen.</div><div class="para">Laden Sie Dahdi wie folgt herunter:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/telephony/dahdi-linux/dahdi-linux-current.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+2009-03-23 10:33:37 (165 KB/s) - »dahdi-linux-current.tar.gz« gespeichert [1251822/1251822]
+
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/telephony/dahdi-tools/dahdi-tools-current.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+2009-03-23 10:37:49 (147 KB/s) - »dahdi-tools-current.tar.gz« gespeichert [413598/413598]
+
+debian:/usr/src# </pre></div><div class="para">Entpacken:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf dahdi-linux-current.tar.gz</code></strong></span> 
+dahdi-linux-2.1.0.4/
+dahdi-linux-2.1.0.4/include/
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf dahdi-tools-current.tar.gz</code></strong></span> 
+dahdi-tools-2.1.0.2/
+dahdi-tools-2.1.0.2/hdlctest.c
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm dahdi-linux-current.tar.gz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm dahdi-tools-current.tar.gz</code></strong></span> </pre></div><div class="para">Abhängigkeiten installieren:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install libusb-dev libnewt-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  libnewt-dev libpng12-0{a} libpng12-dev{a} 
+  libslang2-dev{a} libusb-dev zlib1g-dev{a} 
+0 Pakete aktualisiert, 6 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 1176kB an Archiven herunterladen. Nach dem Entpacken werden 3113kB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em>
+Richte libnewt-dev ein (0.52.2-11.3) ...
+Richte libusb-dev ein (2:0.1.12-13) ...
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para">Kompilieren und installieren:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">cd dahdi-linux-2.1.0.4/</code></strong></span>
+debian:/usr/src/dahdi-linux-2.1.0.4# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/linux-headers-2.6.26-1-686'
+debian:/usr/src/dahdi-linux-2.1.0.4# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+  DEPMOD  2.6.26-1-686
+make[1]: Leaving directory `/usr/src/linux-headers-2.6.26-1-686'
+<em class="replaceable"><code>[...]</code></em>
+###################################################
+###
+### DAHDI installed successfully.
+### If you have not done so before, install the package
+### dahdi-tools.
+###
+###################################################</pre></div><div class="para"><pre class="screen">debian:/usr/src/dahdi-linux-2.1.0.4# <span class="bold bold"><strong><code class="command">cd ..</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">cd dahdi-tools-2.1.0.2/</code></strong></span>
+debian:/usr/src/dahdi-tools-2.1.0.2# <span class="bold bold"><strong><code class="command">./configure</code></strong></span> 
+<em class="replaceable"><code>[...]</code></em>
+checking for newtBell in -lnewt... yes
+checking newt.h usability... yes
+checking newt.h presence... yes
+checking for newt.h... yes
+checking for usb_init in -lusb... yes
+checking usb.h usability... yes
+checking usb.h presence... yes
+checking for usb.h... yes
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src/dahdi-tools-2.1.0.2# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/dahdi-tools-2.1.0.2'
+debian:/usr/src/dahdi-tools-2.1.0.2# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+###################################################
+###
+### DAHDI tools installed successfully.
+### If you have not done so before, install init scripts with:
+###
+###   make config
+###
+###################################################
+debian:/usr/src/dahdi-tools-2.1.0.2# </pre></div><div class="para">Init-Skripte und Konfigurationsdateien installieren:<pre class="screen">debian:/usr/src/dahdi-tools-2.1.0.2# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+install -D dahdi.init /etc/init.d/dahdi
+/usr/bin/install -c -D -m 644 init.conf.sample /etc/dahdi/init.conf
+/usr/bin/install -c -D -m 644 modules.sample /etc/dahdi/modules
+/usr/bin/install -c -D -m 644 modprobe.conf.sample /etc/modprobe.d/dahdi
+/usr/bin/install -c -D -m 644 blacklist.sample /etc/modprobe.d/dahdi.blacklist
+/usr/sbin/update-rc.d dahdi defaults 15 30
+ Adding system startup for /etc/init.d/dahdi ...
+   /etc/rc0.d/K30dahdi -&gt; ../init.d/dahdi
+   /etc/rc1.d/K30dahdi -&gt; ../init.d/dahdi
+   /etc/rc6.d/K30dahdi -&gt; ../init.d/dahdi
+   /etc/rc2.d/S15dahdi -&gt; ../init.d/dahdi
+   /etc/rc3.d/S15dahdi -&gt; ../init.d/dahdi
+   /etc/rc4.d/S15dahdi -&gt; ../init.d/dahdi
+   /etc/rc5.d/S15dahdi -&gt; ../init.d/dahdi
+DAHDI has been configured.
+
+If you have any DAHDI hardware it is now recommended you 
+edit /etc/dahdi/modules in order to load support for only
+the DAHDI hardware installed in this system.  By default 
+support for all DAHDI hardware is loaded at DAHDI start. 
+
+I think that the DAHDI hardware you have on your system is:
+debian:/usr/src/dahdi-tools-2.1.0.2# </pre></div><div class="para">Der Hinweis sagt uns, dass wir für einen schnelleren Systemstart und
+  für ein schlankeres System in der Datei
+  <code class="filename">/etc/dahdi/modules</code> alle Module auskommentieren sollten,
+  die wir nicht für gegebenenfalls eingebaute Karten benötigen. Das ist aber
+  kein Muss. Wer keine Karten installiert hat, kann alle Module
+  auskommentieren.</div><div class="para">Um jetzt nicht das System rebooten zu müssen, starten wir einfach
+  Dahdi neu, damit die Module geladen werden:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">/etc/init.d/dahdi restart</code></strong></span>
+Unloading DAHDI hardware modules: done
+Loading DAHDI hardware modules:
+
+No hardware timing source found in /proc/dahdi, loading dahdi_dummy
+Running dahdi_cfg: done.
+debian:~# </pre>Hier im Beispiel wurde ohne eingebaute Karten automatisch
+  <code class="literal">dahdi_dummy</code><sup>[<a id="idp20485760" href="#ftn.idp20485760" class="footnote">150</a>]</sup> geladen, das auch ohne ISDN-Karten einen Zeittakt
+  bereitstellt.</div><h3>Asterisk</h3><div class="para">Auf der Asterisk-Homepage <a href="http://www.asterisk.org/">http://www.asterisk.org</a> finden Sie
+  die notwendigen Quellen, um Asterisk zu installieren. Nehmen Sie bitte eine
+  <span class="emphasis"><em>stabile</em></span> und keine Entwickler-Version, und laden Sie
+  diese herunter:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/asterisk/asterisk-1.4-current.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+2009-03-23 10:45:32 (172 KB/s) - »asterisk-1.4-current.tar.gz« gespeichert [11858197/11858197]</pre></div><div class="para">Entpacken:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf asterisk-1.4-current.tar.gz</code></strong></span> 
+asterisk-1.4.24/
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm asterisk-1.4-current.tar.gz</code></strong></span> </pre></div><div class="para">Abhängigkeiten und zusätzliche Pakete installieren:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install libncurses5-dev libnewt-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  libncurses5-dev 
+0 Pakete aktualisiert, 1 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 1546kB an Archiven herunterladen. Nach dem Entpacken werden 6599kB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para"><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install libcurl4-openssl-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  ca-certificates{a} comerr-dev{a} libcurl3{a} 
+  libcurl4-openssl-dev libglib2.0-0{a} 
+  libglib2.0-data{a} libidn11{a} libidn11-dev{a} 
+  libkadm55{a} libkrb5-dev{a} libldap2-dev{a} 
+  libpcre3{a} libssh2-1{a} libssh2-1-dev{a} 
+  libssl-dev{a} openssl{a} pkg-config{a} 
+0 Pakete aktualisiert, 17 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 8171kB an Archiven herunterladen. Nach dem Entpacken werden 23,2MB zusätzlich belegt sein.
+<em class="replaceable"><code>[...</code></em><em class="replaceable"><code>]</code></em></pre></div><div class="para"><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install libspeex-dev libspeexdsp-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  libspeex-dev libspeex1{a} 
+  libspeexdsp-dev libspeexdsp1{a} 
+0 Pakete aktualisiert, 2 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 320kB an Archiven herunterladen. Nach dem Entpacken werden 717kB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para"><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install libiksemel-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  libiksemel-dev libiksemel3{a} 
+0 Pakete aktualisiert, 2 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 91,9kB an Archiven herunterladen. Nach dem Entpacken werden 299kB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para"><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">aptitude -y install unixodbc-dev</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  autotools-dev{a} defoma{a} file{a} fontconfig{a} 
+  fontconfig-config{a} libaudio2{a} libdrm2{a} 
+  libexpat1{a} libfontconfig1{a} libfreetype6{a} 
+  libgl1-mesa-glx{a} libglu1-mesa{a} libice6{a} 
+  libjpeg62{a} liblcms1{a} libltdl3{a} libltdl3-dev{a} 
+  libmagic1{a} libmng1{a} libodbcinstq1c2{a} 
+  libqt3-mt{a} libsm6{a} libtool{a} libxcursor1{a} 
+  libxdamage1{a} libxfixes3{a} libxft2{a} libxi6{a} 
+  libxinerama1{a} libxmu6{a} libxrandr2{a} 
+  libxrender1{a} libxt6{a} libxxf86vm1{a} 
+  odbcinst1debian1{a} ttf-dejavu{a} ttf-dejavu-core{a} 
+  ttf-dejavu-extra{a} ucf{a}unixodbc{a} unixodbc-dev 
+0 Pakete aktualisiert, 41 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 12,8MB an Archiven herunterladen. Nach dem Entpacken werden 32,2MB zusätzlich belegt sein.
+<em class="replaceable"><code>[...]</code></em></pre></div><div class="para">Kompilierung vorbereiten:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">cd asterisk-1.4.24/</code></strong></span>
+debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">./configure</code></strong></span> 
+checking build system type... i686-pc-linux-gnu
+checking host system type... i686-pc-linux-gnu
+checking for gcc... gcc
+<em class="replaceable"><code>[...]</code></em>
+configure: Package configured for: 
+configure: OS type  : linux-gnu
+configure: Host CPU : i686
+debian:/usr/src/asterisk-1.4.24# </pre></div><div class="para">Kompilieren<sup>[<a id="idp14562400" href="#ftn.idp14562400" class="footnote">151</a>]</sup>:<pre class="screen">debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+   [CC] astman.c -&gt; astman.o
+   [CC] md5.c -&gt; md5.o
+   [LD] astman.o md5.o -&gt; astman
+   [CC] stereorize.c -&gt; stereorize.o
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/asterisk-1.4.24/main'
+ +--------- Asterisk Build Complete ---------+
+ + Asterisk has successfully been built, and +
+ + can be installed by running:              +
+ +                                           +
+ +               make install                +
+ +-------------------------------------------+
+debian:/usr/src/asterisk-1.4.24# </pre></div><div class="para">Installieren:<pre class="screen">debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+ +---- Asterisk Installation Complete -------+
+ +                                           +
+ +    YOU MUST READ THE SECURITY DOCUMENT    +
+ +                                           +
+ + Asterisk has successfully been installed. +
+ + If you would like to install the sample   +
+ + configuration files (overwriting any      +
+ + existing config files), run:              +
+ +                                           +
+ +               make samples                +
+ +                                           +
+ +-----------------  or ---------------------+
+ +                                           +
+ + You can go ahead and install the asterisk +
+ + program documentation now or later run:   +
+ +                                           +
+ +              make progdocs                +
+ +                                           +
+ + **Note** This requires that you have      +
+ + doxygen installed on your local system    +
+ +-------------------------------------------+
+debian:/usr/src/asterisk-1.4.24# </pre></div><div class="para">Die eben kompilierten Programmdateien sind jetzt auf dem System
+  installiert. Allerdings finden wir im Asterisk-Konfigurationsverzeichnis
+  <code class="filename">/etc/asterisk/</code> noch gähnende Leere vor. Da wir nicht
+  von Grund auf beginnen möchten, lassen wir uns die Standard-Beispieldateien
+  erstellen:<pre class="screen">debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">make samples</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src/asterisk-1.4.24# </pre></div><div class="para">Damit Asterisk beim Booten des Rechners auch automatisch gestartet und
+  bei einem Shutdown ordentlich gestoppt wird, benötigen wir noch
+  entsprechende Init-Skripte:<pre class="screen">debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+update-rc.d: warning: /etc/init.d/asterisk missing LSB information
+update-rc.d: see &lt;http://wiki.debian.org/LSBInitScripts&gt;
+ Adding system startup for /etc/init.d/asterisk ...
+   /etc/rc2.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc2.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/S50asterisk -&gt; ../init.d/asterisk
+debian:/usr/src/asterisk-1.4.24# </pre></div><div class="para">Wir sind jetzt fast fertig. Leider setzt die Asterisk-Installation die
+  Runlevels auf Debian bisher noch nicht ganz korrekt, was wir folgendermaßen
+  beheben:<pre class="screen">debian:/usr/src/asterisk-1.4.24# <span class="bold bold"><strong><code class="command">cd</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">update-rc.d -f asterisk remove</code></strong></span>
+ Removing any system startup links for /etc/init.d/asterisk ...
+   /etc/rc2.d/S50asterisk
+   /etc/rc2.d/K91asterisk
+   /etc/rc3.d/S50asterisk
+   /etc/rc3.d/K91asterisk
+   /etc/rc4.d/S50asterisk
+   /etc/rc4.d/K91asterisk
+   /etc/rc5.d/S50asterisk
+   /etc/rc5.d/K91asterisk
+debian:~# <span class="bold bold"><strong><code class="command">update-rc.d asterisk defaults 50 15</code></strong></span>
+update-rc.d: warning: /etc/init.d/asterisk missing LSB information
+update-rc.d: see &lt;http://wiki.debian.org/LSBInitScripts&gt;
+ Adding system startup for /etc/init.d/asterisk ...
+   /etc/rc0.d/K15asterisk -&gt; ../init.d/asterisk
+   /etc/rc1.d/K15asterisk -&gt; ../init.d/asterisk
+   /etc/rc6.d/K15asterisk -&gt; ../init.d/asterisk
+   /etc/rc2.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/S50asterisk -&gt; ../init.d/asterisk
+debian:~# </pre></div><div class="para">Fertig! Asterisk ist auf Ihrem System installiert. Mit dem Befehl
+  <code class="literal"><code class="command">asterisk -V</code></code> können Sie die
+  installierte Version herausfinden (bitte achten Sie auf das großgeschriebene
+  V):<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">asterisk -V</code></strong></span>
+Asterisk 1.4.24
+debian:~# </pre></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp19788160" href="#idp19788160" class="para">145</a>] </sup>In der Regel werden Sie das für die Architektur
+      <code class="literal">i386</code> benötigen.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp19778128" href="#idp19778128" class="para">146</a>] </sup><a href="http://de.wikipedia.org/wiki/Advanced_Packaging_Tool">http://de.wikipedia.org/wiki/Advanced_Packaging_Tool</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp15465936" href="#idp15465936" class="para">147</a>] </sup>siehe <a class="xref" href="glossar.html#glossar-pri" title="PRI">PRI<a id="idp16123616" class="indexterm"></a></a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp15463808" href="#idp15463808" class="para">148</a>] </sup>siehe <a class="xref" href="glossar.html#glossar-bri" title="BRI">BRI<a id="idp16105984" class="indexterm"></a></a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp18556976" href="#idp18556976" class="para">149</a>] </sup>Bis Asterisk 1.4.21 hieß Dahdi noch Zaptel. Für weitere
+      Informationen siehe <a class="xref" href="zaptel-to-dahdi.html" title="Anhang I. Zaptel zu DAHDI">Anhang I, <i>Zaptel zu DAHDI</i></a>.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp20485760" href="#idp20485760" class="para">150</a>] </sup>früher <code class="literal">ztdummy</code></p></div><div class="footnote"><p><sup>[<a id="ftn.idp14562400" href="#idp14562400" class="para">151</a>] </sup>An dieser Stelle vor dem Kompilieren könnte man als erfahrenerer
+      Asterisk-Benutzer mit <code class="literal"><code class="command">make
+      menuselect</code></code> in einem interaktiven Dialog bestimmte
+      Module deaktivieren.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="danksagungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Danksagungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link glossary"><a href="glossar.html" title="print-previous-main-loop-first level2 breadcrumb-link glossary">Glossar</a></li><li class="breadcrumb-first-level level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="breadcrumb-first-level level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Installation von Asterisk 1.4.x auf Debian Linux</li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="installation-1.6-debian.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation von Asterisk 1.6.x auf Debian Linux</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="installation-1.8-debian.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation von Asterisk 1.8 auf Debian Linux</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="installation-10.0-debian.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation von Asterisk 10.0 auf Debian Linux</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="installationsanleitungen-asterisk.html"><strong>Zurück</strong>Anhang A. Installationsanleitungen für Asterisk 1...</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="installation-1.6-debian.html"><strong>Weiter</strong>A.2. Installation von Asterisk 1.6.x auf Debian L...</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

@@ -1,0 +1,134 @@
+[[applications-voicemail]]
+= `VoiceMail()`
+
+Hinterlässt eine Voicemail-Nachricht in der angegebenen
+Mailbox.
+
+[source]
+----
+VoiceMail(Mailbox[@Context][&Mailbox[@Context][&...]],Optionen)
+----
+
+Alte Syntax:
+
+[source]
+----
+VoiceMail([s|u|b]Mailbox[@Context][&Mailbox[@Context][&...]])
+----
+
+Erlaubt es dem Anrufer, in der angegebenen Mailbox eine
+Voicemail-Nachricht zu hinterlassen. Die Mailbox muss in
+`voicemail.conf` konfiguriert sein. Sind mehrere
+Mailboxen aufgelistet, wird die Begrüßung der ersten gespielt. Wenn die
+Mailbox nicht existiert, wird die Ausführung des Dialplans
+abgebrochen.
+
+Mit der Option `s` (silent) werden die Anweisungen zum
+Hinterlassen der Nachricht übersprungen. Mit `u` (unavailable)
+wird die Nicht-verfügbar-Nachricht abgespielt, falls vorhanden. Bei
+`b` (busy) wird die Besetzt-Nachricht gespielt (Datei
+`busy` statt `unavail`).
+
+Mit `j` wird bei einem Fehler zur Extension n+101
+gesprungen, wenn sie vorhanden ist.
+
+Drückt der Teilnehmer während der Eingabeaufforderung
+`0` (Null), geht der Anruf zur Extension `o` (kleiner
+Buchstabe o, Operator) im aktuellen Context über.
+
+Drückt der Teilnehmer während der Eingabeaufforderung
+`*`, geht der Anruf zur Extension `a` (Assistant) im
+aktuellen Context über.
+
+Gibt im Falle eines Fehlers, falls die Mailbox nicht gefunden wird
+oder falls der Teilnehmer auflegt, -1 zurück, sonst 0. Setzt die
+Channel-Variable `VMSTATUS` auf `SUCCESS` (Erfolg),
+`USEREXIT` (Abbruch durch Anrufer) oder `FAILED`
+(Fehler).
+
+[source]
+----
+; den Anrufer zur Mailbox 123 leiten, mit Nicht-erreichbar-Nachricht:
+exten => 123,1,VoiceMail(123,u)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'VoiceMail' =-
+
+[Synopsis]
+Leave a Voicemail message
+
+[Description]
+VoiceMail(mailbox[@context][&mailbox[@context]][...][|options]): This
+application allows the calling party to leave a message for the specified
+list of mailboxes. When multiple mailboxes are specified, the greeting will
+be taken from the first mailbox specified. Dialplan execution will stop if the
+specified mailbox does not exist.
+The Voicemail application will exit if any of the following DTMF digits are
+received:
+0 - Jump to the 'o' extension in the current dialplan context.
+* - Jump to the 'a' extension in the current dialplan context.
+This application will set the following channel variable upon completion:
+VMSTATUS - This indicates the status of the execution of the VoiceMail
+application. The possible values are:
+SUCCESS | USEREXIT | FAILED
+
+Options:
+b - Play the 'busy' greeting to the calling party.
+g(#) - Use the specified amount of gain when recording the voicemail
+message. The units are whole-number decibels (dB).
+Only works on supported technologies, which is Zap only.
+s - Skip the playback of instructions for leaving a message to the
+calling party.
+u - Play the 'unavailable' greeting.
+j - Jump to priority n+101 if the mailbox is not found or some other
+error occurs.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -22,6 +22,7 @@
+b - Play the 'busy' greeting to the calling party.
+g(#) - Use the specified amount of gain when recording the voicemail
+message. The units are whole-number decibels (dB).
++ Only works on supported technologies, which is Zap only.
+s - Skip the playback of instructions for leaving a message to the
+calling party.
+u - Play the 'unavailable' greeting.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Leave a Voicemail message
+
+[Description]
+- VoiceMail(mailbox[@context][&mailbox[@context]][...][|options]): This
++ VoiceMail(mailbox[@context][&mailbox[@context]][...][,options]): This
+application allows the calling party to leave a message for the specified
+list of mailboxes. When multiple mailboxes are specified, the greeting will
+be taken from the first mailbox specified. Dialplan execution will stop if the
+@@ -20,11 +20,13 @@
+
+Options:
+b - Play the 'busy' greeting to the calling party.
++ d([c]) - Accept digits for a new extension in context c, if played during
++ the greeting. Context defaults to the current context.
+g(#) - Use the specified amount of gain when recording the voicemail
+message. The units are whole-number decibels (dB).
+- Only works on supported technologies, which is Zap only.
++ Only works on supported technologies, which is DAHDI only.
+s - Skip the playback of instructions for leaving a message to the
+calling party.
+u - Play the 'unavailable' greeting.
+- j - Jump to priority n+101 if the mailbox is not found or some other
+- error occurs.
++ U - Mark message as Urgent.
++ P - Mark message as PRIORITY.
+
+.Siehe auch
+xref:applications-voicemailmain.adoc[Abschnitt C.187, „`VoiceMailMain()`“],
+`voicemail.conf`

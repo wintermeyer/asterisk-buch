@@ -1,0 +1,39 @@
+[[agi-command-hangup]]
+= `HANGUP`
+
+[source]
+----
+HANGUP [Kanalname]
+----
+
+Legt den virtuellen Hörer auf dem angegebenen Kanal auf. Wurde kein
+_`Kanalname`_ angegeben, wird der aktuelle Kanal
+aufgelegt.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| -1 | Fehler. Der angegebene Kanal existiert nicht.
+| 1 | Erfolgreich. Hangup wurde ausgeführt.
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: HANGUP [<channelname>]
+Hangs up the specified channel.
+If no channel name is given, hangs up the current channel
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,4 @@
+Usage: HANGUP [<channelname>]
+Hangs up the specified channel.
+If no channel name is given, hangs up the current channel
++ Runs Dead : No

@@ -1,0 +1,68 @@
+[[applications-while]]
+= `While()`
+
+Beginnt eine While-Schleife.
+
+[source]
+----
+While(Ausdruck)
+----
+
+Beginnt eine While-Schleife. Die Ausführung kehrt zu diesem Punkt
+zurück, wenn `EndWhile()` aufgerufen wird, und das so lange, bis
+der Ausdruck nicht länger wahr ist. Danach wird die Ausführung nach
+`EndWhile()` fortgesetzt.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,Set(i=1)
+exten => 123,n,While($[${i} < 5])
+exten => 123,n,SayNumber(${i})
+exten => 123,n,Set(i=$[${i} + 1])
+exten => 123,n,EndWhile()
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'While' =-
+
+[Synopsis]
+Start a while loop
+
+[Description]
+Usage: While(<expr>)
+Start a While Loop. Execution will return to this point when
+EndWhile is called until expr is no longer true.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,7 @@
+-= Info about application 'While' =-
+
+[Synopsis]
+- Start A While Loop
++ Start a while loop
+
+[Description]
+Usage: While(<expr>)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,5 @@
+Start a while loop
+
+[Description]
+- Usage: While(<expr>)
+- Start a While Loop. Execution will return to this point when
+- EndWhile is called until expr is no longer true.
++ While(<expr>): Start a While Loop. Execution will return to this
++ point when EndWhile() is called until expr is no longer true.
+
+.Siehe auch
+xref:applications-endwhile.adoc[Abschnitt C.47, „`EndWhile()`“], xref:applications-exitwhile.adoc[Abschnitt C.53, „`ExitWhile()`“], xref:applications-continuewhile.adoc[Abschnitt C.24, „`ContinueWhile()`“], xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“]

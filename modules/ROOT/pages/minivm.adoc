@@ -1,0 +1,176 @@
+[[minivm]]
+= Mini-VoiceMail (MiniVM)
+
+MiniVM (Mini-VoiceMail) ist ein alternatives Voicemail-System, das ab
+Asterisk 1.6 zur Verfügung steht. Es lässt sich etwas modularer gestalten,
+als dies mit den monolithischen Applikationen `VoiceMail()`
+und `VoiceMailMain()` möglich ist. Die Bezeichnung
+„Mini“ ist also gewissermaßen eine Untertreibung,
+„Modular“ wäre passender.
+
+[[minivm-directories]]
+== Verzeichnisstruktur
+
+Das Verzeichnis, in dem die Voicemail-Nachrichten eines
+MiniVM-Benutzers gespeichert werden, istfootnote:[mit `astspooldir = /var/spool/asterisk` in der `asterisk.conf`]:
+
++/var/spool/asterisk/voicemail/_`domain`_/_`benutzer`_/+
+
+also z. B.:
+
++/var/spool/asterisk/voicemail/_`localdomain`_/_`philipp`_/+
+
+oder:
+
++/var/spool/asterisk/voicemail/_`amooma.de`_/_`philipp.kempgen`_/+
+
+Darin gibt es jeweils noch folgende Unterverzeichnisse, in denen
+sich eigene Ansagen des Benutzers in verschiedenen Formaten
+befinden:
+
+`greet/`:: Ansage des eigenen Namens
+`busy/`:: „Im Gespräch“-Ansage
+`unavailable/`:: „Nicht erreichbar“-Ansage
+`temp/`:: Temporäre Ansage
+
+[[minivm.conf]]
+== minivm.conf
+
+MiniVM wird in der Datei
+`/etc/asterisk/minivm.conf` konfiguriert, die analog
+zur bekannten `voicemail.conf` (xref:voicemail-voicemail.conf.adoc[Abschnitt 13.4, „`voicemail.conf`
+“]) aufgebaut ist. Die
+Mailbox-Definitionen haben allerdings immer das Format
++_`benutzer`_@_`domain`_+.
+
+[IMPORTANT]
+====
+Achten Sie darauf, dass hier, anders als in den übrigen
+Asterisk-Konfigurationsdateien, die Sprache nicht als 2-Buchstaben-Code
+(`de`, `en`, ...) angegeben wird,
+sondern im Format
++_`Sprache`___`Land`_+
+footnote:[nach RFC 3066, http://tools.ietf.org/html/rfc3066, allerdings mit `_` (Unterstrich) statt mit `-` (Bindestrich)]. Dabei ist _`Sprache`_ ein
+2-buchstabiger Code nach ISO 639-1footnote:[http://de.wikipedia.org/wiki/ISO_639#ISO_639-1, http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes] und _`Land`_ ein 2-buchstabiger
+Code nach ISO 3166-1 alpha-2footnote:[http://de.wikipedia.org/wiki/ISO-3166-1-Kodierliste, http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2].
+Beispiele: `de_DE` (Deutsch, Deutschland),
+`de_AT` (Deutsch, Österreich), `de_CH`
+(Deutsch, Schweiz), `fr_CH` (Französisch, Schweiz),
+`en_US` (Englisch, USA), `en_UK`
+(Englisch, Vereinigtes Königreich), `sv_SE`
+(Schwedisch, Schweden), `no_NO` (Nynorsk, Norwegen),
+`nb_NO` (Bokmål, Norwegen).
+====
+
+Eine für Deutschland sinnvolle `minivm.conf`
+könnte z. B. so aussehen:
+
+[source]
+----
+[general]
+format=alaw     ; Speicherformat alaw
+minmessage=2    ; minimale Länge 2 Sekunden
+maxmessage=300  ; maximale Länge 300 Sekunden (5 Minuten)
+maxsilence=10   ; nach 10 Sekunden Stille auflegen
+maxgreet=120    ; maximale Ansage-Länge 120 Sekunden (2 Minuten)
+
+[template-de_DE_email]
+subject = Neue Nachricht
+messagebody = Hallo ${MVM_NAME}\n\n${MVM_CALLERID} hat auf Ihrem Anrufbeantworter eine\nNachricht hinterlassen.\n\nMailbox : ${MVM_MAILBOX}\nDatum   : ${MVM_DATE}\nLänge   : ${MVM_DUR}\n
+charset = iso-8859-1
+dateformat = %A, %d %B %Y um %H:%M
+locale = de_DE
+attachmedia = yes
+
+[template-de_DE_pager]
+subject = Neue Nachricht
+messagebody = Sie haben eine neue Nachricht von\n${MVM_CALLERID}.\n
+charset = iso-8859-1
+dateformat = %A, %d %B %Y um %H:%M
+locale = de_DE
+attachmedia = no
+----
+
+Statt `messagebody` kann man auch
+`templatefile` und dann eine Datei angeben, absolut oder
+relativ zum Verzeichnis `/etc/asterisk/`, also z.
+B.:
+
+[source]
+----
+templatefile = minivm-templates/de_de_email.txt
+----
+
+Nach dem Abschnitt `[general]` und einer oder
+mehreren
++[template-_`...`_]+-Definitionenfootnote:[Genau genommen muss man nicht unbedingt +[template-_`...`_\]+-Definitionen verwenden. Man kann die Default-Werte auch im Abschnitt `[general\]` angeben.] folgen dann die Definitionen der Mailboxen. Beispiel:
+
+[source]
+----
+[standardwerte@amooma.de](!)
+etemplate = de_DE_email    ; E-Mail-Template [template-de_DE_email]
+;ptemplate = de_DE_pager   ; ggf. Pager-Template [template-de_DE_pager]
+timezone = de
+setvar = x_firma=Amooma GmbH
+
+[philipp@amooma.de](standardwerte@amooma.de)
+fullname = Philipp Kempgem
+;email = philipp.kempgen@amooma.de  ; ggf. abweichende E-Mail-Adresse
+;pager = philipp.kempgen@amooma.de  ; ggf. E-Mail-Adr. für Pager-Nachrichten
+
+[stefan@amooma.de](standardwerte@amooma.de)
+fullname = Stefan Wintermeyer
+----
+
+Statt eines richtigen Domain-Namens wie `amooma.de`
+könnte man auch einfach `localdomain` verwenden.
+
+Mit
++setvar=_`Feldname`_=_`Wert`_+
+kann man zusätzlich eigene Feld/Wert-Paare setzen, die sich im Dialplan
+mit der Funktion `MINIVMACCOUNT()` (xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“]) abfragen lassen. Um dabei nicht mit
+den fest vorgegebenen Feldnamen in Konflikt zu geraten, empfiehlt sich z.
+B. ein Präfix wie „`x_`“.
+
+[source]
+----
+Verbose(1,### Firma: ${MINIVMACCOUNT(philipp@amooma.de:x_firma)});
+----
+
+Statt in der `minivm.conf` können die
+Mailbox-Definitionen alternativ per „Realtime“ aus einer
+Datenbank-Tabelle gelesen werden.
+
+[[minivm-cli]]
+== CLI-Befehle für Mini-VoiceMail
+
+Folgende Befehle für MiniVM gibt es auf dem Asterisk-CLI:
+
+`minivm list accounts`:: Listet die definierten Mailbox-Accounts auf.
+`minivm list templates`:: Listet die definierten Nachrichten-Templates auf.
+`minivm list zones`:: Listet die definierten Zeitzonen auf.
+`minivm show settings`:: Zeigt die allgemeinen Einstellungen aus `[general]` an.
+`minivm show stats`:: Zeigt die Anzahl der eingerichteten Accounts, Templates, Zeitzonen etc. an.
+
+[[minivm-applications-functions]]
+== MiniVM-Applikationen und -Funktionen
+
+Folgende Dialplan-Applikationen werden von MiniVM
+bereitgestellt:
+
+[cols="1*"]
+|===
+| `MinivmAccMess()` - xref:applications-minivmaccmess.adoc[Abschnitt C.94, „`MinivmAccMess()`“]
+| `MinivmDelete()` - xref:applications-minivmdelete.adoc[Abschnitt C.95, „`MinivmDelete()`“]
+| `MinivmGreet()` - xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“]
+| `MinivmNotify()` - xref:applications-minivmnotify.adoc[Abschnitt C.97, „`MinivmNotify()`“]
+| `MinivmRecord()` - xref:applications-minivmrecord.adoc[Abschnitt C.98, „`MinivmRecord()`“]
+|===
+
+Dialplan-Funktionen:
+
+[cols="1*"]
+|===
+| `MINIVMACCOUNT()` - xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“]
+| `MINIVMCOUNTER()` - xref:functions-minivmcounter.adoc[Abschnitt D.65, „`MINIVMCOUNTER()`“]
+|===

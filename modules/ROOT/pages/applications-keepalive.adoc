@@ -1,0 +1,31 @@
+[[applications-keepalive]]
+= `KeepAlive()`
+
+Interne Hilfsfunktion.
+
+[source]
+----
+KeepAlive()
+----
+
+[WARNING]
+====
+Diese Applikation wird nur von Asterisk intern verwendet. Rufen Sie
+sie nicht im Dialplan auf!
+====
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'KeepAlive' =-
+
+[Synopsis]
+returns AST_PBX_KEEPALIVE value
+
+[Description]
+KeepAlive(): This application is chiefly meant for internal use with Gosubs.
+Please do not run it alone from the dialplan!
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

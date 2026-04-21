@@ -1,0 +1,46 @@
+[[functions-queue_member]]
+= `QUEUE_MEMBER()`
+
+[source]
+----
+QUEUE_MEMBER(warteschlange,feld)
+----
+
+Gibt die Anzahl der Mitglieder (Agenten) einer Warteschlange
+zurück.
+
+`count`:: Gibt die Gesamtanzahl der Mitglieder zurück.
+`logged`:: Gibt die Anzahl der eingeloggten Mitglieder zurück.
+`free`:: Gibt die Anzahl der freien, eingeloggten Mitglieder zurück, die einen Anruf entgegennehmen könnten.
+
+[source]
+----
+exten => 123,1,Set(free=${QUEUE_MEMBER(support,free)})
+exten => 123,n,Verbose(1,In der support-Queue sind ${free} Mitglieder frei)
+exten => 123,n,Queue(support)
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'QUEUE_MEMBER' =-
+
+[Syntax]
+QUEUE_MEMBER(<queuename>, <option>)
+
+[Synopsis]
+Count number of members answering a queue
+
+[Description]
+Returns the number of members currently associated with the specified queue.
+One of three options may be passed to determine the count returned:
+"logged" - Returns the number of logged-in members for the specified queue
+"free" - Returns the number of logged-in members for the specified queue available to take a call
+"count" - Returns the total number of members for the specified queue
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:functions-queue_member_count.adoc[Abschnitt D.73, „`QUEUE_MEMBER_COUNT()`“], xref:functions-queue_waiting_count.adoc[Abschnitt D.77, „`QUEUE_WAITING_COUNT()`“], xref:functions-queue_member_penalty.adoc[Abschnitt D.75, „`QUEUE_MEMBER_PENALTY()`“], xref:functions-queue_member_list.adoc[Abschnitt D.74, „`QUEUE_MEMBER_LIST()`“], xref:functions-queue_variables.adoc[Abschnitt D.76, „`QUEUE_VARIABLES()`“]

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>19.3. Das Manager-Interface (AMI)</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="asterisk-fernsteuern.html" title="Kapitel 19. Asterisk fernsteuern" /><link rel="prev" href="call-file.html" title="19.2. Call Files" /><link rel="next" href="manager-interface-ajam.html" title="19.4. Der Asynchronous Javascript Asterisk Manager (AJAM)" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="19.3. Das Manager-Interface (AMI)" id="asterisk-manager-api"><div class="titlepage"><div><div><h2 class="title" id="asterisk-manager-api">19.3. Das Manager-Interface (AMI)<a id="idp11876896" class="indexterm"></a><a id="idp11877904" class="indexterm"></a><a id="idp11878912" class="indexterm"></a><a id="idp11880320" class="indexterm"></a></h2></div></div></div><div class="para">Sie aktivieren das Manager-Interface, indem Sie in der
+    <code class="filename">manager.conf</code> im Abschnitt <code class="code">[general]</code> den
+    Parameter <code class="code">enabled=yes</code> setzen.<div class="caution"><h2>Achtung</h2><div class="para">Das sollten Sie nie auf einem Server mit öffentlichem Zugang
+        machen, außer Sie schützen sich zusätzlich durch
+        <code class="command">iptables</code>, <code class="command">ipfw</code> oder eine andere
+        Firewall oder einen SSH-Tunnel!</div></div>Ganz unten legen wir uns einen Benutzereintrag mit dem Namen
+    <em class="parameter"><code>admin</code></em> an:<pre class="programlisting">[admin]
+secret = geheim
+deny = 0.0.0.0/0.0.0.0
+permit = 127.0.0.1/255.255.255.255
+read = all,system,call,log,verbose,command,agent,user,config
+write = all,system,call,log,verbose,command,agent,user,config</pre>Die
+    Optionen nach <code class="code">read</code> und <code class="code">write</code> geben an, für
+    welche Befehlsklassen Sie dem User Rechte geben.<sup>[<a id="idp12129792" href="#ftn.idp12129792" class="footnote">94</a>]</sup><div class="caution"><h2>Achtung</h2><div class="para">Diese großzügige Rechtevergabe dient nur zum Testen! Mit dem
+        Recht <code class="code">command</code> kann der User z. B. Asterisk stoppen. Seit
+        Version 1.4 ist es sogar möglich, durch das AMI den Dialplan zu
+        verändern und dann eventuell mit <code class="code">System()</code> auf der Shell
+        Befehle mit root-Rechten auszuführen!</div></div>Nach einem Restart von Asterisk können wir uns auf Port 5038
+    mit dem AMI verbinden, was wir auf der Shell mit
+    <code class="command">telnet</code><sup>[<a id="idp12134608" href="#ftn.idp12134608" class="footnote">95</a>]</sup>ausprobieren:<pre class="screen">$ <span class="bold bold"><strong><code class="command">telnet 127.0.0.1 5038</code></strong></span>
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Asterisk Call Manager/1.0</pre>Man kann hier von Hand Befehle (die meist
+    aus mehreren Zeilen bestehen) eintippen, z. B.:<pre class="screen">Action: Login
+ActionID: 1
+Username: admin
+Secret: geheim
+
+</pre><div class="note"><h2>Anmerkung</h2><div class="para">Alle Befehlspakete werden durch zwei Returns
+        abgeschlossen.</div></div></div><div class="para">Antwort:<pre class="screen">Response: Success
+ActionID: 1
+Message: Authentication accepted
+</pre></div><div class="para">Die primäre Verwendung liegt aber ganz klar im automatisierten
+    Zugriff durch Skripte.</div><div class="note"><h2>Anmerkung</h2><div class="para">Das Manager-Interface ist nicht unbedingt dafür berühmt, viele
+      gleichzeitige Verbindungen handhaben zu können (auch wenn sich das in
+      der Version 1.4 stark verbessert hat). In so einer Last-Situation könnte
+      man über den Einsatz eines speziellen Proxys wie des
+      <span class="quote">„<span class="quote">AstManProxy</span>“</span><sup>[<a id="idp12142672" href="#ftn.idp12142672" class="footnote">96</a>]</sup> (ein Perl-Skript) nachdenken, der viele Verbindungen
+      entgegennimmt und zu einer bündelt – für die zugreifenden Skripte
+      völlig transparent. Für die folgenden <span class="quote">„<span class="quote">Spielereien</span>“</span> ist das
+      aber unnötig.</div></div><div class="para">Nach erfolgreicher Authentifizierung können in beiden Richtungen
+    Pakete gesendet werden. Die Art des Pakets wird immer von der ersten Zeile
+    darin bestimmt. Der Client sendet <code class="code">Action</code>-Pakete, der Server
+    antwortet mit <code class="code">Response</code> oder kann auch von sich aus
+    <code class="code">Event</code>-Pakete schicken. Die Reihenfolge der Zeilen in einem
+    Paket ist ansonsten aber irrelevant. Zeilen werden durch CR LF<sup>[<a id="idp16386672" href="#ftn.idp16386672" class="footnote">97</a>]</sup> beendet, das ganze Paket durch ein weiteres CR LF.
+    Normalerweise sendet der Client in jeder <code class="code">Action</code> ein
+    <code class="code">ActionID</code>-Feld mit beliebigem, möglichst eindeutigem
+    Inhalt<sup>[<a id="idp16389264" href="#ftn.idp16389264" class="footnote">98</a>]</sup>, das der Server so in seine <code class="code">Response</code> übernimmt,
+    damit sich die Antworten bei Überschneidungen zuordnen lassen.</div><div class="para">Der Server sendet <code class="code">Event</code>-Pakete, um den Client über
+    verschiedene Ereignisse zu informieren. Es gibt auch Ereignisse, die von
+    einer <code class="code">Action</code> des Clients ausgelöst werden. Dann sendet der
+    Server ein <code class="code">Response: Follows</code>, gefolgt von den Events (die
+    dann ebenfalls die <code class="code">ActionID</code> beinhalten), und ein
+    abschließendes Event (normalerweise
+    <em class="replaceable"><code>Aktionsname</code></em>Complete).</div><div class="para">Wenn Ihr Client keine Events benötigt, kann er direkt im ersten
+    Authentifizierungspaket den Parameter <code class="code">Events: off</code> senden, um
+    dann nur Antworten auf von ihm gesendete Actions zu erhalten.</div><div class="para">Die Liste der verfügbaren Befehle erhalten Sie im
+    <span class="emphasis"><em>CLI</em></span> mit <code class="command">manager show commands</code>,
+    Informationen über einen Befehl mit <code class="command">manager show command
+    <em class="replaceable"><code>Befehlsname</code></em></code> (siehe <a class="xref" href="ami-commands.html" title="Anhang F. AMI-Befehle">Anhang F, <i>AMI-Befehle</i></a>):<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">manager show commands</code></strong></span>
+  Action           Privilege    Synopsis
+  ------           ---------    --------
+  AbsoluteTimeout  call,all     Set Absolute Timeout
+  AgentCallbackLo  agent,all    Sets an agent as logged in by callback
+  AgentLogoff      agent,all    Sets an agent as no longer logged in
+  Agents           agent,all    Lists agents and their status
+  ChangeMonitor    call,all     Change monitoring filename of a channel
+  Command          command,all  Execute Asterisk CLI Command
+  DBGet            system,all   Get DB Entry
+  DBPut            system,all   Put DB Entry
+  Events           &lt;none&gt;       Control Event Flow
+  ExtensionState   call,all     Check Extension Status
+  GetConfig        config,all   Retrieve configuration
+  Getvar           call,all     Gets a Channel Variable
+  Hangup           call,all     Hangup Channel
+  IAXnetstats      &lt;none&gt;       Show IAX Netstats
+  IAXpeers         &lt;none&gt;       List IAX Peers
+  ListCommands     &lt;none&gt;       List available manager commands
+  Logoff           &lt;none&gt;       Logoff Manager
+  MailboxCount     call,all     Check Mailbox Message Count
+  MailboxStatus    call,all     Check Mailbox
+  Monitor          call,all     Monitor a channel
+  Originate        call,all     Originate Call
+  Park             call,all     Park a channel
+  ParkedCalls      &lt;none&gt;       List parked calls
+  PauseMonitor     call,all     Pause monitoring of a channel
+  Ping             &lt;none&gt;       Keepalive command
+  PlayDTMF         call,all     Play DTMF signal on a specific channel.
+  QueueAdd         agent,all    Add interface to queue.
+  QueuePause       agent,all    Makes a queue member temporarily unavailable
+  QueueRemove      agent,all    Remove interface from queue.
+  Queues           &lt;none&gt;       Queues
+  QueueStatus      &lt;none&gt;       Queue Status
+  Redirect         call,all     Redirect (transfer) a call
+  SetCDRUserField  call,all     Set the CDR UserField
+  Setvar           call,all     Set Channel Variable
+  SIPpeers         system,all   List SIP peers (text format)
+  SIPshowpeer      system,all   Show SIP peer (text format)
+  Status           call,all     Lists channel status
+  StopMonitor      call,all     Stop monitoring a channel
+  UnpauseMonitor   call,all     Unpause monitoring of a channel
+  UpdateConfig     config,all   Update basic configuration
+  UserEvent        user,all     Send an arbitrary event
+  WaitEvent        &lt;none&gt;       Wait for an event to occur</pre>Diese
+    Befehle sind fast immer gleichlautend mit einer entsprechenden
+    Dialplan-Applikation – neu ist vor allem die Action
+    <code class="code">Originate</code>, mit der man einen ausgehenden Anruf veranlassen
+    kann, und <code class="code">Command</code>, das einen Befehl direkt auf dem CLI
+    ausführt. Da wir unserem User <code class="code">admin</code> alle Rechte gegeben haben
+    (s. o.), darf er alle Befehle ausführen. Wie man einen Befehl benutzt,
+    erfahren Sie so:<pre class="screen">*CLI&gt; <span class="bold bold"><strong><code class="command">manager show command Command</code></strong></span>
+Action: Command 
+Synopsis: Execute Asterisk CLI Command
+Privilege: command,a
+Description: Run a CLI command.
+Variables: (Names marked with * are required)
+        *Command: Asterisk CLI command to run
+        ActionID: Optional Action id for message matching.</pre></div><div class="para">Die von Asterisk verschickten Events sind bisher so gut wie
+    undokumentiert. Auf <a href="http://www.voip-info.org/wiki/view/asterisk+manager+events">http://www.voip-info.org/wiki/view/asterisk+manager+events</a>
+    finden Sie eine zusammengestellte Liste mit spärlichen Hinweisen. Ein paar
+    Erklärungen können Sie auf <a href="http://asterisk-java.sourceforge.net/apidocs/net/sf/asterisk/manager/event/package-frame.html">http://asterisk-java.sourceforge.net/apidocs/net/sf/asterisk/manager/event/package-frame.html</a>
+    nachlesen<sup>[<a id="idp14554096" href="#ftn.idp14554096" class="footnote">99</a>]</sup>.</div><div class="section" title="Beispiel: Anzahl der Mailbox-Nachrichten mit Expect abfragen" id="manager-interface-beispiel-expect"><div class="titlepage"><div><div><h3 class="title" id="manager-interface-beispiel-expect">Beispiel: Anzahl der Mailbox-Nachrichten mit Expect
+      abfragen</h3></div></div></div><div class="para">Nehmen wir an, wir wollten über das Manager-Interface die
+      Anzahl der Nachrichten in einer Voicemailbox abfragen. Diese einfache
+      Aufgabe lässt sich leicht mit einem Skript für <code class="command">expect</code>
+      lösen.</div><div class="sidebar"><h6></h6><div class="para"><code class="command">expect</code> ist ein erweiterter
+        Tcl-Interpreter, mit dem man automatisiert interaktive Shell-Programme
+        ansteuern kann.<sup>[<a id="idp14615040" href="#ftn.idp14615040" class="footnote">100</a>]</sup></div></div><div class="para">Folgendes Expect-Skript verbindet sich mit dem AMI, loggt sich ein
+      und gibt schließlich die Anzahl der neuen und alten Nachrichten in der
+      angegebenen Mailbox aus:<pre class="programlisting">#!/usr/bin/expect
+#
+# Aufruf: ./vmcount.exp 1234@default
+
+# der Benutzer-Zugang wie er in der manager.conf eingerichtet ist:
+set username "admin"
+set secret "geheim"
+set host "127.0.0.1"
+set port "5038"
+
+if {[llength $argv] != 1} {
+    send_user "Fehler: Geben Sie eine Mailbox an!\n"
+    exit 1
+}
+
+# erstes Argument ist die abzufragende Mailbox:
+set mailbox [lindex $argv 0]
+send_user "Mailbox: $mailbox\n"
+
+# das Durchschleifen von stdout zum User abschalten:
+log_user 0
+
+# Verbindung zum AMI öffnen:
+spawn telnet $host $port
+
+# für den Fall, dass telnet abbricht, weil keine Verbindung
+# hergestellt werden kann:
+expect_before eof {
+    send_user "Fehler beim Verbinden.\n"
+    exit 1
+}
+
+# auf die Zeichenfolge "Manager" warten und bei Erfolg
+# ein Login-Paket senden:
+#
+expect "Manager" {
+    send_user "Verbunden.\n"
+    send "Action: Login\nUsername: $username\nSecret: $secret\n\n"
+    # Beachten Sie, dass telnet Zeilenumbrüche (\n) automatisch
+    # in CR LF (\r\n) umwandelt. Man darf hier also nicht \r\n
+    # angeben.
+}
+
+# Login erfolgreich?:
+#
+expect {
+    -re "Response:\\s*Error" {
+        send_user "Login fehlgeschlagen.\n"
+        exit 1
+    }
+    -re "Response:\\s*Success" {
+        send_user "Eingeloggt.\n"
+        # Anzahl der Mailbox-Nachrichten abfragen:
+        send "Action: MailboxCount\nMailbox: $mailbox\n\n"
+    }
+}
+
+expect {
+    -re "Response:\\s*Error" {
+        send_user "Abfragen der Mailbox fehlgeschlagen.\n"
+        exit 1
+    }
+    -re "Response:\\s*Success" {}
+}
+expect {
+    -re "NewMessages:\\s*(\[\\d]*)" {
+        send_user "Neue Nachrichten: $expect_out(1,string)\n"
+    }
+}
+expect {
+    -re "OldMessages:\\s*(\[\\d]*)" {
+        send_user "Alte Nachrichten: $expect_out(1,string)\n"
+    }
+}
+
+# Ausloggen - nicht unbedingt nötig, aber sauber:
+send "Action: Logoff\n\n"
+</pre>Wir speichern das Skript als <code class="filename">vmcount.exp</code>
+      und setzen es mit <code class="command">chmod a+x vmcount.exp</code> auf
+      ausführbar.</div><div class="para">Aufruf:<pre class="screen">$ <span class="bold bold"><strong><code class="command">./vmcount.exp 123@default</code></strong></span>
+Mailbox: 123@default
+Verbunden.
+Eingeloggt.
+Neue Nachrichten: 0
+Alte Nachrichten: 0
+</pre></div></div><div class="section" title="StarAstAPI für PHP" id="manager-interface-starastapi"><div class="titlepage"><div><div><h3 class="title" id="manager-interface-starastapi">StarAstAPI für PHP<a id="idp14625040" class="indexterm"></a></h3></div></div></div><div class="para">Vorweg gesagt: Erwarten Sie nicht zu viel von diesem kleinen
+      Exkurs. StarAstAPI ist noch verbesserungsfähig. :-)</div><div class="para">Für das Manager-Interface gibt es mittlerweile mehr oder
+      weniger gute APIs in verschiedenen Programmiersprachen (PHP, Perl,
+      Python, Ruby etc.), die natürlich hier nicht alle getestet werden
+      konnten<sup>[<a id="idp14627248" href="#ftn.idp14627248" class="footnote">101</a>]</sup>. Sollte die API für Ihre Lieblingssprache nicht laufen,
+      können Sie das Problem sicher lösen – bis hierher haben sowieso
+      nur Leute gelesen, die schon mal programmiert haben. :-)</div><div class="para">Wir testen hier ganz kurz die StarAstAPI<sup>[<a id="idp12482880" href="#ftn.idp12482880" class="footnote">102</a>]</sup> in PHP, was ein PHP 5 voraussetzt<sup>[<a id="idp12484384" href="#ftn.idp12484384" class="footnote">103</a>]</sup>, das mit <code class="code">--enable-sockets</code> kompiliert
+      wurde.<sup>[<a id="idp12485952" href="#ftn.idp12485952" class="footnote">104</a>]</sup> Leider findet man in den StarAstAPI-Dateien noch die seit
+      Jahren veralteten <span class="quote">„<span class="quote">short open tags</span>“</span> (<code class="code">&lt;?</code>).
+      Ersetzen Sie diese gegebenenfalls durch die korrekte Syntax
+      (<code class="code">&lt;?php</code>). Der API liegen 4 Demo-Skripte bei:
+      <code class="filename">sLogin.php</code> versucht nur, sich einzuloggen<sup>[<a id="idp12489632" href="#ftn.idp12489632" class="footnote">105</a>]</sup>, <code class="filename">sCommand.php</code> führt den CLI-Befehl
+      <code class="code">reload</code> aus, <code class="filename">sDial.php</code> versucht, eine
+      Verbindung mit SIP/120 aufzubauen, und <code class="filename">sEvents.php</code>
+      empfängt Events. Wenn wir gleichzeitig mit <code class="command">asterisk
+      -vvvr</code> die CLI beobachten und mit <code class="command">php -q
+      sLogin.php</code> eine Verbindung zum AMI öffnen<sup>[<a id="idp12494704" href="#ftn.idp12494704" class="footnote">106</a>]</sup>, sehen wir im CLI:<pre class="screen">*CLI&gt; 
+  == Parsing '/etc/asterisk/manager.conf': Found
+[Jan 26 20:08:09] NOTICE[10352]: manager.c:961 authenticate: 127.0.0.1 tried to authenticate with nonexistent user 'mark'
+  == Connect attempt from '127.0.0.1' unable to authenticate
+*CLI&gt; </pre> Es hat also wegen des falschen Usernamens nicht
+      funktioniert, trotzdem meldet das Demo-Skript:<pre class="screen">$  <span class="bold bold"><strong><code class="command">php -q sLogin.php</code></strong></span> 
+Login Sucessful 
+</pre>und danach erhalten Sie das Response-Paket:<pre class="screen">Response: Error
+ActionID: 1
+Message: Authentication failed
+</pre>StarAstAPI arbeitet also nicht ganz sauber, kann aber sicher ohne
+      allzu großen Aufwand verbessert werden. Wenn wir <code class="command">php -q
+      sEvents.php</code> aufrufen – jetzt mit dem richtigen Usernamen
+      – sehen wir im CLI:<pre class="screen">*CLI&gt; 
+  == Parsing '/etc/asterisk/manager.conf': Found
+  == Manager 'admin' logged on from 127.0.0.1
+*CLI&gt; </pre>Testhalber führen wir im CLI ein <code class="code">reload</code> aus,
+      was sich in diesen Events in der Ausgabe des PHP-Skripts
+      widerspiegelt:<pre class="screen">Event: Reload
+Privilege: system,all
+Message: Reload Requested
+
+Event: ChannelReload
+Privilege: system,all
+Channel: SIP
+ReloadReason: RELOAD (Channel module reload)
+Registry_Count: 0
+Peer_Count: 0
+User_Count: 0
+</pre>Lassen Sie sich etwas einfallen! Schreiben Sie ein kleines Skript,
+      das all Ihre Freunde anruft – natürlich mitten in der
+      Nacht!</div></div><div class="section" title="Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen" id="manager-interface-beispiel-php"><div class="titlepage"><div><div><h3 class="title" id="manager-interface-beispiel-php">Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen</h3></div></div></div><div class="para">So könnten wir das Beispiel aus <a class="xref" href="asterisk-manager-api.html#manager-interface-beispiel-expect" title="Beispiel: Anzahl der Mailbox-Nachrichten mit Expect abfragen">„Beispiel: Anzahl der Mailbox-Nachrichten mit Expect
+      abfragen“</a> in PHP mit der StarAstAPI
+      lösen:<pre class="programlisting">#!/usr/bin/php -q
+&lt;?php
+# der Parameter -q dient dazu, bei einem CGI-PHP die Ausgabe der
+# Header abzuschalten
+
+if ($argc != 2) {
+    echo "Fehler: Geben Sie eine Mailbox an!\n";
+    exit(1);
+}
+# das erste Argument nach dem Programmnamen ist die Mailbox:
+$mailbox = $argv[1];
+echo "Mailbox: $mailbox\n\n";
+
+# StarAstAPI einbinden:
+require_once './StarAstAPI/StarAstAPI.php';
+
+# verbinden und einloggen:
+#
+$ami = new AstClientConnection();
+if ($ami-&gt;Login( 'admin', 'geheim', '127.0.0.1', 5038 )) {
+    $rp = $ami-&gt;GetResponse('1');
+    //echo $rp-&gt;ToString();
+} else {
+    exit(1);
+}
+
+# folgendes Paket senden:
+#     Action: MailboxCount
+#     Mailbox: $mailbox
+#     ActionID: 2
+#
+$data = new AstPacketData;
+$data-&gt;AddKVPair( 'Action'  , 'MailboxCount' );
+$data-&gt;AddKVPair( 'Mailbox' , $mailbox );
+$data-&gt;AddKVPair( 'ActionID', '2' );
+$packet = new AstPacket;
+$packet-&gt;SetAstPacketType( 'Action' );
+$packet-&gt;SetAstPacketData( $data );
+$ami-&gt;SendPacket( $packet );
+
+# Antwort-Paket mit ActionID 2 lesen:
+#
+$rPacket = $ami-&gt;GetResponse('2');
+//echo $rp-&gt;ToString();
+$rData = $rPacket-&gt;GetAstPacketData();
+$r = $rData-&gt;GetAll();
+
+echo "Neue Nachrichten: ", (int)trim($r['NewMessages:']), "\n";
+echo "Alte Nachrichten: ", (int)trim($r['OldMessages:']), "\n";
+echo "\n";
+
+# Ausloggen - nicht unbedingt nötig, aber sauber:
+#
+$ami-&gt;Logoff();
+# allerdings ist die Funktion der StarAstAPI nicht gerade schön.
+# sie tut dies:
+#echo "Logoff Called from somewhere ...";
+#socket_close($this-&gt;mSocket);
+
+echo "\n";
+?&gt;</pre>Wir speichern das Skript als
+      <code class="filename">vmcount.php</code> und setzen es mit <code class="command">chmod a+x
+      vmcount.exp</code> auf ausführbar.</div><div class="para">Aufruf:<pre class="screen">$ ./vmcount.php 123@default
+Mailbox: 123123123
+
+Neue Nachrichten: 0
+Alte Nachrichten: 0
+
+Logoff Called from somewhere ...</pre></div></div><div class="footnotes"><br /><hr /><div class="footnote"><div class="para">Welche Rechte-Klassen Sie zum Ausführen eines Befehls haben
+        müssen, erfahren Sie im CLI mit <code class="command">show manager
+        commands</code> bzw. <code class="command">manager show
+        commands</code>.</div></div><div class="footnote"><div class="para">Hier kommt nur das <span class="emphasis"><em>Tool</em></span>
+        <code class="command">telnet</code> zum Einsatz. Das hat nichts mit dem
+        Telnet-Protokoll oder -Port zu tun.</div></div><div class="footnote"><div class="para"><a href="http://github.com/davetroy/astmanproxy/tree/master">http://github.com/davetroy/astmanproxy/tree/master</a>,
+          <a href="http://www.voip-info.org/wiki/view/AstManProxy">http://www.voip-info.org/wiki/view/AstManProxy</a></div></div><div class="footnote"><div class="para"><span class="emphasis"><em>Carriage Return</em></span> (ASCII 13 dezimal) und
+        <span class="emphasis"><em>Line Feed</em></span> (ASCII 10 dezimal)</div></div><div class="footnote"><div class="para">Hier bietet sich etwa der Name des Skripts, ein Timestamp und
+        eine fortlaufende Nummer für jede Action an, z. B.
+        <code class="code">testskript.php-1169405408-1.</code></div></div><div class="footnote"><div class="para">Lassen Sie sich nicht verwirren: Das ist eigentlich eine
+        Java-Dokumentation.</div></div><div class="footnote"><div class="para"><a href="http://expect.nist.gov/">http://expect.nist.gov/</a>,
+            <a href="http://en.wikipedia.org/wiki/Expect">http://en.wikipedia.org/wiki/Expect</a></div></div><div class="footnote"><div class="para">Beispiele mit Anmerkungen auf <a href="http://www.voip-info.org/wiki/view/Asterisk+manager+Examples">http://www.voip-info.org/wiki/view/Asterisk+manager+Examples</a></div></div><div class="footnote"><div class="para">von <a href="http://www.starutilities.com/">http://www.starutilities.com/</a></div></div><div class="footnote"><div class="para">Die API lässt sich aber relativ leicht auf PHP 4
+          umschreiben, obwohl der Code recht unübersichtlich und schlecht
+          formatiert ist. Beheben Sie im Zweifelsfall einfach immer die
+          Parse-Errors. :-)</div></div><div class="footnote"><p><sup>[<a id="ftn.idp12485952" href="#idp12485952" class="para">104</a>] </sup>Auf der Shell erfahren Sie mit <code class="command">php -m</code>,
+          welche Module einkompiliert sind.</p></div><div class="footnote"><div class="para">Wenn Sie nach der Anleitung oben vorgegangen sind, müssen
+          Sie natürlich jeweils den Benutzernamen und das Passwort
+          entsprechend anpassen.</div></div><div class="footnote"><div class="para">Hier absichtlich mit falschem Usernamen/Passwort.</div></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="asterisk-rx.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">asterisk -rx "<em xmlns="http://www.w3.org/1999/xhtml" class="replaceable"><code>Befehl</code></em>"</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="call-file.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Call Files</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Das Manager-Interface (AMI)</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="asterisk-manager-api.html#manager-interface-beispiel-expect" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Beispiel: Anzahl der Mailbox-Nachrichten mit Expect
+      abfragen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="asterisk-manager-api.html#manager-interface-starastapi" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">StarAstAPI für PHP</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="asterisk-manager-api.html#manager-interface-beispiel-php" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="manager-interface-ajam.html" title="pfc level3 breadcrumb-link section sectlevel1">Der Asynchronous Javascript Asterisk Manager (AJAM)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="call-file.html"><strong>Zurück</strong>19.2. Call Files</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="manager-interface-ajam.html"><strong>Weiter</strong>19.4. Der Asynchronous Javascript Asterisk Manage...</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

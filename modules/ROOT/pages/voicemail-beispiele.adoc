@@ -1,0 +1,276 @@
+[[voicemail-beispiele]]
+= Beispielanwendungen
+
+Die folgenden Beispiele geben einen schnellen Überblick über
+typische Konstellationen. Anschließend (in xref:voicemail-applikationen.adoc[Abschnitt 13.3, „Applikationen“]) gehen wir auf die Besonderheiten und
+Möglichkeiten von Voicemail-Systemen unter Asterisk ein.
+
+[[voicemail-beispiele-meier]]
+== Die Voicemailbox der Familie Meier
+
+Die Familie Meier stellt im Zuge der Modernisierung des
+Haushalts auf eine Asterisk-Telefonanlage um. Dies beinhaltet eine
+moderne Voicemailbox für alle Familienmitglieder.
+
+[[voicemail-beispiele-meier-aufgabe]]
+=== Aufgabenstellung
+
+Folgende Personen müssen mit einer Voicemailbox ausgerüstet
+werden:
+
+[cols="3*"]
+|===
+| Name | Extension | Bemerkung
+
+| Horst Meier | 200 | Normale Voicemailbox
+| Eva Meier | 201 | Normale Voicemailbox
+| Peter Meier | 202 | Normale Voicemailbox und Benachrichtigung per E-Mail. Die Sprachnachricht wird der E-Mail beigefügt.
+| Lisa Meier | 203 | Normale Voicemailbox, Benachrichtung per E-Mail (Sprachnachricht wird der E-Mail beigefügt) und danach automatische Löschung der Voicemail im System
+|===
+
+[[voicemail-beispiele-meier-loesung]]
+=== Lösung
+
+Die `voicemail.conf` sieht in diesem Fall
+wie folgt aus:
+
+[source]
+----
+[general]
+format = wav
+attach = yes
+
+[default]
+; Die Syntax fuer die Eintraege lautet:
+; MailboxNr => Passwort,Name,E-Mail,Pager,Optionen
+; (wobei die MailboxNr oft der Extension entspricht)
+200 => 1234,Horst Meier
+201 => 1234,Eva Meier
+202 => 1234,Peter Meier,peter@die-familie-meier.de
+203 => 1234,Lisa Meier,lisa@die-familie-meier.de,,delete=yes
+----
+
+In der `extensions.conf` wird wie folgt
+auf die Voicemailbox verwiesen:
+
+[source]
+----
+[familie-meier]
+; Wenn nach 30 Sekunden niemand abnimmt, geht das Gespräch 
+; auf die Voicemailbox, das Gleiche passiert bei besetzt:
+exten => _20[0-3],1,Set(ZIELNR=${EXTEN})
+exten => _20[0-3],n,Dial(SIP/${EXTEN},30)
+exten => _20[0-3],n,Goto(s-${DIALSTATUS},1)  ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten => s-NOANSWER,1,VoiceMail(${ZIELNR},u) ; Ansage "nicht erreichbar"
+exten => s-BUSY,1,VoiceMail(${ZIELNR},b)     ; Ansage "besetzt"
+exten => s-ANSWER,1,Hangup()                 ; zur Sicherheit nach Gespräch auflegen
+exten => _s-.,1,Goto(s-NOANSWER,1)           ; alles andere wie nicht erreichbar behandeln
+
+; auf der Extension 250 kann jeder Teilnehmer mit seinem 
+; Telefon seine persönliche Voicemailbox abrufen:
+exten => 250,1,VoiceMailMain(${CALLERID(num)})
+----
+
+Schöner wäre es so:
+
+[source]
+----
+[familie-meier]
+exten => _20[0-3],1,Macro(normal|SIP/${EXTEN}|${EXTEN})
+
+exten => 250,1,VoiceMailMain(${CALLERID(num)})
+
+[macro-normal];
+;  ${ARG1} - anzurufendes(s) Gerät(e) (z. B. SIP/123&SIP/124)
+;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
+exten => s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
+exten => s,n,Goto(s-${DIALSTATUS},1)        ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten => s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Ansage "nicht erreichbar"
+exten => s-BUSY,1,VoiceMail(${ARG2},b)      ; Ansage "besetzt"
+exten => s-ANSWER,1,Hangup()                ; zur Sicherheit nach dem Gespräch auflegen
+exten => _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln
+----
+
+[[voicemail-beispiele-firma]]
+== Die Apfelmus GmbH
+
+Die in xref:case-study.adoc[Kapitel 5, _Case-Study einer Beispielfirma_] vorgestellte Apfelmus GmbH
+benötigt ein umfangreicheres Voicemail-System. Wir bedienen uns dieses
+Szenarios, um die Möglichkeiten des Voicemail-Systems näher zu
+erläutern.
+
+[[voicemail-beispiele-firma-aufgabe]]
+=== Aufgabenstellung
+
+Folgende Einstellungen sollen für jede Voicemailbox als
+Grundeinstellung vorgegeben werden:
+
+* Sprachnachrichten werden im WAV-Format abgespeichert.
+* Jede Voicemailbox kann maximal 200 Nachrichten abspeichern.
+* Eine Sprachnachricht darf maximal 5 Minuten lang sein.
+* Sprachnachrichten werden auf dem System gespeichert und dem Nutzer als Attachment per E-Mail zugestellt.
+
+Einzelne Abteilungen haben darüber hinaus noch zusätzliche
+Wünsche und Bedürfnisse für ihre Voicemailboxen:
+
+[cols="3*"]
+|===
+| Voicemailbox | Funktion | Bemerkung
+
+| 150 | Hausmeister | Eine Benachrichtigung wird nur per Pager zugestellt und nicht per E-Mail.Anrufer dürfen die Sprachnachricht vor dem Abspeichern noch einmal anhören und gegebenenfalls ändern.Nach dem Abhören der Nachricht kann der Anrufer aus dem Menü zurückgerufen werden.
+| 160 - 169 | IT | In der IT-Abteilung bekommt jeder Mitarbeiter eine eigene Voicemailbox.Es wird nur dann auf die Voicemailboxen umgeleitet, wenn kein Mitarbeiter ans Telefon geht. Bei besetztem Anschluss kann hingegen keine Nachricht hinterlassen werden.footnote:[Dies ist eine Vorsichtsmaßnahme, die einen Denial-of-Service im Falle eines großen IT-Problems verhindern soll. Wenn alle Mitarbeiter eine Nachricht auf dem Voicemail-System hinterlassen würden, dann käme die IT-Abteilung mit dem Abhören dieser Nachrichten nicht mehr nach.]
+| 802 | Verkauf Inland | Es wird keine E-Mail verschickt.footnote:[In der Verkäufergruppe sind mehrere Personen, es soll daher nicht eine E-Mail an eine bestimmte Einzelperson geschickt werden. Man könnte aber die Funktion vieler SIP-Telefone nutzen, mit einem Blinklicht anzuzeigen, ob eine Nachricht in der Voicemailbox vorhanden ist.]Bei der Abfrage der Voicemailbox muss kein Passwort eingegeben werden.
+| 803 | Verkauf Ausland | Es wird keine E-Mail verschickt.Bei der Abfrage der Voicemailbox muss kein Passwort eingegeben werden.
+| 201 | Geschäftsführer 1 | Anrufer dürfen die Sprachnachricht vor dem Abspeichern noch einmal anhören und gegebenenfalls ändern.Nach dem Abhören der Nachricht kann der Anrufer aus dem Menü zurückgerufen werden.
+| 202 | Geschäftsführer 2 | Anrufer dürfen die Sprachnachricht vor dem Abspeichern noch einmal anhören und gegebenenfalls ändern.Nach dem Abhören der Nachricht kann der Anrufer aus dem Menü zurückgerufen werden.
+| 804 | Sekretariat | Anrufer dürfen die Sprachnachricht vor dem Abspeichern noch einmal anhören und gegebenenfalls ändern.
+|===
+
+[[voicemail-beispiele-firma-loesung]]
+=== Lösung
+
+Die `voicemail.conf` der Apfelmus GmbH
+sieht wie folgt aus:
+
+[source]
+----
+[general]
+; Die Sprachnachrichten werden im qualitativ hochwertigen 
+; WAV-Format gespeichert.
+format = wav
+
+; Die E-Mails mit den Sprachnachrichten für die Nutzer erhalten 
+; als Absender: voicemailsystem@apfelmus-gmbh.de
+serveremail = voicemailsystem@apfelmus-gmbh.de
+
+; Es dürfen maximal 200 Nachrichten pro Mailbox 
+; gespeichert werden.
+maxmsg = 200
+
+; Die maximale Länge einer Sprachnachricht ist 5 Minuten.
+maxmessage = 300
+
+; Text für die Benachrichtigungs-E-Mail.
+; Muss in einer Zeile stehen!
+emailbody = Guten Tag ${VM_NAME},\n\nSie haben eine neue Nachricht von ${VM_CALLERID} in Ihrer Voicemailbox ${VM_MAILBOX}. Bitte rufen Sie die 800 an, um die Nachricht abzuhoeren.\n\n-- Asterisk Voicemail System\n
+
+; Text für die Benachrichtigung per Pager.
+; Muss in einer Zeile stehen!
+pagerbody = Neue Voicemail von ${VM_CALLERID} um ${VM_DATE}.
+
+; Voice-Nachrichten anhängen:
+attach = yes
+
+[default]
+; Die Syntax für die Konfigurationszeilen ist:
+; MailboxNr => Passwort,Name,E-Mail,Pager,Optionen
+150 => 1234,Hans Hausmeister,,pager.hausmeister@apfelmus-gmbh.de,review=yes|callback=interne-gespraeche
+802 => 1234,Verkauf Inland
+803 => 1234,Verkauf Ausland
+201 => 1234,Hans Wichtig,geschaeftsfuehrer1@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
+202 => 1234,Uwe Wichtig,geschaeftsfuehrer2@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
+804 => 1234,Sekretariat,sekr@apfelmus-gmbh.de,,,review=yes
+----
+
+Und in der `extensions.conf` wird auf die
+Voicemailbox wie folgt verwiesen:
+
+[source]
+----
+[hausmeister]
+include => interne-gespraeche
+include => voicemailsystem-hausmeister
+
+[it]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+include => voicemailsystem-normal
+
+[geschaeftsfuehrer]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[sekretariat]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[verkauf-national]
+include => interne-gespraeche
+include => voicemailsystem-verkauf-national
+
+[verkauf-ausland]
+include => interne-gespraeche
+include => voicemailsystem-verkauf-ausland
+
+[versand]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[produktion]
+include => interne-gespraeche
+include => voicemailsystem-komfort
+
+[sonstige]
+
+[macro-simple];
+;  ${ARG1} - anzuklingelnde(s) Gerät(e) (z. B. SIP/123&SIP/124)
+;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
+exten => s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
+exten => s,n,Goto(s-${DIALSTATUS},1)        ; je nach Status springen (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten => s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Voicemail mit Ansage "nicht erreichbar"
+exten => s-BUSY,1,VoiceMail(${ARG2},b)      ; Voicemail mit Ansage "besetzt"
+exten => s-ANSWER,1,Hangup()                ; zur Sicherheit nach Gespräch auflegen
+exten => _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln
+
+[interne-gespraeche]
+; Wenn der Hausmeister nicht ans Telefon geht, wird
+; das Telefonat auf die Voicemailbox 150 geleitet:
+exten => _15X,1,Macro(simple|SIP/${EXTEN}|150)
+
+; Die IT hat normale Voicemailboxen:
+exten => _16X,1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+
+; Die beiden Geschäftsführer haben eine eigene Voicemailbox:
+exten => _20[1-2],1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+
+; Das Sekretariat hat eine Gruppenmailbox:
+exten => _2[3-6]X,1,Macro(simple|SIP/${EXTEN}|804)
+
+; Der Verkauf Inland hat eine Gruppenmailbox:
+exten => _3[0-4]X,1,Macro(simple|SIP/${EXTEN}|802)
+
+; Der Verkauf Ausland hat eine Gruppenmailbox:
+exten => _3[5-9]X,1,Macro(simple|SIP/${EXTEN}|803)
+
+; Alle anderen erhalten keine Voicemailbox.
+exten => _[4-5]XX,1,Dial(SIP/${EXTEN},30)
+
+[voicemailsystem-komfort]
+exten => 800,1,VoiceMailMain(${CALLERID(num)})
+
+[voicemailsystem-normal]
+exten => 801,1,VoiceMailMain()
+
+[voicemailsystem-hausmeister]
+exten => 800,1,VoiceMailMain(150)
+
+[voicemailsystem-verkauf-national]
+exten => 800,1,VoiceMailMain(802,s)
+
+[voicemailsystem-verkauf-ausland]
+exten => 800,1,VoiceMailMain(803,s)
+----
+
+[[voicemail-beispiele-firma-besonderheiten]]
+=== Besonderheiten
+
+Die `extensions.conf` der Apfelmus GmbH
+sieht jetzt schon etwas aufwendiger aus. Das liegt daran, dass wir
+verschiedene Voicemailbox-Arten verwenden. Es gibt einmal die normale
+Voicemailbox und dann noch die Gruppenvoicemailboxen für den Verkauf
+und das Sekretariat. Weiterhin sollen die Mitarbeiter des Verkaufs
+ihre Voicemailboxen ohne Passwort-Eingabe abrufen können. Das Ganze
+soll natürlich für den einzelnen Mitarbeiter möglichst komfortabel
+abgebildet werden. Aus diesem Grund bleibt für alle User des Systems
+die `800` die Rufnummer der Voicemailbox, unter der sie
+dieselbe abrufen können.

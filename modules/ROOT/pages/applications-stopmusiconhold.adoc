@@ -1,0 +1,40 @@
+[[applications-stopmusiconhold]]
+= `StopMusicOnHold()`
+
+Stoppt das Abspielen von Wartemusik.
+
+[source]
+----
+StopMusicOnHold(param)
+----
+
+Stoppt die Wartemusik, die mit
+`StartMusicOnHold()` gestartet wurde.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'StopMusicOnHold' =-
+
+[Synopsis]
+Stop Playing Music On Hold
+
+[Description]
+StopMusicOnHold: Stops playing music on hold.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,4 +4,4 @@
+Stop Playing Music On Hold
+
+[Description]
+- StopMusicOnHold: Stops playing music on hold.
++ StopMusicOnHold(): Stops playing music on hold.
+
+.Siehe auch
+xref:applications-startmusiconhold.adoc[Abschnitt C.171, „`StartMusicOnHold()`“], xref:applications-musiconhold.adoc[Abschnitt C.104, „`MusicOnHold()`“]

@@ -1,0 +1,50 @@
+[[functions-db_delete]]
+= `DB_DELETE()`
+
+[source]
+----
+DB_DELETE(Familie/Schlüssel)
+----
+
+Löscht einen Wert aus der AstDB. Dabei wird auch die Variable
+`DB_RESULT` auf den entsprechenden Wert gesetzt, falls sie
+vorhanden ist.
+
+[source]
+----
+; den Eintrag cidnums/0123456789 löschen:
+exten => 123,1,Set(ignored=${DB_DELETE(cidnums/0123456789)})
+----
+
+[NOTE]
+====
+Vor Asterisk 1.4 muss statt der Funktion `DB_DELETE()`
+die Applikation `DBdel()` verwendet werden.
+====
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'DB_DELETE' =-
+
+[Syntax]
+DB_DELETE(<family>/<key>)
+
+[Synopsis]
+Return a value from the database and delete it
+
+[Description]
+This function will retrieve a value from the Asterisk database
+and then remove that key from the database. DB_RESULT
+will be set to the key's value if it exists.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-db.adoc[Abschnitt D.17, „`DB()`“], xref:functions-db_exists.adoc[Abschnitt D.19, „`DB_EXISTS()`“], xref:applications-dbdel.adoc[Abschnitt C.33, „`DBdel()`“],
+xref:applications-dbdeltree.adoc[Abschnitt C.34, „`DBdeltree()`“]

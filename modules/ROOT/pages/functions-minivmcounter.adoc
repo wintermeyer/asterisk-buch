@@ -1,0 +1,70 @@
+[[functions-minivmcounter]]
+= `MINIVMCOUNTER()`
+
+[source]
+----
+MINIVMCOUNTER(benutzer@domain,zaehlername)
+----
+
+[source]
+----
+MINIVMCOUNTER(benutzer@domain,zaehlername,operand)
+----
+
+Liest den Zähler _`zaehlername`_ eines
+Benutzer-Accounts im Mini-VoiceMail-System (xref:minivm.adoc[Abschnitt 13.7, „Mini-VoiceMail (MiniVM)“]) bzw.
+setzt ihn herauf oder herunter oder auf einen bestimmten Wert.
+
+_`operand`_ wird nur zum Setzen benötigt, nicht
+zum Lesen. Mögliche Werte:
+
+`s`:: Zähler auf einen bestimmten Wert setzen (_set_)
+`i`:: Zähler um einen bestimmten Wert erhöhen (_increment_)
+`d`:: Zähler um einen bestimmten Wert vermindern (_decrement_)
+
+Die Zähler werden in Text-Dateien in den Mini-VM-Verzeichnissen
+gespeichert.
+
+[source]
+----
+123 => {
+    Set(MINIVMCOUNTER(philipp.kempgen@localdomain,testzaehler,s)=5);
+    Verbose(1,### Zaehler: ${MINIVMCOUNTER(philipp.kempgen@localdomain,testzaehler)});
+    Set(MINIVMCOUNTER(philipp.kempgen@localdomain,testzaehler,i)=1);
+    Verbose(1,### Zaehler: ${MINIVMCOUNTER(philipp.kempgen@localdomain,testzaehler)});
+    Hangup()
+}
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'MINIVMCOUNTER' =-
+
+[Syntax]
+MINIVMCOUNTER(<account>:name[:operand])
+
+[Synopsis]
+Reads or sets counters for MiniVoicemail message
+
+[Description]
+Valid operands for changing the value of a counter when assigning a value are:
+- i Increment by value
+- d Decrement by value
+- s Set to value
+
+The counters never goes below zero.
+- The name of the counter is a string, up to 10 characters
+- If account is given and it exists, the counter is specific for the account
+- If account is a domain and the domain directory exists, counters are specific for a domain
+The operation is atomic and the counter is locked while changing the value
+
+The counters are stored as text files in the minivm account directories. It might be better to use
+realtime functions if you are using a database to operate your Asterisk
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“], xref:applications-minivmaccmess.adoc[Abschnitt C.94, „`MinivmAccMess()`“], xref:applications-minivmdelete.adoc[Abschnitt C.95, „`MinivmDelete()`“], xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“], xref:applications-minivmnotify.adoc[Abschnitt C.97, „`MinivmNotify()`“], xref:applications-minivmrecord.adoc[Abschnitt C.98, „`MinivmRecord()`“]

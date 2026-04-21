@@ -1,0 +1,39 @@
+[[applications-md5check]]
+= `MD5Check()`
+
+Prüft einen MD5-Hash gegen einen String.
+
+[source]
+----
+MD5Check(MD5Hash|String|Optionen)
+----
+
+[IMPORTANT]
+====
+`MD5Check()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `MD5()` (xref:functions-md5.adoc[Abschnitt D.62, „`MD5()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'MD5Check' =-
+
+[Synopsis]
+Check MD5 checksum
+
+[Description]
+MD5Check(<md5hash>|<string>[|options]): Calculates a MD5 checksum on <string>
+and compares it with the hash. Returns 0 if <md5hash> is correct for <string>.
+The option string may contain zero or more of the following characters:
+'j' -- jump to priority n+101 if the hash and string do not match
+This application sets the following channel variable upon completion:
+CHECKMD5STATUS The status of the MD5 check, one of the following
+MATCH | NOMATCH
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-md5.adoc[Abschnitt C.87, „`MD5()`“], xref:functions-md5.adoc[Abschnitt D.62, „`MD5()`“]

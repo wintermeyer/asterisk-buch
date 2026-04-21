@@ -1,0 +1,166 @@
+[[die-extension]]
+= Extension
+
+Die einzelnen Dialplan-Programme werden Asterisk-intern Extensions
+genannt. Eine Extension wird nicht kompiliert, sondern bei jedem Durchlauf
+von Asterisk interpretiert. Das Einlesen erfolgt einmalig automatisch
+während des Startens des Asterisk-Daemons.footnote:[Eine Ausnahme stellt hier die _Asterisk RealTime Architecture_ (ARA) dar. In einem ARA-System wird der Dialplan in einer Datenbank (z. B. MySQL) abgespeichert und dort von Asterisk bei jedem Anruf neu eingelesen (also nicht nur einmal beim Starten von Asterisk). So können Dialpläne auch im laufenden Betrieb ständig geändert werden. Allerdings hat diese Variante viele Nachteile. Nährere Informationen zu ARA finden Sie unter http://www.voip-info.org/wiki/view/Asterisk+RealTime.] Das erneute Einlesen des Dialplans kann aber auch im
+laufenden Betrieb im CLI (Command Line Interface) durch den Befehl
+`reload now` bzw. `dialplan reload`
+forciert werden.
+
+[[extension-syntax]]
+== Syntax
+
+Eine Extension besteht immer aus folgenden Teilen:
+
+* Extension (Nummer oder Name)
+* Priorität (also der Programmzeilenzähler)
+* Applikation – das ist die Anweisung, die Asterisk ausführen soll.
+
+[source]
+----
+exten => Extension,Priorität,Applikation()
+----
+
+z. B.:
+
+[source]
+----
+exten => 123,1,Answer()
+----
+
+[IMPORTANT]
+====
+Die erste Priorität in einer Extension muss immer eine 1
+(eins) sein. Ansonsten wird Asterisk diese Extension nicht aufrufen.
+Die nächsten Prioritäten müssen danach immer um +1 erhöht werden.
+Größere Sprünge werden von Asterisk nicht erkannt.
+====
+
+[[grundlegende-applikationen]]
+== Grundlegende Applikationen
+
+Um die Programmierbeispiele in diesem Kapitel halbwegs sinnvoll zu
+gestaltenfootnote:[Ein typisches Henne-Ei-Problem. Man kann eine Applikation nur verstehen, wenn man die Programmierung eines Dialplans versteht, und umgekehrt.], benötigen wir folgende Applikationen (alle diese
+Applikationen werden später noch in xref:applications.adoc[Anhang C, _Applikationen im Dialplan_]
+genau erklärt):
+
+* `Answer()`
++
+Die `Answer()`-Applikation dient dazu, einen
+Verbindungsversuch zu akzeptieren. Wenn ein Channel klingelt, dann
+kann `Answer()` den virtuellen Hörer abnehmen (siehe auch
+xref:applications-answer.adoc[Abschnitt C.10, „`Answer()`“]).
+* `Hangup()`
++
+`Hangup()` ist das Gegenstück zu
+`Answer()`. Die Verbindung wird getrennt, und der
+virtuelle Hörer wird aufgelegt (siehe auch xref:applications-hangup.adoc[Abschnitt C.68, „`Hangup()`“]).
+* `Playback(Soundfile)`
++
+Mit `Playback()` kann man Sounddateien abspielen.
+Diese finden sich, wenn kein anderes Verzeichnis angegeben worden
+ist, im Verzeichnis `/var/lib/asterisk/sounds/`.
+Die Dateiendung wird dabei nicht angegeben (Asterisk sucht sich den
+optimalen Codec selbstständig heraus; siehe auch xref:applications-playback.adoc[Abschnitt C.117, „`Playback()`“]).
+* `Wait(Zahl)`
++
+Mit `Wait()` kann man eine Pause abrufen. Die Zahl
+in der Klammer gibt die Anzahl der zu wartenden Sekunden an (siehe
+auch xref:applications-wait.adoc[Abschnitt C.188, „`Wait()`“]).
+* `NoOp(String)`
++
+Die Applikation `NoOp()` macht nichts.
+„NoOp“ steht für _No Operation_. Sie ist
+aber ein praktisches Tool, um Dialpläne zu debuggen. Der Inhalt des
+übergebenen Strings wird auf dem CLI ausgegeben. Im CLI muss dafür
+aber der Verbose-Level auf mindestens 3 eingestellt sein. (Geben Sie
+einfach im CLI `core set verbose 3` ein; siehe auch
+xref:applications-noop.adoc[Abschnitt C.107, „`NoOp()`“].)
+* `VoiceMail(Voicemailbox,u)`
++
+Die Applikation `VoiceMail()` gibt dem Anrufer die
+Möglichkeit, eine Sprachnachricht auf der Voicemailbox zu
+hinterlassen, die als erster Parameter bestimmt wird (siehe auch
+xref:applications-voicemail.adoc[Abschnitt C.186, „`VoiceMail()`“]).
+* `VoiceMailMain()`
++
+Die Applikation `VoiceMailMain()` gibt dem Anrufer
+Zugang zum Voicemail-System. Wer über eine Voicemailbox verfügt,
+kann diese dort abhören (siehe auch xref:applications-voicemailmain.adoc[Abschnitt C.187, „`VoiceMailMain()`“]).
+
+[[die-prioritaet]]
+== Priorität
+
+Eine typische Extension besteht aus mehreren Schritten. Damit
+Asterisk diese Schritte in der richtigen Reihenfolge ausführen kann, ist
+eine Art Zähler nötig. Das erinnert ein wenig an frühe BASIC-Programme,
+die auch am Anfang einer jeden Zeile einen solchen Zähler hatten. Dieser
+Zähler heißt bei Asterisk _Priorität_. Prioritäten
+werden der Reihenfolge nach abgearbeitet (es wird immer +1 gezählt).
+Wenn die nächste logische Priorität (Lücken sind nicht zulässig!) nicht
+definiert ist, bricht Asterisk ab – gibt aber leider keine
+Fehlermeldung auf dem CLI aus.
+
+[[prioritaet-hello-world]]
+=== Ein hello-world-Beispiel
+
+Die folgende Extension wird immer ausgelöst, wenn ein Telefon
+mit dem Context `apfelmus` die Nummer 8888 anruft. Asterisk
+nimmt dann ab, spielt den Sprachbaustein
+`hello-world` ab und legt auf.
+
+[source]
+----
+[apfelmus]
+exten => 8888,1,Answer()
+exten => 8888,2,Playback(hello-world)
+exten => 8888,3,Hangup()
+----
+
+[[n-prioritaet]]
+=== n-Priorität
+
+Seit der Asterisk-Version 1.2 ist es möglich, Prioritäten nicht
+nur streng mit Zahlen, sondern auch mit dem Platzhalter `n`
+zu belegen. Der n-Zähler fungiert hierbei als ein automatischer
+Programmzeilenzähler. Jedes Mal, wenn die Programmsteuerung auf die
+n-Priorität stößt, addiert sie 1 zum letzten Wert der Priorität. Dies
+ist dann hilfreich, falls Sie viele aufeinanderfolgende Regeln
+definiert haben und eine weitere Regel einfügen möchten, denn dann
+müssen Sie nicht mehr die Zähler der nachfolgenden Regeln neu
+nummerieren. Wenn eine normale Extension wie folgt aussieht:
+
+[source]
+----
+exten => 1234,1,Answer()
+exten => 1234,2,Wait(2)
+exten => 1234,3,Playback(hello-world)
+exten => 1234,4,Wait(2)
+exten => 1234,5,Hangup()
+----
+
+kann man die gleiche Extension auch mit der n-Priorität
+definieren:
+
+[source]
+----
+exten => 1234,1,Answer()
+exten => 1234,n,Wait(2)
+exten => 1234,n,Play(hello-world)
+exten => 1234,n,Wait(2)
+exten => 1234,n,Hangup()
+----
+
+Dies kann nicht nur an der zweiten Priorität, sondern an einer
+beliebigen Stelle passieren:
+
+[source]
+----
+exten => 1234,1,Answer()
+exten => 1234,2,Wait(2)
+exten => 1234,3,Play(hello-world)
+exten => 1234,n,Wait(2)
+exten => 1234,n,Hangup()
+----

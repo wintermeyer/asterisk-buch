@@ -1,0 +1,45 @@
+[[applications-bridge]]
+= `Bridge()`
+
+Channels verbinden.
+
+[source]
+----
+Bridge(channel,options)
+----
+
+Verbindet den aktuellen Kanal mit einem anderen Kanal.
+
+Der Erfolgsstatus wird in der Variablen
+`BRIDGERESULT` zurückgegeben.
+
+`SUCCESS`:: Erfolgreich verbunden
+`LOOP`:: Schleife
+`NONEXISTENT`:: Kanal existiert nicht.
+`INCOMPATIBLE`:: Kanal ist nicht kompatibel.
+`FAILURE`:: Anderer Fehler
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'Bridge' =-
+
+[Synopsis]
+Bridge two channels
+
+[Description]
+Usage: Bridge(channel[,options])
+Allows the ability to bridge two channels via the dialplan.
+The current channel is bridged to the specified 'channel'.
+Options:
+p - Play a courtesy tone to 'channel'.
+This application sets the following channel variable upon completion:
+BRIDGERESULT The result of the bridge attempt as a text string, one of
+SUCCESS | FAILURE | LOOP | NONEXISTENT | INCOMPATIBLE
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-dial.adoc[Abschnitt C.38, „`Dial()`“]

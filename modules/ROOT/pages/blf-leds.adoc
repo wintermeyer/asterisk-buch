@@ -1,0 +1,150 @@
+[[blf-leds]]
+= Ansteuerung der LEDs
+
+[[blf-sip.conf]]
+== sip.conf
+
+Zuerst sind bestimmte Einstellungen im Abschnitt
+`[general]` der `sip.conf`
+erforderlich:
+
+[source]
+----
+[general]
+allowsubscribe = yes
+notifyringing = yes
+notifyhold = yes
+limitonpeers = yes
+----
+
+Auch in den Abschnitten der einzelnen SIP-Benutzer sind
+Einstellungen hinzuzufügen, nämlich `subscribecontext` und
+`call-limit`. `subscribecontext` besagt, in
+welchem Context Asterisk suchen soll, wenn dieser Benutzer den Status
+anderer Benutzer "abonnieren" will. In der Regel ist das der Context, in
+dem sich auch die internen Benutzer befinden. `call-limit`
+hat eigentlich eine andere Aufgabe, nämlich die Anzahl der
+gleichzeitigen Gespräche dieses Benutzers zu beschränken (wenn es auf
+einen Wert > 0 gesetzt wird). Es dient hier aber auch dazu, dass
+Asterisk überhaupt die Anzahl der gleichzeitigen Gespräche dieses
+Benutzers mitzählt, was für den Status (frei/besetzt) wichtig ist. Es
+muss also auf einen beliebigen Wert > 0 gesetzt werden, am besten
+mindestens auf 2, sonst hat man Probleme bei Transfers.
+
+Zudem sind (für das spätere Heranholen von Gesprächen) noch die
+zwei Parameter `callgroup`footnote:[siehe xref:sip.adoc#sip-channel-callgroup[„`callgroup`“\]] und `pickupgroup`footnote:[siehe xref:sip.adoc#sip-channel-pickupgroup[„`pickupgroup`“\]] von Bedeutung. Zum Beispiel darf ein Benutzer mit
+`pickupgroup=2` Gespräche von anderen Benutzern mit
+`callgroup=2` heranholen. Dies dient also der
+Rechteverwaltung. Da es allerdings nur 64 mögliche Gruppen gibt (0 bis
+63), ist diese Methode nur für kleine bis mittelgroße Installationen
+brauchbar. Bei großen Installationen setzt man für alle User die gleiche
+Gruppe und muss sich dann um die Rechteverwaltung selber kümmern (dazu
+später noch ein Hinweis).
+
+[source]
+----
+[21]
+type = friend
+context = interne-benutzer
+secret = 9847825134
+host = dynamic
+mailbox = 2000
+subscribecontext = interne-benutzer
+call-limit = 10
+callgroup = 2
+pickupgroup = 2
+----
+
+[[blf-hints]]
+== Hints
+
+Als Nächstes muss man Asterisk die Zuordnung zwischen Extensions
+und Benutzern (oder Geräten) mitteilen. Dies macht man im Dialplan mit
+sogenannten „_Hints_“. Wenn man in
+Dialplan-Prioritäten denkt, dann ist ein `hint` eine
+spezielle Priorität, die noch vor der Priorität `1` steht.
+Wichtig ist, dass sich die Hints in dem Context befinden, den man in der
+`sip.conf` (s. o.) mit `subscribecontext`
+angegeben hat, ansonsten werden die Status-Informationen nicht
+weitergeleitet. Das ist durchaus Absicht, damit man nicht per se von
+allen Telefonen aus alle weiteren überwachen kann. Durch
+unterschiedliche Contexte lässt sich also auch eine Art
+Berechtigungssystem bauen.footnote:[Diese Methode eignet sich allerdings nicht so gut für datenbankgestützte „Realtime“-Installationen.] Wir beschreiben hier anhand von Beispielen, wie ein Hint
+definiert wird. Je nachdem, ob Ihr Dialplan im
+`extensions.conf`-Format oder in AEL geschrieben ist,
+verwenden Sie die eine oder die andere Variante.
+
+[cols="2*"]
+|===
+| `extensions.conf` | `extensions.ael`
+
+| [interne-benutzer] exten => 21,*hint,SIP/21* exten => 21,1,Dial(SIP/${EXTEN},40) exten => 21,n,VoiceMail(${EXTEN},u) exten => 22,*hint,SIP/22* exten => 22,1,Dial(SIP/${EXTEN},40) exten => 22,n,VoiceMail(${EXTEN},u) | context interne-benutzer { *hint(SIP/21)* 21 => { Dial(SIP/${EXTEN},40); VoiceMail(${EXTEN},u); } *hint(SIP/22)* 22 => { Dial(SIP/${EXTEN},40); VoiceMail(${EXTEN},u); } }
+|===
+
++
+
+[cols="2*"]
+|===
+| `extensions.conf` | `extensions.ael`
+
+| [interne-benutzer] exten => 21,*hint,SIP/21* exten => 22,*hint,SIP/22* exten => _2X,1,Dial(SIP/${EXTEN},40) exten => _2X,n,VoiceMail(${EXTEN},u) | context interne-benutzer { *hint(SIP/21)* 21 => {} *hint(SIP/22)* 22 => {} _2X => { Dial(SIP/${EXTEN},40); VoiceMail(${EXTEN},u); } }
+|===
+
++
+
+[IMPORTANT]
+====
+Beachten Sie hierbei, dass ein `hint` in Asterisk 1.4
+nicht mit Patternfootnote:[xref:einleitung-regex.adoc[Abschnitt 3.3, „Pattern Matching“\]] geschrieben werden kann.
+
+[source]
+----
+exten => _2X,hint,SIP/${EXTEN}
+----
+
+bzw.
+
+[source]
+----
+hint(SIP/${EXTEN}) _2X => {...}
+----
+
+wäre
+also unzulässig.
+Ab Asterisk 1.6 ist diese Schreibweise möglich, auch wenn es
+anfänglich noch zu Problemen kam. Bitte beachten Sie aber, dass
+während der Interpretation eines Hints noch kein Channel besteht, was
+bedeutet, dass auch keine Channel-Variablen in der Hint-Definition zur
+Verfügung stehen – mit Ausnahme von
+`${EXTEN}`.
+====
+
+[cols="2*"]
+|===
+| `extensions.conf` | `extensions.ael`
+
+| [interne-benutzer] exten => _2X,*hint,SIP/${EXTEN}* exten => _2X,1,Dial(SIP/${EXTEN},40) exten => _2X,n,VoiceMail(${EXTEN},u) | context interne-benutzer { *hint(SIP/${EXTEN})* _2X => { Dial(SIP/${EXTEN},40); VoiceMail(${EXTEN},u); } }
+|===
+
++
+
+[cols="2*"]
+|===
+| `extensions.conf` | `extensions.ael`
+
+| [interne-benutzer] exten => 20,*hint,SIP/21&SIP/22* exten => 20,1,Dial(SIP/21&SIP/22,40) | context interne-benutzer { *hint(SIP/21&SIP/22)* 20 => {} 20 => { Dial(SIP/21&SIP/22,40); } }
+|===
+
++
+
+[TIP]
+====
+Der Übersichtlichkeit halber kann man alle Hints auch in einen
+eigenen Context legen und diesen überall dort mit `include =>
+meine-hints` einbinden, wo er benötigt wird. Dies ist vor allem
+in Asterisk-Versionen vor 1.6 interessant.
+====
+
+Danach müssen Sie Asterisk neu starten (*+`/etc/init.d/asterisk
+reload`+* oder *+`asterisk -rx 'module
+reload'`+*).

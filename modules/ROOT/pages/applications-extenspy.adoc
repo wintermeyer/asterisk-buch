@@ -1,0 +1,145 @@
+[[applications-extenspy]]
+= `ExtenSpy()`
+
+Einen Kanal belauschen und bei Bedarf hineinflüstern.
+
+[source]
+----
+ExtenSpy(Extension[@Context][,Optionen])
+----
+
+`ExtenSpy()` kann auf Channels zu der angegebenen
+Extension geschaltet werden, um das ein- und ausgehende Audio mitzuhören.
+Optionen:
+
+`b`:: Nur Channels abhören, die zu einem verbundenen Anruf gehören.
++g(_`grp`_)+:: Nur Channels abhören, bei denen in deren Kanal-Variable `${SPYGROUP}` die Gruppe `grp` enthalten ist. `${SPYGROUP}` kann eine durch `:` getrennte Liste von Werten sein.
+`q`:: Keinen Ton beim Beginn abspielen.
++r([_`name`_])+:: Abgehörte Gespräche werden im Spool-Verzeichnis aufgezeichnet. Bei Bedarf kann mit `name` ein Dateiname (ohne Erweiterung) eingestellt werden. Der Default ist `chanspy`.
++v([_`wert`_])+:: Verändert die anfängliche Lautstärke. Die Werte reichen von -4 bis 4.
+`w`:: Aktiviert den Flüster-Modus (_whisper mode_). So kann man in den abgehörten Channel hineinflüstern.
+`W`:: Aktiviert den „private whisper mode“. So kann man zwar in den abgehörten Channel sprechen, diesen aber nicht hören.
+
+Während des Abhörens können folgende Tastenbefehle gegeben
+werden:
+
+`#`:: Schaltet durch die Lautstärkeeinstellung (-4 bis 4).
+`*`:: Schaltet zu einem anderen Channel.
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ExtenSpy' =-
+
+[Synopsis]
+Listen to a channel, and optionally whisper into it
+
+[Description]
+ExtenSpy(exten[@context][|options]): This application is used to listen to the
+audio from an Asterisk channel. This includes the audio coming in and
+out of the channel being spied on. Only channels created by outgoing calls for the
+specified extension will be selected for spying. If the optional context is not
+supplied, the current channel's context will be used.
+While spying, the following actions may be performed:
+- Dialing # cycles the volume level.
+- Dialing * will stop spying and look for another channel to spy on.
+Options:
+b - Only spy on channels involved in a bridged call.
+g(grp) - Match only channels where their ${SPYGROUP} variable is set to
+contain 'grp' in an optional : delimited list.
+q - Don't play a beep when beginning to spy on a channel, or speak the
+selected channel name.
+r[(basename)] - Record the session to the monitor spool directory. An
+optional base for the filename may be specified. The
+default is 'chanspy'.
+v([value]) - Adjust the initial volume in the range from -4 to 4. A
+negative value refers to a quieter setting.
+w - Enable 'whisper' mode, so the spying channel can talk to
+the spied-on channel.
+W - Enable 'private whisper' mode, so the spying channel can
+talk to the spied-on channel but cannot listen to that
+channel.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Listen to a channel, and optionally whisper into it
+
+[Description]
+- ExtenSpy(exten[@context][|options]): This application is used to listen to the
++ ExtenSpy(exten[@context][,options]): This application is used to listen to the
+audio from an Asterisk channel. This includes the audio coming in and
+out of the channel being spied on. Only channels created by outgoing calls for the
+specified extension will be selected for spying. If the optional context is not
+@@ -12,19 +12,48 @@
+While spying, the following actions may be performed:
+- Dialing # cycles the volume level.
+- Dialing * will stop spying and look for another channel to spy on.
++ Note: The X option superseeds the two features above in that if a valid
++ single digit extension exists in the correct context it ChanSpy will
++ exit to it.
+Options:
+- b - Only spy on channels involved in a bridged call.
+- g(grp) - Match only channels where their ${SPYGROUP} variable is set to
+- contain 'grp' in an optional : delimited list.
+- q - Don't play a beep when beginning to spy on a channel, or speak the
+- selected channel name.
+- r[(basename)] - Record the session to the monitor spool directory. An
+- optional base for the filename may be specified. The
+- default is 'chanspy'.
+- v([value]) - Adjust the initial volume in the range from -4 to 4. A
+- negative value refers to a quieter setting.
+- w - Enable 'whisper' mode, so the spying channel can talk to
+- the spied-on channel.
+- W - Enable 'private whisper' mode, so the spying channel can
+- talk to the spied-on channel but cannot listen to that
+- channel.
++ b - Only spy on channels involved in a bridged call.
++ B - Instead of whispering on a single channel barge in on both
++ channels involved in the call.
++ d - Override the typical numeric DTMF functionality and instead
++ use DTMF to switch between spy modes.
++ 4 = spy mode
++ 5 = whisper mode
++ 6 = barge mode
++ g(grp) - Only spy on channels in which one or more of the groups
++ listed in 'grp' matches one or more groups from the
++ SPYGROUP variable set on the channel to be spied upon.
++ Note that both 'grp' and SPYGROUP can contain either a
++ single group or a colon-delimited list of groups, such
++ as 'sales:support:accounting'.
++ n([mailbox][@context]) - Say the name of the person being spied on if that person has recorded
++ his/her name. If a context is specified, then that voicemail context will
++ be searched when retrieving the name, otherwise the "default" context
++ will be searched. If no mailbox is specified, then the channel name will
++ be used when searching for the name (i.e. if SIP/1000 is the channel being
++ spied on and no mailbox is specified, then "1000" will be used when searching
++ for the name).
++ q - Don't play a beep when beginning to spy on a channel, or speak the
++ selected channel name.
++ r[(basename)] - Record the session to the monitor spool directory. An
++ optional base for the filename may be specified. The
++ default is 'chanspy'.
++ s - Skip the playback of the channel type (i.e. SIP, IAX, etc) when
++ speaking the selected channel name.
++ v([value]) - Adjust the initial volume in the range from -4 to 4. A
++ negative value refers to a quieter setting.
++ w - Enable 'whisper' mode, so the spying channel can talk to
++ the spied-on channel.
++ W - Enable 'private whisper' mode, so the spying channel can
++ talk to the spied-on channel but cannot listen to that
++ channel.
++ o - Only listen to audio coming from this channel.
++ X - Allow the user to exit ChanSpy to a valid single digit
++ numeric extension in the current context or the context
++ specified by the SPY_EXIT_CONTEXT channel variable. The
++ name of the last channel that was spied on will be stored
++ in the SPY_CHANNEL variable.
+
+.Siehe auch
+xref:applications-chanspy.adoc[Abschnitt C.20, „`ChanSpy()`“], xref:applications-zapbarge.adoc[Abschnitt C.197, „`ZapBarge()`“], xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“], xref:applications-monitor.adoc[Abschnitt C.100, „`Monitor()`“]

@@ -1,0 +1,84 @@
+[[applications-gotoiftime]]
+= `GotoIfTime()`
+
+Verzweigt bedingt, abhängig von Zeit und Tag.
+
+[source]
+----
+GotoIfTime(Zeit,Wochentag,Monatstag,Monat?[[Context,]Extension,]Prio)
+----
+
+Verzweigt zu der angegebenen Priorität, falls die aktuelle Zeit in
+das angegebene Muster fällt. Jedes Element kann auch als * (für immer) oder
+als Spanne (mit `-`) definiert werden.
+
+Die Parameter zu dieser Anwendung sind:
+
+`Uhrzeit-Spanne`:: Zeitintervall, im 24-Stunden-Format mit Minuten, z. B. `9:00-17:00`
+`Wochentag`:: Wochentage (`mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun`), z. B. `mon-fri`
+`Monatstag`:: Tag des Monats (1-31), z. B. `1-15`
+`Monat`:: Monate (`jan`, `feb`, `mar`, `apr`, `mai`, `jun`, `jul`, `aug`, `sep`, `oct`, `nov`, `dec`), z. B. `apr-oct`
+
+[source]
+----
+; Während der Öffnungszeiten zum Context incoming-geoeffnet springen.
+; Wir haben montags-freitags von 9 bis 18 Uhr geöffnet:
+exten => s,1,GotoIfTime(09:00-17:59,mon-fri,*,*?incoming-geoeffnet,s,1)
+; außerdem samstags von 9 bis 12:
+exten => s,n,GotoIfTime(09:00-11:59,sat,*,*?incoming-geoeffnet,s,1)
+; Außerhalb der Öffnungszeiten zum Context incoming-geschlossen:
+exten => s,n,Goto(incoming-geschlossen,s,1)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'GotoIfTime' =-
+
+[Synopsis]
+Conditional Goto based on the current time
+
+[Description]
+GotoIfTime(<times>|<weekdays>|<mdays>|<months>?[[context|]exten|]priority):
+This application will set the context, extension, and priority in the channel structure
+if the current time matches the given time specification. Otherwise, nothing is done.
+Further information on the time specification can be found in examples
+illustrating how to do time-based context includes in the dialplan.
+If the target jump location is bogus, the same actions would be taken as for Goto.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -9,4 +9,4 @@
+if the current time matches the given time specification. Otherwise, nothing is done.
+Further information on the time specification can be found in examples
+illustrating how to do time-based context includes in the dialplan.
+- If the target jump location is bogus, Asterisk will respond as outlined in Goto.
++ If the target jump location is bogus, the same actions would be taken as for Goto.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,9 +4,14 @@
+Conditional Goto based on the current time
+
+[Description]
+- GotoIfTime(<times>|<weekdays>|<mdays>|<months>?[[context|]exten|]priority):
++ GotoIfTime(<times>,<weekdays>,<mdays>,<months>?[labeliftrue]:[labeliffalse]):
+This application will set the context, extension, and priority in the channel structure
+- if the current time matches the given time specification. Otherwise, nothing is done.
++ based on the evaluation of the given time specification. After this application completes,
++ the pbx engine will continue dialplan execution at the specified location in the dialplan.
++ If the current time is within the given time specification, the channel will continue at
++ 'labeliftrue'. Otherwise the channel will continue at 'labeliffalse'. If the label chosen
++ by the condition is omitted, no jump is performed, and execution passes to the next
++ instruction. If the target jump location is bogus, the same actions would be taken as for
++ Goto.
+Further information on the time specification can be found in examples
+illustrating how to do time-based context includes in the dialplan.
+- If the target jump location is bogus, the same actions would be taken as for Goto.
+
+.Siehe auch
+xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“], xref:applications-execiftime.adoc[Abschnitt C.52, „`ExecIfTime()`“], xref:functions-iftime.adoc[Abschnitt D.51, „`IFTIME()`“],
+xref:extensions.ael.adoc#ael-iftime[Abschnitt , „???TITLE???“]

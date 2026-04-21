@@ -1,0 +1,14 @@
+{
+  "name": "asterisk-buch",
+  "version": "1.0.0",
+  "description": "Das Asterisk-Buch (Antora source)",
+  "private": true,
+  "scripts": {
+    "build": "antora --fetch antora-local-playbook.yml",
+    "deploy": "antora --fetch antora-playbook.yml"
+  },
+  "devDependencies": {
+    "@antora/cli": "3.1.14",
+    "@antora/site-generator": "3.1.14"
+  }
+}

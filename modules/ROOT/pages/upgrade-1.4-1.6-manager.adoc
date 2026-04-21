@@ -1,0 +1,7 @@
+[[upgrade-1.4-1.6-manager]]
+= Manager-Interface (AMI)
+
+* Die Version des Manager-Interfaces ist jetzt `1.1`. Genaue Details zu den Änderungen finden Sie in `doc/manager_1_1.txt`.
+* Die Ausgabe des Befehls `IAXpeers` wurde an die Ausgabe von `SIPpeers` angeglichen.
+* Das Modul `cdr_manager` macht jetzt Ausgaben in der Klasse „`cdr`“ (vorher: „`call`“). Wenn AMI-Benutzer die CDR-Ereignisse sehen können sollen, dann muss für sie in der `manager.conf` beim Parameter „`read`“ auch „`cdr`“ hinzugefügt werden.
+* Für den Befehl `Originate` sind jetzt Schreibrechte (Parameter „`write`“) in der Klasse „`originate`“ nötig; mit dem Argument „`Application`“ auch in der Klasse „`system`“.

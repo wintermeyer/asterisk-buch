@@ -1,0 +1,21 @@
+[[manager-setvar]]
+= `Setvar`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Setvar
+Synopsis: Set Channel Variable
+Privilege: call,all
+Description: Set a global or local channel variable.
+Variables: (Names marked with * are required)
+Channel: Channel to set variable for
+*Variable: Variable name
+*Value: Value
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

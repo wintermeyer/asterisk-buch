@@ -1,0 +1,58 @@
+[[feedback]]
+= Mitwirken und Feedback
+
+Dieses Buch ist kein abgeschlossener Text, es soll
+„lebendig“ bleiben und ständig verbessert werden. Aus diesem
+Grund steht der gesamte Text unter der GNU Free Documentation License
+(siehe xref:gnu-fdl.adoc[Appendix K, _GNU Free Documentation License_]). Daher finden Sie auf der Webseite
+http://das-asterisk-buch.de
+die jeweils aktuelle Version des Buches.
+
+Wenn Sie Verbesserungsvorschläge haben, dann schreiben Sie eine
+E-Mail mit dem entsprechenden Feedback an
+mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de]. Falls Sie bereits
+ausformulierte Veränderungsvorschläge haben, fügen Sie den entsprechenden
+Textabschnitt bitte als ASCII-Text oder direkt im DocBookfootnote:[http://www.docbook.org]-Format der E-Mail bei.
+
+Schon an dieser Stelle möchte ich mich für Ihr Interesse und Ihr
+Engagement für dieses Projekt bedanken!
+
+[[Arten-der-Hilfe]]
+== Arten der Hilfe
+
+Einem Open-Source-Projekt wie diesem können Sie auf verschiedene
+Arten helfen. Das fängt bei einer positiven Buchrezension bei Amazon an
+und hört bei einem selbst geschriebenen Kapitel für ein Spezialproblem
+auf.
+
+[[beta-test-faq]]
+== FAQ für freiwillige Helfer
+
+Dieses Buch wird nie „fertig“ sein. Dafür ist das
+ganze Thema viel zu komplex und umfangreich. Unter http://das-asterisk-buch.de
+finden Sie immer die aktuelle Version des Buches (in der
+„Bleeding-Edge“-Version). Diese FAQ ist für den Inhalt auf
+dieser Webseite gedacht. Wenn Sie einen Fehler im gedruckten Buch
+finden, dann überprüfen Sie bitte erst die zugehörige Webseite.
+
+[cols="2*"]
+|===
+| 1. Was sollte gemeldet werden? |
+| *F:* | Ich habe etwas aus dem Buch ausprobiert. Es funktioniert aber nicht so wie abgedruckt. Soll ich das melden?
+| *A:* | Ja, unbedingt! Bitte mit Angabe der URL und einer eventuellen Fehlermeldung.
+| *F:* | Wie kann ich einen Fehler melden?
+| *A:* | Am einfachsten per E-Mail an den Autor Stefan Wintermeyer: mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de].
+| 2. Fragen zur Technik |
+| *F:* | In welchem Format wird das Buch geschrieben?
+| *A:* | Der Quelltext des Buches wird im DocBook-Format erstellt. Informationen zu DocBook finden Sie auf http://www.docbook.org.
+| *F:* | Warum gibt es kein Wiki, in dem ich einfach Fehler ändern kann?
+| *A:* | Das Buch muss zu einem bestimmten Zeitpunkt gedruckt werden. Dazu benötigt der Setzer einen strukturierten Text. Die Arbeit des Setzers ist mit DocBook am einfachsten. Außerdem zwingt DocBook den Autor eines Texts zu klaren Strukturen.Wenn der ganze Text in einem Wiki stehen würde, dann würde sich der Export aus diesem Wiki sehr schwierig gestalten. Mediawiki hat einfach keine für eine technische Dokumentation sinnvollen Tags.
+| *F:* | Mit welchem Editor kann man am besten DocBook schreiben?
+| *A:* | Das ist fast schon eine „religiöse“ Frage. ;-) Für die einen ist es emacs und für die anderen vi oder vim. Der Autor benutzt meistens den XMLmind XMLEditor, der sich von http://www.xmlmind.com/xmleditor/ herunterladen lässt.
+| *F:* | Kann ich auch die Original-DocBook-Dateien bekommen?
+| *A:* | Ja, sollten Sie in einem Kapitel sehr viel verändern wollen, so können Sie dafür gern die Originaldateien erhalten. Schreiben Sie dazu bitte eine E-Mail an den Autor Stefan Wintermeyer: mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de].
+| *F:* | Was ist mit dem Thema XYZ? Das habe ich noch nicht gefunden, und es ist doch so wichtig.
+| *A:* | Melden Sie sich per E-Mail an mailto:stefan.wintermeyer@amooma.de[stefan.wintermeyer@amooma.de], und beschreiben Sie kurz das Thema.Wenn Sie bereit sind, selbst ein entsprechendes Kapitel zu schreiben und es unter der FDL zu veröffentlichen, dann lassen Sie sich von Stefan Wintermeyer ein Beispiel-DocBook-Kapitel schicken.
+| *F:* | Wie wird die Webseite generiert?
+| *A:* | Ein Skript zieht sich regelmäßig und automatisch die aktuellen DocBook-Quellen aus unserem SVNfootnote:[Subversion Versionsverwaltungssystem, siehe http://de.wikipedia.org/wiki/Subversion_(Software)] und generiert daraus die HTML-Seiten.
+|===

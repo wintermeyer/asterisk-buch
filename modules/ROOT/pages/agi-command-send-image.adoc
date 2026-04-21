@@ -1,0 +1,42 @@
+[[agi-command-send-image]]
+= `SEND IMAGE`
+
+[source]
+----
+SEND IMAGE Dateiname
+----
+
+Sendet das in _`Dateiname`_ angegebene Bild auf
+den aktuellen Kanal. Der Dateiname darf keine Endung (z. B.
+`.gif` oder `.jpg`) enthalten. Diese Funktion wird
+von den meisten Channels nicht unterstützt.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| -1 | Fehler
+| 0 | Erfolgreich
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: SEND IMAGE <image>
+Sends the given image on a channel. Most channels do not support the
+transmission of images. Returns 0 if image is sent, or if the channel does not
+support image transmission. Returns -1 only on error/hangup. Image names
+should not include extensions.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -3,3 +3,4 @@
+transmission of images. Returns 0 if image is sent, or if the channel does not
+support image transmission. Returns -1 only on error/hangup. Image names
+should not include extensions.
++ Runs Dead : No

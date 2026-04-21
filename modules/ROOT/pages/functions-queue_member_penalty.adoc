@@ -1,0 +1,44 @@
+[[functions-queue_member_penalty]]
+= `QUEUE_MEMBER_PENALTY()`
+
+[source]
+----
+QUEUE_MEMBER_PENALTY(warteschlange,interface)
+----
+
+Liest/setzt Malus-Punkte eines Mitglieds einer Warteschlange.
+_`interface`_ ist z. B. `SIP/456`,
+`Agent/456` oder `Local/456`. An ein
+Mitglied mit „penalty“ werden nur nachrangig Anrufe
+durchgestellt.
+
+[source]
+----
+; penalty von SIP/456 in der "support"-Queue abfragen:
+exten => 123,1,Verbose(1,penalty: ${QUEUE_MEMBER_PENALTY(support,SIP/456)})
+; penalty von SIP/456 in der "support"-Queue setzen:
+exten => 123,n,Set(QUEUE_MEMBER_PENALTY(support,SIP/456)=3)
+; penalty von SIP/456 in der "support"-Queue abfragen:
+exten => 123,n,Verbose(1,penalty: ${QUEUE_MEMBER_PENALTY(support,SIP/456)})
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'QUEUE_MEMBER_PENALTY' =-
+
+[Syntax]
+QUEUE_MEMBER_PENALTY(<queuename>,<interface>)
+
+[Synopsis]
+Gets or sets queue members penalty.
+
+[Description]
+Gets or sets queue members penalty
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:functions-queue_member_count.adoc[Abschnitt D.73, „`QUEUE_MEMBER_COUNT()`“], xref:functions-queue_waiting_count.adoc[Abschnitt D.77, „`QUEUE_WAITING_COUNT()`“], xref:functions-queue_member.adoc[Abschnitt D.72, „`QUEUE_MEMBER()`“], xref:functions-queue_member_list.adoc[Abschnitt D.74, „`QUEUE_MEMBER_LIST()`“], xref:functions-queue_variables.adoc[Abschnitt D.76, „`QUEUE_VARIABLES()`“]

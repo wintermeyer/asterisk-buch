@@ -1,0 +1,35 @@
+[[applications-md5]]
+= `MD5()`
+
+Berechnet den MD5-Hash eines Strings.
+
+[source]
+----
+MD5(Ergebnisvariable=String)
+----
+
+[IMPORTANT]
+====
+Die Applikation `MD5()` ist ab Asterisk 1.4 nicht
+mehr vorhanden und wurde durch die Funktion `MD5()`
+(xref:functions-md5.adoc[Abschnitt D.62, „`MD5()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'MD5' =-
+
+[Synopsis]
+Calculate MD5 checksum
+
+[Description]
+MD5(<var>=<string>): Calculates a MD5 checksum on <string>.
+Returns hash value in a channel variable.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-md5check.adoc[Abschnitt C.88, „`MD5Check()`“], xref:functions-md5.adoc[Abschnitt D.62, „`MD5()`“]

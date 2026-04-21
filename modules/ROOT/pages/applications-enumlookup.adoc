@@ -1,0 +1,45 @@
+[[applications-enumlookup]]
+= `EnumLookup()`
+
+Schlägt eine Nummer mit ENUM nach.
+
+[source]
+----
+EnumLookup(Nummer)
+----
+
+[IMPORTANT]
+====
+`EnumLookup()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `ENUMLOOKUP()`
+(xref:functions-enumlookup.adoc[Abschnitt D.27, „`ENUMLOOKUP()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'EnumLookup' =-
+
+[Synopsis]
+Lookup number in ENUM
+
+[Description]
+EnumLookup(exten[|option]): Looks up an extension via ENUM and sets
+the variable 'ENUM'. For VoIP URIs this variable will
+look like 'TECHNOLOGY/URI' with the appropriate technology.
+Currently, the enumservices SIP, H323, IAX, IAX2 and TEL are recognized.
+
+Returns status in the ENUMSTATUS channel variable:
+ERROR Failed to do a lookup
+<tech> Technology of the successful lookup: SIP, H323, IAX, IAX2 or TEL
+BADURI Got URI Asterisk does not understand.
+The option string may contain zero or the following character:
+'j' -- jump to +101 priority if the lookup isn't successful.
+and jump to +51 priority on a TEL entry.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-enumlookup.adoc[Abschnitt D.27, „`ENUMLOOKUP()`“]

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>10.2. Welche ISDN-Karte soll ich nehmen?</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-isdn.html" title="Kapitel 10. ISDN" /><link rel="prev" href="isdn-einleitung.html" title="10.1. Einleitung" /><link rel="next" href="analog.html" title="Kapitel 11. Analoge Telefonie" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="10.2. Welche ISDN-Karte soll ich nehmen?" id="welche-isdn-karte"><div class="titlepage"><div><div><h2 class="title" id="welche-isdn-karte">10.2. Welche ISDN-Karte soll ich nehmen?<a id="idp9285328" class="indexterm"></a></h2></div></div></div><div class="para">Die Frage, welche ISDN-Karte zu empfehlen ist, ist schwer und in
+    einem gedruckten Buch eigentlich gar nicht zu beantworten. Dafür sind
+    folgende Gründe verantwortlich:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">Ein Buchautor kann mit der Antwort auf eine solche Frage nur
+        verlieren. Gibt man keine Antwort, dann heißt es "Wofür habe ich mir
+        denn dann das Buch gekauft?", und wenn man eine bestimmte Karte
+        herausstellt, dann heißt es "Schleichwerbung!".</div></li><li class="listitem"><div class="para">Eine Karte, die heute gut ist, kann eventuell morgen im
+        Vergleich zu einer neuen Karten nur noch als Durchschnitt angesehen
+        werden.</div></li><li class="listitem"><div class="para">Die Software, speziell die Treiber, werden kontinuierlich
+        verbessert, und was heute zutrifft, kann für einen Leser in einem Jahr
+        vielleicht nicht mehr nachvollziehbar sein.</div></li><li class="listitem"><div class="para">Der Support des Herstellers kann nicht endkundengerecht
+        verglichen werden.</div></li><li class="listitem"><div class="para">Je nach Einsatzzweck ergeben sich unterschiedliche Anforderungen
+        an die Produkte. Hier trennt eine Unterscheidung in gewerbliche und
+        private Nutzung die Produkte in zwei Lager. Bei einer privaten Nutzung
+        kann eine Anlage auch mal durch einen fehlerhaften Treiber für ein
+        paar Stunden ausfallen. Dies ist im gewerblichen Einsatz nicht
+        akzeptabel.</div></li></ul></div><div class="para">Der Betrieb einer oder mehrerer ISDN-Karten in einem Asterisk-Server
+    ist sehr einfach. Allerdings ist die Installation und Konfiguration leider
+    immer noch nicht trivial. Es gibt verschiedene Möglichkeiten, ISDN-Karten
+    mit Asterisk "zum Laufen" zu bringen. Auf die einzelnen Varianten gehen
+    wir in diesem Kapitel in jeweils eigenen Bereichen ein.<div class="important"><h2>Wichtig</h2><div class="para">Alle in diesem Kapitel beschriebenen Installationsmethoden
+        werden anhand eines Debian Linux-Systems beschrieben. Die jeweilige
+        Installation kann sich auf einem anderen Linux-System ganz anders
+        darstellen und auf so manchem BSD-System gar nicht funktionieren. Wir
+        empfehlen Ihnen dringend, die hier beschriebenen Wege 1:1 zu
+        übernehmen und deshalb auch ein Debian Linux einzusetzen.</div></div></div><div class="section" title="Empfehlung für den Privathaushalt" id="isdn-empfehlung-privat"><div class="titlepage"><div><div><h3 class="title" id="isdn-empfehlung-privat">Empfehlung für den Privathaushalt</h3></div></div></div><div class="para">Die meisten privaten Asterisk-Installationen sind nicht auf
+      optimale Sprachqualität und Verfügbarkeit angewiesen. Hier gilt in
+      erster Linie der Kaufpreis als Argument. Sollten Sie über die Karte
+      nicht faxen wollen und auch nur maximal 2 B-Kanäle benötigen, so können
+      Sie ruhig eine billige HFC-Karte kaufen. Diese Karten werden schon für
+      20 bis 30 Euro angeboten. Die Installation ist oft umständlich, und von
+      der Sprachqualität darf man keine Wunder erwarten. Aber wer mit diesen
+      Einschränkungen leben kann, der ist mit einem No-Name-Produkt gut
+      bedient.</div></div><div class="section" title="Empfehlung für den geschäftlichen Einsatz" id="isdn-empfehlung-geschaeft"><div class="titlepage"><div><div><h3 class="title" id="isdn-empfehlung-geschaeft">Empfehlung für den geschäftlichen Einsatz</h3></div></div></div><div class="para">Wer mit Asterisk eine alte Telefonanlage ersetzen will, muss eine
+      mindestens gleich gute Qualität erzielen. Ansonsten gibt es Ärger mit
+      den Usern und mit den Kunden. Diese Qualität kann mit den günstigen
+      No-Name-HFC-Karten nicht realisiert werden.</div><div class="section" title="Hardware-Echo-Cancelation" id="isdn-hardware-echo-cancelation"><div class="titlepage"><div><div><h4 class="title" id="isdn-hardware-echo-cancelation">Hardware-Echo-Cancelation</h4></div></div></div><div class="para">Auch wenn man es sich als Enduser wünschen würde, ist das
+        Echo-Problem noch lange nicht gelöst. Also braucht man für normale
+        Telefonate eine gute Echo-Cancelation, und bei Faxen soll diese
+        automatisch deaktiviert werden. Dies ist am besten durch eine
+        Onboard-Hardware-Echo-Cancelation-Einheit auf der ISDN-Karte zu
+        realisieren. Diese ist qualitativ besser als die nachgeschalteten
+        Software-Module und nimmt dem Telefonanlagenserver keine CPU-Zeit weg.
+        Da der entsprechende Baustein von den ISDN-Kartenherstellern extern
+        eingekauft wird, erhöht sich der Preis der Karte entsprechend.
+        Trotzdem sollten Sie alle ISDN-Karten, die von Ihnen aus gesehen mit
+        dem öffentlichen Netz kommunizieren, auf jeden Fall mit einer solchen
+        Hardware-Echo-Cancelation kaufen. Bei internen ISDN-Karten ist dies
+        nicht nötig, da Echo fast nur vom öffentlichen Netz aus kommt.</div><div class="para">Ein qualitativer Unterschied bei der Hardware-Echo-Cancellation
+        liegt in der Tail-Length des eingesetzten Bausteins. Er bestimmt die
+        Länge des Referenzaudiostrangs. Vereinfacht kann man sagen: Je größer
+        die Tail-Length ist, desto besser ist die Echo-Cancelation. Allerdings
+        sind da die Unterschiede für die meisten Menschen nicht mehr
+        hörbar.</div></div><div class="section" title="Interrupts und Load auf dem Server" id="isdn-interrupts-und-load"><div class="titlepage"><div><div><h4 class="title" id="isdn-interrupts-und-load">Interrupts und Load auf dem Server</h4></div></div></div><div class="para">In den ersten Jahren der Asterisk-Entwicklung gab es keine
+        günstige Hardware-Echo-Cancelation. Deshalb hat Mark Spencer (und
+        haben andere) diese in Software nachgebildet. Dazu musste er die ein-
+        und ausgehenden Audiosteams in Stücke von 1 ms Länge aufteilen. Aus
+        diesem Grund geben alle normalen ISDN-Karten für jeden B-Kanal pro 1
+        ms Audiostream einen Interrupt an den Server. Dieses historische
+        Konstrukt führt heute zu einigen Problemen. Hat man einen normalen
+        kleinen ISDN-Anschluss mit 2 B-Kanälen und eine aktuelle
+        Serverhardware, so wird man davon nichts mitbekommen. Baut man aber
+        ein Embedded-System mit nur wenig CPU-Power, dann kann es auch schon
+        bei 2 B-Kanälen zu Engpässen kommen. Das gleiche Problem tritt bei
+        großen Systemen mit mehreren Multiplexanschlüssen auf. Irgendwann
+        kommen einfach so viele Interrupts herein, dass auch die größte
+        aktuell kaufbare PC-Hardware in die Knie geht.</div><div class="para">Falls Sie also entweder sehr kleine Embedded-Systeme oder sehr
+        große Server mit vielen B-Kanälen betreiben wollen, haben Sie nur
+        folgende Möglichkeiten:<div class="itemizedlist"><ul><li class="listitem"><div class="para">Überprüfen Sie, wie viel Last ein einzelnes System
+              verkraftet, und clustern Sie dann mehrere Systeme
+              parallel.</div></li><li class="listitem"><div class="para">Setzen Sie ein ISDN-to-SIP-Media-Gateway ein. Das sind
+              Blackbox-Systeme, die auf der einen Seite mit dem ISDN-Netz und
+              auf der anderen Seite per SIP mit Ihrem Asterisk-Server
+              verbunden werden. Stellen Sie dabei aber sicher, dass in dieser
+              Blackbox nicht auch ein Asterisk läuft und der Hersteller
+              einfach nur hoch pokert.</div></li><li class="listitem"><div class="para">Kaufen Sie sich eine ISDN-Karte, die das Problem über
+              einen speziellen Treiber löst. So hat z. B. Sangoma aus Kanada
+              das Problem erkannt und liefert einen speziellen
+              Asterisk-Treiber, der nicht pro B-Kanals alle 1 ms, sondern pro
+              ISDN-Port (also 2 B-Kanäle bzw. 30 bei einem PRI) alle 10 ms
+              einen Interrupt zum System gibt. So haben Sie keine Nachteile,
+              kommen aber mit wesentlich kleinerer Server-Hardware aus oder
+              können wesentlich mehr B-Kanäle auf gleicher Hardware zum Laufen
+              bringen.</div></li></ul></div></div></div><div class="section" title="Interne analoge Faxgeräte" id="isdn-interne-analoge-faxe"><div class="titlepage"><div><div><h4 class="title" id="isdn-interne-analoge-faxe">Interne analoge Faxgeräte</h4></div></div></div><div class="para">Sollten Sie extern über ISDN mit dem Festnetz verbunden sein und
+        intern noch ein analoges Fax betreiben, so bekommen Sie unweigerlich
+        ein Timing-Problem bei längeren Faxen. Der Grund liegt in der
+        unterschiedlichen Taktung der Audio-Kanäle. Die ISDN-Karte benutzt
+        dafür den Takt aus dem öffentlichen ISDN-Netz. Dieser ist
+        atomuhr-genau und sehr verlässlich. Die Karte mit den analogen Ports
+        benutzt für die Taktung eine eigene Takteinheit, für die meist sehr
+        günstige und entsprechend ungenaue Module verbaut werden. Unabhängig
+        von der Genauigkeit der Taktung der Analog-Karte gibt es immer einen
+        Taktunterschied zwischen der ISDN- und der Analog-Karte. Dieser
+        Taktunterschied wird eine Zeit lang mit einem Puffer abgefedert, aber
+        nach einer gewissen Zeit (im Schnitt alle zwei Faxseiten) kommt es zu
+        einem Aussetzer, weil der Puffer leer ist und ein Stück Audio verloren
+        geht. Die Fehlerkorrektur der Faxe beruht auf analoger Technologie der
+        70er- und 80er-Jahre. Damals gab es dieses Problem noch nicht, und
+        deshalb können Faxgeräte heute mit diesen Aussetzern nur sehr schlecht
+        umgehen. Das Resultat ist meistens eine schwarze Linie oder sonst ein
+        Fehler auf dem Fax. Im besten Fall sieht man nichts, und im
+        schlimmsten Fall bricht die Übertragung ab.</div><div class="para">Auch bei diesem Problem gibt es mehrere
+        Lösungsmöglichkeiten:<div class="itemizedlist"><ul><li class="listitem"><div class="para">Falls Sie auf Ihr analoges Faxgerät verzichten können, ist
+              ein Softwarefax auf dem Server eine preisgünstige und sehr gute
+              Alternative (siehe dazu die <a class="link" href="faxserver.html" title="Kapitel 21. Fax-Server">Beschreibung im Fax-Kapitel</a>).</div></li><li class="listitem"><div class="para">An die gleiche ISDN-Karte angeschlossene <a href="http://de.wikipedia.org/wiki/Terminaladapter">a/b-Wandler</a>
+              (auch ISDN-Terminaladapter oder a/b-Adapter genannt) lösen das
+              Problem meistens ebenfalls. Sollten Sie diese an eine andere
+              ISDN-Karte im System anschließen, müssen Sie überprüfen, ob der
+              Takt der beiden Karten intern synchronisiert wird.</div></li><li class="listitem"><div class="para">Die technisch einfachste Lösung hat auch hier wieder
+              Sangoma aus Kanada. Bei Sangoma-Karten kann der Takt einer
+              ISDN-Karte mit einem kleinen Kabel einfach auf eine Analog-Karte
+              übertragen werden. Dann benutzt die Analog-Karte ebenfalls den
+              Atomzeit-Takt aus dem ISDN-Festnetz.</div></li></ul></div></div></div></div><div class="section" title="Hersteller und Treiber" id="isdn-hersteller-und-treiber"><div class="titlepage"><div><div><h3 class="title" id="isdn-hersteller-und-treiber">Hersteller und Treiber</h3></div></div></div><div class="para">ISDN-Kartenhersteller gibt es wie den sprichwörtlichen Sand am
+      Meer. Die in diesem Buch beschriebenen Hersteller und Karten sind nur
+      eine sehr subjektive Auswahl. Aus diesem Dilemma gibt es keinen Ausweg.
+      Ansonsten müsste man ein extra Buch "ISDN-Karten-Übersicht für Asterisk"
+      herausbringen.<div class="important"><h2>Wichtig</h2><div class="para">Die Angaben zur Hardware und den Treibern basieren auf dem
+          Zeitpunkt der Drucklegung des Buches. Bitte schauen Sie
+          sicherheitshalber hin und wieder auf die <a href="http://das-asterisk-buch.de">Webseite zum Buch</a>.
+          Dort wird es Updates geben.</div></div></div><div class="section" title="Digium" id="isdn-hersteller-digium"><div class="titlepage"><div><div><h4 class="title" id="isdn-hersteller-digium">Digium<a id="idp14927424" class="indexterm"></a></h4></div></div></div><div class="para">Als die für Asterisk verantwortliche Firma bietet <a href="http://www.digium.com">Digium</a> seit einigen Jahren auch
+        ISDN-Karten an. Angefangen hat Digium mit den auf dem amerikanischen
+        Markt sehr viel beliebteren Analog-Karten. Der Vorteil von
+        Digium-Karten liegt klar auf der Hand: Es gibt fast immer zeitgleich
+        auch aktualisierte Treiber. In der Vergangenheit waren diese Treiber
+        eher von durchschnittlicher Qualität, und es gab immer mal wieder
+        Probleme. Digium hat für die neue Treibergeneration (DAHDI) Besserung
+        versprochen.</div><div class="para">Ein zentrales Problem von Digium besteht im Support für den
+        deutschen Raum. Dass Digium nicht mal eigene deutsche Sprachprompts
+        herausbringt, spricht da schon Bände. Es ist zu hoffen, dass der
+        Konkurrenzdruck von anderen Herstellern irgendwann so groß wird, das
+        Digium dies für den normalen deutschen User verbessert. Das Argument
+        "Mit dem Kauf einer Digium-Karte unterstützen Sie die Entwicklung von
+        Asterisk" kann nicht über mäßigen Support und suboptimale Treiber
+        hinwegtrösten.</div></div><div class="section" title="Sangoma" id="isdn-hersteller-sangoma"><div class="titlepage"><div><div><h4 class="title" id="isdn-hersteller-sangoma">Sangoma<a id="idp14932224" class="indexterm"></a></h4></div></div></div><div class="para"><a href="http://www.sangoma.com">Sangoma</a> ist in
+        Nordamerika schon lange ein Geheimtipp in der Asterisk-Community.
+        Sangoma ist eine Firma, die schon seit 1984 auf dem Telefoniemarkt ist
+        und ausschließlich Hardware und entsprechende Treiber herstellt. Die
+        angebotenen Analog- und ISDN-Karten sind von einer ausgesprochen guten
+        Qualität, und der Support ist exzellent.<sup>[<a id="idp14934592" href="#ftn.idp14934592" class="footnote">54</a>]</sup> Sangoma macht sich um viele wichtige Kleinigkeiten
+        Gedanken und hat oft sehr gute Ideen. Speziell für den deutschen Markt
+        wurde z. B. mit der B700 eine kombinierte Analog- und ISDN-Karte
+        entwickelt.</div><div class="para">Als Nachteil in der "reinen" Open-Source-Lehre kann man
+        allerdings die Verwendung eines Binary-only-ISDN-Stacks einer
+        französischen Firma sehen. Sangoma argumentiert dabei, dass dieser
+        komerzielle Stack für ISDN zertifiziert ist und entsprechend sauber
+        läuft, was für den Open-Source-mISDN-Stack nicht immer gilt.</div></div><div class="section" title="No-Name-HFC-Karten" id="isdn-hersteller-no-name-hfc"><div class="titlepage"><div><div><h4 class="title" id="isdn-hersteller-no-name-hfc">No-Name-HFC-Karten</h4></div></div></div><div class="para">Die breite Masse an ISDN-Karten wird in Deutschland von den
+        No-Name-Herstellern verkauft. Die Karten werden für unter 100 Euro auf
+        den Markt gespült. Ein Support ist bei diesen Herstellern fast nie zu
+        bekommen (was bei dem Preis aber auch nicht möglich ist). Die Karten
+        werden fast immer mit mISDN in Betrieb genommen. Bitte lesen Sie in
+        <a class="xref" href="welche-isdn-karte.html" title="10.2. Welche ISDN-Karte soll ich nehmen?">Abschnitt 10.2, „Welche ISDN-Karte soll ich nehmen?“</a> mehr zu diesen Thema.</div></div></div><div class="section" title="Installationsanleitungen für ISDN-Karten" id="isdn-installationsanleitungen"><div class="titlepage"><div><div><h3 class="title" id="isdn-installationsanleitungen">Installationsanleitungen für ISDN-Karten</h3></div></div></div><div class="para">Installationsanleitungen für Asterisk mit verschiedenen
+      ISDN-Karten und entsprechenden Treibern finden Sie in <a class="xref" href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="Anhang B. Spezielle Installationsanleitungen für Asterisk mit ISDN- oder Analog-Karten">Anhang B, <i>Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</i></a>.</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp14934592" href="#idp14934592" class="para">54</a>] </sup>Sicherlich sollte man lieber eine Support-Anfrage in
+            Englisch verfassen, aber im Zweifelsfall wird man auch auf eine
+            deutsche Anfrage Hilfe bekommen.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="isdn-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Welche ISDN-Karte soll ich nehmen?</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="welche-isdn-karte.html#isdn-empfehlung-privat" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Empfehlung für den Privathaushalt</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="welche-isdn-karte.html#isdn-empfehlung-geschaeft" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Empfehlung für den geschäftlichen Einsatz</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="welche-isdn-karte.html#isdn-hersteller-und-treiber" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Hersteller und Treiber</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="welche-isdn-karte.html#isdn-installationsanleitungen" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Installationsanleitungen für ISDN-Karten</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="isdn-einleitung.html"><strong>Zurück</strong>10.1. Einleitung</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="analog.html"><strong>Weiter</strong>Kapitel 11. Analoge Telefonie</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

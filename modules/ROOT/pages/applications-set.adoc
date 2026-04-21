@@ -1,0 +1,117 @@
+[[applications-set]]
+= `Set()`
+
+Setzt eine Variable auf den angegebenen Wert.
+
+[source]
+----
+Set(Variable=Wert)
+----
+
+Setzt die Variable auf den angegebenen Wert. Beginnt der Name der
+Variablen mit dem Zeichen `_`, wird eine einfache Vererbung
+angenommen (d. h., es wird auf Kanäle vererbt, die von diesem Channel
+erzeugt werden). Beginnt der Name mit `__`, wird eine
+Endlosvererbung angenommen (d. h., es wird auf alle Kind-Kanäle vererbt),
+siehe xref:variablen.adoc#var-vererbung[„Vererbung von Channel-Variablen“]. Variablen sind normalerweise nur
+innerhalb eines Channels gültig und werden beim Auflegen gelöscht. Mit der
+Option `g` setzt man in Asterisk 1.2 eine Variable (nicht eine
+Funktion!) global; in 1.4 macht man das mithilfe der Funktion
+`GLOBAL()`.
+
+[source]
+----
+; die Variable TEST auf "123" setzen:
+exten => 123,1,Set(TEST=123)
+exten => 123,n,SayDigits(${TEST})
+
+; die globale Variable TEST2 auf "456" setzen:
+exten => 123,n,Set(TEST2=456,g)         ; Asterisk 1.2
+exten => 123,n,Set(GLOBAL(TEST2)=456)   ; Asterisk 1.4
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Set' =-
+
+[Synopsis]
+Set channel variable(s) or function value(s)
+
+[Description]
+Set(name1=value1|name2=value2|..[|options])
+This function can be used to set the value of channel variables or dialplan
+functions. It will accept up to 24 name/value pairs. When setting variables,
+if the variable name is prefixed with _, the variable will be inherited into
+channels created from the current channel. If the variable name is prefixed
+with __, the variable will be inherited into channels created from the current
+channel and all children channels.
+Options:
+g - Set variable globally instead of on the channel
+(applies only to variables, not functions)
+
+The use of Set to set multiple variables at once and the g flag have both
+been deprecated. Please use multiple Set calls and the GLOBAL() dialplan
+function instead.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -14,3 +14,8 @@
+Options:
+g - Set variable globally instead of on the channel
+(applies only to variables, not functions)
++
++
++ The use of Set to set multiple variables at once and the g flag have both
++ been deprecated. Please use multiple Set calls and the GLOBAL() dialplan
++ function instead.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,21 +1,23 @@
+-= Info about application 'Set' =-
+
+[Synopsis]
+- Set channel variable(s) or function value(s)
++ Set channel variable or function value
+
+[Description]
+- Set(name1=value1|name2=value2|..[|options])
++ Set(name=value)
+This function can be used to set the value of channel variables or dialplan
+- functions. It will accept up to 24 name/value pairs. When setting variables,
+- if the variable name is prefixed with _, the variable will be inherited into
+- channels created from the current channel. If the variable name is prefixed
+- with __, the variable will be inherited into channels created from the current
+- channel and all children channels.
+- Options:
+- g - Set variable globally instead of on the channel
+- (applies only to variables, not functions)
+-
+-
+- The use of Set to set multiple variables at once and the g flag have both
+- been deprecated. Please use multiple Set calls and the GLOBAL() dialplan
+- function instead.
++ functions. When setting variables, if the variable name is prefixed with _,
++ the variable will be inherited into channels created from the current
++ channel. If the variable name is prefixed with __, the variable will be
++ inherited into channels created from the current channel and all children
++ channels.
++ Compatibility note: If (and only if), in /etc/asterisk/asterisk.conf, you have a [compat]
++ category, and you have app_set = 1.6 under that, then the behavior of this
++ app changes, and does not strip surrounding quotes from the right hand side
++ as it did previously in 1.4. The app_set = 1.6 is only inserted if 'make samples'
++ is executed, or if users insert this by hand into the asterisk.conf file.
++ /nThe advantages of not stripping out quoting, and not caring about the
++ separator characters (comma and vertical bar) were sufficient to make these
++ changes in 1.6. Confusion about how many backslashes would be needed to properly
++ protect separators and quotes in various database access strings has been greatly
++ reduced by these changes.
+
+.Siehe auch
+xref:applications-importvar.adoc[Abschnitt C.73, „`ImportVar()`“],
+`doc/README.variables` (1.2) /
+`doc/channelvariables.txt` (1.4), xref:functions-global.adoc[Abschnitt D.38, „`GLOBAL()`“]

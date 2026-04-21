@@ -1,0 +1,15 @@
+[[danksagung-einleitung]]
+= Einleitung
+
+Das erste _Asterisk-Buch_ ist im Jahr 2006
+veröffentlicht worden. In all den Jahren gab es sehr viel positives
+Feedback aus der Community. Dafür möchten wir uns ganz herzlich bedanken.
+Im ersten Buch wurden alle Personen namentlich und mit E-Mail Adresse
+genannt. Das machen wir in diesem Buch aus folgenden Gründen nicht
+mehr:
+
+* SPAM-Versender bedienten sich leider aus diesen Listen mit E-Mail-Adressen.
+* Viele Personen wollen anonym bleiben. Das hat meistens mit dem Arbeitgeber zu tun (z. B. lassen einige Behörden das nicht zu, weil es eine Art Schleichwerbung wäre).
+
+Wir bedanken uns für all das Feedback und die Anregungen. Ohne Ihre
+Hilfe wäre das Buch heute nicht so gut, wie es ist. Danke!

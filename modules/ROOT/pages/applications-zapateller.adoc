@@ -1,0 +1,75 @@
+[[applications-zapateller]]
+= `Zapateller()`
+
+Verwendet einen speziellen Informationston, um automatisierte
+Werbeanrufe abzublocken.
+
+[source]
+----
+Zapateller(Optionen)
+----
+
+Generiert einen speziellen Informationston (SIT, Special
+Information Tone, "Kein Anschluss unter dieser Nummer"), um Telefonverkäufer
+und andere maschinengewählte Anrufe davon abzuhalten, Sie zu
+belästigen.
+
+Die folgenden Optionen sind verfügbar (ggf. durch `|`
+getrennt):
+
+`answer`:: Bewirkt, dass die Leitung beantwortet wird, bevor der Ton abgespielt wird.
+`nocallerid`:: Bewirkt, dass Zapateller den Ton nur abspielt, wenn keine Caller-ID-Information verfügbar ist.
+
+[source]
+----
+[incoming]
+; im Context incoming die SIT-Töne spielen, wenn keine Caller-ID vorhanden ist:
+exten => s,1,Zapateller(nocallerid)
+exten => s,n,Wait(3)
+exten => s,n,Answer()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Zapateller' =-
+
+[Synopsis]
+Block telemarketers with SIT
+
+[Description]
+Zapateller(options): Generates special information tone to block
+telemarketers from calling you. Options is a pipe-delimited list of
+options. The following options are available:
+'answer' causes the line to be answered before playing the tone,
+'nocallerid' causes Zapateller to only play the tone if there
+is no callerid information available. Options should be separated by |
+characters
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -7,7 +7,12 @@
+Zapateller(options): Generates special information tone to block
+telemarketers from calling you. Options is a pipe-delimited list of
+options. The following options are available:
+- 'answer' causes the line to be answered before playing the tone,
+- 'nocallerid' causes Zapateller to only play the tone if there
+- is no callerid information available. Options should be separated by |
+- characters
++ 'answer' - causes the line to be answered before playing the tone,
++ 'nocallerid' - causes Zapateller to only play the tone if there is no
++ callerid information available. Options should be
++ separated by , characters
++
++ This application will set the following channel variable upon completion:
++ ZAPATELLERSTATUS - This will contain the last action accomplished by the
++ Zapateller application. Possible values include:
++ NOTHING | ANSWERED | ZAPPED
+
+.Siehe auch
+xref:applications-privacymanager.adoc[Abschnitt C.119, „`PrivacyManager()`“]

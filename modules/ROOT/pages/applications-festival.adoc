@@ -1,0 +1,73 @@
+[[applications-festival]]
+= `Festival()`
+
+Verwendet das Sprachsynthese-System (Text-to-speech)
+_Festival_, um dem Anrufer Text vorzulesen.
+
+[source]
+----
+Festival(Text[,Tasten])
+----
+
+Verbindet sich zum lokal laufenden Festival-Server (muss
+installiert sein), sendet ihm den angegebenen `Text` und spielt
+dem Teilnehmer die resultierende Audiodatei vor. Wenn `Tasten`
+angegeben wurden und der Anrufer während des Abspielens eine davon drückt,
+wird der Abspielvorgang beendet und die entsprechende Taste zurückgegeben.
+Falls als `Tasten` der Wert `any` angegeben ist, wird
+jede Taste erkannt (und an die entsprechende Extension
+weitergeleitet).
+
+Sie müssen den Festival-Server _vor_ Asterisk
+starten und die `Answer()`-Anwendung zum Beantworten des Channels
+verwenden, bevor Sie `Festival()` aufrufen.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,Festival('Hallo Welt',#)
+----
+
+Alternativ zu der Applikation `Festival()` kann man auch
+mit dem `System()`-Befehl Festivals Programm
+`text2wave` aufrufen und die resultierende Audiodatei mit
+`Background()` oder `Playback()` abspielen, etwa so
+(nur als Beispiel, achten Sie auf die Verzeichnisse!):
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,System(echo 'Hallo Welt' | text2wave -o sound.wav -otype wav -)
+exten => 123,n,Background(sound)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Festival' =-
+
+[Synopsis]
+Say text to the user
+
+[Description]
+Festival(text[|intkeys]): Connect to Festival, send the argument, get back the waveform,play it to the user, allowing any given interrupt keys to immediately terminate and return
+the value, or 'any' to allow any number back (useful in dialplan)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,6 @@
+Say text to the user
+
+[Description]
+- Festival(text[|intkeys]): Connect to Festival, send the argument, get back the waveform,play it to the user, allowing any given interrupt keys to immediately terminate and return
++ Festival(text[,intkeys]): Connect to Festival, send the argument, get back the waveform,
++ play it to the user, allowing any given interrupt keys to immediately terminate and return
+the value, or 'any' to allow any number back (useful in dialplan)
+
+.Siehe auch
+`contrib/README.festival`

@@ -1,0 +1,227 @@
+[[hello-world-im-cli]]
+= Hello-World im CLI aufrufen
+
+Im ersten Beispiel werden wir einen einfachen Hello-World-Dialplan
+programmieren und diesen von der Asterisk-Konsole – dem CLI (Command
+Line Interface) – aufrufen.
+
+[[asterisk-conf-files]]
+== Asterisk konfigurieren
+
+Im Verzeichnis `/etc/asterisk/` finden Sie nach
+einer frischen Installation alle Konfigurationsdateien in einer
+einfachen Standardausführung:
+
+[source,shell]
+----
+debian:~# cd /etc/asterisk/
+debian:/etc/asterisk# ls
+adsi.conf           features.conf     phone.conf
+adtranvofr.conf     festival.conf     privacy.conf
+agents.conf         followme.conf     queues.conf
+alarmreceiver.conf  func_odbc.conf    res_odbc.conf
+alsa.conf           gtalk.conf        res_pgsql.conf
+amd.conf            h323.conf         res_snmp.conf
+asterisk.adsi       http.conf         rpt.conf
+asterisk.conf       iax.conf          rtp.conf
+cdr.conf            iaxprov.conf      say.conf
+cdr_custom.conf     indications.conf  sip.conf
+cdr_manager.conf    jabber.conf       sip_notify.conf
+cdr_odbc.conf       logger.conf       skinny.conf
+cdr_pgsql.conf      manager.conf      sla.conf
+cdr_tds.conf        meetme.conf       smdi.conf
+codecs.conf         mgcp.conf         telcordia-1.adsi
+dnsmgr.conf         misdn.conf        udptl.conf
+dundi.conf          modules.conf      users.conf
+enum.conf           musiconhold.conf  voicemail.conf
+extconfig.conf      muted.conf        vpb.conf
+extensions.ael      osp.conf          zapata.conf
+extensions.conf     oss.conf
+debian:/etc/asterisk# 
+----
+
+Dies ist jetzt eine recht umfangreiche Liste, aber – keine
+Angst – für unser Hello-World-Beispiel müssen wir uns nur mit
+einer von diesen Dateien näher befassen. Diese mit `make
+samples` erstellten und recht komplexen Default-Dateien
+verschieben wir dazu erst einmal nach
+`/var/tmp/asterisk-etc-backup/` (damit wir später bei
+Bedarf darauf zugreifen können):
+
+[source,shell]
+----
+debian:/etc/asterisk# mkdir -p /var/tmp/asterisk-etc-backup
+debian:/etc/asterisk# mv extensions.* /var/tmp/asterisk-etc-backup/
+debian:/etc/asterisk# 
+----
+
+Legen Sie mit Ihrem Lieblingseditorfootnote:[Wenn Sie keinen Editor kennen, den Sie in einem Terminalfenster verwenden können, empfehle ich Ihnen `nano`. Unter Debian ist dieser einfach als Benutzer root mit `apt-get -y install nano` zu installieren. Danach öffnen Sie mit `nano dateiname` die Datei. In Nano selbst sehen Sie im unteren Bereich des Bildschirms die wichtigsten Befehle.] die Datei
+`/etc/asterisk/extensions.conf` mit folgendem Inhalt
+an:
+
+[source]
+----
+[default]
+exten => 1001,1,Answer()
+exten => 1001,2,Playback(hello-world)
+exten => 1001,3,Hangup()
+----
+
+[[asterisk-konfigurieren]]
+== Asterisk starten und Hello-World abrufen
+
+Und diese paar Zeilen sollen ausreichen? Dabei heißt es doch
+immer, Asterisk sei so kompliziert. Probieren wir es einmal aus! Mit dem
+Befehl `asterisk -c` starten Sie Asterisk:
+
+[source,shell]
+----
+debian:/etc/asterisk# asterisk -c
+Asterisk 1.4.21, Copyright (C) 1999 - 2008 Digium, Inc. and others.
+Created by Mark Spencer <markster@digium.com>
+[...]
+[ Booting...
+[ Reading Master Configuration ]
+[...]
+Asterisk Ready.
+*CLI> 
+----
+
+Mit dem erfolgreichen Start von Asterisk erhalten wir ebenfalls
+eine Konsole, auf der wir mit dem laufenden Asterisk-Prozess
+kommunizieren können. Vor uns sehen wir jetzt das Command Line Interface
+(CLI) von Asterisk. Hier können wir aktiv in das Geschehen
+eingreifen.
+
+[NOTE]
+====
+Wer übrigens auf seinem Terminal Probleme mit den
+Escape-Sequenzen für die Farben hat kann beim Aufrufen zusätzlich den
+Parameter `-n` („*n*o
+color“) verwenden um die Farben abzuschalten.
+====
+
+Als erste Handlung rufen wir mit dem Befehl `console dial
+1001` das Hello-World-Beispiel ab:
+
+[source,shell]
+----
+*CLI> console dial 1001
+*CLI>  << Console call has been answered >> 
+ << Hangup on console >> 
+
+*CLI>
+----
+
+Mit `console dial 1001` rufen wir die Extension
+1001 auf. Diese spielt dann den Sprachbaustein
+`hello-world.gsm` aus dem Verzeichnis
+`/var/lib/asterisk/sounds/` ab.
+
+[NOTE]
+====
+`console dial` agiert wie ein ganz einfaches
+Telefon. Man kann eine Extension anrufen und auch über die
+Soundkarte hören.
+====
+
+[[was-ist-eine-extension]]
+=== Was ist eine Extension?
+
+Eine Extension ist eine Programmeinheit in einem Dialplan. Jede
+Extension besteht mindestens aus einer Zeile, die im
+Format
+
+[source]
+----
+exten => Name-der-Extension,Priorität,Applikation
+----
+
+geschrieben wird. Die Priorität ist dabei die Reihenfolge der
+einzelnen Programmabschnitte. Unsere Extension 1001 hat drei
+Prioritäten:
+
+[source]
+----
+exten => 1001,1,Answer()
+exten => 1001,2,Playback(hello-world)
+exten => 1001,3,Hangup()
+----
+
+Die Applikationen sind selbsterklärend:
+
+* `Answer()`
++
+hebt ab und öffnet damit einen neuen Asterisk-Channel
+(siehe xref:applications-answer.adoc[Hilfetext zu
+Answer()]).
+* `Playback(hello-world)`
++
+spielt im aktuellen Channel die Datei
+`hello-world.gsm` ab (siehe xref:applications-playback.adoc[Hilfetext zu
+Playback()]).
+* `Hangup()`
++
+legt auf und schließt damit den Channel (siehe xref:applications-hangup.adoc[Hilfetext zu
+Hangup()]).
+
+[[cli-verbosity]]
+=== Verbosity erhöhen
+
+Zum Debuggen von Asterisk empfiehlt es sich oft, im CLI die
+Verbosity (also die "Gesprächigkeit") von Asterisk zu erhöhen. Wenn
+Asterisk mit `asterisk -c` gestartet wird, ist der
+Verbose-Level auf 0 eingestellt (die Range reicht von 0 bis 10). Im
+CLI können Sie mit dem Befehl `core set verbose 5`
+den Level auf 5 stellen (was ein guter Debug-Level ist):
+
+[source,shell]
+----
+*CLI> core set verbose 5
+Verbosity was 0 and is now 5
+*CLI> 
+----
+
+Wenn Sie jetzt den Befehl `console dial 1001`
+ausführen, dann bekommen Sie von Asterisk sehr viel mehr Informationen
+über den Ablauf im Dialplan:
+
+[source,shell]
+----
+*CLI> console dial 1001
+  == Console is full duplex
+*CLI>     -- Executing [1001@default:1] Answer("Console/dsp", "") in new stack
+ << Console call has been answered >> 
+    -- Executing [1001@default:2] Playback("Console/dsp", "hello-world") in new stack
+    -- <Console/dsp> Playing 'hello-world' (language 'en')
+*CLI>     -- Executing [1001@default:3] Hangup("Console/dsp", "") in new stack
+  == Spawn extension (default, 1001, 3) exited non-zero on 'Console/dsp'
+ << Hangup on console >> 
+
+*CLI> 
+----
+
+Sie können den Verbose-Level aber auch beim Starten von Asterisk
+mit dem Softwareschalter `-vvvvv` auf den Level 5
+setzen.
+
+[WARNING]
+====
+Benutzen Sie bitte im CLI nie `core set
+debug`, um den Dialplan zu debuggen! Das ist eine für
+Asterisk-Entwickler eingebaute Möglichkeit, Fehler im Quellcode
+von Asterisk zu analysieren. Das hilft beim Dialplan aber
+nicht.
+====
+
+[[cli-stop-now]]
+=== Asterisk stoppen
+
+Geben Sie einfach im CLI den Befehl `stop now`
+ein, und Asterisk fährt herunter:
+
+[source,shell]
+----
+*CLI> stop now
+debian:/etc/asterisk#
+----

@@ -1,0 +1,60 @@
+[[functions-queue_variables]]
+= `QUEUE_VARIABLES()`
+
+[source]
+----
+QUEUE_VARIABLES(warteschlange)
+----
+
+Liefert Informationen über eine Warteschlange. Die Werte werden als
+Channel-Variablen gesetzt. Damit diese Funktion benutzt werden kann, muss in
+der `queues.conf` für die betreffende Queue die
+Einstellung `setqueuevar=yes` aktiviert sein. Bei Erfolg
+wird `0` zurückgegeben bzw. `-1`, wenn die
+Queue nicht definiert oder `setqueuevar` nicht aktiviert
+ist.
+
+[source]
+----
+; Werte fuer die Queue "techsupport" abfragen:
+exten => 123,1,Set(err=${QUEUE_VARIABLES(techsupport)})
+exten => 123,n,Verbose(1,Strategie: ${QUEUESTRATEGY})
+exten => 123,n,Verbose(1,Maximal erlaubte Anrufer: ${QUEUEMAX})
+exten => 123,n,Verbose(1,Aktuelle Anruferanzahl: ${QUEUECALLS})
+exten => 123,n,Verbose(1,Erfolgreiche Anrufe: ${QUEUECOMPLETED})
+exten => 123,n,Verbose(1,Abgebrochene Anrufe: ${QUEUEABANDONED})
+exten => 123,n,Verbose(1,Durchschnittliche Wartezeit: ${QUEUEHOLDTIME})
+exten => 123,n,Verbose(1,Gesetztes Service-Level: ${QUEUESRVLEVEL})
+exten => 123,n,Verbose(1,Service-Level-Einhaltung: ${QUEUESRVLEVELPERF})
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'QUEUE_VARIABLES' =-
+
+[Syntax]
+QUEUE_VARIABLES(<queuename>)
+
+[Synopsis]
+Return Queue information in variables
+
+[Description]
+Makes the following queue variables available.
+QUEUEMAX maxmimum number of calls allowed
+QUEUESTRATEGY the strategy of the queue
+QUEUECALLS number of calls currently in the queue
+QUEUEHOLDTIME current average hold time
+QUEUECOMPLETED number of completed calls for the queue
+QUEUEABANDONED number of abandoned calls
+QUEUESRVLEVEL queue service level
+QUEUESRVLEVELPERF current service level performance
+Returns 0 if queue is found and setqueuevar is defined, -1 otherwise
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:functions-queue_member_count.adoc[Abschnitt D.73, „`QUEUE_MEMBER_COUNT()`“], xref:functions-queue_waiting_count.adoc[Abschnitt D.77, „`QUEUE_WAITING_COUNT()`“], xref:functions-queue_member_penalty.adoc[Abschnitt D.75, „`QUEUE_MEMBER_PENALTY()`“], xref:functions-queue_member.adoc[Abschnitt D.72, „`QUEUE_MEMBER()`“], xref:functions-queue_member_list.adoc[Abschnitt D.74, „`QUEUE_MEMBER_LIST()`“]

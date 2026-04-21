@@ -1,0 +1,50 @@
+[[applications-stopmonitor]]
+= `StopMonitor()`
+
+Beendet das Mitschneiden eines Channels.
+
+[source]
+----
+StopMonitor()
+----
+
+Beendet die Aufnahme eines Channels. Diese Anwendung hat keinerlei
+Auswirkungen, wenn der Channel momentan nicht überwacht wird.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,Monitor(wav,monitor_test,mb)
+exten => 123,n,SayDigits(12345678901234567890)
+exten => 123,n,StopMonitor()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'StopMonitor' =-
+
+[Synopsis]
+Stop monitoring a channel
+
+[Description]
+StopMonitor
+Stops monitoring a channel. Has no effect if the channel is not monitored
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,5 @@
+Stop monitoring a channel
+
+[Description]
+- StopMonitor
++ StopMonitor():
+Stops monitoring a channel. Has no effect if the channel is not monitored
+
+.Siehe auch
+xref:applications-monitor.adoc[Abschnitt C.100, „`Monitor()`“], xref:applications-pausemonitor.adoc[Abschnitt C.113, „`PauseMonitor()`“]

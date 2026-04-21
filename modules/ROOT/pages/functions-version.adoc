@@ -1,0 +1,55 @@
+[[functions-version]]
+= `VERSION()`
+
+[source]
+----
+VERSION(param)
+----
+
+Diese Funktion gibt Versionsinformationen von Asterisk zurück. Wenn
+die Funktion ohne Parameter aufgerufen wird, dann kommt in etwa so ein
+String zurück: `SVN-branch-1.4-r44830M`. Man kann mit dem
+Parameter aber genau bestimmen, welche Versionsinformationen von Asterisk
+man erhalten möchte:
+
+`ASTERISK_VERSION_NUM`:: Eine Zeichenkette, die nur die Zahlen der Versionsnummer enthält. (Zu dem Zeitpunkt, als dieses Buch entstand, gab die Funktion immer nur "999999" zurück.)
+`BUILD_USER`:: Sagt aus, mit welchem Unix-Benutzernamen Asterisk aus dem Quellcode übersetzt wurde (z. B. `root`).
+`BUILD_HOSTNAME`:: Gibt den Hostnamen des Rechners zurück, auf dem Asterisk aus dem Quellcode übersetzt wurde (z. B. `voipnode1`).
+`BUILD_MACHINE`:: Gibt den CPU-Typ des Rechners zurück, auf dem Asterisk aus dem Quellcode übersetzt wurde (z. B. `i686`).
+`BUILD_OS`:: Gibt den Namen des Betriebssystems zurück, auf dem Asterisk aus dem Quellcode übersetzt wurde (z. B. `Linux`).
+`BUILD_DATE`:: Gibt das Datum zurück, an welchem Asterisk aus dem Quellcode übersetzt wurde.
+`BUILD_KERNEL`:: Gibt den Namen des Betriebssystemkernels zurück, auf dem Asterisk aus dem Quellcode übersetzt wurde (z. B. `2.6.28-4-686`).
+
+[source]
+----
+; Gibt die Version von Asterisk auf dem CLI aus
+exten => 123,n,Verbose(1, ${VERSION()})
+	
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'VERSION' =-
+
+[Syntax]
+VERSION([info])
+
+[Synopsis]
+Return the Version info for this Asterisk
+
+[Description]
+If there are no arguments, return the version of Asterisk in this format: SVN-branch-1.4-r44830M
+If the argument is 'ASTERISK_VERSION_NUM', a string of digits is returned (right now fixed at 999999).
+If the argument is 'BUILD_USER', the string representing the user's name whose account was used to configure Asterisk, is returned.
+If the argument is 'BUILD_HOSTNAME', the string representing the name of the host on which Asterisk was configured, is returned.
+If the argument is 'BUILD_MACHINE', the string representing the type of machine on which Asterisk was configured, is returned.
+If the argument is 'BUILD_OS', the string representing the OS of the machine on which Asterisk was configured, is returned.
+If the argument is 'BUILD_DATE', the string representing the date on which Asterisk was configured, is returned.
+If the argument is 'BUILD_KERNEL', the string representing the kernel version of the machine on which Asterisk was configured, is returned .
+Example: Set(junky=${VERSION()};
+Sets junky to the string 'SVN-branch-1.6-r74830M', or possibly, 'SVN-trunk-r45126M'.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

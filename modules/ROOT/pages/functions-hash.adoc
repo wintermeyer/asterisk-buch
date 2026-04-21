@@ -1,0 +1,52 @@
+[[functions-hash]]
+= `HASH()`
+
+[source]
+----
+HASH(name[,schluessel])
+----
+
+Implementiert assoziative Arrays (auch bekannt als
+Hashes).
+
+[source]
+----
+exten => 123,1,Set(HASH(warenkorb,aepfel)=5)
+exten => 123,n,Set(HASH(warenkorb,birnen)=3)
+exten => 123,n,Set(HASH(warenkorb,kartoffeln)=2)
+exten => 123,n,Verbose(1,Im Warenkorb sind folgende Artikel:)
+exten => 123,n,Verbose(1,  ${HASH(warenkorb,aepfel)} Aepfel)
+exten => 123,n,Verbose(1,  ${HASH(warenkorb,birnen)} Birnen)
+exten => 123,n,Verbose(1,  ${HASH(warenkorb,kartoffeln)} Kartoffeln)
+----
+
+Beim Zuweisen aus ODBC-Funktionen muss man den Schlüssel nicht
+angeben.
+
+[source]
+----
+exten => 456,1,Set(HASH(ergebnis)=ODBC_...)
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'HASH' =-
+
+[Syntax]
+HASH(hashname[,hashkey])
+
+[Synopsis]
+Implementation of a dialplan associative array
+
+[Description]
+In two argument mode, gets and sets values to corresponding keys within a named
+associative array. The single-argument mode will only work when assigned to from
+a function defined by func_odbc.so.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-hashkeys.adoc[Abschnitt D.44, „`HASHKEYS()`“], xref:applications-clearhash.adoc[Abschnitt C.22, „`ClearHash()`“], xref:functions-odbc_sql.adoc[Abschnitt D.71, „`ODBC_SQL()`“], xref:functions-odbc_fetch.adoc[Abschnitt D.68, „`ODBC_FETCH()`“]

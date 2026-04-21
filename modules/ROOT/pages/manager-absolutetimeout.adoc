@@ -1,0 +1,30 @@
+[[manager-absolutetimeout]]
+= `AbsoluteTimeout`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: AbsoluteTimeout
+Synopsis: Set Absolute Timeout
+Privilege: call,all
+Description: Hangup a channel after a certain time.
+Variables: (Names marked with * are required)
+*Channel: Channel name to hangup
+*Timeout: Maximum duration of the call (sec)
+Acknowledges set time with 'Timeout Set' message
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,6 +1,6 @@
+Action: AbsoluteTimeout
+Synopsis: Set Absolute Timeout
+- Privilege: call,all
++ Privilege: system,call,all
+Description: Hangup a channel after a certain time.
+Variables: (Names marked with * are required)
+*Channel: Channel name to hangup

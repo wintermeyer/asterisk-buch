@@ -1,0 +1,59 @@
+[[applications-hasvoicemail]]
+= `HasVoicemail()`
+
+Prüft, ob Voicemail-Nachrichten in einer Mailbox vorhanden
+sind.
+
+[source]
+----
+HasVoicemail(Mailbox[/Ordner][@Context][,Variable,[Optionen]])
+----
+
+[IMPORTANT]
+====
+`HasVoicemail()` ist ab Asterisk 1.6 nicht mehr
+vorhanden und sogar schon ab 1.2 überflüssig, denn mit der Funktion
+`VMCOUNT()` (xref:functions-vmcount.adoc[Abschnitt D.111, „`VMCOUNT()`“]) kann
+man das Gleiche erreichen:
+
+[source]
+----
+Set(anzahl=${VMCOUNT(4000)})
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'HasVoicemail' =-
+
+[Synopsis]
+Conditionally branches to priority + 101 with the right options set
+
+[Description]
+HasVoicemail(vmbox[/folder][@context][|varname[|options]])
+Optionally sets <varname> to the number of messages in that folder. Assumes folder of INBOX if not specified.
+The option string may contain zero or the following character:
+'j' -- jump to priority n+101, if there is voicemail in the folder indicated.
+This application sets the following channel variable upon completion:
+HASVMSTATUS The result of the voicemail check returned as a text string as follows
+<# of messages in the folder, 0 for NONE>
+
+This application has been deprecated in favor of the VMCOUNT() function
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -11,3 +11,5 @@
+This application sets the following channel variable upon completion:
+HASVMSTATUS The result of the voicemail check returned as a text string as follows
+<# of messages in the folder, 0 for NONE>
++
++ This application has been deprecated in favor of the VMCOUNT() function
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:applications-hasnewvoicemail.adoc[Abschnitt C.69, „`HasNewVoicemail()`“], xref:functions-vmcount.adoc[Abschnitt D.111, „`VMCOUNT()`“]

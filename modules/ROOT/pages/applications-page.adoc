@@ -1,0 +1,68 @@
+[[applications-page]]
+= `Page()`
+
+Rundruf.
+
+[source]
+----
+Page(Technology/Resource[&Technology2/Resource2[&...]][,Optionen])
+----
+
+Die als Parameter angegebenen Telefone werden angerufen und kommen
+automatisch in einen Konferenzraum, in dem sie allerdings nicht sprechen
+können. Dies kann nur der Initiator des Rundrufes. Optionen:
+
+`d`:: Full-Duplex-Modus aktivieren.
+`q`:: Es wird kein Ton abgespielt.
+`r`:: Der Rundruf wird in einer Datei aufgezeichnet.
+
+[source]
+----
+exten => 123,1,Page(SIP/2000&SIP/2001&SIP/2002)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Page' =-
+
+[Synopsis]
+Pages phones
+
+[Description]
+Page(Technology/Resource&Technology2/Resource2[|options])
+Places outbound calls to the given technology / resource and dumps
+them into a conference bridge as muted participants. The original
+caller is dumped into the conference as a speaker and the room is
+destroyed when the original caller leaves. Valid options are:
+d - full duplex audio
+q - quiet, do not play beep to caller
+r - record the page into a file (see 'r' for app_meetme)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -11,3 +11,4 @@
+destroyed when the original caller leaves. Valid options are:
+d - full duplex audio
+q - quiet, do not play beep to caller
++ r - record the page into a file (see 'r' for app_meetme)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Pages phones
+
+[Description]
+- Page(Technology/Resource&Technology2/Resource2[|options])
++ Page(Technology/Resource&Technology2/Resource2[,options])
+Places outbound calls to the given technology / resource and dumps
+them into a conference bridge as muted participants. The original
+caller is dumped into the conference as a speaker and the room is
+@@ -12,3 +12,4 @@
+d - full duplex audio
+q - quiet, do not play beep to caller
+r - record the page into a file (see 'r' for app_meetme)
++ s - only dial channel if devicestate says it is not in use

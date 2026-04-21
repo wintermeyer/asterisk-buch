@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.2. Netzwerkprotokolle</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-protokolle.html" title="Kapitel 8. Protokolle" /><link rel="prev" href="protokolle-einleitung.html" title="8.1. Einleitung" /><link rel="next" href="definition-channel.html" title="8.3. Channels" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="8.2. Netzwerkprotokolle" id="netzwerkprotokolle"><div class="titlepage"><div><div><h2 class="title" id="netzwerkprotokolle">8.2. Netzwerkprotokolle</h2></div></div></div><div class="para">Wir möchten Ihnen an dieser Stelle die Wikipedia-Artikel zu TCP und
+    UDP wärmstens empfehlen. Die folgende Darstellung ist in ihrer Struktur an
+    diese Artikel<sup>[<a id="idp19455280" href="#ftn.idp19455280" class="footnote">33</a>]</sup> angelehnt.</div><div class="para">Für alle Ungeduldigen, hier eine einfache und knappe Definition: TCP
+    ist ein Protokoll, das sicherstellt, dass die Übertragung der gesamten
+    Information vom Sender geordnet und vollständig beim Empfänger ankommt.
+    Das Ziel der vollständigen und korrekten Datenübertragung wird mit einem
+    relativ großen Overhead im Verhältnis zur Nutzlast erkauft. Im Gegensatz
+    dazu investiert das Schwesterprotokoll UDP sehr viel weniger in die
+    Steuerung der Übertragung. Es schickt einfach alles raus und stellt nicht
+    sicher, dass jedes einzelne Datenpaket auch wirklich beim Empfänger
+    ankommt. Für VoIP sind beide Protokolltypen von Bedeutung, da bei einem
+    normalen VoIP-Anruf die initiale Verbindung über TCP hergestellt wird, die
+    reinen Sprachdaten aber mit UDP übertragen werden. Speziell für die
+    Übertragung von Audiodaten ist Quantität der Datenpakete wichtiger als
+    Qualität.</div><div class="section" title="Transmission Control Protocol (TCP)" id="tcp"><div class="titlepage"><div><div><h3 class="title" id="tcp">Transmission Control Protocol (TCP)</h3></div></div></div><div class="para">Das Transmission Control Protocol (TCP) ist eine Vereinbarung
+      (Protokoll) darüber, auf welche Art und Weise Daten zwischen Computern
+      ausgetauscht werden sollen. Alle Betriebssysteme moderner Computer
+      beherrschen TCP und nutzen es für den Datenaustausch mit anderen
+      Rechnern. Das Protokoll ist ein zuverlässiges, verbindungsorientiertes
+      Transportprotokoll in Computernetzwerken. Es ist Teil der
+      Internetprotokollfamilie, der Grundlage des Internets. Entwickelt wurde
+      TCP von Robert E. Kahn und Vinton G. Cerf. Ihre Forschungsarbeit, die
+      sie bereits im Jahre 1973 begannen, zog sich über mehrere Jahre hin.
+      Deshalb erfolgte die erste Standardisierung von TCP erst im Jahre 1981
+      als RFC 793. Danach gab es viele Erweiterungen, die bis heute in neuen
+      RFCs (einer Reihe von technischen und organisatorischen Dokumenten zum
+      Internet) spezifiziert werden und alle zu TCP gehören. Im Unterschied
+      zum verbindungslosen UDP (User Datagram Protocol) stellt TCP einen
+      virtuellen Kanal zwischen zwei Endpunkten einer Netzwerkverbindung
+      (Sockets) her. Auf diesem Kanal können in beide Richtungen Daten
+      übertragen werden. TCP setzt in den meisten Fällen auf das IP
+      (Internet-Protokoll) auf, weshalb häufig (und oft nicht ganz korrekt)
+      auch vom TCP/IP-Protokoll die Rede ist. Es ist in Schicht 4 des
+      OSI-Referenzmodells angesiedelt. Aufgrund seiner vielen angenehmen
+      Eigenschaften (Datenverluste werden erkannt und automatisch behoben,
+      Datenübertragung ist in beide Richtungen möglich, Netzwerküberlastung
+      wird verhindert usw.) ist TCP ein sehr weit verbreitetes Protokoll zur
+      Datenübertragung. Beispielsweise wird TCP als (fast) ausschließliches
+      Transportmedium für das WWW, E-Mail, Daten in Peer-to-Peer-Netzwerken
+      und für viele andere populäre Netzwerkdienste verwendet.</div><div class="section" title="Allgemeines" id="tcp-allgemein"><div class="titlepage"><div><div><h4 class="title" id="tcp-allgemein">Allgemeines</h4></div></div></div><div class="para">TCP ist im Prinzip eine Ende-zu-Ende-Verbindung in Vollduplex,
+        die die Übertragung der Informationen in beide Richtungen zu gleicher
+        Zeit zulässt. Diese Verbindung kann in zwei Halbduplexverbindungen
+        eingeteilt werden, bei denen Informationen in beide Richtungen
+        (allerdings nicht gleichzeitig) fließen können. Die Daten in
+        Gegenrichtung können dabei zusätzliche Steuerungsinformationen
+        enthalten. Die Verwaltung (das Management) dieser Verbindung sowie die
+        Datenübertragung werden von der TCP-Software übernommen. Die
+        TCP-Software ist eine Funktionssammlung und (je nach Betriebssystem
+        unterschiedlich) bei Linux auch im Betriebssystemkern, dem
+        Linux-Kernel, angesiedelt. Anwendungen, die diese Software häufig
+        nutzen, sind zum Beispiel Webbrowser und Webserver. Jede
+        TCP-Verbindung wird eindeutig durch zwei Endpunkte identifiziert. Ein
+        Endpunkt stellt ein geordnetes Paar dar, das aus IP-Adresse und Port
+        besteht. Ein solches Paar bildet eine bidirektionale
+        Software-Schnittstelle und wird auch als Socket bezeichnet. Mithilfe
+        der IP-Adressen werden die an der Verbindung beteiligten Rechner
+        identifiziert; mithilfe der Ports werden dann auf den beiden
+        beteiligten Rechnern die beiden miteinander kommunizierenden Programme
+        identifiziert. Durch die Verwendung von Portnummern auf beiden Seiten
+        der Verbindung ist es beispielsweise möglich, dass ein Webserver auf
+        einem Port (normalerweise Port 80) gleichzeitig mehrere Verbindungen
+        zu einem anderen Rechner geöffnet hat. Ports sind 16-Bit-Zahlen
+        (Portnummern) und reichen von 0 bis 65535. Ports von 0 bis 1023 sind
+        reserviert und werden von der IANA vergeben. Zum Beispiel ist Port 80
+        für das im WWW verwendete HTTP-Protokoll reserviert. Allerdings ist
+        das Benutzen der vordefinierten Ports nicht bindend. So kann jeder
+        Administrator beispielsweise einen FTP-Server (normalerweise Port 21)
+        auch auf einem beliebigen anderen Port laufen lassen.</div></div><div class="section" title="Verbindungsaufbau und -abbau" id="tcp-verbindungsaufbau"><div class="titlepage"><div><div><h4 class="title" id="tcp-verbindungsaufbau">Verbindungsaufbau und -abbau</h4></div></div></div><div class="para">Ein Webserver, der seinen Dienst anbietet, generiert einen
+        Endpunkt mit dem Port und seiner Adresse. Dies wird als
+        <span class="emphasis"><em>passive open</em></span> oder auch als
+        <span class="emphasis"><em>listen</em></span> bezeichnet. Will ein Client eine
+        Verbindung aufbauen, generiert er einen eigenen Endpunkt aus seiner
+        Rechneradresse und einer noch freien Portnummer. Mithilfe eines ihm
+        bekannten Ports und der Adresse des Servers kann dann eine Verbindung
+        aufgebaut werden. Während der Datenübertragungsphase (active open)
+        sind die Rollen von Client und Server (aus TCP-Sicht) vollkommen
+        symmetrisch. Insbesondere kann jeder der beiden beteiligten Rechner
+        einen Verbindungsabbau einleiten. Während des Abbaus kann die
+        Gegenseite noch Daten übertragen, die Verbindung kann also halb offen
+        sein.</div></div><div class="section" title="Der Drei-Wege-Handshake" id="tcp-drei-wege-handshake"><div class="titlepage"><div><div><h4 class="title" id="tcp-drei-wege-handshake">Der Drei-Wege-Handshake</h4></div></div></div><div class="para">Der Drei-Wege-Handshake ist die Bezeichnung für ein bestimmtes
+        Verfahren, um eine in Bezug auf Übertragungsverluste sichere
+        Datenübertragung zwischen zwei Instanzen zu ermöglichen. Obwohl er
+        überwiegend in der Netzwerktechnik verwendet wird, ist der
+        Drei-Wege-Handshake nicht auf diese beschränkt.</div><div class="section" title="Verbindungsaufbau" id="beschreibung-tcp-verbindungsaufbau"><div class="titlepage"><div><div><h5 class="title" id="beschreibung-tcp-verbindungsaufbau">Verbindungsaufbau</h5></div></div></div><div class="para">Der Drei-Wege-Handshake kommt beim Aufbau einer TCP-Verbindung
+          zum Einsatz. Der Rechner, der die Verbindung aufbauen will, sendet
+          dem anderen Rechner ein SYN-Paket (von engl.
+          <span class="emphasis"><em>synchronize</em></span>) mit einer Sequenznummer x. Die
+          Sequenznummern sind dabei für die Sicherstellung einer vollständigen
+          Übertragung in der richtigen Reihenfolge und ohne Duplikate wichtig.
+          Es handelt sich also um ein Paket, dessen SYN-Bit im Paketkopf
+          gesetzt ist (siehe TCP-Header). Die Start-Sequenznummer ist eine
+          beliebige Zahl, deren Generierung von der jeweiligen
+          TCP-Implementierung abhängig ist. Sie sollte jedoch möglichst
+          zufällig sein, um Sicherheitsrisiken zu vermeiden. Die Gegenstelle
+          (siehe <a class="xref" href="netzwerkprotokolle.html#tcp-header" title="Aufbau des TCP-Headers">„Aufbau des TCP-Headers“</a>) empfängt das Paket und sendet
+          in einem eigenen SYN-Paket im Gegenzug ihre Start-Sequenznummer y
+          (die ebenfalls beliebig und unabhängig von der Start-Sequenznummer
+          der Gegenstelle ist). Zugleich bestätigt sie den Erhalt des ersten
+          SYN-Pakets, indem sie die Sequenznummer x um eins erhöht und im
+          ACK-Teil (von engl. <span class="emphasis"><em>acknowledgment</em></span> =
+          Bestätigung) des Headers zurückschickt. Der Client bestätigt zuletzt
+          den Erhalt des SYN/ACK-Pakets durch das Senden eines eigenen
+          ACK-Pakets mit der Sequenznummer y+1. Dieser Vorgang wird auch als
+          <span class="emphasis"><em>Forward Acknowledgement </em></span>bezeichnet. Außerdem
+          sendet der Client den Wert x+1 aus Sicherheitsgründen ebenso zurück.
+          Dieses ACK-Segment erhält der Server, das ACK-Segment ist durch das
+          gesetzte ACK-Flag gekennzeichnet. Die Verbindung ist damit
+          aufgebaut.</div></div><div class="section" title="Verbindungsabbau" id="tcp-verbindungsabbau"><div class="titlepage"><div><div><h5 class="title" id="tcp-verbindungsabbau">Verbindungsabbau</h5></div></div></div><div class="para">Der geregelte Verbindungsabbau erfolgt ähnlich. Statt des
+          SYN-Bits kommt das FIN-Bit (von engl. <span class="emphasis"><em>finish</em></span> =
+          Ende, Abschluss) zum Einsatz, das anzeigt, dass keine Daten mehr vom
+          Sender kommen. Der Erhalt des Pakets wird wiederum mittels ACK
+          bestätigt. Der Empfänger des FIN-Pakets sendet zuletzt seinerseits
+          ein FIN-Paket, das ihm ebenfalls bestätigt wird. Obwohl eigentlich
+          vier Wege genutzt werden, handelt es sich beim Verbindungsabbau auch
+          um einen Drei-Wege-Handshake, da die ACK- und FIN-Operationen vom
+          Server zum Client als ein Weg gewertet werden. Zudem ist ein
+          verkürztes Verfahren möglich, bei dem FIN und ACK genau wie beim
+          Verbindungsaufbau im selben Paket untergebracht werden. Die
+          <span class="emphasis"><em>Maximum Segment Lifetime </em></span>(MSL) ist die maximale
+          Zeit, die ein Segment im Netzwerk verbringen kann, bevor es
+          verworfen wird. Nach dem Senden des letzten ACKs wechselt der Client
+          in einen zwei MSL andauernden Wartezustand (Waitstate), in dem alle
+          verspäteten Segmente verworfen werden. Dadurch wird sichergestellt,
+          dass keine verspäteten Segmente als Teil einer neuen Verbindung
+          fehlinterpretiert werden. Außerdem wird eine korrekte
+          Verbindungsterminierung sichergestellt. Geht ACK y+1 verloren, läuft
+          beim Server der Timer ab, und das LAST_ACK-Segment wird erneut
+          übertragen.</div></div></div><div class="section" title="Aufbau des TCP-Headers" id="tcp-header"><div class="titlepage"><div><div><h4 class="title" id="tcp-header">Aufbau des TCP-Headers</h4></div></div></div><div class="para">Das TCP-Segment besteht immer aus zwei Teilen: dem
+        <span class="emphasis"><em>Header</em></span> und der <span class="emphasis"><em>Nutzlast
+        (Payload)</em></span>. Die Nutzlast enthält die zu übertragenden Daten,
+        die wiederum Protokollinformationen der Anwendungsschicht wie HTTP
+        oder FTP entsprechen können. Der Header enthält für die Kommunikation
+        erforderliche Daten sowie Informationen, die das Dateiformat
+        beschreiben. Die Werte werden in <span class="emphasis"><em>Network Byte Order
+        </em></span>(Big Endian) angegeben.</div><div class="mediaobject"><img src="bilder/tcp_header.html.jpg" width="650" alt="image" /><div class="caption"><div class="para">Aufbau des TCP-Headers<sup>[<a id="idp6672288" href="#ftn.idp6672288" class="footnote">34</a>]</sup></div></div></div></div><div class="section" title="Datenübertragung" id="tcp-datenuebertragung"><div class="titlepage"><div><div><h4 class="title" id="tcp-datenuebertragung">Datenübertragung</h4></div></div></div><div class="section" title="TCP- bzw. IP-Paket-Größe" id="tcp-ip-paket-groesse"><div class="titlepage"><div><div><h5 class="title" id="tcp-ip-paket-groesse">TCP- bzw. IP-Paket-Größe</h5></div></div></div><div class="para">Ein TCP-Segment hat typischerweise eine Größe von 1500 Bytes.
+          Es darf nur so groß sein, dass es in die darunterliegende
+          Übertragungsschicht passt, also in das Internetprotokoll IP. Das
+          IP-Paket ist theoretisch bis 65.535 Bytes (64 Kilobyte)
+          spezifiziert, wird aber selbst meist über Ethernet übertragen, und
+          dort ist die Rahmengröße auf 1500 Bytes festgelegt. TCP und IP
+          definieren jeweils einen Header von 20 Bytes Größe. Für die
+          Nutzdaten bleiben in einem TCP/IP-Paket also 1460 Bytes übrig. Da
+          die meisten Internet-Anschlüsse DSL verwenden, gibt es dort noch das
+          Point-to-Point Protocol (PPP) zwischen IP und Ethernet, was noch
+          einmal 8 Bytes für den PPP-Rahmen kostet. Dem TCP/IP-Paket
+          verbleiben im Ethernet-Rahmen nur 1492 Bytes MTU (Maximum
+          Transmission Unit), die Nutzdaten reduzieren sich auf insgesamt 1452
+          Bytes MSS (Maximum Segment Size). Dies entspricht einer Auslastung
+          von 96,8 %.</div></div><div class="section" title="Aufteilen der Anwendungsdaten auf TCP- bzw. IP-Pakete" id="tcp-aufteilen-der-daten"><div class="titlepage"><div><div><h5 class="title" id="tcp-aufteilen-der-daten">Aufteilen der Anwendungsdaten auf TCP- bzw. IP-Pakete</h5></div></div></div><div class="para">Empfänger und Sender einigen sich vor dem Datenaustausch über
+          das Options-Feld auf die Größe der MSS. Die Anwendung, die Daten
+          versenden möchte, beispielsweise ein Webserver, legt zum Beispiel
+          einen 10 Kilobyte großen Datenblock im Puffer ab. Um so mit einem
+          1460 Byte großen Nutzdatenfeld 10 Kilobyte Daten zu versenden, teilt
+          man die Daten auf mehrere Pakete auf, fügt einen TCP-Header hinzu
+          und versendet die TCP-Segmente. Dieser Vorgang wird Segmentierung
+          genannt. Im Puffer ist der Datenblock, dieser wird in fünf Segmente
+          aufgeteilt. Jedes Segment erhält durch die TCP-Software einen
+          TCP-Header. Drei TCP-Segmente wurden aktuell abgeschickt. Diese sind
+          nicht notwendigerweise sortiert, da im Internet jedes TCP-Segment
+          einen anderen Weg nehmen und es dadurch zu Verzögerungen kommen
+          kann. Damit die TCP-Software im Empfänger die Segmente wieder
+          sortieren kann, ist jedes Segment nummeriert (die Segmente werden
+          sozusagen durchgezählt). Bei der Zuordnung der Segmente wird die
+          Sequenznummer herangezogen. Der Empfänger muss diejenigen
+          TCP-Segmente bestätigen, die einwandfrei (Prüfsumme ist in Ordnung)
+          angekommen sind.</div></div></div><div class="section" title="Datenintegrität und Zuverlässigkeit" id="tcp-datenintegritaet"><div class="titlepage"><div><div><h4 class="title" id="tcp-datenintegritaet">Datenintegrität und Zuverlässigkeit</h4></div></div></div><div class="para">Im Gegensatz zum verbindungslosen UDP implementiert TCP einen
+        bidirektionalen, byte-orientierten, zuverlässigen Datenstrom zwischen
+        zwei Endpunkten. Das darunterliegende Protokoll (IP) ist
+        paketorientiert, wobei Datenpakete verloren gehen können, in
+        verkehrter Reihenfolge ankommen dürfen und sogar doppelt empfangen
+        werden können. TCP wurde entwickelt, um mit der Unsicherheit der
+        darunterliegenden Schichten umzugehen. Es prüft daher die Integrität
+        der Daten mittels der Prüfsumme im Paketkopf und stellt die
+        Reihenfolge durch Sequenznummern sicher. Der Sender wiederholt das
+        Senden von Paketen, falls keine Bestätigung innerhalb einer bestimmten
+        Zeitspanne (Timeout) eintrifft. Die Daten der Pakete werden beim
+        Empfänger in einem Puffer in der richtigen Reihenfolge zu einem
+        Datenstrom zusammengefügt, und doppelte Pakete werden verworfen. Der
+        Datentransfer kann selbstverständlich jederzeit nach dem Aufbau einer
+        Verbindung gestört, verzögert oder ganz unterbrochen werden. Das
+        Übertragungssystem läuft dann in einen Timeout. Der vorab getätigte
+        Verbindungsaufbau stellt also keinerlei Gewähr für eine nachfolgende,
+        dauerhaft gesicherte Übertragung dar.</div></div></div><div class="section" title="User Datagram Protocol (UDP)" id="udp"><div class="titlepage"><div><div><h3 class="title" id="udp">User Datagram Protocol (UDP)</h3></div></div></div><div class="para">Das User Datagram Protocol (UDP) ist ein minimales,
+      verbindungsloses Netzprotokoll, das zur Transportschicht der
+      Internetprotokoll-Familie gehört. Die Aufgabe von UDP ist es, Daten, die
+      über das Internet übertragen werden, der richtigen Anwendung zukommen zu
+      lassen. Die Entwicklung von UDP begann 1977, als man für die Übertragung
+      von Sprache ein einfacheres Protokoll benötigte als das bisherige
+      verbindungsorientierte TCP. Es wurde ein Protokoll benötigt, das nur für
+      die Adressierung zuständig war, ohne die Datenübertragung zu sichern, da
+      dies zu Verzögerungen bei der Sprachübertragung führen würde.</div><div class="section" title="Funktionsweise" id="udp-funktionsweise"><div class="titlepage"><div><div><h4 class="title" id="udp-funktionsweise">Funktionsweise</h4></div></div></div><div class="para">Um die Daten, die mit UDP versendet werden, dem richtigen
+        Programm auf dem Zielrechner zukommen zu lassen, werden bei UDP
+        sogenannte Ports verwendet. Dazu wird bei UDP die Portnummer des
+        Dienstes mitgesendet, der die Daten erhalten soll. Diese Erweiterung
+        der Host-zu-Host- auf eine Prozess-zu-Prozess-Übertragung wird als
+        <span class="emphasis"><em>Anwendungsmultiplexen</em></span> und
+        -<span class="emphasis"><em>demultiplexen</em></span> bezeichnet.</div></div><div class="section" title="Eigenschaften" id="udp-eigenschaften"><div class="titlepage"><div><div><h4 class="title" id="udp-eigenschaften">Eigenschaften</h4></div></div></div><div class="para">UDP stellt einen verbindungslosen, potenziell unzuverlässigen
+        Übertragungsdienst bereit. Das bedeutet, dass es keine Garantie gibt,
+        dass ein einmal gesendetes Paket auch ankommt oder dass Pakete in der
+        gleichen Reihenfolge ankommen, in der sie gesendet wurden. Eine
+        Anwendung, die UDP nutzt, muss daher gegenüber verloren gegangenen und
+        umsortierten Paketen unempfindlich sein oder selbst entsprechende
+        Korrekturmaßnahmen beinhalten. Da vor Übertragungsbeginn nicht erst
+        eine Verbindung aufgebaut werden muss, können die Hosts schneller mit
+        dem Datenaustausch beginnen. Dies fällt vor allem bei Anwendungen ins
+        Gewicht, bei denen nur kleine Datenmengen ausgetauscht werden müssen.
+        Einfache Frage-Antwort-Protokolle wie das <span class="emphasis"><em>Domain Name
+        System</em></span> (DNS) verwenden UDP, um die Netzwerkbelastung gering
+        zu halten und damit den Datendurchsatz zu erhöhen. Ein
+        Drei-Wege-Handshake wie bei TCP für den Aufbau der Verbindung würde
+        unnötigen Overhead erzeugen. Daneben bietet die ungesicherte
+        Übertragung auch den Vorteil von geringen
+        Übertragungsverzögerungsschwankungen: Geht bei einer TCP-Verbindung
+        ein Paket verloren, so wird es automatisch erneut angefordert. Dies
+        braucht Zeit, die Übertragungsdauer kann daher schwanken, was für
+        Multimedia-Anwendungen schlecht ist. Bei VoIP z. B. würde es zu
+        plötzlichen Aussetzern kommen bzw. die Wiedergabepuffer müssten größer
+        angelegt werden. Bei verbindungslosen Kommunikationsdiensten bringen
+        verloren gegangene Pakete dagegen nicht die gesamte Übertragung ins
+        Stocken, sondern vermindern lediglich die Qualität. UDP übernimmt die
+        Eigenschaften der darunterliegenden Netzwerkschicht. Im Falle des
+        Internetprotokolls IP können Datenpakete maximal 65.535 Bytes lang
+        sein, wovon der IP-Header und UDP-Header insgesamt mindestens 28 Bytes
+        belegen. UDP-Datagramme haben daher maximal 65.507 Nutzdatenbytes.
+        Solche Pakete werden jedoch von IP fragmentiert übertragen, sodass UDP
+        nur bei Datenpaketgrößen bis zu einigen Kilobytes sinnvoll ist. IP
+        löscht Pakete etwa bei Übertragungsfehlern oder bei Überlast.
+        Datagramme können daher fehlen. Das UDP-Protokoll bietet hierfür keine
+        Erkennungs- oder Korrekturmechanismen wie etwa TCP. Im Falle von
+        mehreren möglichen Routen zum Ziel kann IP bei Bedarf neue Wege
+        wählen. Hierdurch ist es in seltenen Fällen sogar möglich, dass später
+        gesendete Daten früher gesendete überholen.</div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp19455280" href="#idp19455280" class="para">33</a>] </sup>Siehe <a href="http://de.wikipedia.org/wiki/Transmission_Control_Protocol">http://de.wikipedia.org/wiki/Transmission_Control_Protocol</a>
+        und <a href="http://de.wikipedia.org/wiki/User_Datagram_Protocol">http://de.wikipedia.org/wiki/User_Datagram_Protocol</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp6672288" href="#idp6672288" class="para">34</a>] </sup><a href="http://de.wikipedia.org/wiki/Transmission_Control_Protocol">http://de.wikipedia.org/wiki/Transmission_Control_Protocol</a></p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="protokolle-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Netzwerkprotokolle</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="netzwerkprotokolle.html#tcp" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Transmission Control Protocol (TCP)</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="netzwerkprotokolle.html#udp" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">User Datagram Protocol (UDP)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="definition-channel.html" title="pfc level3 breadcrumb-link section sectlevel1">Channels</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="peers-users-friends.html" title="pfc level3 breadcrumb-link section sectlevel1">Peers, Users und Friends</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="iax-vs-sip.html" title="pfc level3 breadcrumb-link section sectlevel1">IAX versus SIP</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="sip.html" title="pfc level3 breadcrumb-link section sectlevel1">SIP</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="iax.html" title="pfc level3 breadcrumb-link section sectlevel1">IAX</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="protokolle-einleitung.html"><strong>Zurück</strong>8.1. Einleitung</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="definition-channel.html"><strong>Weiter</strong>8.3. Channels</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

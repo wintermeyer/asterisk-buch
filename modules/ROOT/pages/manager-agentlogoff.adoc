@@ -1,0 +1,20 @@
+[[manager-agentlogoff]]
+= `AgentLogoff`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: AgentLogoff
+Synopsis: Sets an agent as no longer logged in
+Privilege: agent,all
+Description: Sets an agent as no longer logged in.
+Variables: (Names marked with * are required)
+*Agent: Agent ID of the agent to log off
+Soft: Set to 'true' to not hangup existing calls
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

@@ -1,0 +1,120 @@
+[[applications-macro]]
+= `Macro()`
+
+Ruft ein zuvor definiertes Makro auf.
+
+[source]
+----
+Macro(macroname[,Arg1[,Arg2[,...]]])
+----
+
+Führt ein im Context
++macro-_`macroname`_+ definiertes Makro
+aus, indem es zur `s`-Extension dieses Contextes springt und nach
+der Ausführung des Makros zurückkehrt.
+
+Die angerufene Extension, Context und Priorität sind innerhalb des
+Makros in`${MACRO_EXTEN}`, `${MACRO_CONTEXT}` und
+`${MACRO_PRIORITY}` verfügbar. Die Parameter `Arg1`,
+`Arg2` ... werden im Makro-Context zu `${ARG1}`,
+`${ARG2}` usw.
+
+`Macro()` liefert -1 zurück, falls irgendein Schritt des
+Makros -1 zurückliefert, sonst 0. Falls bei Beendigung des Ablaufs
+`${MACRO_OFFSET}` gesetzt ist, versucht die Anwendung, bei
+Priorität n+1+`MACRO_OFFSET` fortzufahren, falls ein solcher
+Schritt existiert, sonst bei n+1.
+
+Falls die `Goto()`-Anwendung aus dem Makro heraus
+aufgerufen wird, wird das Makro enden und die Kontrolle an das Ziel von
+`Goto()` gehen.
+
+[source]
+----
+; ein Makro definieren, das vom übergebenen Wert herunterzählt:
+[macro-countdown]
+exten => s,1,Set(COUNT=${ARG1})
+exten => s,n,While($[ ${COUNT} > 0])
+exten => s,n,SayNumber(${COUNT})
+exten => s,n,Set(COUNT=$[ ${COUNT} - 1 ])
+exten => s,n,EndWhile()
+
+[default]
+exten => 123,1,Macro(countdown,3)   ; das Makro "countdown" mit ARG1=3 aufrufen
+exten => 124,1,Macro(countdown,5)   ; das Makro "countdown" mit ARG1=5 aufrufen
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Macro' =-
+
+[Synopsis]
+Macro Implementation
+
+[Description]
+Macro(macroname|arg1|arg2...): Executes a macro using the context
+'macro-<macroname>', jumping to the 's' extension of that context and
+executing each step, then returning when the steps end.
+The calling extension, context, and priority are stored in ${MACRO_EXTEN},
+${MACRO_CONTEXT} and ${MACRO_PRIORITY} respectively. Arguments become
+${ARG1}, ${ARG2}, etc in the macro context.
+If you Goto out of the Macro context, the Macro will terminate and control
+will be returned at the location of the Goto.
+If ${MACRO_OFFSET} is set at termination, Macro will attempt to continue
+at priority MACRO_OFFSET + N + 1 if such a step exists, and N + 1 otherwise.
+Extensions: While a macro is being executed, it becomes the current context.
+This means that if a hangup occurs, for instance, that the macro
+will be searched for an 'h' extension, NOT the context from which
+the macro was called. So, make sure to define all appropriate
+extensions in your macro! (you can use 'catch' in AEL)
+WARNING: Because of the way Macro is implemented (it executes the priorities
+contained within it via sub-engine), and a fixed per-thread
+memory stack allowance, macros are limited to 7 levels
+of nesting (macro calling macro calling macro, etc.); It
+may be possible that stack-intensive applications in deeply nested macros
+could cause asterisk to crash earlier than this limit.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -23,5 +23,5 @@
+contained within it via sub-engine), and a fixed per-thread
+memory stack allowance, macros are limited to 7 levels
+of nesting (macro calling macro calling macro, etc.); It
+- may be possible that stack-intensive applications in deeply nested
+- macros could cause asterisk to crash earlier than this limit.
++ may be possible that stack-intensive applications in deeply nested macros
++ could cause asterisk to crash earlier than this limit.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Macro Implementation
+
+[Description]
+- Macro(macroname|arg1|arg2...): Executes a macro using the context
++ Macro(macroname,arg1,arg2...): Executes a macro using the context
+'macro-<macroname>', jumping to the 's' extension of that context and
+executing each step, then returning when the steps end.
+The calling extension, context, and priority are stored in ${MACRO_EXTEN},
+@@ -18,10 +18,12 @@
+This means that if a hangup occurs, for instance, that the macro
+will be searched for an 'h' extension, NOT the context from which
+the macro was called. So, make sure to define all appropriate
+- extensions in your macro! (you can use 'catch' in AEL)
++ extensions in your macro! (Note: AEL does not use macros)
+WARNING: Because of the way Macro is implemented (it executes the priorities
+contained within it via sub-engine), and a fixed per-thread
+memory stack allowance, macros are limited to 7 levels
+of nesting (macro calling macro calling macro, etc.); It
+may be possible that stack-intensive applications in deeply nested macros
+- could cause asterisk to crash earlier than this limit.
++ could cause asterisk to crash earlier than this limit. It is advised that
++ if you need to deeply nest macro calls, that you use the Gosub application
++ (now allows arguments like a Macro) with explict Return() calls instead.
+
+.Siehe auch
+xref:applications-goto.adoc[Abschnitt C.65, „`Goto()`“], xref:applications-gosub.adoc[Abschnitt C.63, „`Gosub()`“], xref:extensions.ael.adoc#ael-macros[„Makros (_macros_)“]

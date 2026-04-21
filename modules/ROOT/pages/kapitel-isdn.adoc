@@ -1,0 +1,12 @@
+[[kapitel-isdn]]
+= ISDN
+
+In diesem Kapitel:
+
+* xref:isdn-einleitung.adoc[Einleitung]
+** xref:isdn-einleitung.adoc#minimalgrundlagen-isdn[Minimalgrundlagen von ISDN]
+* xref:welche-isdn-karte.adoc[Welche ISDN-Karte soll ich nehmen?]
+** xref:welche-isdn-karte.adoc#isdn-empfehlung-privat[Empfehlung für den Privathaushalt]
+** xref:welche-isdn-karte.adoc#isdn-empfehlung-geschaeft[Empfehlung für den geschäftlichen Einsatz]
+** xref:welche-isdn-karte.adoc#isdn-hersteller-und-treiber[Hersteller und Treiber]
+** xref:welche-isdn-karte.adoc#isdn-installationsanleitungen[Installationsanleitungen für ISDN-Karten]

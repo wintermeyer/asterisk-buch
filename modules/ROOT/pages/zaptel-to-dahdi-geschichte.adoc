@@ -1,0 +1,18 @@
+[[zaptel-to-dahdi-geschichte]]
+= Geschichte
+
+Der von Digium benutzte Name Zaptel™ ist ein
+Trademark der Firma _Zapata Telephony_
+(_ZapTel_). Das hat weder bei Digium noch bei Zapata
+Telephony lange Zeit keinen gestört. Wohl erst, als Asterisk und damit
+Digium immer populärer wurde, hatte Zapata Telephony Digium darauf
+aufmerksam gemacht, dass sie ein Trademark (also ein Markenzeichen) auf
+diesen Begriff eingetragen hatten (das war ca. 2006). Mitte 2008 hat
+Digium dann offiziell Zaptel in Dahdi umbenannt. Siehe dazu den
+Blogeintrag von http://blogs.digium.com/2008/05/19/zaptel-project-being-renamed-to-dahdi/.
+
+[cols="3*"]
+|===
+| | *Zaptel project being renamed to DAHDI*Approximately two years ago, the owner of the trademark "ZapTel" (for telephony purposes) contacted Digium and notified us that the name was in fact trademarked. His company owns the ZapTel trademark and sells telephone calling cards, and would prefer that Internet searches for "Zaptel cards" not return products unrelated to their trademark.In an effort to rectify this situation, since that time we have had many discussions internally at Digium about what we should do, including ensuring that any new name we chose would be something that was available to be trademarked (as Asterisk is), so that we wouldn?t have a recurrence of this situation. The owner of the trademark has been very accommodating as we worked through this process, but it is now time for us to take action.Beginning immediately, we are going to work on renaming Zaptel to DAHDI, which stands for Digium Asterisk Hardware Device Interface. When DAHDI 2.0.0 (the first version) is released, it will contain nearly all the functionality of Zaptel 1.4, except for Linux kernel 2.4 support, devfs support, and drivers for some very outdated (and no longer available) Digium hardware (torisa and wcusb). Zaptel 1.2 will continue to be released in new versions as bugs are found and fixed, but when DAHDI 2.0.0 is released there will be no more releases of Zaptel 1.4.Asterisk 1.6.0 will use DAHDI exclusively (it will not have support for Zaptel), although this will be done in a highly backwards-compatible way so that disruption to existing dialplans and configurations will be minimized.Asterisk 1.4 will continue to have support for Zaptel, although it will be enhanced to also transparently support DAHDI instead, and the documentation (and default configuration files) will encourage new users to use DAHDI instead of Zaptel.Asterisk 1.2 will be unaffected by these changes.It is unfortunate that all of us have to bear the inconvenience of this change, but we will try to ensure that it is as easy for users to switch from Zaptel to DAHDI as we can make it.For continuing updates on this process, including additional upgrade notes and other information, please monitor the page at:http://www.asterisk.org/zaptel-to-dahdi |
+| | --kpfleming, May 19th, 2008 |
+|===

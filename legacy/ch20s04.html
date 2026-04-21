@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>20.4. Beispiele in verschiedenen Programmiersprachen</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-agi.html" title="Kapitel 20. Asterisk Gateway Interface (AGI)" /><link rel="prev" href="agi-aufruf-im-dialplan.html" title="20.3. Aufruf eines AGI-Skripts im Dialplan" /><link rel="next" href="faxserver.html" title="Kapitel 21. Fax-Server" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="20.4. Beispiele in verschiedenen Programmiersprachen"><div class="titlepage"><div><div><h2 class="title" id="idp9205120">20.4. Beispiele in verschiedenen Programmiersprachen</h2></div></div></div><div class="para">Im Folgenden werden AGI-Programme in einigen exemplarischen
+    Programmiersprachen erklärt.</div><div class="section" title="Perl" id="agi-perl"><div class="titlepage"><div><div><h3 class="title" id="agi-perl">Perl</h3></div></div></div><div class="para">In der Standard-Asterisk-Installation ist ein Test-AGI-Skript mit
+      dem Namen <code class="filename">agi-test.agi</code> <sup>[<a id="idp9208368" href="#ftn.idp9208368" class="footnote">110</a>]</sup>im Verzeichnis
+      <code class="filename">/var/lib/asterisk/agi-bin/</code> abgespeichert. Anhand
+      dieses Perl-Programms werden wir die grundsätzliche Arbeit mit
+      AGI-Skripten beschreiben.</div><div class="para">Das Skript wird dabei in der <code class="filename">extensions.conf</code>
+      wie folgt aufgerufen:<pre class="programlisting">exten =&gt; 1234,1,Answer()
+exten =&gt; 1234,2,AGI(agi-test.agi)
+exten =&gt; 1234,3,Hangup()</pre></div><div class="section" title="Schritt-für-Schritt-Analyse des agi-test.agi-Skripts" id="agi-perl-agi-test.agi"><div class="titlepage"><div><div><h4 class="title" id="agi-perl-agi-test.agi">Schritt-für-Schritt-Analyse des agi-test.agi-Skripts</h4></div></div></div><div class="para">Wir besprechen das Beispiel-Skript zeilen- oder
+        abschnittsweise.<pre class="programlisting">#!/usr/bin/perl
+use strict;</pre>Die ersten zwei Zeilen sagen dem ausführenden
+        Betriebssystem, dass es sich um ein Perl-Programm handelt, das mit dem
+        Interpreter <code class="filename">/usr/bin/perl</code> ausgeführt werden soll.
+        <code class="code">use strict</code> bewirkt eine konsequentere Behandlung von
+        Fehlern innerhalb des Perl-Programms.<pre class="programlisting">$|=1;</pre>Diese
+        kleine Zeile bringt Perl dazu, die Ausgabe von Text nicht zu puffern.
+        So können wir sicher sein, dass alle Ausgaben auch unmittelbar an
+        Asterisk übergeben und nicht erst in einem Buffer zwischengespeichert
+        werden.<pre class="programlisting"># Setup some variables
+my %AGI; my $tests = 0; my $fail = 0; my $pass = 0;</pre>Hier
+        werden verschiedene Variablen definiert. Das Hash <code class="code">%AGI</code>
+        nimmt die initialen Eingaben von Asterisk auf. Die restlichen
+        Variablen zählen die Gesamtanzahl der Tests, die Anzahl der
+        fehlgeschlagenen Tests und die Anzahl der funktionierenden
+        Tests.<pre class="programlisting">while(&lt;STDIN&gt;) {
+  chomp;
+  last unless length($_);
+  if (/^agi_(\w+)\:\s+(.*)$/) {
+    $AGI{$1} = $2;
+  }
+}</pre>Die eben eingelesenen Werte werden zum Debuggen auf STDERR,
+        also im Endeffekt auf dem CLI ausgegeben:<pre class="programlisting">print STDERR "AGI Environment Dump:\n";
+foreach my $i (sort keys %AGI) {
+        print STDERR " -- $i = $AGI{$i}\n";
+}
+</pre>Danach geht es mit <code class="code">checkresult</code>
+        weiter:<pre class="programlisting">sub checkresult {
+  my ($res) = @_;
+  my $retval;
+  $tests++;
+  chomp $res;
+  if ($res =~ /^200/) {
+    $res =~ /result=(-?\d+)/;
+    if (!length($1)) {
+      print STDERR "FAIL ($res)\n";
+      $fail++;
+    } else {
+      print STDERR "PASS ($1)\n";
+      $pass++;
+    }
+  } else {
+    print STDERR "FAIL (unexpected result '$res')\n";
+    $fail++;
+  }
+}</pre>Die Subroutine <code class="code">checkresult</code> liest das Ergebnis
+        eines Befehls an Asterisk aus und bestimmt, ob der Test erfolgreich
+        war oder nicht. Entsprechend werden die Variablen <code class="code">$fail</code>
+        und <code class="code">$pass</code> hochgezählt. Nachdem die Grundlagen gelegt
+        sind, können die einzelnen Tests beginnen: Die Datei
+        <code class="filename">beep.gsm</code> wird abgespielt.<pre class="programlisting">print STDERR "1.  Testing 'sendfile'...";
+print "STREAM FILE beep \"\"\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Der Text "hello world" wird an den
+        Anrufer geschickt. Das funktioniert natürlich nur, wenn das Protokoll
+        und das Endgerät diese Funktion unterstützen.<pre class="programlisting">print STDERR "2.  Testing 'sendtext'...";
+print "SEND TEXT \"hello world\"\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Das Bild "asterisk-image" wird an
+        den Anrufer geschickt. Auch diese Funktion ist vom Protokoll und dem
+        Endgerät abhängig.<pre class="programlisting">print STDERR "3.  Testing 'sendimage'...";
+print "SEND IMAGE asterisk-image\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Die Zahl 192837465 wird dem Anrufer
+        vorgelesen:<pre class="programlisting">print STDERR "4.  Testing 'saynumber'...";
+print "SAY NUMBER 192837465 \"\"\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Dieser Befehl wartet 1000
+        Millisekunden auf die Eingabe von DTMF-Tönen durch den
+        Anrufer:<pre class="programlisting">print STDERR "5.  Testing 'waitdtmf'...";
+print "WAIT FOR DIGIT 1000\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Ein 3000 Millisekunden langes
+        GSM-Soundfile mit dem Namen <code class="filename">testagi.gsm</code> wird
+        aufgenommen. Die Aufnahme kann durch die Eingabe der Zahlen 1, 2, 3
+        oder 4 unterbrochen werden.<pre class="programlisting">print STDERR "6.  Testing 'record'...";
+print "RECORD FILE testagi gsm 1234 3000\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Das soeben aufgenommene Soundfile
+        wird abgespielt:<pre class="programlisting">print STDERR "6a.  Testing 'record' playback...";
+print "STREAM FILE testagi \"\"\n";
+my $result = &lt;STDIN&gt;;
+&amp;checkresult($result);</pre>Nun erfolgt die Ausgabe auf dem
+        CLI, wie viele Tests funktioniert oder nicht funktioniert
+        haben:<pre class="programlisting">print STDERR "================== Complete ======================\n";
+print STDERR "$tests tests completed, $pass passed, $fail failed\n";
+print STDERR "==================================================\n";</pre><div class="warning"><h2>Warnung</h2><div class="para">Bei vielen AGI-Befehlen sehen Sie den folgenden
+            Aufbau:<pre class="programlisting">fwrite(STDOUT,"BEFEHL $value \"\"\n");
+#                            ^^^^^^^</pre>Der in dieser Zeile
+            unterschlängelte Teil (zwischen <code class="code">$value</code> und
+            <code class="code">);</code>) ist zwingend erforderlich, damit der Befehl
+            korrekt ausgeführt wird. Es handelt sich hierbei um ein Argument
+            ohne Inhalt, das durch zwei gequotete Anführungszeichen
+            dargestellt wird. Abgeschlossen wird der gesamte Befehl durch ein
+            <span class="quote">„<span class="quote">line feed</span>“</span> (ein Zeilenende-Zeichen), in diesem Fall
+            ein <code class="code">\n</code>.</div></div></div></div></div><div class="section" title="PHP" id="agi-php"><div class="titlepage"><div><div><h3 class="title" id="agi-php">PHP</h3></div></div></div><div class="para">PHP ist zu einer der populärsten Programmiersprachen für
+      Webapplikationen geworden.<sup>[<a id="idp5686240" href="#ftn.idp5686240" class="footnote">111</a>]</sup> Da man aber aktuelle PHP-Versionen auch für den Aufruf von
+      Programmen auf der Kommandozeile benutzen kann, ist PHP eine für
+      AGI-Skripte gut geeignete Sprache. Als Beispiel benutzen wir ein kleines
+      PHP-Programm (<code class="filename">lotto.php</code>), das 6 zufällige Zahlen
+      von 1 bis 49 auswählt und dem Anrufer vorspricht. Die Beschreibung der
+      einzelnen Schritte erfolgt im Quellcode.<pre class="programlisting">#!/usr/bin/php -q
+&lt;?php
+
+# Sicherheitseinstellung. Das Skript läuft nicht 
+# laenger als 8 Sekunden.
+#################################################
+set_time_limit(8);
+
+
+# Output Buffer wird deaktiviert
+# Alternativ könnten wir nach jeder Ausgabe
+# fflush(STDOUT); aufrufen.
+#################################################
+ob_implicit_flush();
+
+
+# PHP Error Reporting wird deaktiviert
+#################################################
+error_reporting(0);
+
+
+# Für die Kommunikation mit Asterisk benötigen 
+# wir STDIN und STDOUT Filehandles
+#################################################
+if (!defined('STDIN'))
+  define('STDIN' , fopen('php://stdin' , 'r'));
+if (!defined('STDOUT'))
+  define('STDOUT', fopen('php://stdout', 'w'));
+if (!defined('STDERR'))
+  define('STDERR', fopen('php://stderr', 'w'));
+
+
+# Die von Asterisk übergebenen Variablen und 
+# Werte werden ausgelesen und im Array $agi 
+# gespeichert.
+#################################################
+
+$agi = array();
+
+while (!feof(STDIN))
+{
+  $tmp = trim(fgets(STDIN,4096));
+  if (($tmp == '') || ($tmp == "\n"))
+    break;
+  $var1 = split(':',$tmp);
+  $name = str_replace('agi_','',$var1[0]);
+  $agi[$name] = trim($var1[1]);
+}
+
+
+# Ein Array mit 6 zufälligen und nicht 
+# doppelten Zahlen von 1 bis 49 wird generiert.
+#################################################
+
+$Lottozahlen = array();
+do {
+  $Zahl = rand(1,49);
+  if (array_search($Zahl, $Lottozahlen) == FALSE) {
+    $Lottozahlen[] = $Zahl;
+  }
+} while (count($Lottozahlen) &lt; 6);
+
+
+# Vor der ersten Ansage wird eine Sekunde 
+# gewartet.
+#################################################
+fwrite(STDOUT,"EXEC Wait 1 \"\"\n");
+fflush(STDOUT);
+
+
+# Die Zahlen werden nacheinander vorgelesen. 
+# Zwischen den einzelnen Zahlen gibt es immer 
+# eine Pause von einer Sekunde.
+#################################################
+foreach ($Lottozahlen as $value) {
+  fwrite(STDOUT,"SAY NUMBER $value \"\"\n");
+  fflush(STDOUT);
+  fwrite(STDOUT,"EXEC Wait 1 \"\"\n");
+  fflush(STDOUT);
+}
+
+?&gt;</pre>Das Programm <code class="filename">lotto.php</code> muss im
+      Verzeichnis <code class="filename">/var/lib/asterisk/agi-bin/</code>
+      abgespeichert werden und wird in der
+      <code class="filename">extensions.conf</code> wie folgt aufgerufen:</div><pre class="programlisting">exten =&gt; 1234,1,Answer()
+exten =&gt; 1234,2,AGI(lotto.php)
+exten =&gt; 1234,3,Hangup()</pre><div class="section" title="phpAGI" id="agi-phpagi"><div class="titlepage"><div><div><h4 class="title" id="agi-phpagi">phpAGI</h4></div></div></div><div class="para">Wenn Sie PHP und AGI einsetzen, aber nicht das Rad neu erfinden
+        wollen, können Sie die fertige PHP-Klasse phpAGI benutzen.
+        Informationen und die dazugehörigen Dateien finden Sie auf der
+        Homepage des Projekts <a href="http://phpagi.sourceforge.net/"><em class="citetitle">http://phpagi.sourceforge.net/</em></a>.</div><div class="para">Das folgende mit phpAGI mitgelieferte Programm gibt schnell
+        einen Überblick über die Funktionsaufrufe<sup>[<a id="idp11275168" href="#ftn.idp11275168" class="footnote">112</a>]</sup><pre class="programlisting">&lt;?php
+/**
+* @package phpAGI_examples
+* @version 2.0
+*/
+
+function my_ip(&amp;$agi, $peer)
+   {
+    $ip = 'unknown';
+    $asm = $agi-&gt;new_AsteriskManager();
+    if($asm-&gt;connect())
+    {
+      $peer = $asm-&gt;command("sip show peer $peer");
+      $asm-&gt;disconnect();
+    
+      if(!strpos($peer['data'], ':'))
+        echo $peer['data'];
+      else
+      {
+        $data = array();
+        foreach(explode("\n", $peer['data']) as $line)
+        {
+          $a = strpos('z'.$line, ':') - 1;
+          if($a &gt;= 0) $data[trim(substr($line, 0, $a))] = trim(substr($line, $a + 1));
+        }
+      }
+    
+      if(isset($data['Addr-&gt;IP']))
+      {
+        $ip = explode(' ', trim($data['Addr-&gt;IP']));
+        $ip = $ip[0];
+      }
+    }
+    $agi-&gt;text2wav("Your IP address is $ip");
+  }
+?&gt;</pre></div></div></div><div class="section" title="Ruby und Adhearsion" id="adhearsion"><div class="titlepage"><div><div><h3 class="title" id="adhearsion">Ruby und Adhearsion</h3></div></div></div><div class="para">Obwohl <a href="http://www.ruby-lang.org">Ruby</a> eine für
+      EDV-Verhältnisse alte Programmiersprache ist, hat sie erst in den
+      letzten Jahren (hauptsächlich durch <a href="http://rubyonrails.org/">Ruby on Rails</a>) eine große
+      Popularität erlangt. <a href="http://adhearsion.com/">Adhearsion</a> ist für Ruby und
+      Asterisk dabei das Gleiche, was Ruby on Rails für Ruby und
+      Webapplikationen ist. Das Thema ist dabei so spannend, dass man darüber
+      ein eigenes Buch schreiben könnte. Auch hier werden wir im Laufe der
+      Zeit auf der <a href="http://das-asterisk-buch.de">Webseite zum
+      Buch</a> Updates nachreichen.</div><div class="section" title="Installation" id="adhearsion-installation"><div class="titlepage"><div><div><h4 class="title" id="adhearsion-installation">Installation</h4></div></div></div><div class="para">Wie es sich für ein gutes Open-Source-Projekt gehört, ist auch
+        die Dokumentation von Adhearsion reichlich verzweigt und oft
+        unvollständig. Glücklicherweise ist wenigstens die Installation
+        denkbar einfach, weil es zu Adhearsion ein fertiges
+        <span class="emphasis"><em>gem</em></span> gibt (für Ruby-Neulinge: gem ist ein
+        Paketmanagement-Mechanismus für Ruby). Entsprechend kann die
+        Installation mit <code class="command">gem install adhearsion</code> vollzogen
+        werden.</div></div><div class="section" title="Einfaches Setup" id="adhearsion-setup"><div class="titlepage"><div><div><h4 class="title" id="adhearsion-setup">Einfaches Setup</h4></div></div></div><div class="para">Mit der Benutzung von Adhearsion wird der Dialplan von Asterisk
+        recht übersichtlich und kurz. Man muss nur bei jedem eingehenden
+        Context die folgende Zeile einfügen:<pre class="programlisting">exten =&gt; _.,1,AGI(agi://127.0.0.1)
+</pre></div><div class="para">Damit übernimmt Adhearsion die Kontrolle über alle Gespräche,
+        die in diesem Context geführt werden. Natürlich kann man aber auch
+        einen traditionellen Dialplan mit Adhearsion mischen.</div><div class="para">Eine Adhearsion-Applikation muss ähnlich wie bei Ruby on Rails
+        erst generiert werden. Dies erfolgt mit dem Programm
+        <code class="filename"><span class="application"><strong>ahn</strong></span></code>, das mit
+        <code class="command">ahn create applikationsname</code> aufgerufen wird.
+        Beispiel:<pre class="screen">stefan@pbx:~$ <span class="bold bold"><strong><code class="command">ahn create apfelmus_app</code></strong></span>
+      create  
+      create  components/simon_game
+      create  components/disabled/stomp_gateway
+      create  components/ami_remote
+      create  components/restful_rpc/spec
+      create  config
+      create  .ahnrc
+      create  components/simon_game/simon_game.rb
+      create  components/ami_remote/ami_remote.rb
+      create  components/disabled/stomp_gateway/stomp_gateway.rb
+      create  components/disabled/stomp_gateway/config.yml
+      create  components/disabled/stomp_gateway/README.markdown
+      create  components/restful_rpc/restful_rpc.rb
+      create  components/restful_rpc/config.yml
+      create  components/restful_rpc/README.markdown
+      create  components/restful_rpc/example-client.rb
+      create  components/restful_rpc/spec/restful_rpc_spec.rb
+      create  config/startup.rb
+      create  dialplan.rb
+      create  events.rb
+      create  README
+      create  Rakefile
+stefan@pbx:~$ <span class="bold bold"><strong><code class="command">cd apfelmus_app</code></strong></span>
+stefan@pbx:~/apfelmus_app$ </pre></div><div class="para">Gestartet wird die Applikation dann mit <code class="command">ahn start
+        .</code><pre class="screen">stefan@pbx:~/apfelmus_app$ <span class="bold bold"><strong><code class="command">ahn start .</code></strong></span>
+ INFO ahn: Adhearsion initialized!</pre></div><div class="para">Ab diesem Zeitpunkt übernimmt Adhearsion die Kontrolle über
+        Anrufe. Sie können dabei auf dem Bildschirm mitverfolgen, was
+        passiert.</div></div><div class="section" title="Beispielprogramm" id="adhearsion-beispiel"><div class="titlepage"><div><div><h4 class="title" id="adhearsion-beispiel">Beispielprogramm</h4></div></div></div><div class="para">Der Adhearsion-Dialplan oder besser gesagt das Ruby-Programm
+        wird in der Datei <code class="filename">dialplan.rb</code> definiert. Hier ein
+        einfaches Beispiel:<pre class="programlisting">intern {
+  case extension
+  when 22
+    play "hello-world"
+    hangup
+  else
+    dial "SIP/#{extension}"
+  end
+}</pre></div><div class="para"><code class="code">intern</code> ist in diesem Beispiel der benutzte Context,
+        aus dem Adhearsion aufgerufen wurde.</div></div></div><div class="section" title="Andere Programmiersprachen" id="agi-andere-programmiersprachen"><div class="titlepage"><div><div><h3 class="title" id="agi-andere-programmiersprachen">Andere Programmiersprachen</h3></div></div></div><div class="para">Wie am Anfang dieses Kapitels schon erwähnt wurde, kann man
+      AGI-Programme in jeder beliebigen Programmiersprache schreiben. Fertige
+      Bibliotheken finden sich z. B. für:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">Java</div></li><li class="listitem"><div class="para">Perl</div></li><li class="listitem"><div class="para">PHP</div></li><li class="listitem"><div class="para">Python</div></li><li class="listitem"><div class="para">Ruby</div></li><li class="listitem"><div class="para">C</div></li></ul></div><div class="para">Am einfachsten ist eine Suche in der Suchmaschine Ihrer Wahl nach
+      den Schlüsselwörtern <span class="quote">„<span class="quote">AGI</span>“</span> und dem Namen der
+      Programmiersprache.</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp9208368" href="#idp9208368" class="para">110</a>] </sup>Die Dateiendung <code class="filename">agi</code> ist dabei nicht
+          zwingend notwendig. Man könnte die Datei auch
+          <code class="filename">agi-test.pl</code> nennen.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp5686240" href="#idp5686240" class="para">111</a>] </sup>Böse Zungen sprechen auch vom BASIC des 21. Jahrhunderts.
+          ;-)</p></div><div class="footnote"><p><sup>[<a id="ftn.idp11275168" href="#idp11275168" class="para">112</a>] </sup>Für die Benutzung von <code class="code">text2wav</code> muss ein
+            Text-to-Speech-System (z. B. <span class="emphasis"><em>Festival</em></span>)
+            installiert und konfiguriert sein.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="agi-datenstroeme.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Datenströme</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="agi-verzeichnisse.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Verzeichnisse und Rechte</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="agi-aufruf-im-dialplan.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Aufruf eines AGI-Skripts im Dialplan</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Beispiele in verschiedenen Programmiersprachen</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="ch20s04.html#agi-perl" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Perl</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="ch20s04.html#agi-php" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">PHP</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="ch20s04.html#adhearsion" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Ruby und Adhearsion</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="ch20s04.html#agi-andere-programmiersprachen" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Andere Programmiersprachen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="agi-aufruf-im-dialplan.html"><strong>Zurück</strong>20.3. Aufruf eines AGI-Skripts im Dialplan</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="faxserver.html"><strong>Weiter</strong>Kapitel 21. Fax-Server</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

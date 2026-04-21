@@ -1,0 +1,8 @@
+[[danksagungen]]
+= Danksagungen
+
+In diesem Kapitel:
+
+* xref:danksagung-einleitung.adoc[Einleitung]
+* xref:danksagungen-von-stefan-wintermeyer.adoc[Danksagungen von Stefan Wintermeyer]
+* xref:danksagungen-von-philipp-kempgen.adoc[Danksagungen von Philipp Kempgen]

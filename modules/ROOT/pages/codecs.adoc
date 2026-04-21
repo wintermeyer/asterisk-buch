@@ -1,0 +1,13 @@
+[[codecs]]
+= Codecs
+
+In diesem Kapitel:
+
+* xref:codecs-einleitung.adoc[Einleitung]
+* xref:codecs-beschreibung.adoc[Was macht ein Codec?]
+* xref:codecs-performance.adoc[Performance]
+* xref:codecs-konfiguration.adoc[Konfiguration des Codecs]
+** xref:codecs-konfiguration.adoc#codecs-allow-1[Beispiel mit einem festen Codec]
+** xref:codecs-konfiguration.adoc#codecs-allow-n[Beispiel mit mehreren Codecs zur Auswahl]
+* xref:die-wichtigsten-codecs.adoc[Die wichtigsten Codecs]
+* xref:codecs-trunking.adoc[Bandbreite und Trunking]

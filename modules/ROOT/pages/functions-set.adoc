@@ -1,0 +1,44 @@
+[[functions-set]]
+= `SET()`
+
+[source]
+----
+SET(Variablenname=Ausdruck)
+----
+
+Kann innerhalb von verschachtelten Ausdrücken verwendet werden, um
+Variablen auf einen Wert zu setzen. (Verwechseln Sie diese Funktion nicht
+mit der Applikation `Set()`!)
+
+[source]
+----
+; ${a}, ${b}, ${c}, und ${d} auf 8 setzen:
+exten => 123,1,Set(a=${SET(b=${SET(c=${SET(d=8)})})})
+
+; es ist aber meist vorteilhafter, zugunsten der Übersichtlichkeit
+; ein oder zwei Zeilen mehr zu schreiben
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SET' =-
+
+[Syntax]
+SET(<varname>=[<value>])
+
+[Synopsis]
+SET assigns a value to a channel variable
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-set.adoc[Abschnitt C.149, „`Set()`“]

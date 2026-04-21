@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.5. Installation einer BeroFix-Karte</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="BeroNet, BeroFix, Installation" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="Anhang B. Spezielle Installationsanleitungen für Asterisk mit ISDN- oder Analog-Karten" /><link rel="prev" href="digium-tdm400p-analog.html" title="B.4. Installation der Digium TDM400p Analog-Karte" /><link rel="next" href="applications.html" title="Anhang C. Applikationen im Dialplan" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="B.5. Installation einer BeroFix-Karte" id="beronet-berofix" lang="de"><div class="titlepage"><div><div><h2 class="title" id="beronet-berofix">B.5. Installation einer BeroFix-Karte</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Stefan</span> <span class="surname">Wintermeyer</span></h3></div></div></div></div><a id="idp21208224" class="indexterm"></a><a id="idp21209728" class="indexterm"></a><div class="warning"><h2>Warnung</h2><div class="para">Dieses Kapitel ist noch nicht fertiggestellt (<span class="emphasis"><em>work in
+    progress</em></span>). Bitte melden Sie eventuelle Fehler oder
+    Verbesserungswünsche an stefan.wintermeyer@amooma.de</div></div><div class="para">Die 2009 von <a href="http://www.beronet.com">beroNet</a>
+  vorgestellte BeroFix-ISDN-Karten-Serie geht einen anderen Weg als klassische
+  ISDN-Karten. Die beroFix agiert als eigenständiges Media-Gateway und wird
+  vom System aus nicht wie eine ISDN- sondern wie eine Netzwerk-Karte
+  angesprochen. Die Kommunikation mit Asterisk erfolgt dann normal per
+  SIP-Protokoll. Die Vorteile liegen auf der Hand: Man ist bei Asterisk- oder
+  Kernel-Updates nicht darauf angewiesen, dass man auch einen passenden
+  ISDN-Treiber bekommt.</div><div class="para">Diese Installationsanleitung dient zur Installation eines
+  Asterisk-Systems mit einer beroNet beroFix ISDN-Karte. Die Karte muss dafür
+  bereits in dem System eingebaut sein.</div><div class="note"><h2>Anmerkung</h2><div class="para">Die hier aufgeführte Installationsanleitung gilt für ein
+    Asterisk-System mit allen in diesem Buch beschriebenen Features (bei
+    Ausnahmen wird dies gesondert besprochen). Deshalb ist die Installation
+    etwas umfangreicher. Das hat aber auch den Vorteil, dass Sie in der
+    Zukunft nicht noch einmal etwas nachinstallieren müssen.</div></div><div class="para">Es wird ein frisch installiertes Debian GNU/Linux 4
+  (<span class="quote">„<span class="quote">Etch</span>“</span>) vorausgesetzt.</div><div class="sidebar"><h6></h6><div class="para">Ein ISO-Image für die Installation finden Sie auf <a href="http://www.debian.org/releases/etch/debian-installer/">http://www.debian.org/releases/etch/debian-installer/</a>.
+    Ich empfehle das etwa 140 MB große Netzinstallations-CD-Image. Eine Debian
+    GNU/Linux-Installationsanleitung befindet sich unter <a href="http://www.debian.org/releases/etch/i386/">http://www.debian.org/releases/etch/i386/</a>.
+    Ein allgemeines Anwenderhandbuch steht unter <a href="http://debiananwenderhandbuch.de/">http://debiananwenderhandbuch.de</a>.</div></div><div class="para"><span class="emphasis"><em>Bitte loggen Sie sich nach der Installation als Benutzer
+  <code class="literal">root</code> am System ein, und führen Sie alle hier angegebenen
+  Befehle mit diesem Benutzer aus.</em></span></div><div class="para">Als Erstes stellen Sie sicher, dass <code class="code">apt</code> alle aktuellen
+  Paketlisten zur Verfügung hat:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get update</code></strong></span>
+Hole:1 http://ftp.de.debian.org etch Release.gpg [378B]
+Hole:2 http://security.debian.org etch/updates Release.gpg [189B]
+OK   http://ftp.de.debian.org etch Release                      
+<em class="replaceable"><code>[...]</code></em>
+Es wurden 2B in 0s geholt (3B/s)   
+Paketlisten werden gelesen... Fertig
+debian:~# </pre></div><div class="para">Um sicherzugehen, dass alle Pakete auf dem neuesten Stand sind, führen
+  Sie noch ein Upgrade aus:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get -y upgrade</code></strong></span>
+Paketlisten werden gelesen... Fertig
+Abhängigkeitsbaum wird aufgebaut... Fertig
+0 aktualisiert, 0 neu installiert, 0 zu entfernen und 0 nicht aktualisiert.
+debian:~# </pre></div><div class="para">Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+  installiert wurde, müssen Sie jetzt das System rebooten:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">shutdown -r now</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+The system is going down for reboot NOW!</pre></div><div class="para">Loggen Sie sich nach dem Booten bitte wieder als <code class="code">root</code>
+  ein.</div><div class="para">Jetzt müssen Sie noch ein paar Pakete nachinstallieren, damit das
+  Kompilieren von Asterisk erfolgreich durchgeführt werden kann:</div><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">apt-get -y install build-essential \
+    libncurses5-dev libcurl3-dev libnewt-dev libusb-dev \
+    libvorbis-dev libspeex-dev unixodbc unixodbc-dev \
+    libiksemel-dev linux-headers-`uname -r` flex bc pciutils bridge-utils</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Die folgenden NEUEN Pakete werden installiert:
+  bc binutils build-essential ca-certificates 
+  comerr-dev cpp cpp-4.1 defoma dpkg-dev file flex 
+  fontconfig fontconfig-config g++ g++-4.1 gcc gcc-4.1 bridge-utils
+<em class="replaceable"><code>[...]</code></em>
+debian:~# </pre><div class="para">Als Nächstes wechseln Sie in das Verzeichnis
+  <code class="filename">/usr/src:</code><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src</code></strong></span>
+debian:/usr/src# </pre></div><div class="para">Auf der Asterisk-Homepage <a href="http://www.asterisk.org/">http://www.asterisk.org/</a> finden Sie
+  die notwendigen Quellen, um Asterisk mit allen sinnvollen Extras zu
+  installieren. Nehmen Sie bitte eine <span class="bold bold"><strong>stabile</strong></span>
+  und keine Entwickler-Version, und laden Sie diese in das Verzeichnis
+  <code class="filename">/usr/src/</code> herunter:</div><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.19.2.tar.gz</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+18:53:47 (227.00 KB/s) - »asterisk-1.4.19.2.tar.gz« gespeichert
+debian:/usr/src# </pre><div class="para">Die komprimierten Dateien werden jetzt entpackt:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xvzf asterisk-1.4.19.2.tar.gz</code></strong></span>
+asterisk-1.4.19.2/
+asterisk-1.4.19.2/build_tools/
+asterisk-1.4.19.2/build_tools/menuselect-deps.in
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src# </pre></div><div class="para">Als erstes gehen Sie in das Asterisk-Verzeichnis und kompilieren und
+  installieren Asterisk:<pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">cd /usr/src/asterisk-1.4.19.2</code></strong></span>
+debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">./configure &amp;&amp; make &amp;&amp; make install</code></strong></span>
+checking build system type... i686-pc-linux-gnu
+checking host system type... i686-pc-linux-gnu
+checking for gcc... gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+<em class="replaceable"><code>[...]</code></em>
+make[1]: Leaving directory `/usr/src/asterisk-1.4.19.2/main'
+ +---- Asterisk Installation Complete -------+
+ +                                           +
+ +    YOU MUST READ THE SECURITY DOCUMENT    +
+ +                                           +
+ + Asterisk has successfully been installed. +
+ + If you would like to install the sample   +
+ + configuration files (overwriting any      +
+ + existing config files), run:              +
+ +                                           +
+ +               make samples                +
+ +                                           +
+ +-----------------  or ---------------------+
+ +                                           +
+ + You can go ahead and install the asterisk +
+ + program documentation now or later run:   +
+ +                                           +
+ +              make progdocs                +
+ +                                           +
+ + **Note** This requires that you have      +
+ + doxygen installed on your local system    +
+ +-------------------------------------------+
+debian:/usr/src/asterisk-1.4.19.2# </pre></div><div class="para">Die eben kompilierten Programmdateien sind jetzt auf dem System
+  installiert. Allerdings finden Sie im Asterisk-Konfigurationsverzeichnis
+  <code class="filename">/etc/asterisk/</code> noch gähnende Leere vor. In diesem
+  Verzeichnis liegen die Konfigurationsdateien von Asterisk. Da Sie sicher
+  nicht bei null beginnen möchten, lassen Sie sich die Standarddateien
+  erstellen:</div><pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">make samples</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+debian:/usr/src/asterisk-1.4.19.2# </pre><div class="para">Damit Asterisk beim Booten des Rechners auch automatisch gestartet und
+  bei einem Shutdown auch ordentlich heruntergefahren wird, benötigen wir noch
+  entsprechende Init-Skripte. Diese können mit dem von den Entwicklern etwas
+  unglücklich benannten Befehl <code class="literal"><code class="command">make
+  config</code></code> erstellt werden:<pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+ Adding system startup for /etc/init.d/asterisk ...
+   /etc/rc2.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/K91asterisk -&gt; ../init.d/asterisk
+   /etc/rc2.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc3.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc4.d/S50asterisk -&gt; ../init.d/asterisk
+   /etc/rc5.d/S50asterisk -&gt; ../init.d/asterisk
+debian:/usr/src/asterisk-1.4.19.2# </pre></div><div class="para">Fertig! Asterisk ist auf Ihrem System installiert. Mit dem Befehl
+  <code class="command">asterisk -V</code> können Sie die installierte Version
+  herausfinden (bitte achten Sie auf das großgeschriebene V):<pre class="screen">debian:/usr/src/asterisk-1.4.19.2# <span class="bold bold"><strong><code class="command">asterisk -V</code></strong></span>
+Asterisk 1.4.19.2
+debian:/usr/src/asterisk-1.4.19.2# cd
+debian:~# </pre></div><div class="section" title="Konfiguration der ISDN-Karte" id="beronet-berofix-konfiguration"><div class="titlepage"><div><div><h3 class="title" id="beronet-berofix-konfiguration">Konfiguration der ISDN-Karte</h3></div></div></div><div class="para">Die beroFix-Karte benutzt einen <a href="http://en.wikipedia.org/wiki/Realtek">Realtek</a>-8139-Netzwerkchip
+    um mit dem Asterisk-<span class="quote">„<span class="quote">Wirtssystem</span>“</span> (<span class="emphasis"><em>host
+    system</em></span>) zu kommunizieren. Deshalb ist es nicht notwendig
+    spezielle Treiber zu kompilieren; der Netzwerkkartentreiber wird vom
+    Betriebsystem mitgeliefert. Das Schema für eine beroFix-Karte sieht etwa
+    so aus:</div><div class="literallayout"><p> LAN &lt;———&gt; Netzwerkkarte (eth0) &lt;—&gt; PC &lt;—&gt; BeroFix-Netzwerkkarte (eth1) &lt;———&gt; BeroFix-CPU</p></div><div class="para">Das bedeutet der Host erhält durch die BeroFix eine weitere
+    Netzwerkkarte, die einer IP-Konfiguration bedarf. In solch einem Scenario
+    bietet sich die Konfiguration durch eine Ethernet Bridge an, die die
+    beiden Netzwerk-Interfaces <code class="literal">eth0</code> und
+    <code class="literal">eth1</code> zu einem <span class="emphasis"><em>bridge device</em></span>
+    <code class="literal">br0</code> zusammenfasst.</div><div class="para">Folgenden Schritte sind nötig um eine beroFix richtig zu
+    installieren:</div><div class="para"><div class="orderedlist"><ol><li class="listitem"><div class="para">Netzwerk-Brücke einrichten</div></li><li class="listitem"><div class="para">SIP, ISDN und Routing einrichten</div></li><li class="listitem"><div class="para">SIP-Peer in Asterisk einrichten</div></li></ol></div></div><div class="section" title="Netwerkbrücke einrichten" id="beroNet-beroFix-netzwerkbruecke"><div class="titlepage"><div><div><h4 class="title" id="beroNet-beroFix-netzwerkbruecke">Netwerkbrücke einrichten</h4></div></div></div><div class="para">Zunächst sollten sie mit <code class="literal"><code class="command">ifconfig
+      -a</code></code> prüfen ob die Karte vom System als zweite
+      Netzwerkkarte erkannt wurde:</div><div class="para"><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">ifconfig -a</code></strong></span>
+eth0      Link encap:Ethernet  HWaddr 00:0C:6E:D3:86:C6  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:797562 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:35206 errors:20 dropped:0 overruns:0 carrier:20
+          collisions:7447 txqueuelen:1000 
+          RX bytes:141351732 (134.8 MiB)  TX bytes:19431622 (18.5 MiB)
+          Interrupt:11 Base address:0xc000 
+
+eth1      Link encap:Ethernet  HWaddr 00:50:C2:83:D0:01
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:35124 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:276362 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:20636164 (19.6 MiB)  TX bytes:28931756 (27.5 MiB)
+          Interrupt:11 Base address:0xa000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:9 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:720 (720.0 b)  TX bytes:720 (720.0 b)</pre></div><div class="para">Sie erkennen die beroFix an der MAC-Adresse, diese sollte mit
+      <code class="code">00:50:C2</code> beginnen. In diesem Beispiel ist
+      <code class="literal">eth1</code> die beroFix.</div><div class="para">Um die Netzwerkbrücke manuell einzurichten können sie die
+      <code class="filename">bridge-utils</code> verwenden und müssen ein paar
+      Kommandozeilen eingeben:</div><div class="para"><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">ifconfig eth0 0.0.0.0 up</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">ifconfig eth1 0.0.0.0 up</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">brctl addbr br0</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">brctl addif br0 eth0</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">brctl addif br0 eth1</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">ifconfig br0 10.0.0.3 up</code></strong></span></pre></div><div class="para">Diese Kommandos entfernen die IP-Adressen der Netzwerkkarten,
+      erzeugen eine Brücke <span class="bold bold"><strong><code class="literal">br0</code></strong></span>, fügen der Brücke die
+      beiden Netzwerkkarten hinzu und geben der Brücke die IP-Adresse
+      <span class="bold bold"><strong>10.0.0.3</strong></span>.</div><div class="para">Um die Netzwerk-Konfiguration für die Brücke persistent
+      einzurichten, erweitern sie die Konfigurationsdatei
+      <code class="filename">/etc/network/interfaces</code> mit einem Texteditor wie
+      folgt:</div><div class="para"><pre class="programlisting">auto lo
+iface lo inet loopback
+  
+<span class="bold bold"><strong>auto br0
+iface br0 inet static
+	address 10.0.0.3
+	netmask 255.0.0.0
+	gateway 10.0.0.1
+	bridge_ports eth0 eth</strong></span>1
+</pre></div><div class="para">Nun können Sie mit <code class="literal"><code class="command">/etc/init.d/networking
+      restart</code></code> die Netzwerk-Konfiguration
+      aktivieren.</div><div class="para"><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">/etc/init.d/networking restart</code></strong></span>
+     * Reconfiguring network interfaces...                       [ OK ]
+</pre></div><div class="para">Die Default-IP-Addresse der beroFix ist <span class="bold bold"><strong>10.0.0.2</strong></span>. Es sollte nun möglich sein die
+      Weboberfläche der berofix zu erreichen. Tippen sie dazu einfach in einem
+      Browser die URL <code class="literal">http://10.0.0.2</code> ein. Der
+      Standard-Benutzername ist <span class="quote">„<span class="quote">admin</span>“</span> und das Standard-Passwort
+      ebenfalls <span class="quote">„<span class="quote">admin</span>“</span>.</div></div><div class="section" title="SIP, ISDN und Routing einrichten" id="beronet-berofix-sip-isdn-routing"><div class="titlepage"><div><div><h4 class="title" id="beronet-berofix-sip-isdn-routing">SIP, ISDN und Routing einrichten</h4></div></div></div><div class="para">Die beroFix wird vollständig über die Web-Benutzeroberfläche
+      konfiguriert. Loggen Sie sich dazu bitte mit einem Browser auf
+      <code class="literal">http://10.0.0.2</code> mit den Benutzerdaten
+      <span class="quote">„<span class="quote">admin</span>“</span>/<span class="quote">„<span class="quote">admin</span>“</span> ein. Sie werden nun eine
+      Weboberfläche mit den folgenden Menüpunkten sehen:<div class="itemizedlist"><ul><li class="listitem"><div class="para"><span class="bold bold"><strong>Hardware</strong></span> – zum
+            Einrichten von ISDN-Parametern wie TE/NT, PtP und PtMP</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>ISDN</strong></span> – zum Gruppieren
+            von ISDN-Ports</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>SIP</strong></span> – zum Verwalten
+            von SIP-Servern</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>Dialplan</strong></span> – zum
+            Verwalten des Routings</div></li></ul></div></div><div class="para">Zunächst sollten Sie die ISDN-Hardware prüfen und entsprechend
+      Ihrem Anschluss konfigurieren. TE und NT wird auf der Karte automatisch
+      umgeschaltet, sodass keine Jumperung nötig sind. Als nächstes sollten
+      sie eine ISDN-Gruppe anlegen; vergeben Sie einfach als Namen
+      <span class="quote">„<span class="quote">BRI</span>“</span>.</div><div class="para">Nun können Sie einen SIP-Server einrichten. Erstellen Sie einen
+      neuen Eintrag unter dem Menupunkt <span class="quote">„<span class="quote">SIP</span>“</span> mit den Werten:
+      Name=<span class="quote">„<span class="quote">berofix</span>“</span>, User=<span class="quote">„<span class="quote">berofix</span>“</span>,
+      Secret=<span class="quote">„<span class="quote">berofix</span>“</span>.</div></div><div class="section" title="SIP-Peer in Asterisk einrichten" id="beronet-berofix-asterisk-sip-peer"><div class="titlepage"><div><div><h4 class="title" id="beronet-berofix-asterisk-sip-peer">SIP-Peer in Asterisk einrichten</h4></div></div></div><div class="para">Unter Asterisk wird die beroFix wie ein SIP-Gateway angesprochen,
+      deshalb muss dort in der <code class="filename">/etc/asterisk/sip.conf</code> ein
+      SIP-Peer eingerichtet werden. Fügen Sie dazu in der
+      <code class="filename">sip.conf</code> die folgenden Zeilen ein:<pre class="programlisting">[berofix]
+type = friend
+secret = berofix
+host = 10.0.0.2
+allow = all
+context = from-sip</pre></div><div class="para">Um nun mit einer führenden Null einen Ruf in Richtung ISDN zu
+      senden müssen Sie nun <code class="literal">chan_sip</code> verwenden; benutzen
+      Sie in der <code class="filename">extensions.conf</code> dazu folgenden
+      Zeile:<pre class="programlisting">exten =&gt; _0X.,1,Dial(SIP/${EXTEN:1}@berofix)</pre></div><div class="para"></div></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="danksagungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Danksagungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link glossary"><a href="glossar.html" title="print-previous-main-loop-first level2 breadcrumb-link glossary">Glossar</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="print-previous-main-loop-first level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="breadcrumb-first-level level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="breadcrumb-first-level level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="sangoma-b700-flexbri.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Sangoma B700 FlexBRI</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="sangoma-a500.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Sangoma A500 ISDN-Karte</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="digium-b410p.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Digium B410p</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="digium-tdm400p-analog.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Installation der Digium TDM400p Analog-Karte</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Installation einer BeroFix-Karte</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="beronet-berofix.html#beronet-berofix-konfiguration" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Konfiguration der ISDN-Karte</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="digium-tdm400p-analog.html"><strong>Zurück</strong>B.4. Installation der Digium TDM400p Analog-Karte</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="applications.html"><strong>Weiter</strong>Anhang C. Applikationen im Dialplan</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

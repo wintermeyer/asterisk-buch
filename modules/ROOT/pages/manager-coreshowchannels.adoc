@@ -1,0 +1,17 @@
+[[manager-coreshowchannels]]
+= `CoreShowChannels`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: CoreShowChannels
+Synopsis: List currently active channels
+Privilege: system,reporting,all
+Description: List currently defined channels and some information
+about them.
+Variables:
+ActionID: Optional Action id for message matching.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

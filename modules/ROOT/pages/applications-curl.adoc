@@ -1,0 +1,40 @@
+[[applications-curl]]
+= `Curl()`
+
+Lädt eine URL.
+
+[source]
+----
+Curl(param)
+----
+
+[IMPORTANT]
+====
+`Curl()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Funktion `CURL()` (xref:functions-curl.adoc[Abschnitt D.15, „`CURL()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'Curl' =-
+
+[Synopsis]
+Load an external URL
+
+[Description]
+Curl(URL[|postdata]): This application will request the specified URL.
+It is mainly used for signalling external applications of an event.
+Parameters:
+URL - This is the external URL to request.
+postdata - This information will be treated as POST data.
+This application will set the following variable:
+CURL - This variable will contain the resulting page.
+This application has been deprecated in favor of the CURL function.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-curl.adoc[Abschnitt D.15, „`CURL()`“]

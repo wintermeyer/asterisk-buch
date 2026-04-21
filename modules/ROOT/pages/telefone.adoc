@@ -1,0 +1,13 @@
+[[telefone]]
+= SIP-Telefone
+
+In diesem Kapitel:
+
+* xref:telefone-einleitung.adoc[Einleitung]
+* xref:telefone-snom.adoc[Snom VoIP-Telefone]
+** xref:telefone-snom.adoc#snom-asterisk-sip.conf[Konfiguration von Asterisk]
+** xref:telefone-snom.adoc#snom-konfiguration[Konfiguration der Telefone]
+** xref:telefone-snom.adoc#snom-klingeltoene[Unterschiedliche Klingeltöne]
+** xref:telefone-snom.adoc#snom-360-menu[Benutzerdefinierte Menüführung]
+** xref:telefone-snom.adoc#snom-per-fernwartung-booten[Telefone per Fernwartung neu starten]
+** xref:telefone-snom.adoc#snom-weitere-applikationen[Weitere verfügbare Applikationen]

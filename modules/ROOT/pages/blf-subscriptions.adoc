@@ -1,0 +1,41 @@
+[[blf-subscriptions]]
+= Verfahren für SIP-_Subscriptions_
+
+[NOTE]
+====
+Dieser Abschnitt ist ein kleiner Exkurs für die
+Technikinteressierten. Für die Konfiguration ist er in der Regel nicht
+weiter von Bedeutung. Sie können also getrost zum nächsten Abschnitt
+springen.
+====
+
+Es gibt in SIP mehrere unterschiedlich Verfahren, wie man den Status
+einer Nebenstelle „abonnieren“ kann. Die gebräuchlichste
+SIP-Erweiterung dafür ist http://tools.ietf.org/html/rfc4235[_„_Dialog Event Package_“_ (RFC
+4235)], an die sich u. a. auch die 3x0-Snoms halten. Dieser
+Standard basiert auf http://tools.ietf.org/html/rfc3265[_„_SIP Event Notification_“_ (RFC
+3265)]. Dabei schickt das Telefon für jede zu überwachende
+Nebenstelle ein `SUBSCRIBE` an die Telefonanlage und
+erhält bei jeder Status-Änderung ein `NOTIFY`
+(`PUBLISH` wird von Asterisk noch nicht unterstützt). Der
+Hauptunterschied sind die unterschiedlichen (XML-)Formate im
+„_Body_“ der
+„_Notifications_“.
+
+Die von Asterisk (mehr oder weniger) unterstützten Verfahren
+sind:
+
+[cols="3*"]
+|===
+| Spezifikation | MIME-Typ | Geräte
+
+| http://tools.ietf.org/html/rfc4235[__SIP Dialog Event Package__ (RFC 4235)] | `application/dialog-info+xml` | Snom, Linksys, Aastra, Polycom, Grandstream, Thomson, ...
+| http://tools.ietf.org/html/rfc3863[__Presence Information Data Format (PIDF)__ (RFC 3863)] | `application/pidf+xml` | CounterPathfootnote:[früher Xten] http://www.counterpath.net/eyebeam.html[EyeBeam] etc., Cisco
+| Vor-Version von RFC 3863 (PIDF, s. o.), XPIDF, CPIM mit Microsoft-Ergänzungfootnote:[http://msdn.microsoft.com/en-us/library/cc246193.aspx[__XPIDF Presence Format Example__\], http://msdn.microsoft.com/en-us/library/cc246202.aspx[__XPIDF Presence Document Format__\], http://softlab-pro-web.technion.ac.il/projects/WatchMe/documents/RTC.doc[__Microsoft Real Time Communication (RTC) Client__\]] | `application/xpidf+xml` | Microsoft RTC/LCS, MSN Messenger, Polycom
+| Vor-Version von RFC 3863 (PIDF, s. o.), XPIDF, CPIM | `application/cpim-pidf+xml` | ?
+|===
+
++
+
+`xpidf+xml` und `cpim-pidf+xml`
+sind übrigens sehr ähnlich.

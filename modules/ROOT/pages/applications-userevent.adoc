@@ -1,0 +1,95 @@
+[[applications-userevent]]
+= `UserEvent()`
+
+Sendet ein beliebiges Event an das Manager-Interface.
+
+[source]
+----
+UserEvent(Eventname[,Inhalt])
+----
+
+Sendet ein beliebiges Event an das Manager-Interface. Das
+resultierende Event-Paket hat folgendes Format:
+
+[source]
+----
+Event: UserEvent Eventname
+Channel: Channelname
+Uniqueid: Anruf-ID
+[Inhalt]
+----
+
+Als Inhalt können weitere Zeilen in der Form `Feldname:
+Wert` angegeben werden. Mehrere Zeilen werden durch `|`
+(in älteren Asterisk-Versionen durch `,` oder `^`)
+getrennt.
+
+Liefert stets 0 zurück.
+
+[source]
+----
+exten => 123,1,UserEvent(Test,Hinweis: Ich rufe jetzt ${XY} an.)
+exten => 123,n,Dial(${XY})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'UserEvent' =-
+
+[Synopsis]
+Send an arbitrary event to the manager interface
+
+[Description]
+UserEvent(eventname[|body]): Sends an arbitrary event to the manager
+interface, with an optional body representing additional arguments. The
+body may be specified as a | delimeted list of headers. Each additional
+argument will be placed on a new line in the event. The format of the
+event will be:
+Event: UserEvent
+UserEvent: <specified event name>
+[body]
+If no body is specified, only Event and UserEvent headers will be present.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,12 +4,12 @@
+Send an arbitrary event to the manager interface
+
+[Description]
+- UserEvent(eventname[|body]): Sends an arbitrary event to the
+- manager interface, with an optional body representing additional
+- arguments. The format of the event will be:
+- Event: UserEvent<specified event name>
+- Channel: <channel name>
+- Uniqueid: <call uniqueid>
++ UserEvent(eventname[|body]): Sends an arbitrary event to the manager
++ interface, with an optional body representing additional arguments. The
++ body may be specified as a | delimeted list of headers. Each additional
++ argument will be placed on a new line in the event. The format of the
++ event will be:
++ Event: UserEvent
++ UserEvent: <specified event name>
+[body]
+- If the body is not specified, only Event, Channel, and Uniqueid fields
+- will be present. Returns 0.
++ If no body is specified, only Event and UserEvent headers will be present.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Send an arbitrary event to the manager interface
+
+[Description]
+- UserEvent(eventname[|body]): Sends an arbitrary event to the manager
++ UserEvent(eventname[,body]): Sends an arbitrary event to the manager
+interface, with an optional body representing additional arguments. The
+body may be specified as a | delimeted list of headers. Each additional
+argument will be placed on a new line in the event. The format of the
+
+.Siehe auch
+`manager.conf`, Asterisk Manager
+interface

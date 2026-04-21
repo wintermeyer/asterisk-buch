@@ -1,0 +1,10 @@
+[[agi-verzeichnisse]]
+= Verzeichnisse und Rechte
+
+AGI-Skripte werden von Asterisk standardmäßig im Verzeichnis
+`/var/lib/asterisk/agi-bin`/ gesucht.
+
+Achten Sie darauf, dass das entsprechende Skript von Asterisk auch
+ausgeführt werden darf. Dies wird durch den Aufruf des Befehls
++chmod 755 _`skriptname`_+
+gewährleistet.

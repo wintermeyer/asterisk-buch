@@ -1,0 +1,24 @@
+[[manager-dahdishowchannels]]
+= `DAHDIShowChannels`
+
+.Asterisk-Versionen:
+————————| *1.2**|————————| *1.4**|————————| *1.6* |————————
+(* anderer Name)
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: DAHDIShowChannels
+Synopsis: Show status DAHDI channels
+Privilege: <none>
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 (xref:manager-zapshowchannels.adoc[Abschnitt F.86, „`ZapShowChannels`“]) zu 1.4 (xref:manager-zapshowchannels.adoc[Abschnitt F.86, „`ZapShowChannels`“]):
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 (xref:manager-zapshowchannels.adoc[Abschnitt F.86, „`ZapShowChannels`“]) zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,3 @@
+- Action: ZapShowChannels
+- Synopsis: Show status zapata channels
++ Action: DAHDIShowChannels
++ Synopsis: Show status DAHDI channels
+Privilege: <none>

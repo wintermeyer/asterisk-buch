@@ -1,0 +1,72 @@
+[[functions-language]]
+= `LANGUAGE()`
+
+[source]
+----
+LANGUAGE()
+----
+
+Liest/setzt die Sprache des Kanals. Die Sprache beeinflusst unter
+anderem, welche Audiodateien abgespielt werden. Ist z. B. `de`
+eingestellt und wird `Playback(tt-weasels)` ausgeführt, so wird
+die Datei `de/tt-weasels` abgespielt (wenn vorhanden).
+Gleiches gilt für `SayDigits()` etc.
+
+[source]
+----
+; abfragen:
+exten => 123,1,Set(foo=${LANGUAGE()})
+
+; Deutsch setzen:
+exten => 123,1,Set(LANGUAGE()=de)
+----
+
+[IMPORTANT]
+====
+`LANGUAGE()` ist ab Asterisk 1.6 nicht mehr
+vorhanden und wurde durch die Funktion `CHANNEL()`
+(xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]) ersetzt:
+
+[source]
+----
+Set(CHANNEL(language)=de)
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'LANGUAGE' =-
+
+[Syntax]
+LANGUAGE()
+
+[Synopsis]
+Gets or sets the channel's language.
+
+[Description]
+Deprecated. Use CHANNEL(language) instead.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -7,11 +7,4 @@
+Gets or sets the channel's language.
+
+[Description]
+- Gets or sets the channel language. This information is used for the
+- syntax in generation of numbers, and to choose a natural language file
+- when available. For example, if language is set to 'fr' and the file
+- 'demo-congrats' is requested to be played, if the file
+- 'fr/demo-congrats' exists, then it will play that file, and if not
+- will play the normal 'demo-congrats'. For some language codes,
+- changing the language also changes the syntax of some Asterisk
+- functions, like SayNumber.
++ Deprecated. Use CHANNEL(language) instead.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]

@@ -1,0 +1,48 @@
+[[functions-db]]
+= `DB()`
+
+[source]
+----
+DB(Familie/Schlüssel)
+----
+
+Liest/setzt einen Wert in der AstDB. Beim Lesen wird der Wert
+zurückgegeben oder ein leerer String, wenn der Wert nicht existiert. Das
+Ergebnis ist in der Variable `DB_RESULT`
+verfügbar.
+
+[source]
+----
+; Eintrag open/source setzen und abfragen:
+exten => 123,1,Set(DB(open/source)=${ja})
+exten => 123,n,Set(var=${DB(open/source)})
+exten => 123,n,GotoIf($[[${DB(open/source)} = 1]?opensource:closedsource)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'DB' =-
+
+[Syntax]
+DB(<family>/<key>)
+
+[Synopsis]
+Read from or write to the Asterisk database
+
+[Description]
+This function will read from or write a value to the Asterisk database. On a
+read, this function returns the corresponding value from the database, or blank
+if it does not exist. Reading a database value will also set the variable
+DB_RESULT. If you wish to find out if an entry exists, use the DB_EXISTS
+function.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-db_exists.adoc[Abschnitt D.19, „`DB_EXISTS()`“], xref:functions-db_delete.adoc[Abschnitt D.18, „`DB_DELETE()`“], xref:applications-dbdeltree.adoc[Abschnitt C.34, „`DBdeltree()`“]

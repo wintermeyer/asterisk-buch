@@ -1,0 +1,13 @@
+[[upgrade-1.4-1.6-ael]]
+= AEL
+
+* AEL-Dialplan-Makros werden jetzt „unter der Haube“ mit der `Gosub()`-Applikation implementiert. Vor Version 1.6 wurde das mit der `Macro()`-Applikation gemacht. Sie können weiterhin Makros ganz normal verwenden, sollten aber darauf achten, dass das Makro mit `return` zurückkehrt.
++
+[source]
+----
+macro mein-makro() {
+    // tu was
+    return;
+}
+----
+* Es gibt ein neues Tool, `conf2ael`, das einen herkömmlichen Dialplan (`extensions.conf`) nach AEL konvertiert (`extensions.ael`). Das Tool befindet sich allerdings noch in einem frühen Entwicklungsstadium.

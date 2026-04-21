@@ -1,0 +1,40 @@
+[[applications-dbget]]
+= `DBget()`
+
+Liest einen Wert aus der AstDB.
+
+[source]
+----
+DBget(Variable=Familie/Schlüssel|Optionen)
+----
+
+[IMPORTANT]
+====
+`DBget()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Funktion `DB()` (xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'DBget' =-
+
+[Synopsis]
+Retrieve a value from the database
+
+[Description]
+DBget(varname=family/key[|options]): This application will retrieve a value
+from the Asterisk database and store it in the given variable.
+Options:
+j - Jump to priority n+101 if the requested family/key isn't found.
+This application sets the following channel variable upon completion:
+DBGETSTATUS - This variable will contain the status of the attempt
+FOUND | NOTFOUND
+This application has been deprecated in favor of the DB function.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-dbput.adoc[Abschnitt C.36, „`DBput()`“], xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]

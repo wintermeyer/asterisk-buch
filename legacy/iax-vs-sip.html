@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.5. IAX versus SIP</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-protokolle.html" title="Kapitel 8. Protokolle" /><link rel="prev" href="peers-users-friends.html" title="8.4. Peers, Users und Friends" /><link rel="next" href="sip.html" title="8.6. SIP" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="8.5. IAX versus SIP" id="iax-vs-sip"><div class="titlepage"><div><div><h2 class="title" id="iax-vs-sip">8.5. IAX versus SIP</h2></div></div></div><div class="para">Fast jeder Asterisk-Administrator muss sich irgendwann einmal die
+    Frage stellen, ob er eher auf SIP oder eher auf IAX setzen soll. Die kurze
+    Antwort: Wenn IAX möglich ist (also, wenn die Telefone es unterstützen),
+    dann sollte IAX benutzt werden. Ansonsten immer SIP. Mark Spencer (der
+    Erfinder von Asterisk) hat zu diesem Thema auf einer Asterisk-Mailingliste
+    im Jahr 2004 eine ausführlichere Antwort geschrieben (die im Original
+    englische E-Mail finden Sie im <a class="xref" href="anhang-iax-vs-sip.html" title="Anhang J. IAX vs. SIP">Anhang J, <i>IAX vs. SIP</i></a>):</div><pre class="screen">Date: Mon, 5 Jul 2004 18:59:52 -0500 (CDT)
+From: Mark Spencer &lt;markster@digium.com&gt;
+
+Ich möchte einige Unterschiede zwischen SIP und IAX kurz 
+zusammenfassen. Vielleicht hilft Dir das bei der 
+Entscheidungsfindung.
+
+1) IAX arbeitet während des Gesprächs, unabhängig von der Anzahl 
+der Anrufe und des verwendeten Codecs, effizienter als RTP. Der 
+Vorteil liegt irgendwo zwischen 2400 Kbit/s für einen 
+Einzelanruf und der dreifachen Anzahl der Anrufe pro Megabit 
+bei G.729, wenn die Messung bei aktiviertem Trunk-Modus auf der 
+MAC-Ebene vorgenommen wird.
+
+2) IAX ist nicht ASCII-, sondern datenelementkodiert. Dies macht
+Implementierungen wesentlich leichter und zudem robuster 
+gegenüber Pufferüberlaufangriffen, da absolut keine Textanalyse 
+oder -interpretation erforderlich ist. IAX führt den gesamten 
+IP-Stapel, IAX-Stapel, TDM-Schnittstelle, Echokompensation und 
+Erzeugung der Anrufer-ID auf 4 Kbyte Heap und Stack sowie 64 Kbyte Flash 
+aus. Dies veranschaulicht ganz klar die 
+Implementierungseffizienz des Entwurfs. Die Größe der 
+IAX-Signalpakete ist drastisch geringer als die bei SIP, was 
+aber in der Regel nur dann erwähnenswert ist, wenn zahlreiche 
+Clients sich häufig registrieren. Allgemein gesprochen ist IAX2 
+bei der Kodierung, der Dekodierung und der Überprüfung der Daten 
+effizienter. Zudem wäre es für den Autor einer 
+IAX-Implementierung extrem schwierig, eine Inkompatibilität mit 
+einer anderen Implementierung herzustellen, da für eine 
+Interpretation kaum Raum vorhanden ist.
+
+3) IAX weist eine sehr klare Trennung von Schicht 2 und Schicht 
+3 auf, d.h., sowohl Signalisierung als auch Tondaten haben 
+definierte Zustände, werden robust und in konsistenter Weise 
+übertragen, und wenn ein Endpunkt des Anrufs unvermittelt 
+verschwindet, dann wird der Anruf auch zeitnah beendet, und zwar
+auch dann, wenn keine weiteren Signale und/oder Audiodaten 
+empfangen werden. Einen solchen Mechanismus weist SIP nicht auf; 
+hinzu kommt, dass, was die Signalisierung angeht, die 
+Zuverlässigkeit sehr niedrig und schwerfällig ist, weswegen 
+zusätzlich zum Kernstandard RF3261 weitere Standards benötigt 
+werden.
+
+4) Die einheitlichen Signalisierungs- und Audiopfade von IAX 
+gestatten die transparente Navigation von NATs, und der 
+Firewall-Administrator muss lediglich einen einzigen Port 
+öffnen, um den Einsatz von IAX zu gestatten. Der IAX-Client 
+muss für einen korrekten Betrieb überhaupt nichts über das 
+Netzwerk wissen, in dem er sich befindet. Anders gesagt: Es kann 
+niemals eine durch eine Firewall bedingte Situation auftreten, 
+in der IAX einen Anruf aufbauen und dann keine Audiodaten 
+übertragen kann (natürlich vorausgesetzt, es ist genügend
+Bandbreite vorhanden).
+
+5) Das authentifizierte Übertragungssystem von IAX gestattet 
+die Übertragung von Audio- und Rufsteuerdaten über einen 
+zwischengeschalteten Server auf eine robuste Weise: Wenn zwei 
+Endpunkte einander aus irgendeinem Grund nicht erkennen können, 
+wird der Ruf über den Zentralserver gehalten.
+
+6) IAX trennt die Caller-ID vom Authentifizierungsmechanismus 
+des Benutzers. SIP verfügt hierzu über keine eindeutige Methode, 
+sofern nicht Remote-Party-IDs verwendet werden.
+
+7) SIP ist ein IETF-Standard. Zwar gibt es eine neue 
+Dokumentation von Frank Miller, aber IAX ist gegenwärtig noch 
+kein veröffentlichter Standard.
+
+8) IAX ermöglicht es einem Endpunkt, die Gültigkeit einer 
+Telefonnummer zu überprüfen, damit er weiß, ob die Nummer 
+vollständig ist, vollständig sein könnte oder aber zwar 
+vollständig ist, aber länger sein könnte. SIP bietet hierfür 
+keine vollständige Unterstützung.
+
+9) IAX sendet DTMF stets außerbandig, d.h., es kann keine 
+Verwirrung bezüglich der Frage entstehen, welche Methode verwendet 
+wird.
+
+10) IAX unterstützt die Übertragung von Sprache und Context, was 
+in einer Asterisk-Umgebung durchaus sinnvoll ist. Mehr fällt mir 
+jetzt im Moment nicht ein.
+
+Mark
+
+PS: Ich nehme mal an, dass SIP trotzdem ein paar Vorteile 
+aufweisen muss (andernfalls wären seine Entwickler ja Dummköpfe).
+
+Es bleibt also zu fragen, wie IAX die folgenden Aspekte verwaltet:
+1) Bandbreitenanzeige
+2) Neue Codecs
+3) Erweiterbarkeit
+4) Parken von Verbindungen und andere komplexe Szenarien
+5) Videotelefonie
+
+Ich habe den Eindruck, dass dies alles in SIP besser geregelt ist.</pre><div class="para">Nachtrag zu dieser E-Mail: IAX ist mittlerweile ein offenes und gut
+    dokumentiertes Protokoll.</div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="protokolle-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="netzwerkprotokolle.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Netzwerkprotokolle</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="definition-channel.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Channels</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="peers-users-friends.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Peers, Users und Friends</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">IAX versus SIP</li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="sip.html" title="pfc level3 breadcrumb-link section sectlevel1">SIP</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="iax.html" title="pfc level3 breadcrumb-link section sectlevel1">IAX</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="peers-users-friends.html"><strong>Zurück</strong>8.4. Peers, Users und Friends</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="sip.html"><strong>Weiter</strong>8.6. SIP</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

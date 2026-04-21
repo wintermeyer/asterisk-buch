@@ -1,0 +1,46 @@
+[[applications-ringing]]
+= `Ringing()`
+
+Signalisiert Klingelton.
+
+[source]
+----
+Ringing()
+----
+
+Signalisiert dem Teilnehmer Klingeln. Wie diese Signalisierung
+erfolgt, hängt vom Channel-Treiber ab. Beachten Sie, dass diese Anwendung
+den Anrufer nicht mit tatsächlichem Klingeln versieht. Benutzen Sie hierzu
+die Anwendung `Playtones()`.
+
+Liefert stets 0 zurück.
+
+[source]
+----
+; Klingeln vortäuschen:
+exten => 123,1,Ringing()
+exten => 123,n,Wait(5)
+exten => 123,n,Playback(tt-somethingwrong)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Ringing' =-
+
+[Synopsis]
+Indicate ringing tone
+
+[Description]
+Ringing(): This application will request that the channel indicate a ringing
+tone to the user.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-busy.adoc[Abschnitt C.16, „`Busy()`“], xref:applications-congestion.adoc[Abschnitt C.23, „`Congestion()`“], xref:applications-progress.adoc[Abschnitt C.121, „`Progress()`“], xref:applications-ringing.adoc[Abschnitt C.138, „`Ringing()`“], xref:applications-playtones.adoc[Abschnitt C.118, „`Playtones()`“]

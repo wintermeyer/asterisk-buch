@@ -1,0 +1,16 @@
+[[toene-und-signale]]
+= Töne und Signale
+
+In einer Standard-Asterisk-Installation werden Besetzt- und
+Freizeichen (und noch ein paar andere Signaltöne) nach amerikanischem
+Muster ausgegeben. Um dies auf deutsche Signale umzustellen, muss man nur
+in der Konfigurationsdatei
+`/etc/asterisk/indications.conf` im Abschnitt
+`[general]` ein `country=de`
+einsetzen:
+
+[source]
+----
+[general]
+country=de
+----

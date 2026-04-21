@@ -1,0 +1,123 @@
+[[voicemail-applikationen]]
+= Applikationen
+
+Es gibt zwei Voicemail-Applikationen, die in der
+`extensions.conf` aufgerufen werden können:
+
+`VoiceMail()`:: Dieses Programm leitet einen Anrufer an das Voicemail-System weiter, und dort wird er aufgefordert, eine Nachricht zu hinterlassen.
+`VoiceMailMain()`:: VoiceMailMain ist das Abfrageprogramm für die Nutzer der Telefonanlage. Mit diesem Programm können Nutzer selbst Ansagen aufnehmen und Nachrichten abhören.
+
+[[voicemail-applikationen-voicemail]]
+== `VoiceMail()`
+
+Funktion: Der Anrufer kann eine Nachricht auf dem
+Voicemail-System hinterlassen.
+
+Die Applikation `VoiceMail()` wird immer aus der
+Datei `extensions.conf` aufgerufen.
+Beispiel:
+
+[source]
+----
+exten => 2000,2,VoiceMail(2000,u)
+----
+
+[[voicemail-applikationen-voicemail-syntax]]
+=== Syntax
+
+[source]
+----
+VoiceMail(mailbox[@context][,u|b|s])
+----
+
+`mailbox`:: Das ist der Name der Mailbox (Ziffern). Er muss nicht identisch mit der entsprechenden Extension sein. Dies ist aber aus praktischen Gründen sinnvoll, da die Konfiguration dadurch übersichtlicher wird.
+`@context`:: Eine Mailbox kann in einem bestimmten Context ausgeführt werden. Ist kein Context angegeben, so wird der `[default]`-Context verwendet.
++
+[cols="1*"]
+|===
+| Wenn der Anrufer während der Ansage die `0` (Null) drückt, dann springt die Applikation zu der Extension `o` (Buchstabe o, kleingeschrieben) in diesem Context.
+| Wenn der Anrufer während der Ansage den `*` (Stern) drückt, dann springt die Applikation zu der Extension `a` (Buchstabe a, kleingeschrieben) in diesem Context.
+|===
+`[u|b|s]`::
++
+`u`:: Veranlasst, dass die Nachricht „unavailable“ (nicht verfügbar) abgespielt wird. Der Dateiname im Filesystem ist `/var/lib/asterisk/sounds/vm-isunavail.gsm`.footnote:[Falls Sie ein fertiges Asterisk-Paket verwenden, kann der Pfad z. B. auch `/usr/share/asterisk/sounds/` sein.]
+`b`:: Veranlasst, dass die Nachricht „busy“ (besetzt) abgespielt wird. Der Dateiname im Filesystem ist `/var/lib/asterisk/sounds/vm-rec-busy.gsm`.
+`s`:: Unterdrückt das Abspielen einer Nachricht (Sounddatei) und startet unmittelbar die Aufnahme.
+
+Falls keine Mailbox in der Datei
+`voicemail.conf` definiert ist, aber ein Eintrag
+mit der Priorität n+101 existiert, dann wird dieser angesprungen und
+ausgeführt.
+
+[[voicemail-applikationen-voicemailmain]]
+== `VoiceMailMain()`
+
+Funktion: Stellt Nutzern den Zugang zum Voicemail-System
+her.
+
+Die Funktion `VoiceMailMain()` wird immer aus der
+Datei `extensions.conf` aufgerufen.
+Beispiel:
+
+[source]
+----
+exten => 300,1,VoiceMailMain()
+----
+
+[[voicemail-applikationen-voicemailmain-syntax]]
+=== Syntax
+
+[source]
+----
+VoiceMailMain([mailbox][@context][,s|p])
+----
+
+`mailbox`:: Der Name (also die Nummer) der Mailbox. Wenn kein Name vorgegeben wurde, fragt das System danach.
+`@context`:: Definiert den Context, der innerhalb der `voicemail.conf` angesprochen wird.
+`[s|p]`::
++
+`s`:: Wird ein `s` vor den Mailboxnamen gestellt, dann entfällt die Passwortabfrage.
+`p`:: Wird ein `p` vor den Mailboxnamen gestellt, dann wird der User gebeten, eine Mailbox anzugeben. Aus dem Inhalt von +_`mailbox`_+ und dieser Eingabe wird dann der neue Mailboxname. Damit lässt sich eine mandantenfähige Mailbox-Struktur realisieren.
+
+[[voicemail-applikationen-voicemailmain-menue]]
+=== Menü
+
+Eine Beschreibung des Sprachmenüs von
+`VoiceMailMain()` ist schwierig, da es von den eingesetzten
+Prompts (Sprachbausteinen) abhängt. Die prinzipiellen Funktionen sind
+hier aufgelistet. In Klammern finden Sie die englischen
+Beschreibungen.
+
+[cols="30*"]
+|===
+| *`1`* | Nachrichten abspielen _(Read voicemail messages)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| | *`3`*Erweiterte Optionen _(Advanced options)_ *`1`*Antwort _(Reply)_*`2`*Rückruf _(Call back)_*`3`*Zusatzinformationen _(Envelope)_*`4`*Anruf tätigen _(Outgoing call)_*`4`*Vorherige Nachricht _(Play previous message)_*`5`*Wiederholung der aktuellen Nachricht _(Repeat current message)_*`6`*Nächste Nachricht _(Play next message)_*`7`*Lösche aktuelle Nachricht _(Delete current message)_*`8`*Nachricht an eine andere Mailbox weiterleiten _(Forward message to another mailbox)_*`9`*Nachricht in einem Ordner speichern _(Save message in a folder)_*`*`*Hilfe; während des Abspielens einer Nachricht: Zurückspulen _(Help; during msg playback: Rewind)_*`#`*Beenden; während des Abspielens einer Nachricht: Weiter _(Exit; during msg playback: Skip forward)_ | *`3`* | Erweiterte Optionen _(Advanced options)_ | | *`1`*Antwort _(Reply)_*`2`*Rückruf _(Call back)_*`3`*Zusatzinformationen _(Envelope)_*`4`*Anruf tätigen _(Outgoing call)_ | *`1`* | Antwort _(Reply)_ | *`2`* | Rückruf _(Call back)_ | *`3`* | Zusatzinformationen _(Envelope)_ | *`4`* | Anruf tätigen _(Outgoing call)_ | *`4`* | Vorherige Nachricht _(Play previous message)_ | *`5`* | Wiederholung der aktuellen Nachricht _(Repeat current message)_ | *`6`* | Nächste Nachricht _(Play next message)_ | *`7`* | Lösche aktuelle Nachricht _(Delete current message)_ | *`8`* | Nachricht an eine andere Mailbox weiterleiten _(Forward message to another mailbox)_ | *`9`* | Nachricht in einem Ordner speichern _(Save message in a folder)_ | *`*`* | Hilfe; während des Abspielens einer Nachricht: Zurückspulen _(Help; during msg playback: Rewind)_ | *`#`* | Beenden; während des Abspielens einer Nachricht: Weiter _(Exit; during msg playback: Skip forward)_
+| *`3`* | Erweiterte Optionen _(Advanced options)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| | *`1`*Antwort _(Reply)_*`2`*Rückruf _(Call back)_*`3`*Zusatzinformationen _(Envelope)_*`4`*Anruf tätigen _(Outgoing call)_ | *`1`* | Antwort _(Reply)_ | *`2`* | Rückruf _(Call back)_ | *`3`* | Zusatzinformationen _(Envelope)_ | *`4`* | Anruf tätigen _(Outgoing call)_ | | | | | | | | | | | | | | | | | | | |
+| *`1`* | Antwort _(Reply)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`2`* | Rückruf _(Call back)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`3`* | Zusatzinformationen _(Envelope)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`4`* | Anruf tätigen _(Outgoing call)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`4`* | Vorherige Nachricht _(Play previous message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`5`* | Wiederholung der aktuellen Nachricht _(Repeat current message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`6`* | Nächste Nachricht _(Play next message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`7`* | Lösche aktuelle Nachricht _(Delete current message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`8`* | Nachricht an eine andere Mailbox weiterleiten _(Forward message to another mailbox)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`9`* | Nachricht in einem Ordner speichern _(Save message in a folder)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`*`* | Hilfe; während des Abspielens einer Nachricht: Zurückspulen _(Help; during msg playback: Rewind)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`#`* | Beenden; während des Abspielens einer Nachricht: Weiter _(Exit; during msg playback: Skip forward)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`2`* | Ordner wechseln _(Change folders)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`0`* | Mailbox-Optionen _(Mailbox options)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| | *`1`*Aufnahme der „Nicht erreichbar“-Ansage _(Record your unavailable message)_*`2`*Aufnahme der „Im Gespräch“-Ansage _(Record your busy message)_*`3`*Aufnahme des Namens _(Record your name)_*`4`*Aufnahme einer temporären Ansage _(Record your temporary message)_ Jeweils nach der Aufnahme: *`1`*Akzeptieren _(Accept)_*`2`*Nochmals abspielen _(Review)_*`3`*Nochmals aufnehmen _(Re-record)_ | *`1`* | Aufnahme der „Nicht erreichbar“-Ansage _(Record your unavailable message)_ | *`2`* | Aufnahme der „Im Gespräch“-Ansage _(Record your busy message)_ | *`3`* | Aufnahme des Namens _(Record your name)_ | *`4`* | Aufnahme einer temporären Ansage _(Record your temporary message)_ | | Jeweils nach der Aufnahme: | | *`1`*Akzeptieren _(Accept)_*`2`*Nochmals abspielen _(Review)_*`3`*Nochmals aufnehmen _(Re-record)_ | *`1`* | Akzeptieren _(Accept)_ | *`2`* | Nochmals abspielen _(Review)_ | *`3`* | Nochmals aufnehmen _(Re-record)_ | | | | | | | | | |
+| *`1`* | Aufnahme der „Nicht erreichbar“-Ansage _(Record your unavailable message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`2`* | Aufnahme der „Im Gespräch“-Ansage _(Record your busy message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`3`* | Aufnahme des Namens _(Record your name)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`4`* | Aufnahme einer temporären Ansage _(Record your temporary message)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| | Jeweils nach der Aufnahme: | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| | *`1`*Akzeptieren _(Accept)_*`2`*Nochmals abspielen _(Review)_*`3`*Nochmals aufnehmen _(Re-record)_ | *`1`* | Akzeptieren _(Accept)_ | *`2`* | Nochmals abspielen _(Review)_ | *`3`* | Nochmals aufnehmen _(Re-record)_ | | | | | | | | | | | | | | | | | | | | | |
+| *`1`* | Akzeptieren _(Accept)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`2`* | Nochmals abspielen _(Review)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`3`* | Nochmals aufnehmen _(Re-record)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`*`* | Hilfe _(Help)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| *`#`* | Beenden _(Exit)_ | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+|===

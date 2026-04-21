@@ -1,0 +1,61 @@
+[[applications-agentcallbacklogin]]
+= `AgentCallbackLogin()`
+
+Ermöglicht Login eines Call-Center-Agenten mit Rückruf.
+
+[source]
+----
+AgentCallbackLogin([Agenten-Nr][,Optionen[,Extension@Context]])
+----
+
+Ermöglicht es einem Anruf-Agenten, der durch die
+`Agenten-Nummer` identifiziert ist, sich in das
+Anruf-Warteschlangen-System einzuloggen, um bei einem Anruf, der für ihn
+eingeht, zurückgerufen zu werden.
+
+Bei einem eingehenden Anruf für diesen Agenten wird Asterisk die
+spezifizierte zugehörige `Extension` (gegebenenfalls mit dem
+optional angegebenen Context `Context`) aufrufen.
+
+Der `Optionen`-Parameter kann den Wert `s`
+enthalten, der ein Silent Login (stille Anmeldung) bewirkt.
+
+[source]
+----
+; still als Agent 33 (wie in agents.conf definiert) einloggen. Asterisk
+; wird SIP/300 anrufen, sobald für diesen Agenten ein Anruf eingeht:
+exten => 123,1,AgentCallbackLogin(33,s,${CALLERID(num)})
+
+; wenn wir davon ausgehen, dass die Agentennummer mit der Anrufer-
+; Extension übereinstimmt:
+exten => 123,1,AgentCallbackLogin(${CALLERID(num)},s,${CALLERID(num)})
+----
+
+Auf http://www.voip-info.org/wiki/index.php?page=Asterisk+cmd+AgentCallbackLogin
+sind viele Beispiele zu finden.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'AgentCallbackLogin' =-
+
+[Synopsis]
+Call agent callback login
+
+[Description]
+AgentCallbackLogin([AgentNo][|[options][|[exten]@context]]):
+Asks the agent to login to the system with callback.
+The agent's callback extension is called (optionally with the specified
+context).
+The option string may contain zero or more of the following characters:
+'s' -- silent login - do not announce the login ok segment agent logged in/off
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:applications-agentlogin.adoc[Abschnitt C.5, „`AgentLogin()`“]

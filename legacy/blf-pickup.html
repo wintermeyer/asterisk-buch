@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>23.5. Heranholen eines Anrufs („Pickup“)</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="blf-hints-pickup.html" title="Kapitel 23. BLF, Hints, Pickup" /><link rel="prev" href="blf-test.html" title="23.4. Test der Hints" /><link rel="next" href="blf-device-state.html" title="23.6. Gezielte Ansteuerung der LEDs" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="23.5. Heranholen eines Anrufs („Pickup“)" id="blf-pickup"><div class="titlepage"><div><div><h2 class="title" id="blf-pickup">23.5. Heranholen eines Anrufs (<span class="quote">„<span class="quote">Pickup</span>“</span>)<a id="idp15309040" class="indexterm"></a></h2></div></div></div><div class="para">In der bisherigen Konfiguration werden Gespräche des überwachten
+    Teilnehmers nur angezeigt. Wir wollen aber auch die Möglichkeit schaffen,
+    ein Gespräch heranholen zu können, das an einem anderen Apparat
+    eingeht.<sup>[<a id="idp15310704" href="#ftn.idp15310704" class="footnote">130</a>]</sup></div><div class="para">Man unterscheidet dabei zwischen dem gezielten Heranholen eines
+    Anrufs von einem einzelnen Benutzer (<span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Directed
+    Pickup</em></span>) und dem Heranholen eines Anrufs von einer
+    Benutzergruppe (<span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Group Pickup</em></span>).
+    Hier betrachten wir zunächst den ersten, einfacheren Fall.</div><div class="section" title="extensions.conf für Pickup" id="blf-pickup-extensions.conf"><div class="titlepage"><div><div><h3 class="title" id="blf-pickup-extensions.conf">extensions.conf für Pickup</h3></div></div></div><div class="para">Für das Pickup ist es notwendig, noch einen weiteren Eintrag in
+      der <code class="filename">extensions.conf</code> hinzuzufügen:</div><pre class="programlisting">[interne-benutzer]
+
+; ...
+
+; Gesprächsübernahme (PickUp)
+<span class="bold bold"><strong>exten =&gt; _*8X.,1,Set(nst=${EXTEN:2})
+exten =&gt; _*8X.,n,Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen)
+exten =&gt; _*8X.,n,Pickup(${nst}@interne-benutzer)</strong></span></pre><div class="para">bzw. <code class="filename">extensions.ael</code>:</div><pre class="programlisting">context interne-benutzer {
+  
+  // ...
+  
+  // Gesprächsübernahme (PickUp)
+  <span class="bold bold"><strong>_*8X. =&gt; {
+    Set(nst=${EXTEN:2});
+    Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen);</strong></span>
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    <span class="bold bold"><strong>Pickup(${nst}@interne-benutzer);
+  }</strong></span>
+}</pre><div class="para">Damit haben wir in Asterisk eine Extension definiert, die besagt,
+      dass beim Wählen von
+      <code class="code">*8</code><em class="replaceable"><code>&lt;Nebenstelle&gt;</code></em> (also z.
+      B. <code class="code">*821</code>) der Anruf herangeholt wird, der gerade auf dieser
+      <em class="replaceable"><code>&lt;Nebenstelle&gt;</code></em> (z. B. <code class="code">21</code>)
+      im Context <code class="code">interne-benutzer</code> klingelt.<sup>[<a id="idp12744080" href="#ftn.idp12744080" class="footnote">131</a>]</sup><sup>[<a id="idp12745632" href="#ftn.idp12745632" class="footnote">132</a>]</sup></div></div><div class="section" title="Konfiguration des Telefons für Pickup" id="blf-pickup-telefon"><div class="titlepage"><div><div><h3 class="title" id="blf-pickup-telefon">Konfiguration des Telefons für Pickup<a id="idp12749520" class="indexterm"></a></h3></div></div></div><div class="para">Dem Snom-Telefon muss jetzt noch mitgeteilt werden, welche Nummer
+      zur Gesprächsübernahme gewählt werden muss. Anstatt wie oben beschrieben
+      (<a class="xref" href="blf-telefon-konfiguration-snom.html" title="23.3. Konfiguration der Telefone für BLF">Abschnitt 23.3, „Konfiguration der Telefone für BLF“</a>) bei
+      <span class="quote">„<span class="quote">Ziel</span>“</span>/<span class="quote">„<span class="quote">Nebenstelle</span>“</span> bzw. <span class="quote">„<span class="quote">BLF</span>“</span>
+      nur die zu überwachende Nummer einzutragen, tragen Sie nun die Nummer
+      gefolgt von einem <span class="quote">„<span class="quote"><code class="code">|</code></span>“</span> (Pipe-Symbol) und der
+      oben definierten Zeichekette <span class="quote">„<span class="quote"><code class="code">*8</code></span>“</span> für das
+      Pickup ein – also für obiges Beispiel
+      <span class="quote">„<span class="quote"><code class="code">21|*8</code></span>“</span>. Das Telefon wandelt dies wieder in
+      die passende SIP-URI um. Das Snom wird durch diesen Zusatz, der streng
+      genommen nicht zur SIP-URI gehört, angewiesen, zum Heranholen
+      <code class="code">*8</code> vor der Nebenstellennummer zu wählen, obwohl es ihm von
+      Asterisk in der Status-Benachrichtigung nicht so mitgeteilt
+      wird.<sup>[<a id="idp12755968" href="#ftn.idp12755968" class="footnote">133</a>]</sup> (Eine detaillierte technische Beschreibung, wie das Snom
+      auf verschiedene Formen der SIP-<code class="literal">NOTIFY</code>-Nachrichten
+      reagiert, finden Sie unter <a href="http://wiki.snom.com/Features/Call_Pick-Up">http://wiki.snom.com/Features/Call_Pick-Up</a>.)
+      Andere Telefone haben ähnliche Mechanismen (Grandstream z. B.
+      <code class="code">**</code> statt <code class="code">*8</code>, dafür muss man gegebenenfalls die
+      in diesem Kapitel beschriebenen Extensions anpassen).</div><div class="important"><h2>Wichtig</h2><div class="para">Ab den Firmware-Versionen 7.1.33 und 7.3 muss als Tastenfunktion
+        <span class="quote">„<span class="quote">BLF</span>“</span><sup>[<a id="idp12761264" href="#ftn.idp12761264" class="footnote">134</a>]</sup> statt <span class="quote">„<span class="quote">Nebenstelle</span>“</span><sup>[<a id="idp14686224" href="#ftn.idp14686224" class="footnote">135</a>]</sup> verwendet werden. Weitere Informationen dazu von Snom
+        auf <a href="http://wiki.snom.com/Features/Extension_Monitoring">http://wiki.snom.com/Features/Extension_Monitoring</a>,
+        <a href="http://wiki.snom.com/Features/Busy_Lamp_Field_(BLF)">http://wiki.snom.com/Features/Busy_Lamp_Field_(BLF)</a>
+        und <a href="http://wiki.snom.com/Features/Call_Pick-Up">http://wiki.snom.com/Features/Call_Pick-Up</a>.</div></div><div class="para">Jetzt können Sie am überwachenden Telefon einfach die Anrufe
+      annehmen, die am überwachten Telefon eingehen, indem Sie die zur
+      blinkenden LED passende Taste drücken.</div><div class="note"><h2>Anmerkung</h2><div class="para">Um die Anzeige- und Übernahme-Funktionalität korrekt zu nutzen,
+        müssen Sie in den <span class="quote">„<span class="quote">Erweiterten Einstellungen</span>“</span> des Snoms
+        zwei Einstellungen anpassen. Das Setting <span class="quote">„<span class="quote">Dialog-Info Call
+        Pickup</span>“</span> muss aktiviert sein, und <span class="quote">„<span class="quote">Pakete vom Registrar
+        filtern</span>“</span> muss deaktiviert werden. Die erweiterten Einstellungen
+        sind nur im Admin-Modus des Telefons verfügbar.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">Es wäre natürlich auch schön, wenn man sehen könnte, wer gerade
+        auf der überwachten Leitung anruft, bevor man den Anruf entgegennimmt.
+        Dies bietet Asterisk von sich aus leider nicht an. Im Internet gibt es
+        aber diverse Patches, die auch das ermöglichen.</div></div><div class="para">Sollen die erläuterten Einstellungen in Form einer automatischen
+      Konfiguration ins Snom geladen werden, müssen beispielsweise folgende
+      Parameter in der gerätespezifischen Konfiguration
+      stehen:<pre class="programlisting">filter_registrar: off
+callpickup_dialoginfo: on
+fkey5: dest 22|*8
+fkey6: dest 23|*8</pre><div class="note"><h2>Anmerkung</h2><div class="para">Die Funktionstasten sind 0-indiziert. Um wie im Beispiel die
+          Funktionstaste 6 zu belegen, muss der Parameter <code class="code">fkey5</code>
+          gesetzt werden usw. Die Funktionstaste 1 wird mit <code class="code">fkey0</code>
+          angesprochen.</div></div></div></div><div class="section" title="Heranholen von einer Gruppe" id="blf-group-pickup"><div class="titlepage"><div><div><h3 class="title" id="blf-group-pickup">Heranholen von einer Gruppe</h3></div></div></div><div class="para">Das Heranholen eines Anrufs von einer Gruppe von Teilnehmern
+      (<span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">group pickup</em></span>) ist sehr ähnlich
+      und schnell beschrieben. Entweder baut man sich Pickup-Extensions wie z.
+      B. die folgende:</div><pre class="programlisting">context interne-benutzer {
+  
+  // Verkaufsabteilung
+  hint(SIP/21&amp;SIP/22&amp;SIP/23) 20 =&gt; {
+    Dial(SIP/21&amp;SIP/22&amp;SIP/23,40);
+  }
+  
+  // Gesprächsübernahme (PickUp) von der Gruppe Verkauf
+  <span class="bold bold"><strong>_*820 =&gt; {
+    Verbose(1,${CALLERID(num)} will Anruf von Gruppe Verkauf holen);
+    Pickup(21@interne-benutzer&amp;22@interne-benutzer&amp;23@interne-benutzer);
+  }</strong></span>
+}</pre><div class="para">Als zu überwachende Nebenstelle würde man dann am Telefon die
+      <code class="code">20</code> eintragen (Snom: <code class="code">20|*8</code>).</div><div class="para">Als gute Alternative bietet sich die
+      <code class="code">PICKUPMARK</code>-Funktionalität der
+      <code class="code">Pickup()</code>-Applikation (<a class="xref" href="applications-pickup.html" title="C.115. Pickup()">Abschnitt C.115, „<code class="literal">Pickup()</code>“</a>) an, mit der man flexibler ist.
+      Beispiel:</div><pre class="programlisting">context interne-benutzer {
+  
+  // Verkaufsmitarbeiter
+  _2X =&gt; {
+    <span class="bold bold"><strong>Set(__PICKUPMARK=verkauf);</strong></span>
+    Dial(SIP/${EXTEN},40);
+  }
+  hint(SIP/21) 21 =&gt; {}
+  hint(SIP/22) 22 =&gt; {}
+  hint(SIP/23) 23 =&gt; {}
+  
+  // Verkaufsabteilung
+  hint(SIP/21&amp;SIP/22&amp;SIP/23) 20 =&gt; {
+    <span class="bold bold"><strong>Set(__PICKUPMARK=verkauf);</strong></span>
+    Dial(SIP/21&amp;SIP/22&amp;SIP/23,40);
+  }
+  
+  // Gesprächsübernahme von der Gruppe Verkauf
+  _*820 =&gt; {
+    Verbose(1,${CALLERID(num)} will Anruf von Gruppe Verkauf holen);
+    <span class="bold bold"><strong>Pickup(verkauf@PICKUPMARK);</strong></span>
+  }
+}</pre><div class="para">Will man keine Extra-Nebenstelle (im obigen Beispiel die
+      <code class="code">20</code>) für die Pickup-Gruppe verbrauchen, so bietet sich für
+      fortgeschrittene Anwender z. B. folgende Konfiguration an:</div><pre class="programlisting">context interne-benutzer {
+  
+  // Verkaufsmitarbeiter
+  _2X =&gt; {
+    <span class="bold bold"><strong>Set(__PICKUPMARK=200);</strong></span>
+    // welcher Mitarbeiter zu welcher Pickup-Gruppe gehört, ließe sich
+    // z. B. über ein ausgefeiltes AGI-Skript setzen
+    Dial(SIP/${EXTEN}<span class="bold bold"><strong>&amp;Local/**${PICKUPMARK}</strong></span>,40);
+  }
+  hint(SIP/21) 21 =&gt; {}
+  hint(SIP/22) 22 =&gt; {}
+  hint(SIP/23) 23 =&gt; {}
+  
+  // Pickup-Gruppen
+  _**X. =&gt; {
+    Verbose(1,Es klingelt in Pickup-Gruppe ${EXTEN:2});
+  }
+  <span class="bold bold"><strong>hint(SIP/21&amp;SIP/22&amp;SIP/23) **200 =&gt; {}</strong></span>
+  
+  // Gesprächsübernahme direkt
+  _*8X. =&gt; {
+    Set(nst=${EXTEN:2});
+    Verbose(1,${CALLERID(num)} will Anruf von ${nst} holen);
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    Pickup(${nst}@interne-benutzer);
+  }
+  
+  // Gesprächsübernahme von einer Gruppe
+  <span class="bold bold"><strong>_*8**X.</strong></span> =&gt; {
+    Set(pmark=${EXTEN:4});
+    Verbose(1,${CALLERID(num)} will Anruf von Pickup-Gruppe ${pmark} holen);
+    // hier könnte eine Berechtigungsprüfung eingebaut werden
+    <span class="bold bold"><strong>Pickup(${pmark}@PICKUPMARK);</strong></span>
+  }
+}</pre><div class="para">Als zu überwachende Nebenstelle würde man dann am Telefon die
+      <code class="code">**200</code> eintragen (Snom: <code class="code">**200|*8</code>).</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp15310704" href="#idp15310704" class="para">130</a>] </sup>Die Telefonanlagen-Funktion <span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Pickup</em></span> wird im Deutschen meist als
+        <span class="emphasis"><em>Heranholen</em></span> oder <span class="emphasis"><em>Rufübernahme</em></span>
+        bezeichnet.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp12744080" href="#idp12744080" class="para">131</a>] </sup>Zur Beschreibung der Applikation <code class="code">Pickup()</code> siehe
+          auch: <a class="xref" href="applications-pickup.html" title="C.115. Pickup()">Abschnitt C.115, „<code class="literal">Pickup()</code>“</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp12745632" href="#idp12745632" class="para">132</a>] </sup>Die Applikation <code class="code">Pickup()</code> darf nicht verwechselt
+          werden mit der Bristuff-Applikation <code class="code">PickUp()</code> bzw.
+          <code class="code">DPickup()</code>, <code class="code">PickUp2()</code> oder anderen
+          Applikationen ähnlichen Namens, die in den diversen Internet-Foren
+          usw. als Patches herumgeistern, auch wenn sie ungefähr das Gleiche
+          bewirken.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp12755968" href="#idp12755968" class="para">133</a>] </sup>Das wird vermutlich in neueren Versionen von Asterisk behoben,
+          siehe <a href="http://bugs.digium.com/view.php?id=5014"><em class="citetitle">Asterisk
+          Bug 5014</em></a>.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp12761264" href="#idp12761264" class="para">134</a>] </sup><code class="code"><em class="parameter"><code>blf</code></em></code> (<a href="http://wiki.snom.com/Settings/fkey/blf">http://wiki.snom.com/Settings/fkey/blf</a>)</p></div><div class="footnote"><p><sup>[<a id="ftn.idp14686224" href="#idp14686224" class="para">135</a>] </sup><code class="code"><em class="parameter"><code>dest</code></em></code> (<a href="http://wiki.snom.com/Settings/fkey/dest">http://wiki.snom.com/Settings/fkey/dest</a>)</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link formalpara"><a href="blf-hints-pickup.html#blf-beschreibung" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link formalpara">Beschreibung des Leistungsmerkmals BLF</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="blf-leds.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Ansteuerung der LEDs</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="blf-subscriptions.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Verfahren für SIP-<span xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Subscriptions</em></span></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="blf-telefon-konfiguration-snom.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Konfiguration der Telefone für BLF</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="blf-test.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Test der Hints</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Heranholen eines Anrufs (<span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Pickup</span>“</span>)</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="blf-pickup.html#blf-pickup-extensions.conf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">extensions.conf für Pickup</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="blf-pickup.html#blf-pickup-telefon" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Konfiguration des Telefons für Pickup</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="blf-pickup.html#blf-group-pickup" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Heranholen von einer Gruppe</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-device-state.html" title="pfc level3 breadcrumb-link section sectlevel1">Gezielte Ansteuerung der LEDs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="blf-test.html"><strong>Zurück</strong>23.4. Test der Hints</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="blf-device-state.html"><strong>Weiter</strong>23.6. Gezielte Ansteuerung der LEDs</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

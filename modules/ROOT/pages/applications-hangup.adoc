@@ -1,0 +1,52 @@
+[[applications-hangup]]
+= `Hangup()`
+
+Legt den aktuellen Channel auf.
+
+[source]
+----
+Hangup()
+----
+
+Legt den aktuellen Channel bedingungslos auf.
+
+Liefert stets -1 zurück.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,Playback(vm-goodbye)
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Hangup' =-
+
+[Synopsis]
+Hang up the calling channel
+
+[Description]
+Hangup([causecode]): This application will hang up the calling channel.
+If a causecode is given the channel's hangup cause will be set to the given
+value.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,4 +4,6 @@
+Hang up the calling channel
+
+[Description]
+- Hangup(): This application will hang up the calling channel.
++ Hangup([causecode]): This application will hang up the calling channel.
++ If a causecode is given the channel's hangup cause will be set to the given
++ value.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-answer.adoc[Abschnitt C.10, „`Answer()`“]

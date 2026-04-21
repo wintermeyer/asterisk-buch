@@ -1,0 +1,21 @@
+[[asterisk-fernsteuern]]
+= Asterisk fernsteuern
+
+In diesem Kapitel:
+
+* xref:asterisk-rx.adoc[asterisk -rx "_`Befehl`_"]
+** xref:asterisk-rx.adoc#asterisk-rx-beispiel[Beispiel]
+* xref:call-file.adoc[Call Files]
+** xref:call-file.adoc#call-file-parameter[Parameter]
+** xref:call-file.adoc#call-file-zukunft[Call Files in der Zukunft aufrufen]
+** xref:call-file.adoc#call-file-weckruf[Beispiel Weckruf]
+* xref:asterisk-manager-api.adoc[Das Manager-Interface (AMI)]
+** xref:asterisk-manager-api.adoc#manager-interface-beispiel-expect[Beispiel: Anzahl der Mailbox-Nachrichten mit Expect abfragen]
+** xref:asterisk-manager-api.adoc#manager-interface-starastapi[StarAstAPI für PHP]
+** xref:asterisk-manager-api.adoc#manager-interface-beispiel-php[Beispiel: Anzahl der Mailbox-Nachrichten mit PHP abfragen]
+* xref:manager-interface-ajam.adoc[Der Asynchronous Javascript Asterisk Manager (AJAM)]
+** xref:manager-interface-ajam.adoc#manager-interface-beispiel-ajam[Beispiel: Anzahl der Mailbox-Nachrichten per AJAM abfragen]
+** xref:manager-interface-ajam.adoc#manager-interface-ajam-hinweise[Hinweise zu AJAX und AJAM]
+
+Es gibt verschiedene Möglichkeiten, eine Asterisk-Telefonanlage extern
+(also z. B. von anderen Programmen aus) zu steuern.

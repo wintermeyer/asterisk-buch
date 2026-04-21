@@ -1,0 +1,146 @@
+[[rechteverwaltung-mit-contexten]]
+= Rechteverwaltung mit Contexten
+
+Bis jetzt durften alle Telefone immer alle Extensions in der
+`extensions.conf` aufrufen. Dies ist für eine kleine
+interne Telefonanlage ausreichend. Für große Telefonanlagen und Anlagen,
+die sich mit anderen Telefonnetzen verbinden, benötigen wir aber eine
+Rechteverwaltung. Asterisk realisiert dies über sogenannte
+Contexte.
+
+[[rechteverwaltung-mit-contexten-source-1]]
+== Quelle: Jedes Telefon ist in einem Context
+
+Bis jetzt haben wir für die benutzten SIP-Telefone keinen Context
+definiert. Deshalb hat Asterisk automatisch den
+`[default]`-Context genommen. Möchten wir bestimmte Telefone
+in bestimmten Contexten haben, so richten wir dies in der
+`sip.conf` mit folgendem Eintrag ein:
+
+[source]
+----
+context = ContextName
+----
+
+Dabei kann im Bereich `[general]` ein Context für alle
+Telefone angegeben werden. Dieser Context kann aber wiederum bei jedem
+Telefon überschrieben werden.
+
+[[rechteverwaltung-mit-contexten-source-1-beispiel]]
+=== Beispiel mit einem Context
+
+In der Firma abc gibt es die SIP-Telefone 10 und 11. Beide sind
+im Context `[intern]`. Die `sip.conf`
+sieht dann wie folgt aus:
+
+[source]
+----
+[general] 
+port=5060 
+bindaddr=0.0.0.0 
+
+[10] 
+type=friend 
+secret=1234 
+host=dynamic
+context=intern  ; <-- Context
+
+[11] 
+type=friend 
+secret=1234 
+host=dynamic
+context=intern  ; <-- Context
+----
+
+Das gleiche Ergebnis kann aber auch mit folgender
+`sip.conf` erreicht werden:
+
+[source]
+----
+[general] 
+port=5060 
+bindaddr=0.0.0.0 
+context=intern  ; <-- Context
+
+[10] 
+type=friend 
+secret=1234 
+host=dynamic
+
+[11] 
+type=friend 
+secret=1234 
+host=dynamic
+----
+
+[[rechteverwaltung-mit-contexten-source-n-beispiel]]
+=== Beispiel mit mehreren Telefonen
+
+In der Firma abc gibt es die SIP-Telefone 10, 11, 12 und 20. Die
+Telefone 10 bis 12 sind normale Mitarbeitertelefone im Context
+`[abc]`, und das Telefon 20 ist ein Gästetelefon am Empfang
+mit dem Context `[gast]`:
+
+[source]
+----
+[general] 
+port=5060 
+bindaddr=0.0.0.0 
+context=abc  ; <-- Context
+
+[10] 
+type=friend 
+secret=1234 
+host=dynamic
+
+[11] 
+type=friend 
+secret=1234 
+host=dynamic
+
+[12] 
+type=friend 
+secret=1234 
+host=dynamic
+
+[20] 
+type=friend 
+secret=1234 
+host=dynamic
+context=gast  ; <-- Context
+----
+
+[[rechteverwaltung-mit-contexten-dest-n-beispiel]]
+== Ziel: Contexte in der extensions.conf
+
+Die `extensions.conf` wird in verschiedene
+Abschnitte (also Contexte) aufgeteilt. Jeder Context wird durch den
+Contextnamen in eckigen Klammern eingeleitet.
+
+Das Folgende ist ein Beispiel für eine
+`extensions.conf` mit den drei Contexten
+`default`, `hausmeister` und
+`apfelkuchen`:
+
+[source]
+----
+[default] 
+exten => 1001,1,Answer()
+exten => 1001,2,Playback(hello-world)
+exten => 1001,3,Hangup()
+
+[hausmeister]
+exten => 2000,1,Dial(SIP/2000,20)
+exten => 2000,2,VoiceMail(2000,u)
+
+exten => 2001,1,Dial(SIP/2001)
+exten => 2001,2,VoiceMail(2001,u)
+
+[apfelkuchen]
+exten => 2999,1,VoiceMailMain(${CALLERID(num)},s)
+----
+
+Wird bei einem SIP-Telefon in der `sip.conf`
+kein Context angegeben, so nimmt Asterisk immer den
+`[default]`-Context in der
+`extensions.conf`.

@@ -1,0 +1,49 @@
+[[functions-global]]
+= `GLOBAL()`
+
+[source]
+----
+GLOBAL(Variablenname)
+----
+
+Wird verwendet, um eine Variable als global zu deklarieren, also als
+gültig über die Lebensdauer eines Kanals hinaus. In Asterisk 1.2 verwendet
+man stattdessen `Set()` (xref:applications-set.adoc[Abschnitt C.149, „`Set()`“]) mit
+der Option `g`.
+
+[source]
+----
+; eine globale Variable ${meinevariable} definieren:
+exten => 123,1,Set(GLOBAL(meinevariable)=Test)
+----
+
+[NOTE]
+====
+Ob globale Variablen auch nach einem Reload von Asterisk noch gültig
+sind, wird durch die Einstellung `clearglobalvars` in der
+`extensions.conf` bestimmt.
+====
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'GLOBAL' =-
+
+[Syntax]
+GLOBAL(<varname>)
+
+[Synopsis]
+Gets or sets the global variable specified
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-shared.adoc[Abschnitt D.87, „`SHARED()`“], xref:functions-import.adoc[Abschnitt D.52, „`IMPORT()`“], xref:functions-local.adoc[Abschnitt D.58, „`LOCAL()`“]

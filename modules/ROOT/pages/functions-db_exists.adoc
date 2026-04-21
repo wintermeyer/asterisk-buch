@@ -1,0 +1,59 @@
+[[functions-db_exists]]
+= `DB_EXISTS()`
+
+[source]
+----
+DB_EXISTS(Familie/Schlüssel)
+----
+
+Prüft, ob ein Schlüssel in der AstDB vorhanden ist. Gibt 1 oder 0
+zurück. Setzt auch die Variable `DB_RESULT` auf den Wert, der
+unter dem Schlüssel gespeichert ist.
+
+[source]
+----
+; abfragen, ob der Eintrag cidnums/0123456789 existiert:
+exten => 123,1,Set(foo=${DB_EXISTS(cidnums/0123456789)})
+----
+
+So kann z. B. die Applikation `LookupBlacklist()` ersetzt
+werden. Springt, falls die Anrufernummer in der Blacklist ist, zum Context
+`blacklisted`, Extension `s`, Priorität
+`1`:
+
+[source]
+----
+exten => 123,1,GotoIf(${DB_EXISTS(blacklist/${CALLERID(num)})}?blacklisted,s,1)
+exten => 123,n,Dial(IAX2/benutzer:passwort@beispiel.de/500)
+
+[blacklisted]
+exten => s,1,NoOp(${CALLERID(num)} ist auf der Blacklist)
+exten => s,n,Hangup()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'DB_EXISTS' =-
+
+[Syntax]
+DB_EXISTS(<family>/<key>)
+
+[Synopsis]
+Check to see if a key exists in the Asterisk database
+
+[Description]
+This function will check to see if a key exists in the Asterisk
+database. If it exists, the function will return "1". If not,
+it will return "0". Checking for existence of a database key will
+also set the variable DB_RESULT to the key's value if it exists.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-db.adoc[Abschnitt D.17, „`DB()`“], xref:functions-db_delete.adoc[Abschnitt D.18, „`DB_DELETE()`“], xref:applications-dbdeltree.adoc[Abschnitt C.34, „`DBdeltree()`“]

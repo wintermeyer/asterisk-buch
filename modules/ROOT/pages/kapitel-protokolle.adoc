@@ -1,0 +1,22 @@
+[[kapitel-protokolle]]
+= Protokolle
+
+In diesem Kapitel:
+
+* xref:protokolle-einleitung.adoc[Einleitung]
+* xref:netzwerkprotokolle.adoc[Netzwerkprotokolle]
+** xref:netzwerkprotokolle.adoc#tcp[Transmission Control Protocol (TCP)]
+** xref:netzwerkprotokolle.adoc#udp[User Datagram Protocol (UDP)]
+* xref:definition-channel.adoc[Channels]
+* xref:peers-users-friends.adoc[Peers, Users und Friends]
+* xref:iax-vs-sip.adoc[IAX versus SIP]
+* xref:sip.adoc[SIP]
+** xref:sip.adoc#sip-nat-problem[Das SIP-NAT-Problem]
+** xref:sip.adoc#sip-extensions.conf[SIP-Geräte in der extensions.conf]
+** xref:sip.adoc#sip.conf-general[Globale Einstellungen]
+** xref:sip.adoc#sip.conf-channels[Geräte-Einstellungen]
+* xref:iax.adoc[IAX]
+** xref:iax.adoc#warum-iax[Warum IAX?]
+** xref:iax.adoc#iax-beispielkonf[Beispiel für eine IAX-Konfiguration]
+** xref:iax.adoc#iax-globalekonf[Globale Einstellungen]
+** xref:iax.adoc#iax-channelkonf[Channel-Einstellungen]

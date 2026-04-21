@@ -1,0 +1,19 @@
+[[manager-stopmonitor]]
+= `StopMonitor`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: StopMonitor
+Synopsis: Stop monitoring a channel
+Privilege: call,all
+Description: The 'StopMonitor' action may be used to end a previously
+started 'Monitor' action. The only parameter is 'Channel', the name
+of the channel monitored.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

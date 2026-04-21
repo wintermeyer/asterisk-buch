@@ -1,0 +1,44 @@
+[[functions-env]]
+= `ENV()`
+
+[source]
+----
+ENV(Variablenname)
+----
+
+Liest/setzt eine Umgebungsvariable (Environment). Umgebungsvariablen
+sind keine Variablen in Asterisk, sondern in der Betriebssystem-Umgebung.
+Sie können in der Shell mit +echo
+$_`Variablenname`_+ ausgegeben werden.
+Umgebungsvariablen unterscheiden zwischen Groß- unf Kleinschreibung und
+werden fast immer großgeschrieben.
+
+[source]
+----
+; HOME lesen:
+exten => 123,1,Set(foo=${ENV(HOME)})
+
+; HOME setzen:
+exten => 123,1,Set(ENV(HOME)=/myAst)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'ENV' =-
+
+[Syntax]
+ENV(<envname>)
+
+[Synopsis]
+Gets or sets the environment variable specified
+
+[Description]
+Not available
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

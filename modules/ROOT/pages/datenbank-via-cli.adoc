@@ -1,0 +1,114 @@
+[[datenbank-via-cli]]
+= Datenbankzugriff vom CLI
+
+Vom Command Line Interface (CLI) aus kann der Administrator
+ebenfalls auf die Datenbank zugreifen.
+
+[TIP]
+====
+Sollten Sie den entsprechenden Befehl oder die genaue Syntax
+vergessen haben, so können Sie jederzeit `help database` im
+CLI eingeben:
+
+[source,shell]
+----
+big-island*CLI> help database
+             database del  Removes database key/value
+         database deltree  Removes database keytree/values
+             database get  Gets database value
+             database put  Adds/updates database value
+            database show  Shows database contents
+         database showkey  Shows database contents
+----
+====
+
+[IMPORTANT]
+====
+Denken Sie bei den folgenden Beschreibungen daran, dass Sie, wenn
+die Family, der Schlüssel oder der Wert Leerzeichen enthält,
+Anführungszeichen (`"`) um den String schreiben müssen! Also
+z. B. `database put test eintrag "Hallo Welt"`.
+====
+
+[[datenbank-cli-schreiben]]
+== Werte in die Datenbank schreiben
+
+Mit +database put _`family`_
+_`key`_ _`value`_+
+können Werte in die Datenbank geschrieben werden:
+
+[source,shell]
+----
+big-island*CLI> database put obst apfel 20
+Updated database successfully
+----
+
+[[datenbank-cli-lesen]]
+== Werte aus der Datenbank lesen
+
+Mit +database get _`family`_
+_`key`_+ lesen Sie Werte aus der Datenbank
+aus:
+
+[source,shell]
+----
+big-island*CLI> database get obst apfel
+Value: 20d*CLI>
+----
+
+[[datenbank-cli-loeschen]]
+== Werte aus der Datenbank löschen
+
++database del _`family`_
+_`key`_+ und +database deltree
+_`family`_+ löschen Werte aus der
+Datenbank.
+
+[[datenbank-cli-del]]
+=== database del
+
+Um den Key `apfel` aus der Family `obst`
+zu löschen, rufen Sie `database del` auf:
+
+[source,shell]
+----
+big-island*CLI> database del obst apfel
+Database entry removed.
+----
+
+[[datenbank-cli-deltree]]
+=== database deltree
+
+Mit `database deltree` kann eine ganze Family aus der
+Datenbank gelöscht werden:
+
+[source,shell]
+----
+big-island*CLI> database deltree obst
+Database entries removed.
+----
+
+[[datenbank-cli-anzeigen]]
+== Datenbankinhalt anzeigen
+
+Mit den Befehlen `database show` und `database
+showkey` kann der Administrator den Inhalt der Datenbank auf dem
+CLI ausgeben lassen. Ein Beispiel:
+
+[source,shell]
+----
+big-island*CLI> database put einkaufsliste eier 2
+Updated database successfully
+big-island*CLI> database put einkaufsliste butter 250
+Updated database successfully
+big-island*CLI> database put einkaufsliste zucker 500
+Updated database successfully
+big-island*CLI> database show
+/einkaufsliste/butter : 250
+/einkaufsliste/eier : 2
+/einkaufsliste/zucker : 500
+big-island*CLI> database showkey butter
+/einkaufsliste/butter : 250
+big-island*CLI> database deltree einkaufsliste
+Database entries removed.
+----

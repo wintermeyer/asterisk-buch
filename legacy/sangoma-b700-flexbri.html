@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.1. Installation der Sangoma B700 FlexBRI</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="Sangoma, B700, FlexBRI, Installation" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="Anhang B. Spezielle Installationsanleitungen für Asterisk mit ISDN- oder Analog-Karten" /><link rel="prev" href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="Anhang B. Spezielle Installationsanleitungen für Asterisk mit ISDN- oder Analog-Karten" /><link rel="next" href="sangoma-a500.html" title="B.2. Installation der Sangoma A500 ISDN-Karte" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="B.1. Installation der Sangoma B700 FlexBRI" id="sangoma-b700-flexbri" lang="de"><div class="titlepage"><div><div><h2 class="title" id="sangoma-b700-flexbri">B.1. Installation der Sangoma B700 FlexBRI</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Philipp</span> <span class="surname">Kempgen</span></h3></div></div></div></div><a id="idp23416544" class="indexterm"></a><a id="idp23413936" class="indexterm"></a><div class="abstract" title="Zusammenfassung"><h6>Zusammenfassung</h6><div class="para">Installationsbeschreibung Sangoma FlexBRI (B700) auf einem
+    Asterisk-System. Mit Beispiel für den Anschluss an das öffentliche
+    ISDN-Netz und ein internes analoges Fax.</div></div><div class="note"><h2>Anmerkung</h2><div class="para">In dieser Anleitung wird Wanpipe in der Version
+    <span class="quote">„<span class="quote">current-beta</span>“</span> (das ist derzeit eine 3.5) installiert statt
+    <span class="quote">„<span class="quote">current-stable</span>“</span> (derzeit 3.4). Das ist momentan notwendig,
+    da die FlexBRI-Karte erst ab Wanpipe Version 3.5 betrieben werden
+    kann.<sup>[<a id="idp23410064" href="#ftn.idp23410064" class="footnote">165</a>]</sup></div></div><div class="para"><span class="inlinemediaobject"><img src="bilder/sangoma-b700-flexbri.html.jpg" align="right" alt="image" style="text-align: right" /><div class="longdesc"><div class="para">Sangoma B700 FlexBRI</div></div></span>Die von <a href="http://www.sangoma.com">Sangoma</a> für den europäischen Markt
+  entwickelte B700-<span class="quote">„<span class="quote">FlexBRI</span>“</span>-Karte<sup>[<a id="idp23400064" href="#ftn.idp23400064" class="footnote">166</a>]</sup> ist die erste hybride Karte mit 4 BRI-ISDN-Ports (also 8
+  B-Kanälen) und 2 analogen FXS-Ports, also genau das, worauf in Deutschland
+  viele kleine Firmen mit einem analogen Faxgerät und einem
+  ISDN-Telefonanschluss schon lange gewartet haben. Die Karte ist verfügbar
+  für PCI<sup>[<a id="idp23397424" href="#ftn.idp23397424" class="footnote">167</a>]</sup>- und PCI-Express<sup>[<a id="idp23395600" href="#ftn.idp23395600" class="footnote">168</a>]</sup>-Steckplätze (<span class="quote">„<span class="quote">Slots</span>“</span>) mit 5 V oder 3,3 V. Sie
+  verwendet die hervorragende Hardware-Echounterdrückung (Echo Cancellation)
+  von <a href="http://www.octasic.com/">Octasic</a>.</div><div class="para">Die FlexBRI ist sehr gut für kleine bis mittelgroße Installationen
+  geeignet, wo z. B. zusätzlich zur VoIP-Anbindung – oder auch
+  ausschließlich – bis zu 8 B-Kanäle ins öffentliche ISDN-Netz und ein
+  bis zwei interne analoge Faxe betrieben werden sollen. Es sind aber auch
+  andere Szenarien denkbar. Die 4 ISDN-Ports lassen sich paarweise auf
+  TE<sup>[<a id="idp23392176" href="#ftn.idp23392176" class="footnote">169</a>]</sup> oder NT<sup>[<a id="idp23389632" href="#ftn.idp23389632" class="footnote">170</a>]</sup> einstellen. Eine kleinere Variante der Karte bietet nur 2
+  ISDN-Ports und 2 analoge FXS-Ports. Diese Installationsanleitung gilt alle
+  Karten der B700er-Serie.</div><div class="section" title="Die FlexBRI-Karte einbauen" id="sangoma-flexbri-installation-hardware"><div class="titlepage"><div><div><h3 class="title" id="sangoma-flexbri-installation-hardware">Die FlexBRI-Karte einbauen</h3></div></div></div><div class="para">Geliefert wird die B700 in einer kleinen blauen Box, komplett mit
+    Port-Splitter-Kabeln. Die Y-Kabel werden benötigt, um aus den ISDN- und
+    der analogen Buchse jeweils 2 Leitungen mit <span class="quote">„<span class="quote">RJ-45</span>“</span><sup>[<a id="idp23385600" href="#ftn.idp23385600" class="footnote">171</a>]</sup>- bzw. <span class="quote">„<span class="quote">RJ-11</span>“</span><sup>[<a id="idp23384656" href="#ftn.idp23384656" class="footnote">172</a>]</sup>-Steckern herauszuführen. Außerdem liegt eine CD bei, mit
+    Handbüchern, Treibern, Firmware etc. und auch dem Hinweis zur
+    Registrierung bei Sangoma, wodurch man dann Gewährleistung erhält. Dass
+    Sie beim Auspacken der Karte darauf achten, geerdet zu sein, versteht sich
+    von selbst.</div><div class="para">Ob die ISDN-Ports auf TE- oder NT-Modus eingestellt sind, wird
+    dadurch bestimmt, wie die 2 BRI-Module in die Karte eingesteckt sind.
+    Durch die Sichtfenster kann man das gut erkennen. Das linke Modul ist
+    zuständig für Port 1 und 2, das rechte für 3 und 4. Gegebenenfalls steckt
+    man die Module andersherum ein. In dieser Anleitung stellen wir beide
+    Module auf TE, da wir die Karte an das öffentliche ISDN-Netz anschließen
+    wollen. Für den TE-Modus müssen alle Leitungswiderstände
+    (<span class="emphasis"><em>termination resistors</em></span>) ausgeschaltet sein (für NT
+    an), siehe <a href="http://wiki.sangoma.com/sangoma-wanpipe-smg-asterisk-bri-installation#HardwareInstallation">http://wiki.sangoma.com/sangoma-wanpipe-smg-asterisk-bri-installation#HardwareInstallation</a>.</div><div class="para">Auf der Karte gibt es 8 kleine Schalter für die Wiederstände,
+    jeweils einer für ein Adernpaar, also 2 für einen ISDN-Port bzw. 4 für
+    eine Buchse an der Karte, da die Karte ja in einer Buchse 2 Ports
+    herausführt. Es müssen pro BRI-Modul also die jeweiligen
+    DIP-Doppel-Schalter Sw1 und Sw2 bzw. Sw3 und Sw4 alle gleich eingestellt
+    sein.</div><div class="para">Gute Schema-Zeichnungen zum Einbau der FlexBRI finden Sie in <a href="http://www.sangoma.com/data/docs/flex_bri_installation_manual.pdf">http://www.sangoma.com/data/docs/flex_bri_installation_manual.pdf</a>.</div><div class="para">Bei den BRI-Ports ist es wichtig, dass der Port 1 an das öffentliche
+    ISDN-Netz angeschlossen wird, da dieser den Zeittakt übernimmt. Port 1
+    wird aus Buchse 1 herausgeführt; das ist die am weitesten von der
+    Schraublasche der PCI-Blende entfernte Buchse, oder anders gesagt die
+    Buchse mit dem geringsten Abstand vom PCI-Sockel auf dem Mainboard.</div><div class="para">Es wird ein FXS<sup>[<a id="idp23378192" href="#ftn.idp23378192" class="footnote">173</a>]</sup>-Analog-Modul mitgeliefert. Auf dem Modul im
+    <span class="quote">„<span class="quote">FXO/FXS</span>“</span>-Steckplatz muss also FXS zu lesen sein. Damit das
+    FXS-Modul Strom liefern kann, muss die Karte beim Einbauen am hinteren
+    Ende an einen normalen <a href="http://de.wikipedia.org/wiki/Molex">Molex-Stecker</a>
+    angeschlossen werden.</div><div class="para">Für diese Anleitung wird ein frisch installiertes Debian GNU/Linux 5
+    (<span class="quote">„<span class="quote">Lenny</span>“</span>) vorausgesetzt<sup>[<a id="idp17186288" href="#ftn.idp17186288" class="footnote">174</a>]</sup>.</div><div class="sidebar"><h6></h6><div class="para">Ein ISO-Image für die Installation finden Sie auf <a href="http://www.debian.org/releases/etch/debian-installer/">http://www.debian.org/releases/lenny/debian-installer/</a>.
+      Ich empfehle das etwa 150 MByte große Netzinstallations-CD-Image. Eine
+      Debian-GNU/Linux-Installationsanleitung befindet sich unter <a href="http://www.debian.org/releases/etch/i386/">http://www.debian.org/releases/lenny/i386/</a>.
+      Ein allgemeines Anwenderhandbuch steht unter <a href="http://debiananwenderhandbuch.de/">http://debiananwenderhandbuch.de</a>.</div></div><div class="para"><span class="emphasis"><em>Bitte loggen Sie sich nach der Installation als Benutzer
+    <code class="literal">root</code> am System ein, und führen Sie alle hier
+    angegebenen Befehle mit diesem Benutzer aus.</em></span></div><div class="para">Es versteht sich eigentlich von selbst, dass man auf einem frisch
+    installierten System die Paketlisten für <code class="literal">aptitude</code>
+    aktualisiert und wichtige Updates einspielt:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude update</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+Paketlisten werden gelesen... Fertig
+debian:~# <span class="bold bold"><strong><code class="command">aptitude upgrade</code></strong></span>
+0 aktualisiert, 0 neu installiert, 0 zu entfernen und 0 nicht aktualisiert.
+debian:~# </pre></div><div class="para">Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+    installiert wurde, müssen wir jetzt das System rebooten:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">shutdown -r now</code></strong></span></pre></div><div class="para">Loggen Sie sich nach dem Hochfahren des Rechners bitte wieder als
+    <code class="literal">root</code> ein, und kontrollieren Sie dann, dass die Karte
+    richtig erkannt wird:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">lspci -nn -v -d 1923:</code></strong></span>
+00:06.0 Network controller [0280]: Sangoma Technologies Corp. A200/Remora FXO/FXS Analog AFT card [1923:0040]
+        Subsystem: Device [a700:3400]
+        Flags: bus master, medium devsel, latency 255, IRQ 17
+        Memory at 4a100000 (32-bit, non-prefetchable) [size=64K]</pre>Da
+    ist sie (<code class="literal">1923</code> ist der PCI-Hersteller-Code von
+    Sangoma).</div><div class="para">Lassen Sie sich übrigens nicht von den Farben der LEDs in den
+    Buchsen verwirren. Die BRI-Module leuchten rot für TE (grün für NT), und
+    das FXS-Analog-Modul leuchtet grün (FXO: rot).</div></div><div class="section" title="Build-Umgebung" id="sangoma-flexbri-build-environment"><div class="titlepage"><div><div><h3 class="title" id="sangoma-flexbri-build-environment">Build-Umgebung</h3></div></div></div><div class="para">In den weiteren Abschnitten benötigen wir eine Build-Umgebung, also
+    Compiler usw.:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install build-essential</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">aptitude install libncurses5-dev flex bison</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">aptitude install bzip2</code></strong></span></pre></div><div class="para">Und auch die Linux-Kernel-Header:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install linux-headers-`uname -r`</code></strong></span></pre></div></div><div class="section" title="Quellen von Zaptel und Asterisk" id="sangoma-flexbri-zaptel-asterisk"><div class="titlepage"><div><div><h3 class="title" id="sangoma-flexbri-zaptel-asterisk">Quellen von Zaptel und Asterisk</h3></div></div></div><div class="para">Wanpipe, also der Sangoma-Treiber, beinhaltet ein Skript namens
+    <code class="filename">Setup</code>, das sich um die Installation kümmert. Dieses
+    Skript führt auch verschiedene Tests in den Source-Verzeichnissen von
+    Zaptel und Asterisk durch. Sie müssen entsprechend vor der Installation
+    von Wanpipe die Quellen von Zaptel und Asterisk herunterladen und
+    installieren.</div><div class="important"><h2>Wichtig</h2><div class="para">Es ist sehr wahrscheinlich, dass sich 2009 oder 2010 in diesem
+      Installations-Howto Veränderungen ergeben. Bitte überprüfen Sie die
+      Webseite zum Buch (<a href="http://das-asterisk-buch.de">http://das-asterisk-buch.de</a>)
+      auf Updates.</div></div><div class="para">Zaptel:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install udev libnewt-dev</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.1.tar.gz</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xzf zaptel-1.4.12.1.tar.gz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm zaptel-1.4.12.1.tar.gz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">cd zaptel-1.4.12.1/</code></strong></span>
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">./configure</code></strong></span> 
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+I think that the zaptel hardware you have on your system is:
+pci:0000:00:06.0     wanpipe-     1923:0040 Sangoma Technologies Corp. A200/Remora FXO/FXS Analog AFT card
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">update-rc.d -f zaptel remove</code></strong></span>
+debian:/usr/src/zaptel-1.4.12.1# <span class="bold bold"><strong><code class="command">update-rc.d zaptel defaults 15 30</code></strong></span></pre></div><div class="para">Asterisk<sup>[<a id="idp23393568" href="#ftn.idp23393568" class="footnote">175</a>]</sup>:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install libssl-dev libncurses5-dev libcurl3-dev</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.21.tar.gz</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xzf asterisk-1.4.21.tar.gz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm asterisk-1.4.21.tar.gz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">cd asterisk-1.4.21/</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">./configure</code></strong></span> 
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">make</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">make install</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">make samples</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">make config</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">update-rc.d -f asterisk remove</code></strong></span>
+debian:/usr/src/asterisk-1.4.21# <span class="bold bold"><strong><code class="command">update-rc.d asterisk defaults 50 15</code></strong></span></pre></div></div><div class="section" title="Installation von Wanpipe" id="sangoma-flexbri-wanpipe-installation"><div class="titlepage"><div><div><h3 class="title" id="sangoma-flexbri-wanpipe-installation">Installation von Wanpipe</h3></div></div></div><div class="para">Eine Build-Umgebung haben wir bereits<sup>[<a id="idp20593680" href="#ftn.idp20593680" class="footnote">176</a>]</sup>. Außerdem brauchen wir noch <code class="code">udev</code> und
+    <code class="code">lksctp</code>:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install udev lksctp-tools libsctp-dev</code></strong></span></pre></div><div class="para">Auch <code class="code">logrotate</code> sollte vorher vorhanden sein, damit das
+    Skript automatisch eine entsprechende logrotate-Definition erstellen
+    kann:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install logrotate</code></strong></span></pre></div><div class="para">Als Nächstes installieren wir die aktuelle Version von
+    Wanpipe:</div><pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cd /usr/src/</code></strong></span>
+debian:/usr/src# <span class="bold bold"><strong><code class="command">wget -O wanpipe-current-beta.tgz \
+  ftp://ftp.sangoma.com/linux/current_wanpipe/current-beta.tgz</code></strong></span></pre><pre class="screen">debian:/usr/src# <span class="bold bold"><strong><code class="command">tar xzf wanpipe-*.tgz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">rm wanpipe-*.tgz</code></strong></span> 
+debian:/usr/src# <span class="bold bold"><strong><code class="command">cd wanpipe-*</code></strong></span></pre><div class="para">Das Skript <code class="filename">Setup</code> kümmert sich um die
+    Kompilierung und würde es melden, falls wir notwendige Software nicht
+    installiert hätten. Dabei benutzen wir überall die Default-Werte. Als
+    <span class="quote">„<span class="quote">Compilation Mode</span>“</span> verwenden wir Nr. 7 (<span class="quote">„<span class="quote">SMG (BRI) +
+    TDM Voice</span>“</span>).</div><pre class="screen">debian:/usr/src/wanpipe-3.5.2# <span class="bold bold"><strong><code class="command">./Setup install</code></strong></span>
+        ----------------------------------------------------------
+                  WANPIPE v3.5.2 Installation Script
+            Copyright (c) 1995-2008, Sangoma Technologies Inc.
+        ----------------------------------------------------------
+<em class="replaceable"><code>[...]</code></em>
+Would you like to install WANPIPE now? [y] (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+Verifying files and fixing permissions ...Done
+Checking for C developement tools ...(gcc) OK
+Checking for C++ developement tools ...OK
+Checking for Make utility ...OK
+Checking for ncurses library ... OK
+Checking for Perl developement tools ...OK
+Checking for AWK ...OK
+Checking for FLEX ...OK
+Checking for Patch ...OK
+Checking for libtermcap-devel...OK
+Checking for bison...OK
+
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+Please specify absolute path name of your linux directory
+
+
+Press Enter for Default: /lib/modules/2.6.26-1-686/build
+
+#&gt;<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Setting linux directory to /lib/modules/2.6.26-1-686/build
+
+Upgrading WANPIPE kernel documentation ...Done.
+
+
+Upgrading WANPIPE kernel headers ...Done.
+
+Upgrading WANPIPE kernel drivers ...Done.
+
+WANPIPE device drivers upgraded successfully!
+
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+        Please Select Compilation Mode
+<em class="replaceable"><code>[...]</code></em>
+
+7. SMG (BRI) + TDM Voice (Zaptel)
+       Default for: Asterisk BRI + PRI + Analog
+
+<em class="replaceable"><code>[...]</code></em>
+
+Please select (1,2,3,4,5,6,7,8 or 9) [Default: 1]: <span class="bold bold"><strong><strong class="userinput"><code>7</code></strong></strong></span></pre><pre class="screen">Enabling the AFT TE1 Support</pre><pre class="screen">
+Looking for zaptel directory in /usr/src ...
+-------------------------------------------
+1 : /usr/src/zaptel-1.4.12.1 
+------------------------------------------ 
+------------------------------------------ 
+m : Enter zaptel path manually
+
+(ctrl-c to Exit)
+Please select working zaptel directory [1-1][m]: <span class="bold bold"><strong><strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Enabling the TDM Voice Asterisk Support
+                                                      
+Zaptel HW HDLC Support Detected: Enabling DCHAN Feature
+Native Zaptel HW HDLC Support Detected - No patch required
+Zaptel source unmodified
+                        
+Checking for UDEV Zaptel compatibility...OK
+  UDEV permissions not found/or not used 
+
+Checking for SCTP Utilities....OK.</pre><pre class="screen">
+Looking for Asteris/CallWeaver directory in /usr/src ...
+-------------------------------------------
+1 : /usr/src/asterisk-1.4.21 
+------------------------------------------ 
+------------------------------------------ 
+m : Enter Asterisk/CallWeaver path manually
+
+(ctrl-c to Exit)
+Please select working Asterisk/CallWeaver directory [1-1][m]: <span class="bold bold"><strong><strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Source kernel name:2.6.26-1-686
+
+Checking for SMP support ...Enabled.
+
+Checking current processor type ...i686
+
+<em class="replaceable"><code>[...]</code></em>
+
+Checking for REGPARM kernel option ...Enabled.
+
+Compiling General WANPIPE Driver for 2.6.X Kernel .....Done.
+
+
+WAN HWEC module enabled and compiled!
+
+Linking Wanpipe Driver and protocols ...Done.
+
+Updating Kernel Modules ...Done.
+
+Visually Confirm that driver compilation was successful! (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+WANPIPE META CONFIGURATION
+
+There are two configuration files associated with WANPIPE.  
+
+1) /usr/src/wanpipe-3.5.2/wanrouter.rc: 
+        - defines locations of important files such as lock
+          and configuration files as well as start/stop 
+          order of multiple WANPIPE devices.
+2) /usr/src/wanpipe-3.5.2/wanpipe1.conf:
+        - main configuration file for each WANPIPE device.
+        - defines interfaces, hardware and protocol information.
+        - this file can be created using the 'wancfg' GUI
+          utility or manually based on sample files located
+          in /etc/wanpipe/samples.
+          
+Please read the WanpipeInstallation.(pdf/txt) manual for further
+information.
+
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Please specify a desired location for WANPIPE configuration files.
+
+        (Press Enter for Default: /etc/wanpipe)
+
+&lt;specify path:&gt;<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Please specify a desired location for WANPIPE interface files.
+
+        (Press Enter for Default: /etc/wanpipe/interfaces)
+
+&lt;specify path:&gt;<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Please specify a location for WANPIPE binary, firmware files.
+
+        (Press Enter for Default: /etc/wanpipe/firmware)
+
+&lt;specify path:&gt;<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+WANPIPE UTILITIES SETUP
+
+WANPIPE utilities are used to:
+        1) create configuration files: for Zaptel and Asterisk
+                /usr/sbin/wancfg_zaptel #Zaptel and Asterisk
+                /usr/sbin/wancfg_smg    #BRI/SS7, Zaptel and Asterisk
+                /usr/sbin/wancfg_tdmapi #TDM API
+        2) create WANPIPE WAN/IP configuration files.
+                (/usr/sbin/wancfg)
+        3) start,stop,restart individual/all devices and interfaces.
+                (/usr/sbin/wanrouter)
+        4) debug line, protocol and driver problems.
+                (/usr/sbin/wanpipemon)
+        5) aid in WANPIPE API development
+                (/etc/wanpipe/api)
+
+Refer to the WanpipeInstallation.(pdf/txt) for more information.
+
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Compiling WANPIPE Utilities ...Done.
+
+
+Compiling WANPIPE WanCfg Utility ...
+Done.
+
+
+Compiling WANPIPE Misc Utilities ...Done.
+
+
+Compiling WANPIPE LibSangoma TDM API library ...Done.
+
+
+Compiling WANPIPE API Development Utilities ...Failed!
+
+        ERROR: Failed to compile WANPIPE API Tools !!!
+        
+Please contact Sangoma Technologies
+Press [Enter] to continue...
+
+Compiling WANPIPE HWEC Utilities ...Done.
+
+        WANPIPE Environment Setup Complete !!!
+
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">Installing WANPIPE Files ... !
+Installing  WANPIPE Utilities in /usr/sbin
+Installing wanrouter.rc in /etc/wanpipe
+Installing wanpipe libraries in /etc/wanpipe
+Installing firmware in /etc/wanpipe/firmware
+Installing documentation in /usr/share/doc/wanpipe
+Installing sample api code in /etc/wanpipe/api
+Installing AFT Firmware update utility in /etc/wanpipe/util
+Installing driver headers in /etc/wanpipe/api/include/linux
+Installing Hardware Echo Cancel Utilites
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+WANPIPE BOOTSTRAP CONFIGURATION
+
+Your system uses System V -style initialization scripts.  You have an option
+to add router start-up script to those scripts so that the router will start
+automatically when system enters multi-user mode and shut down when it enters
+single-user mode or when it is halted.
+
+i.e. By selecting this option WANPIPE will startup on system bootup and 
+     stop on system shutdown.
+
+Would you like to install WANPIPE start-up scripts? (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+Current boot level is 2
+
+Wanrouter boot scripts configuration...
+
+Removing existing wanrouter boot scripts...OK
+Enabling wanrouter boot scripts ...(level:8)
+Enabling wanrouter shutdown scripts ...(level:91)
+Would you like to auto-execute ztcfg after wanrouter start? (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+Installing Sangoma Media Gateway Daemon...
+
+Installing SMG Daemon...
+
+Warning: asterisk is running
+Would you like to stop asterisk? (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen">
+Checking Syslog ....
+ found /etc/rsyslog.conf 
+Stopping enhanced syslogd: rsyslogd.
+Starting enhanced syslogd: rsyslogd.
+Stopping enhanced syslogd: rsyslogd.
+Starting enhanced syslogd: rsyslogd.
+Ok
+
+Checking logrotate ...
+Error: Logrotate dir: /etc/logrotate.d not found !
+OK.
+
+Checking for SCTP Utilities....
+OK.
+
+Checking for SCTP modules...
+OK.
+
+Compiling Sangoma MGD ...
+<em class="replaceable"><code>[...]</code></em>
+install -D -m 755 sangoma_mgd /usr/sbin/sangoma_mgd
+BRI control scripts installed
+install -D -m 755 ../sangoma_bri/smg_ctrl /usr/sbin/smg_ctrl
+sangoma_mgd Installed
+Ok.
+Compiling Woomera Channel ...
+<em class="replaceable"><code>[...]</code></em>
+install -D -m 755 chan_woomera.so /usr/lib/asterisk/modules/chan_woomera.so
+chan_woomera Installed
+Ok.
+---------------------------------
+
+ SMG Install Done
+
+--&gt; Config: /etc/sangoma_mgd.conf
+--&gt; Start:  sangoma_mgd -bg
+
+ Chan Woomera Install Done
+
+--&gt; Config: /etc/asterisk/woomera.conf
+--&gt; Start: start asterisk (part of asterisk)
+
+---------------------------------
+
+
+Installing SMG BRI Daemon...
+
+----------------------------------------
+Sangoma BRI Installation Complete
+
+ -&gt; To configure for BRI run:
+ -&gt; /usr/bin/wancfg_smg
+
+----------------------------------------</pre><pre class="screen">
+Append sample config in Asterisk Extensions and Iax Conf (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen">cat: ./conf_bri/woomera_ext.conf: Datei oder Verzeichnis nicht gefunden
+Asterisk extensions.conf file updated with woomera config
+cat: ./conf_bri/woomera_iax.conf: Datei oder Verzeichnis nicht gefunden
+Asterisk iax.conf file updated with bri guest config
+Press [Enter] to continue...<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+WANPIPE INSTALLATON: COMPLETE
+        
+WANPIPE installation is now complete. WANPIPE kernel drivers 
+and configuration/debug utilities have been compiled and installed.
+
+        1) Proceed to configure the WANPIPE drivers:
+                Asterisk/Zaptel: /usr/sbin/wancfg_zaptel
+                TDM API        : /usr/sbin/wancfg_tdmapi
+                SMG SS7/BRI    : /usr/sbin/wancfg_smg
+                WAN Routing/API: /usr/sbin/wancfg
+        2) Use the /usr/sbin/wanrouter startup scrip to start and stop
+           the router. (eg: wanrouter start)
+        3) To uninstall WANPIPE package run ./Setup remove
+                
+Please read http://wiki.sangoma.com for further instructions.</pre><pre class="screen">
+Wanpipe / Zaptel &amp; SMG BRI Configuration
+========================================
+
+wancfg_smg configurator can create all wanpipe config files
+for ZAPTEL as well as for SMG BRI.
+Optionally: the configurator can also create Asterisk zapata.conf
+-----------------------------------------------------
+Would you like to configure wanpipe devices for ZAPTEL &amp; BRI? (y/n) <span class="bold bold"><strong><strong class="userinput"><code>y</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+Generating configuration files for Sangoma Media Gateway
+<em class="replaceable"><code>[...]</code></em>
+---------------------------------------------
+Configuring T1/E1 cards [A101/A102/A104/A108]
+---------------------------------------------
+------------------------------------
+Configuring ISDN BRI cards [A500/B700]
+------------------------------------
+DYDBG dev: [1 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=10 : PORT=1 : HWEC=16 : V=34
+]
+DYDBG card_model 700 port 1</pre><div class="para">Jetzt geht es um die Konfiguration der BRI-Ports. Zur Erinnerung:
+    <span class="quote">„<span class="quote">Point to multipoint</span>“</span> = Mehrgeräteanschluß, also
+    <span class="quote">„<span class="quote">normales</span>“</span> ISDN, <span class="quote">„<span class="quote">Point to point</span>“</span> =
+    Anlagenanschluß:</div><pre class="screen">-----------------------------------------------------------
+AFT-700 detected on slot:6 bus:0
+-----------------------------------------------------------
+
+Would you like to configure AFT-700 port 1 on slot:6 bus:0
+ 1. YES
+ 2. NO
+ 3. Exit
+[1-3]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Configuring port 1 on AFT-700 [slot:6 bus:0 span:1]
+
+Select connection type for port 1
+ 1. Point to multipoint
+ 2. Point to point
+[1-2, ENTER='Point to multipoint']:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Input the group for this port
+: <span class="bold bold"><strong><strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Select dialplan context for group:1
+ 1. from-pstn
+ 2. Custom
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Configuring span:1 as TEI:127
+ 1. YES - Keep this setting
+ 2. NO  - Specify a different TEI
+[1-2, ENTER='YES']:<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><div class="para">Das Gleiche machen wir noch einmal für Port 2, 3 und 4:</div><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+Would you like to configure AFT-700 port 2 on slot:6 bus:0
+ 1. YES
+ 2. NO
+ 3. Exit
+[1-3, ENTER='YES']:<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Configuring port 2 on AFT-700 [slot:6 bus:0 span:2]
+
+Select connection type for port 2
+ 1. Point to multipoint
+ 2. Point to point
+[1-2, ENTER='Point to multipoint']:<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">
+Input the group for this port
+def="1": <span class="bold bold"><strong><strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Configuring span:2 as TEI:127
+ 1. YES - Keep this setting
+ 2. NO  - Specify a different TEI
+[1-2, ENTER='YES']:<span class="bold bold"><strong> <strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+DYDBG dev: [5 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=10 : PORT=5 : HWEC=16 : V=34
+]
+DYDBG card_model 700 port 5
+
+ISBN BRI card configuration complete
+
+Press any key to continue: <span class="bold bold"><strong><strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><div class="para">Dann konfigurieren wir den Analog-Port:</div><pre class="screen">-----------------------------------------------------------
+AFT-700 Analog detected on slot:6 bus:0
+-----------------------------------------------------------
+
+Would you like to configure AFT-700 on slot:6 bus:0
+ 1. YES
+ 2. NO
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Would you like to enable hardware DTMF detection?
+ 1. YES
+ 2. NO
+[1-2, ENTER='YES']:<span class="bold bold"><strong> <strong class="userinput"><code>2</code></strong></strong></span></pre><pre class="screen">
+Which codec will be used?
+ 1. ALAW - Europe
+ 2. MULAW - North America
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Which Operation Mode will be used?
+ 1. FCC
+ 2. TBR21
+ 3. AUSTRALIA
+[1-3, ENTER='FCC']:<span class="bold bold"><strong> <strong class="userinput"><code>2</code></strong></strong></span></pre><pre class="screen">
+Press any key to continue: <span class="bold bold"><strong><strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen">A700 configured on slot:6 bus:0 span:1
+
+Analog card configuration complete
+
+Press any key to continue: <span class="bold bold"><strong><strong class="userinput"><code><em class="replaceable"><code>enter</code></em></code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+###################################################################
+#                             SUMMARY                             #
+###################################################################
+
+  0 T1/E1 port(s) detected, 0 configured
+  4 ISDN BRI port(s) detected, 4 configured
+  1 analog card(s) detected, 1 configured
+  0 usb device(s) detected, 0 configured
+
+Configurator will create the following files:
+        1. Wanpipe config files in /etc/wanpipe
+        2. sangoma_brid config file /etc/wanpipe/smg_bri
+        3. Zaptel config file /etc/zaptel.conf
+        4. Zapata config file /etc/asterisk/zapata.conf
+
+
+Your original configuration files will be saved to:
+        1. /etc/zaptel.conf.bak 
+        2. /etc/asterisk/zapata.conf.bak 
+
+
+Your configuration has been saved in /etc/wanpipe/debug-2009-01-13.tgz.
+When requesting support, email this file to techdesk@sangoma.com
+
+
+###################################################################
+
+Configuration Complete! Please select following:
+ 1. YES - Continue
+ 2. NO - Exit
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Zaptel and Wanpipe configuration complete: choose action
+ 1. Save cfg: Restart Asterisk &amp; Wanpipe now
+ 2. Save cfg: Restart Asterisk &amp; Wanpipe when convenient
+ 3. Save cfg: Stop Asterisk &amp; Wanpipe now
+ 4. Save cfg: Stop Asterisk &amp; Wanpipe when convenient
+ 5. Do not save cfg: Exit
+[1-5]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+Would you like to continue?
+ 1. No - exit
+ 2. YES
+[1-2, ENTER='No']:<span class="bold bold"><strong> <strong class="userinput"><code>2</code></strong></strong></span></pre><pre class="screen"><em class="replaceable"><code>[...]</code></em>
+
+Wanrouter start complete...
+Current boot level is 2
+
+Wanrouter boot scripts configuration...
+
+Removing existing wanrouter boot scripts...OK
+Would you like wanrouter to start on system boot?
+ 1. YES
+ 2. NO
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+Verifying Zaptel boot scripts...Enabled (level:15)
+Verifying Zaptel shutdown scripts...Enabled (level:30)
+Enabling wanrouter boot scripts ...(level:14)
+Enabling wanrouter shutdown scripts ...(level:29)
+Verifying Network boot scripts...Not installed
+Would you like smg_ctrl to start/stop on wanrouter start?
+ 1. YES
+ 2. NO
+[1-2]:<span class="bold bold"><strong> <strong class="userinput"><code>1</code></strong></strong></span></pre><pre class="screen">
+smgbri start scrtip installed scuessfully
+smgbri stop script installed successfully
+Sangoma cards configuration complete, exiting...</pre><div class="para">Im Default-Runlevel 2 sollten jetzt folgende Einträge
+    stehen:<pre class="screen">debian:/usr/src/wanpipe-3.5.2# <span class="bold bold"><strong><code class="command">ls -l /etc/rc2.d/</code></strong></span>
+<em class="replaceable"><code>[...]</code></em>
+lrwxrwxrwx 1 root root  19 10. Jan 12:00 S14wanrouter -&gt; ../init.d/wanrouter
+lrwxrwxrwx 1 root root  16 10. Jan 12:00 S15zaptel -&gt; ../init.d/zaptel
+lrwxrwxrwx 1 root root  18 10. Jan 12:00 S16smg_ctrl -&gt; ../init.d/smg_ctrl
+<em class="replaceable"><code>[...]</code></em>
+lrwxrwxrwx 1 root root  18 10. Jan 12:00 S50asterisk -&gt; ../init.d/asterisk</pre>Wichtig
+    sind dabei nicht die genauen Nummern, sondern die
+    <span class="emphasis"><em>Reihenfolge</em></span> beim Hochfahren:
+    <code class="literal">wanrouter</code>, <code class="literal">zaptel</code>,
+    <code class="literal">smg_ctrl</code>, <code class="literal">asterisk</code>.</div><div class="para">Falls dies nicht der Fall ist oder Sie andere Runlevel bevorzugen,
+    können Sie diese folgendermaßen einrichten:<pre class="screen">debian:/usr/src/wanpipe-3.5.2# <span class="bold bold"><strong><code class="command">update-rc.d -f smg_ctrl remove</code></strong></span>
+debian:/usr/src/wanpipe-3.5.2# <span class="bold bold"><strong><code class="command">update-rc.d smg_ctrl defaults 16 20</code></strong></span></pre></div></div><div class="section" title="Konfiguration für die FlexBRI" id="sangoma-flexbri-konfiguration"><div class="titlepage"><div><div><h3 class="title" id="sangoma-flexbri-konfiguration">Konfiguration für die FlexBRI</h3></div></div></div><div class="para">Das <code class="filename">Setup</code>-Skript hat die Konfiguration für die
+    Sangoma B700 FlexBRI angelegt. Daher soll die Konfigurationsdatei hier nur
+    der Vollständigkeit halber erwähnt werden. Wenn man im Setup alles richtig
+    eingegeben hat, muss man nichts verändern. Sollte man die Konfiguration
+    der Ports erneut vornehmen wollen, kann man später
+    <code class="literal"><code class="command">setup-sangoma</code></code> aufrufen.</div><div class="section" title="Wanpipe" id="sangoma-flexbri-konfiguration-wanpipe"><div class="titlepage"><div><div><h4 class="title" id="sangoma-flexbri-konfiguration-wanpipe">Wanpipe</h4></div></div></div><div class="para">Die Wanpipe-Konfiguration befindet sich im Verzeichnis
+      <code class="filename">/etc/wanpipe/</code>. Darin gibt es mehrere Dateien
+      <code class="filename">wanpipe<em class="replaceable"><code>X</code></em>.conf</code>, wobei
+      <code class="literal"><em class="replaceable"><code>X</code></em></code> für die Nummer des Ports
+      steht. 1 bis 4 sind die BRI-Ports, 5 der Analog-Port.</div></div><div class="section" title="Sangoma Media Gateway (SMG) / Woomera" id="sangoma-flexbri-konfiguration-smg"><div class="titlepage"><div><div><h4 class="title" id="sangoma-flexbri-konfiguration-smg">Sangoma Media Gateway (SMG) / Woomera</h4></div></div></div><div class="para">An der Datei <code class="filename">/etc/sangoma_mgd.conf</code> müssen wir
+      nichts ändern. Auch die <code class="filename">/etc/wanpipe/smg_bri.conf</code>
+      kann fast so bleiben, wie sie ist. Für eine detaillierte Beschreibung
+      der Parameter siehe <a href="http://wiki.sangoma.com/BriAdvancedOptions">http://wiki.sangoma.com/BriAdvancedOptions</a>.
+      Das einzige, was wir hier ändern, ist:<pre class="programlisting">national_prefix=0
+international_prefix=00</pre></div></div><div class="section" title="Zaptel" id="sangoma-flexbri-konfiguration-zaptel"><div class="titlepage"><div><div><h4 class="title" id="sangoma-flexbri-konfiguration-zaptel">Zaptel</h4></div></div></div><div class="para">Die <code class="filename">/etc/zaptel.conf</code> wurde ebenfalls
+      automatisch generiert:<pre class="programlisting"># Autogenerated by /usr/local/sbin/sangoma/setup-sangoma -- do not hand edit
+# Zaptel Channels Configurations (zaptel.conf)
+#
+loadzone=us
+defaultzone=us
+
+
+#Sangoma A700 [slot:6 bus:0 span:1] &lt;wanpipe5&gt;
+fxoks=1
+fxoks=2
+</pre></div><div class="para">Natürlich hindert uns nichts daran, hier <code class="literal">de</code>
+      statt <code class="literal">us</code> einzutragen.<sup>[<a id="idp16922080" href="#ftn.idp16922080" class="footnote">177</a>]</sup></div><div class="para">Bitte wundern Sie sich nicht, warum hier <code class="literal">fxo</code>
+      steht. <code class="literal">fxoks</code> ist die Signalisierung für FXS<sup>[<a id="idp19225792" href="#ftn.idp19225792" class="footnote">178</a>]</sup>.</div></div><div class="section" title="Asterisk" id="sangoma-flexbri-konfiguration-asterisk"><div class="titlepage"><div><div><h4 class="title" id="sangoma-flexbri-konfiguration-asterisk">Asterisk</h4></div></div></div><div class="para">Im Folgenden sehen Sie die Einstellungen in der
+      Asterisk-Konfiguration für die Sangoma B700 FlexBRI.</div><div class="section" title="zapata.conf für die FlexBRI" id="flexbri-asterisk-zapata"><div class="titlepage"><div><div><h5 class="title" id="flexbri-asterisk-zapata">zapata.conf für die FlexBRI</h5></div></div></div><div class="para">Wie nicht anders zu erwarten war, ist die
+        <code class="filename">/etc/asterisk/zapata.conf</code> auch schon für die 2
+        analogen Kanäle konfiguriert. Hier sehen Sie einen
+        Ausschnitt:<pre class="programlisting">;Sangoma A700 [slot:6 bus:0 span:1]  &lt;wanpipe5&gt;
+
+context=from-internal
+group=1
+signalling = fxo_ks
+channel =&gt; 1
+
+context=from-internal
+group=1
+signalling = fxo_ks
+channel =&gt; 2
+</pre></div></div><div class="section" title="woomera.conf für die FlexBRI" id="flexbri-asterisk-woomera"><div class="titlepage"><div><div><h5 class="title" id="flexbri-asterisk-woomera">woomera.conf für die FlexBRI</h5></div></div></div><div class="para">Auch die Konfiguration der BRI-Kanäle in der
+        <code class="filename">/etc/asterisk/woomera.conf</code> für
+        <code class="filename">chan_woomera</code> ist fertig:<pre class="programlisting">[settings]
+debug=2
+
+[default]
+host=localhost
+port=42420
+audio_ip=127.0.0.1
+default_context=sangoma
+debug=2
+dtmf_enable=1
+jb_enable=0
+progress_enable=0
+
+context=from-pstn
+group=1
+</pre></div></div><div class="section" title="extensions.conf für die FlexBRI" id="flexbri-asterisk-extensions"><div class="titlepage"><div><div><h5 class="title" id="flexbri-asterisk-extensions">extensions.conf für die FlexBRI</h5></div></div></div><div class="para">Nun erzeugen wir manuell noch die dazu passende
+        <code class="filename">/etc/asterisk/extensions.conf</code>. Dabei gehen wir
+        davon aus, dass Sie einen solchen Dialplan lesen und verstehen können.
+        Falls Sie gerade erst mit Asterisk angefangen haben, empfiehlt sich
+        ein Blick in <a class="xref" href="kapitel-hello-world.html" title="Kapitel 2. „Hello World“">Kapitel 2, <i><span class="quote">„<span class="quote">Hello World</span>“</span></i></a>.<pre class="programlisting">; Context(e) für Anrufe, die von den BRI-Ports der FlexBRI
+; eingehen. Der Name entspricht dem/den in der
+; /etc/asterisk/woomera.conf eingestellten Context(en).
+
+[from-pstn]
+
+exten =&gt; _X.,1,Verbose(1,### Eingehender Anruf von ${CALLERID(num)} an ${EXTEN})
+exten =&gt; _X.,n,Ringing()
+exten =&gt; _X.,n,Wait(8)
+exten =&gt; _X.,n,Answer()
+exten =&gt; _X.,n,Playback(demo-congrats)
+exten =&gt; _X.,n,Hangup()
+
+exten =&gt; 123456,1,Verbose(1,### Eingehender Anruf von ${CALLERID(num)} an ${EXTEN})
+exten =&gt; 123456,n,Dial(SIP/10)
+exten =&gt; 123456,n,Hangup()
+
+exten =&gt; 99,1,Verbose(1,### Eingehendes Fax von ${CALLERID(num)})
+exten =&gt; 99,n,Dial(Zap/1,60)  ; interne analoge Leitung 1
+exten =&gt; 99,n,Hangup()
+
+; Context(e) für Anrufe von intern, also z. B. vom analogen
+; Port der FlexBRI. Der Name entspricht dem in der
+; /etc/asterisk/zapata.conf eingestellten Context.
+
+[from-internal]
+
+exten =&gt; _X.,1,Verbose(1,### Anruf von intern an ${EXTEN})
+exten =&gt; _X.,n,Dial(WOOMERA/g1/${EXTEN})  ; Gruppe 1
+exten =&gt; _X.,n,Hangup()</pre></div></div></div></div><div class="section" title="Wichtige Befehle für Wanpipe" id="wanpipe-wanrouter-befehle-sangoma-b700"><div class="titlepage"><div><div><h3 class="title" id="wanpipe-wanrouter-befehle-sangoma-b700">Wichtige Befehle für Wanpipe</h3></div></div></div><div class="para">Folgende Befehle sind beim Arbeiten mit Wanpipe/Wanrouter nützlich
+    und zeigen z. B. Informationen über die verbaute FlexBRI-Karte an.</div><div class="para"><code class="literal"><code class="command">wanrouter version</code></code> oder
+    <code class="literal"><code class="command">/etc/init.d/wanrouter version</code></code> zeigt
+    die installierte Version von Wanpipe:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">wanrouter version</code></strong></span>
+
+WANPIPE Release: 3.5.2</pre></div><div class="para"><code class="literal"><code class="command">wanrouter summary</code></code> oder
+    <code class="literal"><code class="command">/etc/init.d/wanrouter summary</code></code> zeigt
+    eine Übersicht über die Konfigurationsdateien
+    <code class="filename">/etc/wanpipe/wanpipe<em class="replaceable"><code>*</code></em>.conf</code><sup>[<a id="idp17938640" href="#ftn.idp17938640" class="footnote">179</a>]</sup>:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">wanrouter summary</code></strong></span>
+
+Configuration File Summary in : /etc/wanpipe/
+
+Device    Protocol          Type Cpu/Io Slot/Irq Bus State
+---------------------------------------------------------------
+wanpipe1  WAN_AFT_ISDN_BRI  PCI  A      6        0   Connected
+wanpipe2  WAN_AFT_ISDN_BRI  PCI  A      6        0   Connecting
+wanpipe3  WAN_AFT_ISDN_BRI  PCI  A      6        0   Connecting
+wanpipe4  WAN_AFT_ISDN_BRI  PCI  A      6        0   Connecting
+wanpipe5  WAN_AFT_ANALOG    PCI  A      6        0   Inactive</pre></div><div class="para"><code class="literal"><code class="command">wanrouter status</code></code> oder
+    <code class="literal"><code class="command">/etc/init.d/wanrouter status</code></code> zeigt
+    den Status aller <span class="emphasis"><em>aktiven</em></span> Ports<sup>[<a id="idp21660320" href="#ftn.idp21660320" class="footnote">180</a>]</sup>:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">wanrouter status</code></strong></span>
+
+Devices currently active:
+        wanpipe1 wanpipe2 wanpipe3 wanpipe4 wanpipe5
+
+
+Wanpipe Config:
+
+Device name | Proto.Map | Adapter            | IRQ | Slot/IO | If's | CLK |
+wanpipe1    | N/A       | A500/B700          | 17  | 6       | 1    | N/A |
+wanpipe2    | N/A       | A500/B700          | 17  | 6       | 1    | N/A |
+wanpipe3    | N/A       | A500/B700          | 17  | 6       | 1    | N/A |
+wanpipe4    | N/A       | A500/B700          | 17  | 6       | 1    | N/A |
+wanpipe5    | N/A       | A200/A400/B600/B700| 17  | 6       | 1    | N/A |
+
+Wanrouter Status:
+
+Device name | Protocol | Station | Status        |
+wanpipe1    | AFT ISDN | N/A     | Connected     |
+wanpipe2    | AFT ISDN | N/A     | Connecting    |
+wanpipe3    | AFT ISDN | N/A     | Disconnected  |
+wanpipe4    | AFT ISDN | N/A     | Disconnected  |
+wanpipe5    | A-ANALOG | N/A     | Connected     |</pre></div><div class="para"><code class="literal"><code class="command">wanrouter hwprobe</code></code> oder
+    <code class="literal"><code class="command">/etc/init.d/wanrouter hwprobe</code></code> zeigt
+    Informationen über die installierte Wanpipe-Hardware:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">wanrouter hwprobe</code></strong></span>
+
+-------------------------------
+| Wanpipe Hardware Probe Info |
+-------------------------------
+1 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=1 : HWEC=16 : V=34
+2 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=2 : HWEC=16 : V=34
+3 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=3 : HWEC=16 : V=34
+4 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=4 : HWEC=16 : V=34
+5 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=5 : HWEC=16 : V=34
+
+Card Cnt: B700=1 </pre></div><div class="para"><code class="literal"><code class="command">wanrouter hwprobe verbose</code></code>
+    funktioniert wie <code class="literal"><code class="command">wanrouter hwprobe</code></code>,
+    zeigt aber noch zusätzliche Informationen wie den TE/NT-Modus:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">wanrouter hwprobe verbose</code></strong></span>
+
+-----------------------------------------
+| Wanpipe Hardware Probe Info (verbose) |
+-----------------------------------------
+1 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=1 : HWEC=16 : V=34
++01:TE: PCI: NONE: C01
+2 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=2 : HWEC=16 : V=34
++02:TE: PCI: NONE: C01
+3 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=3 : HWEC=16 : V=34
++03:TE: PCI: NONE: C01
+4 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=4 : HWEC=16 : V=34
++04:TE: PCI: NONE: C01
+5 . AFT-B700-SH : SLOT=6 : BUS=0 : IRQ=17 : PORT=5 : HWEC=16 : V=34
++01:FXS: PCI: NONE
++02:FXS: PCI: NONE
+
+Card Cnt: B700=1 </pre></div><div class="para">Und dann gibt es natürlich die ganz normalen Befehle
+    <code class="command"><code class="literal">/etc/init.d/wanrouter
+    </code>{<code class="literal">start</code>|<code class="literal">stop</code>|<code class="literal">restart</code>}</code>
+    wie bei jedem Skript in <code class="filename">/etc/init.d/</code> zum Starten bzw.
+    Stoppen des Dienstes.</div><div class="para">Durch Aufruf von <code class="literal"><code class="command">wanrouter</code></code>
+    ohne weitere Optionen erhalten Sie eine Liste aller möglichen
+    Befehle.</div><div class="para">Mit <code class="literal"><code class="command">wanpipemon -g</code></code> bekommen Sie
+    ein grafisches Menü zur Analyse der Wanpipe-Ports.</div><div class="para">Mittels <code class="literal"><code class="command">cat /proc/interrupts</code></code>
+    können Sie prüfen, ob sich die Karte PCI-Interrupts mit anderen Geräten
+    (Festplatte, Netzwerkkarte, ...) teilen muss:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">cat /proc/interrupts</code></strong></span> 
+<em class="replaceable"><code>[...]</code></em>
+ 17:    1979007   IO-APIC-fasteoi   wanpipe1, wanpipe2, wanpipe3, wanpipe4, wanpipe5</pre></div><div class="para">Experten finden weitere Status-Informationen in speziellen Dateien
+    im Verzeichnis <code class="filename">/proc/net/wanrouter/</code>.</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp23410064" href="#idp23410064" class="para">165</a>] </sup>(Irgendwann wird 3.5 als <span class="quote">„<span class="quote">stable</span>“</span>, also stabil,
+        deklariert und wird dann zur Version 3.6.) Eine funktionierende
+        Version dieser Anleitung finden Sie vorübergehend auf <a href="http://www.kempgen.net/asterisk/sangoma-b700-flexbri.html">http://www.kempgen.net/asterisk/sangoma-b700-flexbri.html</a>.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp23400064" href="#idp23400064" class="para">166</a>] </sup>Produktseite: <a href="http://www.sangoma.com/products_and_solutions/hardware/digital_analog_hybrids/flex_bri.html">http://www.sangoma.com/products_and_solutions/hardware/digital_analog_hybrids/flex_bri.html</a>,</p><div class="para">Datenblatt (deutsch): <a href="http://www.sangoma.com/data/datasheets/ge/flex_bri.pdf">http://www.sangoma.com/data/datasheets/ge/flex_bri.pdf</a></div></div><div class="footnote"><p><sup>[<a id="ftn.idp23397424" href="#idp23397424" class="para">167</a>] </sup><a href="http://de.wikipedia.org/wiki/Peripheral_Component_Interconnect">http://de.wikipedia.org/wiki/Peripheral_Component_Interconnect</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp23395600" href="#idp23395600" class="para">168</a>] </sup>abgekürzt: PCIe oder PCI-E (nicht PCI-X), <a href="http://de.wikipedia.org/wiki/PCI-Express">http://de.wikipedia.org/wiki/PCI-Express</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp23392176" href="#idp23392176" class="para">169</a>] </sup>Terminal Equipment, Endeinrichtung, d. h., unsere Seite agiert als
+      Endgerät, also <span class="emphasis"><em>extern.</em></span></p></div><div class="footnote"><p><sup>[<a id="ftn.idp23389632" href="#idp23389632" class="para">170</a>] </sup>Network Termination, Netzabschluss, die Seite, die einem Endgerät
+      eine Teilnehmeranschlussleitung (TAL, engl.: <span class="emphasis"><em>local
+      loop</em></span>) bereitstellt, also <span class="emphasis"><em>intern</em></span></p></div><div class="footnote"><p><sup>[<a id="ftn.idp23385600" href="#idp23385600" class="para">171</a>] </sup>8P8C</p></div><div class="footnote"><p><sup>[<a id="ftn.idp23384656" href="#idp23384656" class="para">172</a>] </sup>6P4C</p></div><div class="footnote"><p><sup>[<a id="ftn.idp23378192" href="#idp23378192" class="para">173</a>] </sup>FXS = Foreign Exchange Station, liefert Betriebsstrom und
+        Wählton, ist also von der TK-Anlage aus gesehen
+        <span class="emphasis"><em>intern</em></span>. Das Gegenteil wäre FXO = Foreign Exchange
+        Office, also von der TK-Anlage aus gesehen
+        <span class="emphasis"><em>extern.</em></span></p></div><div class="footnote"><p><sup>[<a id="ftn.idp17186288" href="#idp17186288" class="para">174</a>] </sup>Die Vorgängerversion 4 (<span class="quote">„<span class="quote">Etch</span>“</span>) funktioniert
+        ebenfalls.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp23393568" href="#idp23393568" class="para">175</a>] </sup>Falls vorher bereits eine ältere Version von Asterisk
+        installiert war, müssen Sie zuerst die alten Module entfernen:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">rm -rf /usr/lib/asterisk/modules</code></strong></span></pre></p></div><div class="footnote"><p><sup>[<a id="ftn.idp20593680" href="#idp20593680" class="para">176</a>] </sup>Hätten wir sie noch nicht, müssten wir sie so
+        installieren:<pre class="screen">debian:~# <span class="bold bold"><strong><code class="command">aptitude install build-essential flex bison libncurses5-dev</code></strong></span>
+debian:~# <span class="bold bold"><strong><code class="command">aptitude install linux-headers-`uname -r`</code></strong></span></pre></p></div><div class="footnote"><p><sup>[<a id="ftn.idp16922080" href="#idp16922080" class="para">177</a>] </sup>Man könnte das auch in der Vorlage
+          <code class="filename">/etc/wanpipe/wancfg_zaptel/templates/zaptel.conf</code>
+          ändern, damit es nach einem erneuten Aufruf von
+          <code class="literal">setup-sangoma</code> erhalten bleibt.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp19225792" href="#idp19225792" class="para">178</a>] </sup>Umgekehrt wäre <code class="literal">fxsks</code> die Signalisierung für
+          FXO.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp17938640" href="#idp17938640" class="para">179</a>] </sup>Die Ausgabe wurde hier etwas in der Breite gekürzt.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp21660320" href="#idp21660320" class="para">180</a>] </sup>Die Ausgabe wurde hier etwas in der Breite gekürzt.</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="danksagungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Danksagungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link glossary"><a href="glossar.html" title="print-previous-main-loop-first level2 breadcrumb-link glossary">Glossar</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="print-previous-main-loop-first level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="breadcrumb-first-level level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="breadcrumb-first-level level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Installation der Sangoma B700 FlexBRI</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#sangoma-flexbri-installation-hardware" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Die FlexBRI-Karte einbauen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#sangoma-flexbri-build-environment" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Build-Umgebung</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#sangoma-flexbri-zaptel-asterisk" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Quellen von Zaptel und Asterisk</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#sangoma-flexbri-wanpipe-installation" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Installation von Wanpipe</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#sangoma-flexbri-konfiguration" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Konfiguration für die FlexBRI</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="sangoma-b700-flexbri.html#wanpipe-wanrouter-befehle-sangoma-b700" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Wichtige Befehle für Wanpipe</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="sangoma-a500.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation der Sangoma A500 ISDN-Karte</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="digium-b410p.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation der Digium B410p</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="digium-tdm400p-analog.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation der Digium TDM400p Analog-Karte</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="beronet-berofix.html" title="pfc level3 breadcrumb-link section sectlevel1">Installation einer BeroFix-Karte</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="installationsanleitungen-asterisk-karten-isdn-analog.html"><strong>Zurück</strong>Anhang B. Spezielle Installationsanleitungen für ...</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="sangoma-a500.html"><strong>Weiter</strong>B.2. Installation der Sangoma A500 ISDN-Karte</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

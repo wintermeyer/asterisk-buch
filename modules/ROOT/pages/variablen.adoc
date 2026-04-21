@@ -1,0 +1,400 @@
+[[variablen]]
+= Variablen
+
+Variablen sind Platzhalter für konkrete Werte. Diese konkreten Werte
+hängen von der Definition der Variablen ab, also dem Typ, und können bei
+Asterisk Zahlen, Buchstaben und Buchstabenfolgen sein. Variablen dienen
+dazu, das kompilierte Programm flexibler zu gestalten und für
+unterschiedliche oder wechselnde Einsatzzwecke anzupassen. Die Verwendung
+von Variablen ermöglicht erst den individuellen Einsatz eines Programms,
+ohne die erneute Übersetzung des Programmcodes in ein ausführbares
+Programm.
+
+[TIP]
+====
+Wenn Sie noch nie programmiert haben oder mit Variablen in
+Berührung gekommen sind, sollten Sie sich an dieser Stelle kurz bei
+http://de.wikipedia.org/wiki/Variable_%28Programmierung%29
+in die Materie einlesen.
+====
+
+Variablen haben bei Asterisk unterschiedliche Geltungsbereiche. Es
+gibt Channel-Variablen, die Werte nur für den jeweiligen und aktiven
+Channel (also das aktuelle Gespräch) setzen, und globale Variablen, die
+Werte für alle Channels setzen. Die bereits von Asterisk vorgesehenen
+Variablen haben wir ja in Form der Parameter in den Konfigurationsdateien
+schon ausführlich kennengelernt. Neben diesen gibt es auch die
+Möglichkeit, eigene Variablen zu definieren und diese in den
+Konfigurationsdateien zu verwenden.
+
+[[variablen-auslesen]]
+== Variablen in einer Extension auslesen
+
+Der Wert einer Variable kann immer in der Syntax
+`${VARIABLENNAME}` ausgelesen werden. Es gibt Variablen, die
+vom Asterisk-System automatisch gesetzt werden. So wird z. B. die
+angerufene Nummer immer in der Variable `EXTEN`
+abgespeichert. Durch Regular Expressions und den Einsatz von Variablen
+kann man somit einen langen Dialplan häufig stark komprimieren.
+
+Beispiel vorher:
+
+[source]
+----
+exten => 100,1,Dial(SIP/100)
+exten => 101,1,Dial(SIP/101)
+exten => 102,1,Dial(SIP/102)
+exten => 103,1,Dial(SIP/103)
+exten => 104,1,Dial(SIP/104)
+exten => 105,1,Dial(SIP/105)
+exten => 106,1,Dial(SIP/106)
+exten => 107,1,Dial(SIP/107)
+exten => 108,1,Dial(SIP/108)
+exten => 109,1,Dial(SIP/109)
+----
+
+Beispiel nachher:
+
+[source]
+----
+exten => _10X,1,Dial(SIP/${EXTEN})
+----
+
+[[variablen-allgemeines]]
+== Allgemeines
+
+Variablennamen müssen nicht wie in unseren Beispielen
+großgeschrieben werden und sind auch nicht an Groß- und Kleinschreibung
+gebunden. Die Großschreibung von Variablen führt aber meistens zu besser
+lesbarem Code, da Sie bereits an der Schreibweise erkennen können, dass
+es sich um eine Variable handelt. Umgekehrt bedeutet das aber auch, dass
+Groß- und Kleinschreibung nicht für die Unterscheidung von Variablen
+verwendet werden kann.
+
+[IMPORTANT]
+====
+Die von Asterisk selbst generierten Variablen wie
+`${EXTEN}` müssen immer in Großbuchstaben
+geschrieben werden.
+====
+
+[[var-strings]]
+=== Strings
+
+Strings (als Variablen, die keine Zahlen, sondern Text
+enthalten) sollten immer in Anführungszeichen gesetzt werden. Asterisk
+akzeptiert sie aber auch ohne diese Markierung. So sind die folgenden
+zwei Zeilen im Ergebnis gleich:
+
+[source]
+----
+exten => 1234,1,Set(OBST=Apfel)
+exten => 1234,2,Set(OBST="Apfel")
+----
+
+Sollte der String ein Komma oder ein Leerzeichen enthalten, dann
+_müssen_ Sie Anführungszeichen verwenden, da diese
+sonst als Kommandos und nicht als Strings interpretiert
+werden:
+
+[source]
+----
+exten => 1234,1,Set(OBSTSORTEN="Apfel, Birne, usw.")
+----
+
+[[var-quoting]]
+=== Quoting
+
+Bei einer Variablen, die Zeichen oder Zeichenfolgen (Wörter,
+Text) als Werte enthält, kann es vorkommen, dass man bestimmte Zeichen
+verwenden möchte, die bereits für andere Funktionen reserviert sind.
+Wollen Sie zum Beispiel ein Underscore-Zeichen als Bestandteil des
+Variablenwertes verwenden, müssen Sie es besonders kennzeichnen bzw.
+maskieren. Diese Kennzeichnung nennt man beim Programmieren
+„_escapen_“. Folgende Zeichen müssen
+auf jeden Fall maskiert („escapt“)
+werden:
+
+[source]
+----
+[ ] $ " \
+----
+
+Das Quoting in der `extensions.conf` erfolgt
+mit einem vorangestellten `\` (Backslash).
+
+Beispiel:
+
+[source]
+----
+exten => 1234,1,Set(BETRAG="10,00 US \$")
+----
+
+[[var-integer]]
+=== Integer
+
+Bestehen Variablen aus einer Ganzzahl
+(_Integer_), so kann diese maximal 18 Stellen
+betragen. Bei Zahlen, die größer sind, tritt ein Fehler auf, der im
+Logfile protokolliert wird.
+
+[TIP]
+====
+Wenn Sie mit größeren Zahlen oder Kommazahlen
+(_Real_) arbeiten wollen, können Sie dies mit
+einem AGI-Skript realisieren (siehe xref:kapitel-agi.adoc[Kapitel 20, _Asterisk Gateway Interface (AGI)_]).
+====
+
+[[globale-var-globals]]
+== Globale Variablen in der `extensions.conf` definieren
+
+Eine globale Variable kann am Anfang der
+`extensions.conf` gesetzt werden. Dies muss im
+besonderen Context `[globals]` erfolgen (er folgt dem Context
+`[general]`).
+
+Beispiel:
+
+[source]
+----
+[general]
+
+[globals]
+KLINGELZEIT=90
+
+[from-intern]
+exten => _XXX,1,Dial(SIP/${EXTEN},${KLINGELZEIT})
+exten => _XXX,n,VoiceMail(${EXTEN})
+----
+
+[[global-var-set]]
+== Variablen mit Set() definieren
+
+Die Applikation `Set()` wird benutzt, um eine Variable
+in einer Extension zu setzen.footnote:[siehe auch xref:applications-set.adoc[Abschnitt C.149, „`Set()`“\]]
+
+[[set-syntax]]
+=== Syntax
+
+[source]
+----
+Set(Variablenname=Wert)
+----
+
+Beispiel:
+
+[source]
+----
+; Eine Channel-Variable setzen:
+exten => 10,1,Set(LIEBLINGSOBSTSORTE="Apfel")
+
+; Eine globale Variable setzen:
+exten => 10,n,Set(GLOBAL(KLINGELZEIT)=90)
+
+; Die Variablen auf dem CLI ausgeben
+exten => 10,n,NoOp(KLINGELZEIT = ${KLINGELZEIT})
+exten => 10,n,NoOp(LIEBLINGSOBSTSORTE = ${LIEBLINGSOBSTSORTE})
+exten => 10,n,NoOp(VAR1 = ${VAR1})
+exten => 10,n,NoOp(VAR2 = ${VAR2})
+----
+
+[[var-vererbung]]
+== Vererbung von Channel-Variablen
+
+Wird im Laufe eines Gespräches ein weiterer Channel aufgebaut, so
+hat dieser natürlich wieder eigene Channel-Variablen.
+
+[[var-einstufige-vererbung]]
+=== Einstufige Vererbung
+
+Will man eine Channel-Variable übergeben, aber keine globale
+Variable dafür benutzen, so kann man der Channel-Variable ein
+`_` (Unterstrich) voransetzen. Diese Channel-Variable
+wird dann an den nächsten Channel vererbt. Dabei wird der Unterstrich
+entfernt. Die Vererbung kann also nur einmal erfolgen.
+
+Beispiel:
+
+[source]
+----
+exten => 1234,1,Set(_KUCHENSORTE="Marmorkuchen")
+----
+
+[[var-mehrstufige-vererbung]]
+=== Mehrstufige Vererbung
+
+Will man eine Channel-Variable beliebig oft vererben, so muss
+man zwei `__` (Unterstrich)-Zeichen vor die Variable
+setzen. Die zwei Unterstrich-Zeichen werden dann immer
+mitvererbt.
+
+[WARNING]
+====
+Asterisk unterscheidet die Namen von Variablen, die mit einem
+Underscore anfangen, nicht von Variablen, die keinen Underscore
+haben. So wird im folgenden Beispiel aus der vererbbaren
+Channel-Variable `KUCHENSORTE` eine normale (nicht
+vererbbare) Channel-Variable:
+
+[source]
+----
+exten => 1234,1,Set(__KUCHENSORTE="Marmorkuchen")
+exten => 1234,n,Set(KUCHENSORTE="Marmorkuchen")
+----
+====
+
+Beispiel:
+
+[source]
+----
+exten => 1234,1,Set(__KUCHENSORTE="Nusskuchen")
+----
+
+Die Unterstriche müssen aber nur beim Setzen der Variable
+vorangestellt werden, nicht beim Auslesen.
+
+[source]
+----
+exten => 1234,1,Set(__KUCHENSORTE="Pflaumenkuchen")
+exten => 1234,n,NoOp(Kuchen: ${KUCHENSORTE})
+----
+
+[[feste-channel-var]]
+== Feste Channel-Variablen
+
+Die folgende Liste enthält die wichtigsten fest einprogrammierten
+Channel-Variablen, die nicht in der `extensions.conf`
+überschrieben, aber ausgelesen werden können.
+
+[WARNING]
+====
+Eine komplette Liste aller vordefinierten Variablen finden Sie
+in der Datei `doc/README.variables` (Asterisk
+1.2) und `doc/channelvariables.txt` (Asterisk
+1.4). In dieser Liste werden nur solche Variablen aufgelistet, die
+nicht als _deprecated_ eingestuft sind. So finden
+Sie z. B. ein `${CALLERIDNUM}` nicht in dieser Liste,
+weil dies deprecated ist. (Sie sollten stattdessen die Funktion
+`${CALLERID(num)}` benutzen.)
+====
+
+Die für das jeweilige Thema relevanten Variablen werden aber
+im Buch immer in jedem Kapitel extra aufgeführt.footnote:[Ein klassisches Henne-Ei-Problem]
+
+[NOTE]
+====
+Bei einigen der hier aufgeführten Variablen handelt es sich gar
+nicht um Variablen, sondern um eingebaute Funktionen. Da dies in der
+Praxis aber oft verschwimmt, werden sie hier trotzdem
+aufgelistet.
+====
+
+`${ANSWEREDTIME}`:: Die Gesamtzeit (in Sekunden), seitdem das Gespräch zustande gekommen ist.
+`${BLINDTRANSFER}`:: Der Name des Channels auf der anderen Seite eines Blind-Transfers.
+`${CHANNEL}`:: Der Name des aktuellen Channels
+`${CONTEXT}`:: Der Name des aktuellen Contextes
+`${EPOCH}`:: Der aktuelle Unix-_Timestamp_.
+`${EXTEN}`:: Die aktuell angewählte Extension
+`${ENV(VARIABLENNAME)}`:: Die Umgebungsvariable `VARIABLENNAME`
+`${HANGUPCAUSE}`:: Der Grund für das Beenden (_hangup_) eines Gesprächs
+`${INVALID_EXTEN}`:: Wird in der `i`-Extension benutzt und enthält die gewählte Extension.
+`${PRIORITY}`:: Die aktuelle Priorität innerhalb der Extension
+`${TRANSFER_CONTEXT}`:: Der Context eines weiterverbundenen Gesprächs
+`${UNIQUEID}`:: Der im System einzigartige (_unique_) ID für das aktuelle Gespräch
+`${SYSTEMNAME}`:: In der `/etc/asterisk/asterisk.conf`-Datei eingetragene _`systemname`_-Parameter.
+
+[[variablenmanipulation]]
+== Variablenmanipulation
+
+Variablen an sich sind erst dann nützlich, wenn man sie zur
+Laufzeit verändern kann. Mithilfe dieser Variabilität lassen sich
+komplexe Verhaltensweisen steuern und vorsehen.
+
+[[var-substring]]
+=== Substring
+
+In der Regel bezeichnen Strings eine Aneinanderreihung einzelner
+Zeichen (_character_). Die Größe eines Strings
+bestimmt sich durch die Anzahl der identifizierbaren einzelnen
+Zeichen. Zum Beispiel besteht der String „Apfelbaum“ aus
+9 Zeichen. Ein String kann grundsätzlich in sogenannte Teilstrings
+zerlegt werden, also in Strings, die, wenn man sie wieder
+aneinanderreiht, den ursprünglichen String ergeben. Im genannten
+Beispiel könnten wir den String „Apfelbaum“ in die
+Teilstrings „Apfel“ und „baum“ zerlegen,
+aber auch „Apf“ und „elbaum“ sind echte
+Teilstrings. Ein String hat theoretisch keine begrenzte Größe, er kann
+beliebig viele Zeichen enthalten; der gesamte Text dieses Buches
+könnte so als ein String aufgefasst werden. Natürlich wäre das dann
+nicht mehr sehr handlich. Dennoch ist der Vorgang des Zerlegens eines
+Strings in Teilstrings eine Standardprozedur beim Programmieren von
+Anwendungen. In vielen Programmiersprachen heißt die hier beschriebene
+Funktionalität _Substring_. Mit einer
+Substring-Funktion kann man Teile eines Strings ausschneiden und das
+Ergebnis in einer anderen Variablen abspeichern. In Asterisk gibt es
+keine eigenständige Routine für diese Substring-Funktion, sondern
+hierfür wird ein `:` (Doppelpunkt) nach dem Variablennamen
+eingesetzt. Vom Inhalt der Variablen, also dem String, wird dann eine
+vorgegebene Anzahl von Zeichen (Länge) als Teilstring
+abgetrennt.
+
+[[var-substring-syntax]]
+==== Syntax
+
+[source]
+----
+${VARIABLENNAME[:Anfang[:Laenge]]}
+----
+
+[[var-substring-beispiel]]
+==== Beispiele
+
+Bei einer Telefonanlage wird traditionell eine führende 0
+(Null) gewählt, um eine Amtsleitung zu bekommen. Die zu wählende
+Telefonnummer darf diese 0 aber nicht enthalten. Wird die Nummer
+`0030 227 32320` gewählt, so kann man mit folgender Zeile
+die eigentliche Rufnummer in die Variable
+`${RUFNUMMER}` abspeichern:footnote:[Für alle neugierigen Leser: Das ist die Telefonnummer des Parlamentsarchivs des Deutschen Bundestages in Berlin.]
+
+[source]
+----
+exten => _0X.,1,Set(RUFNUMMER=${EXTEN:1})
+----
+
+Wenn die Angabe der Länge fehlt, wird automatisch der Rest des
+Strings genommen.
+
+Wenn wir die letzten 5 Ziffern der gewählten Nummer benötigen,
+dann erreichen wir das mit einer negativen Zahl. Bei der oben
+gewählten Nummer würde die folgende Zeile den Wert 32320 in der
+Variablen `${DURCHWAHL}`
+abspeichern:
+
+[source]
+----
+exten => _0X.,1,Set(DURCHWAHL=${EXTEN:-5})
+----
+
+Möchten wir die Vorwahl in einer separaten Variable
+abspeichern, so erreichen wir dies durch:
+
+[source]
+----
+exten => _0X.,1,Set(VORWAHL=${EXTEN:1:3})
+----
+
+Diese
+Zeile geht davon aus, dass die Vorwahl 3-stellig ist, und speichert
+sie in der Variable `${VORWAHL}`.footnote:[Leider macht diese Variante in Deutschland wenig Sinn, da es unterschiedlich lange Vorwahlen gibt. Mehr Informationen zur deutschen Vorwahl finden Sie unter http://de.wikipedia.org/wiki/Telefonvorwahl_%28Deutschland%29.]
+
+Nehmen wir an, wir möchten bei Telefonaten zur Nummer
+`00012024562121` nach Amerika die einzelnen Bestandteile
+herausfiltern:footnote:[Um Ihnen das Gespräch nach Amerika zu sparen: Dies ist die Nummer der Besucherzentrale des Weißen Hauses in Washington DC. ;-)]
+
+[source]
+----
+exten => _0001X.,1,Set(INTERNATIONALEVORWAHL=${EXTEN:3:1})
+exten => _0001X.,n,Set(ORTSVORWAHL=${EXTEN:4:3})
+exten => _0001X.,n,Set(RUFNUMMER=${EXTEN:7})
+exten => _0001X.,n,Set(DURCHWAHL=${EXTEN:-4}
+----

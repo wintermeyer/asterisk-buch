@@ -1,0 +1,42 @@
+[[functions-dundiresult]]
+= `DUNDIRESULT()`
+
+[source]
+----
+DUNDIRESULT(id|nummer)
+----
+
+Gibt ein Ergebnis aus einer DUNDi-Ergebnismenge zurück, siehe
+`DUNDIQUERY()` (xref:functions-dundiquery.adoc[Abschnitt D.25, „`DUNDIQUERY()`“]). Als
+_`id`_ übergibt man die durch
+`DUNDIQUERY()` erhaltene ID der Ergebnismenge.
+_`nummer`_ ist die Nummer des abzufragenden
+Ergebnisses aus der Menge, wobei die Zählung bei 1 beginnt. Wenn man für
+_`nummer`_ `getnum` übergibt, erhält
+man die Anzahl der Treffer.
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'DUNDIRESULT' =-
+
+[Syntax]
+DUNDIRESULT(id|resultnum)
+
+[Synopsis]
+Retrieve results from a DUNDIQUERY
+
+[Description]
+This function will retrieve results from a previous use
+of the DUNDIQUERY function.
+id - This argument is the identifier returned by the DUNDIQUERY function.
+resultnum - This is the number of the result that you want to retrieve.
+Results start at 1. If this argument is specified as "getnum",
+then it will return the total number of results that are available.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-dundiquery.adoc[Abschnitt D.25, „`DUNDIQUERY()`“], xref:functions-dundilookup.adoc[Abschnitt D.24, „`DUNDILOOKUP()`“], `dundi.conf`, xref:functions-enumresult.adoc[Abschnitt D.29, „`ENUMRESULT()`“]

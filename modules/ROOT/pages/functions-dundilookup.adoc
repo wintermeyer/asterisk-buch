@@ -1,0 +1,72 @@
+[[functions-dundilookup]]
+= `DUNDILOOKUP()`
+
+[source]
+----
+DUNDILOOKUP(Nummer[|DUNDi-Context[|Optionen]])
+----
+
+Schlägt eine Telefonnummer mit DUNDi (xref:glossar.adoc#glossar-dundi[DUNDi]) nach. Wird kein `DUNDi-Context`
+angegeben, wird `e164` angenommen. Mit der Option `b`
+(_bypass_) wird der interne DUNDi-Cache umgangen. Gibt
+die erste gefundene Verbindung in der Form
+`Technologie/Ressource` oder einen leeren String zurück.
+
+[source]
+----
+; die Nummer 456 nachschlagen:
+123 => {
+    Set(device=${DUNDILOOKUP(456)});
+    Verbose(1,DUNDi-Ergebnis: ${device});
+    if ("${device}" != "") {
+        Dial(${device});
+    }
+}
+----
+
+[NOTE]
+====
+Wenn Sie nicht nur das erste Ergebnis, sondern mehrere haben wollen,
+müssen Sie stattdessen die Funktionen `DUNDIQUERY()` (xref:functions-dundiquery.adoc[Abschnitt D.25, „`DUNDIQUERY()`“]) und `DUNDIRESULT()` (xref:functions-dundiresult.adoc[Abschnitt D.26, „`DUNDIRESULT()`“]) verwenden.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'DUNDILOOKUP' =-
+
+[Syntax]
+DUNDILOOKUP(number[|context[|options]])
+
+[Synopsis]
+Do a DUNDi lookup of a phone number.
+
+[Description]
+This will do a DUNDi lookup of the given phone number.
+If no context is given, the default will be e164. The result of
+this function will the Technology/Resource found in the DUNDi
+lookup. If no results were found, the result will be blank.
+If the 'b' option is specified, the internal DUNDi cache will
+be bypassed.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -9,7 +9,7 @@
+[Description]
+This will do a DUNDi lookup of the given phone number.
+If no context is given, the default will be e164. The result of
+- this function will the Technology/Resource found in the DUNDi
+- lookup. If no results were found, the result will be blank.
++ this function will return the Technology/Resource found in the first result
++ in the DUNDi lookup. If no results were found, the result will be blank.
+If the 'b' option is specified, the internal DUNDi cache will
+be bypassed.
+
+.Siehe auch
+xref:functions-dundiquery.adoc[Abschnitt D.25, „`DUNDIQUERY()`“],
+`dundi.conf`, xref:functions-enumlookup.adoc[Abschnitt D.27, „`ENUMLOOKUP()`“]

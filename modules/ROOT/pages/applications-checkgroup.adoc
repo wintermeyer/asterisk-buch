@@ -1,0 +1,46 @@
+[[applications-checkgroup]]
+= `CheckGroup()`
+
+Limitiert die Anzahl der Kanäle in einer Gruppe von
+Kanälen.
+
+[source]
+----
+CheckGroup(maximal[@Kategorie][|Optionen])
+----
+
+[IMPORTANT]
+====
+`CheckGroup()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `GROUP_COUNT()`
+(xref:functions-group_count.adoc[Abschnitt D.40, „`GROUP_COUNT()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'CheckGroup' =-
+
+[Synopsis]
+Check the channel count of a group against a limit
+
+[Description]
+Usage: CheckGroup(max[@category][|options])
+Checks that the current number of total channels in the
+current channel's group does not exceed 'max'. If the number
+does not exceed 'max', we continue to the next step.
+The option string may contain zero of the following character:
+'j' -- jump to n+101 priority if the number does in fact exceed max,
+and priority n+101 exists. Execuation then continues at that
+step, otherwise -1 is returned.
+This application sets the following channel variable upon successful completion:
+CHECKGROUPSTATUS The status of the check that the current channel's
+group does not exceed 'max'. It's value is one of
+OK | OVERMAX
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-setgroup.adoc[Abschnitt C.158, „`SetGroup()`“], xref:applications-getgroupcount.adoc[Abschnitt C.61, „`GetGroupCount()`“], xref:applications-getgroupmatchcount.adoc[Abschnitt C.62, „`GetGroupMatchCount()`“], xref:functions-group_count.adoc[Abschnitt D.40, „`GROUP_COUNT()`“]

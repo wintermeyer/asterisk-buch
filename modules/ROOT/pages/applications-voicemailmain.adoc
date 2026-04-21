@@ -1,0 +1,92 @@
+[[applications-voicemailmain]]
+= `VoiceMailMain()`
+
+Betritt das Voicemailsystem.
+
+[source]
+----
+VoiceMailMain([Mailbox][@Context][,Optionen])
+----
+
+Alte Syntax:
+
+[source]
+----
+VoiceMailMain([[s|p]Mailbox][@Context])
+----
+
+Tritt zum Abrufen von Voicemail-Nachrichten in das Voicemail-System
+ein. Ohne Angabe der Mailbox wird der Anrufer zur Eingabe der Mailboxnummer
+aufgefordert.
+
+Mit der Option `s` wird die Überprüfung des Passworts
+übersprungen. Mit der Option `p` wird der Benutzer zur Eingabe
+einer Mailboxnummer aufgefordert, die angegebene Nummer der Eingabe
+vorangestellt und der daraus resultierende String als Mailboxnummer
+verwendet. Das ist nützlich bei der Bereitstellung virtueller Voicemailboxen
+(Virtual Hosting). Mit +a(_`Ordner`_)+
+wird direkt zum angegebenen Ordner (Default: `INBOX`)
+gesprungen.
+
+Ist ein Context spezifiziert, werden nur Mailboxen in diesem
+Voicemail-Context berücksichtigt.
+
+Liefert -1 zurück, wenn der Benutzer auflegt, sonst 0.
+
+[source]
+----
+; zum Voicemail-Menü der Mailbox 123 im Voicemail-Context default gehen:
+exten => 123,1,VoiceMailMain(123@default)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'VoiceMailMain' =-
+
+[Synopsis]
+Check Voicemail messages
+
+[Description]
+VoiceMailMain([mailbox][@context][|options]): This application allows the
+calling party to check voicemail messages. A specific mailbox, and optional
+corresponding context, may be specified. If a mailbox is not provided, the
+calling party will be prompted to enter one. If a context is not specified,
+the 'default' context will be used.
+
+Options:
+p - Consider the mailbox parameter as a prefix to the mailbox that
+is entered by the caller.
+g(#) - Use the specified amount of gain when recording a voicemail
+message. The units are whole-number decibels (dB).
+s - Skip checking the passcode for the mailbox.
+a(#) - Skip folder prompt and go directly to folder specified.
+Defaults to INBOX
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -16,3 +16,5 @@
+g(#) - Use the specified amount of gain when recording a voicemail
+message. The units are whole-number decibels (dB).
+s - Skip checking the passcode for the mailbox.
++ a(#) - Skip folder prompt and go directly to folder specified.
++ Defaults to INBOX
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Check Voicemail messages
+
+[Description]
+- VoiceMailMain([mailbox][@context][|options]): This application allows the
++ VoiceMailMain([mailbox][@context][,options]): This application allows the
+calling party to check voicemail messages. A specific mailbox, and optional
+corresponding context, may be specified. If a mailbox is not provided, the
+calling party will be prompted to enter one. If a context is not specified,
+
+.Siehe auch
+xref:applications-voicemail.adoc[Abschnitt C.186, „`VoiceMail()`“],
+`voicemail.conf`

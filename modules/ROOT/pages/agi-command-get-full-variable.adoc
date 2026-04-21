@@ -1,0 +1,41 @@
+[[agi-command-get-full-variable]]
+= `GET FULL VARIABLE`
+
+[source]
+----
+GET FULL VARIABLE Variablenname [Kanalname]
+----
+
+Gibt den Wert der Variable _`Variablenname`_ aus
+dem Kanal _`Kanalname`_ (oder dem aktuellen)
+aus.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| 0 | Fehler. Variable existiert nicht.
+| 1 (_`Wert`_) | Erfolgreich. Wert der Variablen.
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: GET FULL VARIABLE <variablename> [<channel name>]
+Returns 0 if <variablename> is not set or channel does not exist. Returns 1
+if <variablename> is set and returns the variable in parenthesis. Understands
+complex variable names and builtin variables, unlike GET VARIABLE.
+example return code: 200 result=1 (testvariable)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -3,3 +3,4 @@
+if <variablename> is set and returns the variable in parenthesis. Understands
+complex variable names and builtin variables, unlike GET VARIABLE.
+example return code: 200 result=1 (testvariable)
++ Runs Dead : Yes

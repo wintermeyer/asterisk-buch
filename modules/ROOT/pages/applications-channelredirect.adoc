@@ -1,0 +1,50 @@
+[[applications-channelredirect]]
+= `ChannelRedirect()`
+
+Leitet einen Channel auf eine andere Priorität.
+
+[source]
+----
+ChannelRedirect(Channel,[Context,]Extension,Priorität)
+----
+
+Leitet den angegebenen Channel auf eine andere Extension im
+Dialplan um.
+
+`Channel`:: Name des Channels, der umgeleitet werden soll
+`Context`:: Ziel-Context, zu dem gesprungen werden soll
+`Extension`:: Ziel-Extension, zu der gesprungen werden soll
+`priority`:: Ziel-Priorität in der neuen Extension
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ChannelRedirect' =-
+
+[Synopsis]
+Redirects given channel to a dialplan target.
+
+[Description]
+ChannelRedirect(channel|[[context|]extension|]priority):
+Sends the specified channel to the specified extension priority
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,8 @@
+Redirects given channel to a dialplan target.
+
+[Description]
+- ChannelRedirect(channel|[[context|]extension|]priority):
++ ChannelRedirect(channel,[[context,]extension,]priority)
+Sends the specified channel to the specified extension priority
++ This application sets the following channel variables upon completion:
++ CHANNELREDIRECT_STATUS - Are set to the result of the redirection
++ either NOCHANNEL or SUCCESS
+
+.Siehe auch
+xref:applications-goto.adoc[Abschnitt C.65, „`Goto()`“], xref:applications-transfer.adoc[Abschnitt C.177, „`Transfer()`“]

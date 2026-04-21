@@ -1,0 +1,73 @@
+[[applications-meetmecount]]
+= `MeetMeCount()`
+
+Zählt die Teilnehmer einer MeetMe-Konferenz.
+
+[source]
+----
+MeetMeCount(KonferenzNr[,Variablenname])
+----
+
+Spielt die Anzahl der Teilnehmer in der MeetMe-Konferenz ab. Falls
+eine Variable angegeben ist, wird der Abspielvorgang übersprungen und die
+Anzahl in diese Variable geschrieben.
+
+Liefert bei Erfolg 0 zurück, bei einem Fehler -1.
+
+Zählt die Teilnehmer in Konferenz 501 und weist diese Zahl
+`${COUNT}` zu.
+
+[source]
+----
+; die Teilnehmerzahl der Konferenz 333 in ${anzahl} speichern:
+exten => 333,1,MeetMeCount(501,anzahl)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'MeetMeCount' =-
+
+[Synopsis]
+MeetMe participant count
+
+[Description]
+MeetMeCount(confno[|var]): Plays back the number of users in the specified
+MeetMe conference. If var is specified, playback will be skipped and the value
+will be returned in the variable. Upon app completion, MeetMeCount will hangup
+the channel, unless priority n+1 exists, in which case priority progress will
+continue.
+A ZAPTEL INTERFACE MUST BE INSTALLED FOR CONFERENCING FUNCTIONALITY.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -6,6 +6,7 @@
+[Description]
+MeetMeCount(confno[|var]): Plays back the number of users in the specified
+MeetMe conference. If var is specified, playback will be skipped and the value
+- will be returned in the variable. Upon app completion, MeetMeCount will hangup the
+- channel, unless priority n+1 exists, in which case priority progress will continue.
++ will be returned in the variable. Upon app completion, MeetMeCount will hangup
++ the channel, unless priority n+1 exists, in which case priority progress will
++ continue.
+A ZAPTEL INTERFACE MUST BE INSTALLED FOR CONFERENCING FUNCTIONALITY.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,9 +4,8 @@
+MeetMe participant count
+
+[Description]
+- MeetMeCount(confno[|var]): Plays back the number of users in the specified
++ MeetMeCount(confno[,var]): Plays back the number of users in the specified
+MeetMe conference. If var is specified, playback will be skipped and the value
+will be returned in the variable. Upon app completion, MeetMeCount will hangup
+the channel, unless priority n+1 exists, in which case priority progress will
+continue.
+- A ZAPTEL INTERFACE MUST BE INSTALLED FOR CONFERENCING FUNCTIONALITY.
+
+.Siehe auch
+xref:applications-meetme.adoc[Abschnitt C.89, „`MeetMe()`“], xref:applications-meetmeadmin.adoc[Abschnitt C.90, „`MeetMeAdmin()`“], xref:functions-meetme_info.adoc[Abschnitt D.63, „`MEETME_INFO()`“]

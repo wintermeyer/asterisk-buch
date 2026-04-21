@@ -1,0 +1,1035 @@
+[[iax]]
+= IAX
+
+IAXfootnote:[Hier ist immer IAX2, also IAX Version 2 gemeint.] ist das Inter-Asterisk-eXchange-Protokoll, also das
+Asterisk-eigene VoIP-Protokoll, das bevorzugt verwendet werden
+soll.
+
+[[warum-iax]]
+== Warum IAX?
+
+Braucht die Welt eigentlich _noch_ ein
+VoIP-Protokoll, wo es doch schon SIP, H.323 etc. und eine Reihe
+proprietärer Protokolle gibt? Darüber lässt sich natürlich streiten. IAX
+hat aber einige Vorteile. Hier die wichtigsten, neben weiteren technischen
+Details:
+
+* *Geringer Overhead:* Im Vergleich zu beispielsweise SIP (und dem darin verwendeten RTP) hat IAX als reines UDP-Protokoll ein deutlich besseres Nutzdaten-Overhead-Verhältnis.
+* *NAT/Firewall-tauglich:* Trotz solcher Hürden kann IAX problemlos Anrufe initiieren und entgegennehmen etc. Es muss nur ein einziger Firewall-Port freigegeben werden (bei SIP mindestens 3).
+* *Einfaches Protokoll:* Es müssen keinerlei Strings geparst werden, was IAX kaum anfällig für Speicherüberläufe macht.
+* *Gesprächstransfers:* Gespräche können sowohl über einen zentralen Server laufen als auch direkt zwischen zwei Teilnehmern.
+* *Trunking:* Dadurch kann über die gleiche Datenleitung eine viel höhere Anzahl von simultanen Gesprächen geführt werden.
+
+[[iax-beispielkonf]]
+== Beispiel für eine IAX-Konfiguration
+
+Am Anfang der `iax.conf` steht immer der
+Eintrag `[general]`. Ähnlich wie bei der
+`sip.conf` werden im `[general]`-Abschnitt
+allgemeine Parameter übergeben. Darunter kommt dann die Definition der
+einzelnen Channels.
+
+Als Beispiel für die Möglichkeiten des IAX-Protokolls verbinden
+wir zwei voneinander unabhängige Telefonanlagen mit dem IAX-Protokoll. So
+können Gespräche von der einen zur anderen Anlage geführt werden und
+müssen nicht über das Festnetz geroutet werden.
+
+[[iax-beispielkonf-aufgabe]]
+=== Aufgabenstellung
+
+Es gibt zwei Anlagen mit jeweils zwei Telefonen (1000 und
+1001). Die Anlagen heißen `ast1` und `ast2`. Jede
+Anlage soll in der Lage sein, Gespräche an die andere Anlage mit dem
+IAX-Protokoll zu übermitteln. Dazu wird eine Vorwahl benutzt. Die
+Vorwahl `0901` verbindet zur Anlage `ast1`, und
+`0902` verbindet zur Anlage `ast2`. Die Anlage
+`ast1` besitzt in diesem Beispiel die IP-Adresse
+`192.168.0.101` und die Anlage `ast2` die
+IP-Adresse `192.168.0.102`.
+
+[[iax-beispielkonf-ast1]]
+=== Konfiguration ast1
+
+Die `iax.conf` enthält folgende Konfiguration:
+
+[source]
+----
+[ast2]
+type = friend
+host = 192.168.0.102
+secret = 1234
+context = test-telefone
+permit = 0.0.0.0/0.0.0.0
+----
+
+Die
+`extensions.conf` enthält folgende Konfiguration:
+
+[source]
+----
+[via-asterisk2]
+exten => 09021000,1,Dial(IAX2/ast2/1000)
+exten => 09021001,1,Dial(IAX2/ast2/1001)
+;          ^   ^               ^     ^
+;          |   |               |     |
+; virt.Vorwahl ext      Verbindung  ext
+----
+
+[[iax-beispielkonf-ast2]]
+=== Konfiguration ast2
+
+Die `iax.conf` enthält folgende Konfiguration:
+
+[source]
+----
+[ast1]
+type = friend
+host = 192.168.0.101
+secret = 1234
+context = test-telefone
+permit = 0.0.0.0/0.0.0.0
+----
+
+Die
+`extensions.conf` enthält folgende Konfiguration:
+
+[source]
+----
+[via-asterisk1]
+exten => 09011000,1,Dial(IAX2/ast1/1000)
+exten => 09011001,1,Dial(IAX2/ast1/1001)
+----
+
+[[iax-globalekonf]]
+== Globale Einstellungen
+
+Die folgenden Parameter können nur im `[general]`-Teil
+definiert werden, sind also gültig für alle Channels. Sie können hier
+außerdem auch einige der in xref:iax.adoc#iax-channelkonf[„Channel-Einstellungen“]
+beschriebenen Einstellungen verwenden.
+
+[[iax-globalekonf-bandwidth]]
+=== `bandwidth`
+
+[source]
+----
+bandwidth = [low|medium|high]
+----
+
+Dient als Gruppierung verschiedener Soundcodecs. Auf diese
+Weise kann man einfacher bestimmte Situationen definieren. Das ist eine
+komfortable Alternative zu `allow` und `disallow`
+(xref:iax.adoc#iax-globalekonf-allow[„`allow`“]).
+
+`high`:: Erlaubt alle Codecs: G.723.1, GSM, ulaw (G.711), alaw, G.726, ADPCM, slinear, LPC10, G.729, Speex, iLBC. Sollte nur bei Verbindungen ab 10 Mbit/s verwendet werden.
+`medium`:: Verbietet die Codecs slinear, ulaw und alaw.
+`low`:: Verbietet zusätzlich die Codecs G.726 und ADPCM.
+
+Beispiel:
+
+[source]
+----
+bandwidth = low
+disallow = lpc10   ; hat schlechte Qualität
+----
+
+[[iax-globalekonf-allow]]
+=== `allow`
+
+[source]
+----
+allow = [all|Name des Codecs]
+----
+
+Bestimmte Soundcodecs können gezielt erlaubt
+(`allow`) oder verboten (`disallow`) werden.
+Default ist `allow=all`. Die möglichen Codecs sind:
+`g723.1`, `gsm`, `ulaw`,
+`alaw`, `g726`, `slinear`,
+`plc10`, `adpcm`, `g729`,
+`speex`, `ilbc`, `h261`,
+`h263` und der Platzhalter `all`. Siehe auch
+`bandwidth` (xref:iax.adoc#iax-globalekonf-bandwidth[„`bandwidth`“])
+für eine komfortable Einstellung. `allow` und
+`disallow` können mehrmals verwendet werden und sind damit
+eine Ausnahme.
+
+Beispiel:
+
+[source]
+----
+disallow = all
+allow = ulaw
+allow = gsm
+----
+
+[[iax-globalekonf-disallow]]
+=== `disallow`
+
+[source]
+----
+disallow = [all|Name des Codecs]
+----
+
+Siehe `allow` (xref:iax.adoc#iax-globalekonf-allow[„`allow`“]).
+
+[[iax-globalekonf-codecpriority]]
+=== `codecpriority`
+
+[source]
+----
+codecpriority = [caller|host|disabled|reqonly]
+----
+
+Definiert, welcher Teilnehmer einer eingehenden Verbindung die
+höhere Priorität bei der Verhandlung des Soundcodecs hat. Default:
+`host.`
+
+`caller`:: Der Anrufer hat Vorrang vor dem Host.
+`host`:: Der Host hat Vorrang vor dem Anrufer.
+`disabled`:: Codec-Präferenzen werden nicht berücksichtigt.
+`reqonly`:: Codec-Präferenzen werden ignoriert, und der Anruf wird nur dann akzeptiert, wenn der angeforderte Codec verfügbar ist.
+
+Beispiel:
+
+`codecpriority = caller`
+
+[[iax-globalekonf-authdebug]]
+=== `authdebug`
+
+[source]
+----
+authdebug = [yes|no]
+----
+
+Standardmäßig ist ein minimales Debugging bei der Autorisierung
+von IAX-Verbindungen eingestellt. Dies kann mit
+`authdebug=no` deaktiviert werden.
+
+Beispiel:
+
+`authdebug = no`
+
+[[iax-globalekonf-autokill]]
+=== `autokill`
+
+[source]
+----
+autokill = [yes|Timeout in Millisekunden]
+----
+
+Falls `autokill` nicht gesetzt ist, versucht
+Asterisk einen nicht erreichbaren Host sehr lange zu erreichen. Dies
+kann bei vielen gleichzeitigen Versuchen (auf mehreren Channels) zu
+Performance-Problemen führen. Mit `autokill=yes` wird die
+Verbindung nach 2000 Millisekunden abgebrochen. Alternativ kann man auch
+die Anzahl der Millisekunden angeben.
+
+Beispiel:
+
+`autokill = 3500`
+
+[[iax-globalekonf-amaflags]]
+=== `amaflags`
+
+[source]
+----
+amaflags = [default|omit|billing|documentation]
+----
+
+AMA ist die Abkürzung für „Automatic Message
+Accounting“ und spezifiziert uunter anderem Standardmechanismen
+zur Erzeugung und Übermittlung von Anrufprotokollen (Call Data Records
+bzw. Call Detail Records bzw. CDRs; auf Deutsch auch
+Kommunikationsdatensatz, KDS, genannt).
+
+Mit `omit` werden keine Aufzeichnungen
+gemacht.
+
+Beispiel:
+
+`amaflags = billing`
+
+[[iax-globalekonf-bindaddr]]
+=== `bindaddr`
+
+[source]
+----
+bindaddr = [IP-Adresse]
+----
+
+Definiert die IP-Adresse, auf der Verbindungsanfragen
+beantwortet werden. Default: `0.0.0.0` für alle
+Adressen.
+
+Beispiel:
+
+`bindaddr = 0.0.0.0`
+
+[[iax-globalekonf-bindport]]
+=== `bindport`
+
+[source]
+----
+bindport = [Port-Nummer]
+----
+
+Definiert den Netzwerkport, auf dem Verbindungsanfragen
+beantwortet werden. Der Default-Port für IAX (IAX2!) ist 4569 (IAX
+Version 1: 5036).
+
+[IMPORTANT]
+====
+Diese Einstellung muss immer _vor_ dem
+`bindaddr`-Eintrag erfolgen!
+====
+
+Beispiel:
+
+`bindport = 4569`
+
+[[iax-globalekonf-delayreject]]
+=== `delayreject`
+
+[source]
+----
+delayreject = [yes|no]
+----
+
+Diese Einstellung kann auf `yes` gesetzt werden, um
+eventuelle Brute-Force-Attacken (zum Passwortknacken) abzuschwächen.
+Dann wird nach jedem falschen Einlogversuch 1000 Millisekunden (also 1
+Sekunde) gewartet, bis der nächste Versuch akzeptiert wird. Default:
+`no.`
+
+Beispiel:
+
+`delayreject = yes`
+
+[[iax-globalekonf-language]]
+=== `language`
+
+[source]
+----
+language = [en|de|...]
+----
+
+Konfiguriert die Sprache für den entsprechenden Channel. Die
+gobale Standardsprache ist Englisch. Die Sprache, die gesetzt ist, wird
+vom Kanal als Informationselement gesendet. Diese Einstellung wird auch
+von Anwendungen wie `SayNumber()` gelesen, die für
+verschiedene Sprachen unterschiedliche Sprachbausteine
+verwenden.
+
+Beispiel:
+
+`language = de`
+
+[[iax-globalekonf-mailboxdetail]]
+=== `mailboxdetail`
+
+[source]
+----
+mailboxdetail = [yes|no]
+----
+
+Wenn `mailboxdetail` auf `yes` gesetzt
+ist, wird dem Apparat des Mailboxbenutzers die Anzahl der neuen (und die
+der alten) Nachrichten übermittelt (zur Anzeige auf dem Display o. Ä.).
+Ansonsten wird nur signalisiert, dass es neue Nachrichten gibt, ohne die
+Anzahl zu nennen.
+
+Diese Einstellung ist bei neueren Asterisk-Versionen nicht mehr
+verfügbar. Mittlerweile verhält sich Asterisk immer (standardkonform)
+wie `mailboxdetail=yes.`
+
+Beispiel:
+
+`mailboxdetail = yes`
+
+[[iax-globalekonf-tos]]
+=== `tos`
+
+[source]
+----
+tos = [...]
+----
+
+ToS steht für „Type of Service“; das sind Flags im
+IP-Header, die von manchen Routern ausgelesen und befolgt werden. Damit
+kann das Routingverhalten optimiert werden. Die empfohlene Einstellung
+für IAX ist `tos=ef`. ef steht für Expedited Forwarding, also
+etwa Express-Übertragung, was nach geringer Latenz, geringer Verlustrate
+und wenig Jitter verlangt. Default ist `none` (wegen der
+Rückwärtskompatibilität).
+
+Die Vielzahl der möglichen Werte soll hier nicht weiter
+beschrieben werden, Wenn Sie sich dafür interessieren, lesen Sie die
+Spezifizierung von Differentiated Services in RFC 2474 und die
+IANA-DSCPfootnote:[http://www.iana.org/assignments/dscp-registry]. Hier folgt nur ein ins Deutsche übersetzter Auszug aus
+der Asterisk beiliegenden Datei `doc/README.tos`
+(1.2) / `doc/ip-tos.txt` (1.4):
+
+[cols="3*"]
+|===
+| | Die zulässigen Werte für die tos*-Einstellungen sind:`be` (best effort, die normale, geringste Priorität), `cs1`, `af11`, `af12`, `af13`, `cs2`, `af21`, `af22`, `af23`, `cs3`, `af31`, `af32`, `af33`, `cs4`, `af41`, `af42`, `af42`, `ef` (expedited forwarding), `lowdelay` (geringe Latenz), `throughput` (Durchsatz), `reliability` (Zuverlässigkeit), `mincost` (geringste monetäre Kosten), `none` (wie `be`)Außerdem kann man auch deren numerische Pendants angeben (z. B. `tos=0x18`).Die Werte `lowdelay`, `throughput`, `reliability`, `mincost` und `none` sind veraltet und sollen nicht mehr verwendet werden, da sie das ToS-Byte nach dem alten „IP precedence“-Modell aus RFC 791 und 1349 setzen.=========================================== Konfig.- Parameter Empfohlene Datei Einstellung ------------------------------------------- sip.conf tos_sip cs3 sip.conf tos_audio ef sip.conf tos_video af41 ------------------------------------------- iax.conf tos ef ------------------------------------------- iaxprov.conf tos ef ===========================================Für den größtmöglichen Nutzen müssen Sie sicherstellen, dass Ihre Netzwerk-Hardware ToS unterstützt (ggf. aktivieren). Für Cisco-Geräte siehe „Enterprise QoS Solution Reference Network Design Guide“footnote:[http://www.cisco.com/application/pdf/en/us/guest/netsol/ns432/c649/ccmigration_09186a008049b062.pdf] , für Linux-Systeme siehe „Linux Advanced Routing & Traffic Control HowTo“footnote:[http://www.lartc.org/]. |
+| | --`doc/ip-tos.txt` |
+|===
+
+Beispiel:
+
+`tos = ef`
+
+[[iax-globalekonf-adsi]]
+=== `adsi`
+
+[source]
+----
+adsi = [yes|no]
+----
+
+ADSI (Analog Display Services Interface)footnote:[Wird per FSK (Frequency Shift Keying, dt.: Frequenzumtastung) übertragen.] sind verschiedene Datendienste für analoge Telefone mit
+einem Display, z. B. blinkende LED/Anzeige im Display bei wartenden
+Nachrichten etc.
+
+Falls Sie kompatible Telefone haben, können Sie diesen Dienst
+aktivieren.
+
+Beispiel:
+
+`adsi = yes`
+
+[[iax-channelkonf-register]]
+=== `register`
+
+[source]
+----
+register => username[:password]@remote-host
+----
+
+Ist unser Asterisk-Server nur über eine dynamische IP-Adresse
+erreichbar (also kein DNS, sondern nur eine IP-Adresse), so muss er sich
+bei jedem IP-Adresswechsel bei seiner Gegenstelle neu registrieren,
+sonst weiß die Gegenstelle nicht, an welche IP-Adresse sie Gespräche
+durchstellen soll. Dazu wird `register =>`
+verwendet.
+
+Beachten Sie, dass `register`-Angaben nur benutzt
+werden, wenn das entfernte Ende Sie als Peer und
+`host=dynamic` eingestellt hat.
+
+Das grundlegende Format einer Registerangabe sieht wie folgt
+aus:
+
+`register =>
+username[:password]@remote-host`
+
+Alternativ können Sie, indem Sie den Namen eines geeigneten
+RSA-Schlüsselsfootnote:[Asterisk-RSA-Schlüssel finden sich normalerweise in `/var/lib/asterisk/keys/`. Sie können mittels des `astkey`-Skripts eigene Schlüssel generieren.] in eckige Klammern (`[]`) setzen, einen
+RSA-Schlüssel spezifizieren:footnote:[Die eckigen Klammern sind hier Pflicht und nicht wie im Rest des Buches als Optionsangabe zu lesen.]
+
+`register =>
+username:[rsa-key-name]@remote-host`
+
+Standardmäßig werden Registeranfragen über Port 4569 gesendet.
+Sie können aber durch Anhängen von
++:_`Portnummer`_+ (also z. B.
+`:4444`) an den Hostnamen explizit einen anderen
+angeben.
+
+[[iax-channelkonf]]
+== Channel-Einstellungen
+
+Die folgenden Parameter können für die einzelnen Channel
+definiert werden. Einige können aber auch im Abschnitt
+`[general]` verwendet werden.
+
+[[iax-channelkonf-type]]
+=== `type`
+
+[source]
+----
+type = [user|peer|friend]
+----
+
+Legt fest, ob es sich um eine Verbindung zu einem
+`user` (z. B. einem Benutzer-Endgerät, das sich mit uns
+verbindet) oder einem `peer` (z. B. einem Gateway in ein
+anderes Asterisk-Netzwerk, zu dem wir die Verbindung herstellen)
+handelt. `friend` ist eine Kurzschreibweise, um einen
+`user` und einen `peer` mit den gleichen Angaben
+zu definieren.
+
+Beispiel:
+
+`type = peer`
+
+[WARNING]
+====
+Wenn Sie nicht für alle User-Einträge
+(`type=user`) IP-basierte Zugangsbeschränkungen (siehe
+xref:iax.adoc#iax-channelkonf-permit[„`permit`“]) definiert haben, müssen Sie
+in der `iax.conf` einen Eintrag
+`[guest]` haben, bei dem Sie weder `auth` noch
+`secret` angeben. Andernfalls können sich beliebige User
+verbinden, indem sie ein Passwort erraten.
+Beispiel:
+
+[source]
+----
+[guest]
+type=user
+callerid="IAX-Gast-Benutzer"
+----
+====
+
+[[iax-channelkonf-accountcode]]
+=== `accountcode`
+
+[source]
+----
+accountcode = [Abrechnungsnummer]
+----
+
+Der angegebene String wird als Dateiname für die
+Abrechnungsdateien im Verzeichnis
+`/var/log/asterisk/cdr-csv/` benutzt. Verwenden Sie
+daher nur Kleinbuchstaben, Ziffern, den Bindestrich und den
+Unterstrich.
+
+Beispiel:
+
+`accountcode = iax-hausmeister`
+
+[[iax-channelkonf-bandwidth]]
+=== `bandwidth`
+
+[source]
+----
+bandwidth = [low|medium|high]
+----
+
+`bandwidth` dient als Gruppierung verschiedener
+Soundcodecs. Auf diese Weise kann man einfacher bestimmte Situationen
+definieren (siehe xref:iax.adoc#iax-globalekonf-bandwidth[„`bandwidth`“]).
+
+Beispiel:
+
+`bandwidth = low`
+
+[[iax-channelkonf-allow]]
+=== `allow`
+
+[source]
+----
+allow = [all|Name des Codecs]
+----
+
+Bestimmte Soundcodecs können gezielt erlaubt
+(`allow`) oder verboten (`disallow`) werden (siehe
+xref:iax.adoc#iax-globalekonf-allow[„`allow`“]). Dabei ist zu beachten, das
+eventuell im `[general]`-Bereich erlaubte Codecs erst durch
+ein `disallow=all` wieder verboten werden müssen.
+
+Diese Parameter sind nicht zu verwechseln mit
+`permit` und `deny` (siehe xref:iax.adoc#iax-channelkonf-permit[„`permit`“]).
+
+Beispiel:
+
+[source]
+----
+disallow = all
+allow = ulaw
+allow = gsm
+----
+
+[[iax-channelkonf-disallow]]
+=== `disallow`
+
+[source]
+----
+disallow = [all|Name des Codecs]
+----
+
+Siehe `allow` (xref:iax.adoc#iax-channelkonf-allow[„`allow`“]).
+
+[[iax-channelkonf-codecpriority]]
+=== `codecpriority`
+
+[source]
+----
+codecpriority = [caller|host|disabled|reqonly]
+----
+
+Definiert, welcher Teilnehmer der Verbindung die höhere
+Priorität bei der Verhandlung des Soundcodecs hat (siehe xref:iax.adoc#iax-globalekonf-codecpriority[„`codecpriority`“]).
+
+Beispiel:
+
+`codecpriority = caller`
+
+[[iax-channelkonf-amaflags]]
+=== `amaflags`
+
+[source]
+----
+amaflags = [default|omit|billing|documentation]
+----
+
+AMA ist die Abkürzung für „Automatic Message
+Accounting“ und spezifiziert unter anderem Standardmechanismen
+zur Erzeugung und Übermittlung von Anrufprotokollen (CDRs) (siehe xref:iax.adoc#iax-globalekonf-amaflags[„`amaflags`“]).
+
+Beispiel:
+
+`amaflags = documentation`
+
+[[iax-channelkonf-callerid]]
+=== `callerid`
+
+[source]
+----
+callerid = [Name[ <Nummer>]]
+----
+
+Mit `callerid` können Sie die angezeigte Caller-ID
+für einen Nutzer oder ein Peer setzen. Wenn Sie ein Caller-ID-Feld für
+einen Benutzer definieren, werden alle Anrufe, die auf diesem Kanal
+eingehen, mit dieser Caller-ID verknüpft, unabhängig davon, was Ihnen
+das andere Ende sendet. Das ist aus Sicherheitsgründen zu empfehlen
+(außer, Sie vertrauen dem anderen Ende), da es sehr leicht möglich ist,
+seine Caller-ID zu fälschen.
+
+Beispiel:
+
+`callerid = "Mark Spencer" <(256) 428
+6000>`
+
+[[iax-channelkonf-host]]
+=== `host`
+
+[source]
+----
+host=[Host|dynamic]
+----
+
+Als `host` wird entweder der Hostname oder die
+IP-Adresse des anderen Rechners angegeben. Bei Hosts mit dynamisch
+vergebenen (also wechselnden) IP-Adressen verwenden Sie den Sonderfall
+`host=dynamic`, vorzugsweise in Kombination mit der
+Einstellung `defaultip` (xref:iax.adoc#iax-channelkonf-defaultip[„`defaultip`“]).
+
+Beispiele:
+
+`host = 192.168.0.201`
+
+`host = dynamic`
+
+[[iax-channelkonf-defaultip]]
+=== `defaultip`
+
+[source]
+----
+defaultip = [IP-Adresse]
+----
+
+Die `defaultip`-Einstellung ergänzt
+`host=dynamic` (siehe xref:iax.adoc#iax-channelkonf-host[„`host`“]). Ist ein Host noch nicht bei Ihrem
+Server angemeldet, versucht Asterisk, Nachrichten an die hier definierte
+Standard-IP-Adresse zu schicken.
+
+Beispiel:
+
+`defaultip = 192.168.0.201`
+
+[[iax-channelkonf-permit]]
+=== `permit`
+
+[source]
+----
+permit = IP-Adresse[/Netzmaske]
+----
+
+`permit` und `deny` erlauben und
+beschränken die IP-Adressen, von denen Verbindungen zum entsprechenden
+Eintrag möglich sind. Üblicherweise wird zuerst ein
+`deny=0.0.0.0/0.0.0.0` (alle verbieten) vorangestellt und
+dann mit `permit` die erlaubte IP-Adresse oder ein Bereich
+von Adressen freigegeben. Die Reihenfolge von `deny` und
+`permit` ist entscheidend, und beide können für mehrere
+Hosts/Bereiche auch mehrfach auftreten. Wenn genau ein Host gemeint ist,
+können Sie die Netzmaske (wäre `255.255.255.255`)
+weglassen.
+
+Dieses Beispiel erlaubt nur Verbindungen aus dem Bereich
+`192.168.0.*` (Netzmaske 24 Bits,
+Klasse-C-Netzwerk):
+
+[source]
+----
+deny = 0.0.0.0/0.0.0.0                ; alle verbieten
+permit = 192.168.0.102/255.255.255.0  ; 192.168.0.* erlauben
+permit = 192.168.5.5                  ; 192.168.5.5 erlauben
+----
+
+Alle erlauben bis auf `192.168.*.*`:
+
+[source]
+----
+permit = 0.0.0.0/0.0.0.0              ; alle erlauben
+deny = 192.168.0.0/255.255.0.0        ; 192.168.*.* verbieten
+----
+
+Das nächste Beispiel ist nicht sinnvoll, da zuerst
+`192.168.0.0` bis `192.168.0.127` verboten, dann
+aber wieder _alle_ erlaubt werden, was die erste
+Regel überschreibt. So wird also nichts verboten:
+
+[source]
+----
+deny = 192.168.0.0/255.255.255.127
+permit = 0.0.0.0/0.0.0.0              ; alle erlauben
+----
+
+[[iax-channelkonf-deny]]
+=== `deny`
+
+[source]
+----
+deny = [IP-Adresse]/[Netzmaske]
+----
+
+Siehe `permit` (xref:iax.adoc#iax-channelkonf-permit[„`permit`“]).
+
+Beispiel:
+
+`deny = 0.0.0.0/0.0.0.0`
+
+[[iax-channelkonf-auth]]
+=== `auth`
+
+[source]
+----
+auth = [plaintext|md5|rsa]
+----
+
+Zum Identifizieren des anderen Peers/Users stehen drei Methoden
+zur Auswahl: `plaintext`, `md5` und
+`rsa`.
+
+`plaintext`:: Diese Methode ist sehr unsicher, da das Passwort im Klartext übertragen wird. Sie sollte daher nicht verwendet werden. Das Passwort wird mit `secret` (xref:iax.adoc#iax-channelkonf-secret[„`secret`“]) angegeben.
+`md5`:: In diesem Challenge/Response-Verfahren wird eine MD5-Prüfsumme übertragen. Das Passwort wird mit `secret` (xref:iax.adoc#iax-channelkonf-secret[„`secret`“]) angegeben.
+`rsa`:: Die `rsa`-Methode ist das sicherste Verfahren durch öffentliche und private Schlüssel. Diese Schlüssel werden bei `inkeys` (xref:iax.adoc#iax-channelkonf-inkeys[„`inkeys`“]) und `outkeys` (xref:iax.adoc#iax-channelkonf-outkey[„`outkey`“]) angegeben.
+
+Mit `auth` legen Sie eine durch Komma getrennte
+Liste von erlaubten Authentifizierungsmethoden fest.
+
+Beispiel:
+
+`auth = rsa,md5`
+
+Wenn Sie weder `auth` noch `secret`
+angeben, bedeutet das, dass keine Authentifizierung notwendig
+ist.
+
+[[iax-channelkonf-secret]]
+=== `secret`
+
+[source]
+----
+secret = [Passwort]
+----
+
+Legt das Passwort für die Authentifizierungsmethoden
+`plaintext` oder `md5` fest (siehe xref:iax.adoc#iax-channelkonf-auth[„`auth`“]).
+
+Beispiel:
+
+`secret = meinpasswort`
+
+[[iax-channelkonf-inkeys]]
+=== `inkeys`
+
+[source]
+----
+inkeys = [rsa-key:rsa-key:...]
+----
+
+Legt für die Authentifizierungsmethode `rsa` (siehe
+xref:iax.adoc#iax-channelkonf-auth[„`auth`“]) den öffentlichen RSA-Schlüssel
+des zu authentifizierenden Systems fest. Um mehr als einen RSA-Schlüssel
+mit einer Benutzer-Kanaldefinition zu verknüpfen, trennen Sie die
+Schlüsselnamen mit einem Doppelpunkt (`:`). Jeder dieser
+Schlüssel wird dann eine Verbindung für gültig erklären
+können.
+
+Diese Schlüssel müssen als Dateien so benannt sein:
++/var/lib/asterisk/keys/_`schluesselname`_.pub+
+
+Beispiel:
+
+`inkeys = server-koblenz:server-bonn`
+
+[[iax-channelkonf-outkey]]
+=== `outkey`
+
+[source]
+----
+outkey = [rsa-key]
+----
+
+Sie können die `outkey`-Option verwenden, um sich
+bei einem Peer mithilfe eines RSA-Schlüssels zu authentifizieren. Für
+ausgehende Authentifizierung kann nur ein RSA-Schlüssel verwendet
+werden. Der `outkey` wird nicht verteilt, er ist Ihr privater
+Schlüssel und sollte 3DES-verschlüsselt sein.
+
+Diese Schlüssel müssen als Dateien so benannt sein:
++/var/lib/asterisk/keys/_`schluesselname`_.key+
+
+Beispiel:
+
+`outkey = privater-schluessel`
+
+[[iax-channelkonf-mailbox]]
+=== `mailbox`
+
+[source]
+----
+mailbox = [Mailboxname[@Mailbox-Context]]
+----
+
+Wenn Sie in einer Kanaldefinition einen Peer mit einer Mailbox
+verknüpfen, wird Voicemail eine MWI-Nachricht (Message Waiting
+Indication) an die Knoten am Ende dieses Kanals schicken. Befindet sich
+die Mailboxnummer in einem anderen Voicemail-Context als
+`default`, können Sie sie als
++_`mailbox@context`_+ angeben. Um
+mehrere Mailboxen mit einem einzigen Peer zu verknüpfen, müssen Sie den
+`mailbox`-Befehl mehrmals verwenden.
+
+Beispiel:
+
+`mailbox = 1000`
+
+[[iax-channelkonf-language]]
+=== `language`
+
+[source]
+----
+language = [en|de|...]
+----
+
+Konfiguriert die Sprache für den entsprechenden Channel. Die
+Standardsprache ist Englisch. Diese Einstellung wird von verschiedenen
+Anwendungen wie z. B. der Voicemailbox oder auch der Applikation
+`SayNumber()` verwendet, um unterschiedliche Sprachbausteine
+zu benutzen.
+
+Beispiel:
+
+`language = de`
+
+[[iax-channelkonf-context]]
+=== `context`
+
+[source]
+----
+context = [Context]
+----
+
+Der Context soll dem Benutzer dieser Verbindung zugeordnet
+werden.
+
+Beispiel:
+
+`context = default`
+
+[[iax-channelkonf-regcontext]]
+=== `regcontext`
+
+[source]
+----
+regcontext = [Context]
+----
+
+Sie können einen Context definieren, der automatisch beim
+ersten Registrieren eines Peers ausgeführt wird. Ist mit
+`regexten` keine Extension angegeben, so wird als
+auszuführende Extension der Name des Peers benutzt. Dabei ist zu
+beachten, dass Asterisk als Erstes automatisch ein `NoOp` mit
+der Priorität 1 ausführt. Als erste Priorität danach ist also die 2 zu
+benutzen. Mehrere Contexte können nacheinander aufgeführt werden; als
+Trennungszeichen wird ein `&` verwendet.
+
+Beispiel:
+
+`regcontext = from-iax`
+
+[[iax-channelkonf-regexten]]
+=== `regexten`
+
+[source]
+----
+regexten = [Nummer]
+----
+
+Wird in Verbindung mit `regcontext` verwendet, um
+die Extension zu spezifizieren, die in dem konfigurierten Context
+ausgeführt werden soll. Falls `regexten` nicht explizit
+konfiguriert ist, wird der Name des Peers als Extension
+verwendet.
+
+Beispiel:
+
+`regexten = 3000`
+
+[[iax-channelkonf-jitterbuffer]]
+=== `jitterbuffer`
+
+[source]
+----
+jitterbuffer = [yes|no]
+----
+
+Schaltet den Jitter-Buffer an oder aus (dies gilt bei
+Verbindungen, bei denen Asterisk als Endgerät fungiert). Der
+Jitter-Buffer gleicht unterschiedliche Laufzeiten der IP-Pakete
+aus.
+
+Der Jitter-Buffer hat eventuell Probleme bei eingeschaltetem
+`trunk` (siehe xref:iax.adoc#iax-channelkonf-trunk[„`trunk`“]).
+
+Beispiel:
+
+`jitterbuffer = yes`
+
+[[iax-channelkonf-forcejitterbuffer]]
+=== `forcejitterbuffer`
+
+[source]
+----
+forcejitterbuffer = [yes|no]
+----
+
+Normalerweise ist es die Aufgabe der Endgeräte, einen
+Jitter-Buffer footnote:[Jitter bezieht sich auf die variierende Latenz zwischen den Datenpaketen. Bei zu großen Schwankungen kann es zu Tonausfällen kommen.] einzurichten. Sollte dies aus irgendeinem Grund nicht oder
+nur schlecht funktionieren (manche Geräte haben einen schlechten
+Jitter-Buffer), kann man diesen Buffer auch auf Asterisk als VoIP-Brücke
+aktivieren.
+
+Beispiel:
+
+`forcejitterbuffer = yes`
+
+[[iax-channelkonf-maxjitterbuffer]]
+=== `maxjitterbuffer`
+
+[source]
+----
+maxjitterbuffer = [Laenge in Millisekunden]
+----
+
+Mit diesem Parameter wird die maximale Größe des Jitter-Buffers
+eingestellt. Sie sollten diesen Wert in der Regel nicht höher als 500
+einstellen, sonst kann es zu Tonaussetzern kommen.
+
+Beispiel:
+
+`maxjitterbuffer = 400`
+
+[[iax-channelkonf-resyncthreshold]]
+=== `resyncthreshold`
+
+[source]
+----
+resyncthreshold=[Wert in Millisekunden]
+----
+
+Der Resynchronisierungsgrenzwert wird benutzt, um den
+Jitter-Bufferneu zu takten bzw. neu abzustimmen, falls eine signifikante
+Änderung über wenige Frames hinweg erkannt wird. Dabei wird angenommen,
+dass der Veränderung eine Verwechslung von Zeitstempeln zugrunde liegt.
+Der Resynchronisierungsgrenzwert ist definiert als die gemessene
+Schwankung plus dem Wert von `resyncthreshold`, der in
+Millisekunden angegeben wird.
+
+Beispiel:
+
+`resyncthreshold = 800`
+
+[[iax-channelkonf-trunk]]
+=== `trunk`
+
+[source]
+----
+trunk = [yes|no]
+----
+
+Asterisk kann bei IAX-Verbindungen zu einer bestimmten
+IP-Adresse (z. B. beim Verbinden von zwei Asterisk-Servern) alle Channels
+über einen Trunk versehen. Dadurch wird der Overhead von mehreren
+Verbindungen zu einer Adresse reduziert. Der Trunk-Modus funktioniert
+nur mit geeigneter Hardware (Digium Zaptel) oder entsprechender
+Emulationssoftware für Timing-Zwecke.footnote:[Zum Beispiel das bei Asterisk enthaltene Kernel-Modul `ztdummy` oder `zaprtc` von Junghanns (http://www.junghanns.net/downloads/).]In Version 1.2.x arbeitet der Jitter-Buffer (siehe xref:iax.adoc#iax-channelkonf-jitterbuffer[„`jitterbuffer`“]) nicht gut bei eingeschaltetem
+Trunk-Modus.
+
+Beispiel:
+
+`trunk = yes`
+
+[[iax-channelkonf-trunkfreq]]
+=== `trunkfreq`
+
+[source]
+----
+trunkfreq = [Wiederholrate in Millisekunden]
+----
+
+Mit `trunkfreq` wird in Millisekunden angegeben, wie
+oft Trunk-Nachrichten gesendet werden. Gilt nur, wenn
+`trunk=yes` gesetzt wurde.
+
+Beispiel:
+
+`trunkfreq = 20`
+
+[[iax-channelkonf-qualify]]
+=== `qualify`
+
+[source]
+----
+qualify = [yes|no|Zeit in Millisekunden]
+----
+
+Mit `qualify=yes` werden in festen Zeitabständen
+Ping-Nachrichten an die entfernten Peers gesendet, um herauszufinden, ob
+sie verfügbar sind und welche Latenz zwischen den Antworten liegt. Die
+Peers antworten mit Pong-Nachrichten. Ein Peer wird als nicht erreichbar
+angesehen, wenn innerhalb von 2000 ms noch keine Antwort vorliegt (um
+diese Voreinstellung zu ändern, setzen Sie `qualify` auf die
+entsprechende Anzahl an Millisekunden, die auf eine Anwort gewartet
+werden soll). Einige Endgeräte (bzw. deren Software) kommen nicht mit
+diesen Nachrichten zurecht.
+
+Beispiel:
+
+`qualify = yes`
+
+[[iax-channelkonf-qualifysmoothing]]
+=== `qualifysmoothing`
+
+[source]
+----
+qualifysmoothing = [yes|no]
+----
+
+Stellt ein, ob für die Verfügbarkeitsprüfung durch
+`qualify` immer der Mittelwert der letzten beiden
+Pong-Nachrichten verwendet werden soll. Hosts mit schlechter Verbindung
+könnten sonst fälschlicherweise als nicht verfügbar eingestuft
+werden.
+
+Beispiel:
+
+`qualifysmoothing = yes`

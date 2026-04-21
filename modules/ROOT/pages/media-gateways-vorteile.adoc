@@ -1,0 +1,10 @@
+[[media-gateways-vorteile]]
+= Vorteile
+
+Media Gateways sind meistens viel einfacher zu konfigurieren als
+entsprechende Karten. Man muss auch nicht den Rechner aufschrauben und die
+Karte einbauen. Die Konfiguration innerhalb von Asterisk ist ebenfalls
+einfacher, weil man sich meistens ganz auf SIP beschränken kann. Ein
+großer Vorteil von Media Gateways besteht darin, das man vom
+Telefonanschluss (der klassischen Telefondose) zum Server kein
+Telefonkabel, sondern ein Ethernetkabel legen kann.

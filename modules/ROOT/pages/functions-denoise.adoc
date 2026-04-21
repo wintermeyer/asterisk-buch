@@ -1,0 +1,55 @@
+[[functions-denoise]]
+= `DENOISE()`
+
+[source]
+----
+DENOISE(param)
+----
+
+Mit dieser Funktion kann man auf einem Channel die
+Rauschunterdrückung anschalten. Dies ist vor allem bei analogen Channels
+nützlich, wenn zusätzlich `AGC()` (die automatische
+Verstärkungsregelung) verwendet wird. Die Werte, die man mit
+`Set()` setzen kann, sind `on` oder
+`off`. Als Parameter gibt man die Richtung an:
+
+`rx`:: Für Sprache, die vom Channel empfangen wird
+`tx`:: Für Sprache, die vom Channel gesendet wird
+
+[source]
+----
+; Schalte Rauschunterdrückung für die Empfangsrichtung an und für die Senderichtung aus
+exten => 123,n,Set(Set(DENOISE(rx)=on))
+exten => 123,n,Set(Set(DENOISE(tx)=off))
+	
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'DENOISE' =-
+
+[Syntax]
+Not available
+
+[Synopsis]
+Apply noise reduction to audio on a channel
+
+[Description]
+The DENOISE function will apply noise reduction to audio on the channel
+that this function is executed on. It is especially useful for noisy analog
+lines, especially when adjusting gains or using AGC. Use rx for audio
+received from the channel and tx to apply the filter to the audio being sent
+to the channel.
+Example Usage:
+Set(DENOISE(rx)=on)
+Set(DENOISE(tx)=on)
+Set(DENOISE(rx)=off)
+Set(DENOISE(tx)=off)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-agc.adoc[Abschnitt D.1, „`AGC()`“],xref:functions-volume.adoc[Abschnitt D.112, „`VOLUME()`“]

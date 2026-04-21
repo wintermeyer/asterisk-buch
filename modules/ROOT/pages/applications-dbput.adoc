@@ -1,0 +1,35 @@
+[[applications-dbput]]
+= `DBput()`
+
+Speichert einen Wert in der AstDB.
+
+[source]
+----
+DBput(Familie/Schlüssel=Wert)
+----
+
+[IMPORTANT]
+====
+`DBput()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Funktion `DB()` (xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'DBput' =-
+
+[Synopsis]
+Store a value in the database
+
+[Description]
+DBput(family/key=value): This application will store the given value in the
+specified location in the Asterisk database.
+This application has been deprecated in favor of the DB function.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-dbget.adoc[Abschnitt C.35, „`DBget()`“], xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]

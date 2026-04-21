@@ -1,0 +1,13 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, books]
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/deploy.sh

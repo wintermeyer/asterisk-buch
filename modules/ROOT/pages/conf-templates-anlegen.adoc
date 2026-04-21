@@ -1,0 +1,19 @@
+[[conf-templates-anlegen]]
+= Templates anlegen
+
+Prinzipiell kann jeder Abschnitt als Template für andere dienen,
+aber mit der Markierung „`(!)`“ zeigt man dem
+Parser an, dass dieser Abschnitt _ausschließlich_ als
+Template dient und selbst nicht benutzt wird. Wichtig ist, dass zwischen
+den eckigen und runden Klammern keine Leerzeichen stehen. Templates können
+auch selbst wieder auf Templates basieren.
+
+[source]
+----
+[meine-beispiel-template](!)
+context=default
+type=friend
+qualify=yes
+host=dynamic
+canreinvite=no
+----

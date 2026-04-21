@@ -1,0 +1,18 @@
+[[manager-createconfig]]
+= `CreateConfig`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: CreateConfig
+Synopsis: Creates an empty file in the configuration directory
+Privilege: config,all
+Description: A 'CreateConfig' action will create an empty file in the
+configuration directory. This action is intended to be used before an
+UpdateConfig action.
+Variables
+Filename: The configuration filename to create (e.g. foo.conf)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

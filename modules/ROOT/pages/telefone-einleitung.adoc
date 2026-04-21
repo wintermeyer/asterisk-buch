@@ -1,0 +1,11 @@
+[[telefone-einleitung]]
+= Einleitung
+
+In einer idealen Welt müsste ich in diesem Kapitel alle zur
+Drucklegung des Buches verfügbaren VoIP-Telefone beschreiben und am besten
+noch bewerten. Dies ist allerdings nicht möglich. Das liegt zum Teil auch
+daran, dass nicht alle Hersteller Testgeräte zur Verfügung stellen. Ich
+hoffe, dass im Laufe der Jahre auf der Webseite zum Buch und in
+zukünftigen Versionen des Buches mehr und mehr Telefone mit
+Beispielkonfigurationen aufgelistet werden können. Dazu benötige ich Ihr
+Feedback und Ihre Hilfe.

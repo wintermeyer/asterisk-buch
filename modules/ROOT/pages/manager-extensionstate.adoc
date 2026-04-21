@@ -1,0 +1,34 @@
+[[manager-extensionstate]]
+= `ExtensionState`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: ExtensionState
+Synopsis: Check Extension Status
+Privilege: call,all
+Description: Report the extension state for given extension.
+If the extension has a hint, will use devicestate to check
+the status of the device connected to the extension.
+Variables: (Names marked with * are required)
+*Exten: Extension to check state on
+*Context: Context for extension
+ActionId: Optional ID for this transaction
+Will return an "Extension Status" message.
+The response will include the hint for the extension and the status.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,6 +1,6 @@
+Action: ExtensionState
+Synopsis: Check Extension Status
+- Privilege: call,all
++ Privilege: call,reporting,all
+Description: Report the extension state for given extension.
+If the extension has a hint, will use devicestate to check
+the status of the device connected to the extension.

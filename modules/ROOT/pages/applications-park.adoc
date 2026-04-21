@@ -1,0 +1,93 @@
+[[applications-park]]
+= `Park()`
+
+Parkt den aktuellen Anruf.
+
+[source]
+----
+Park(Extension)
+----
+
+Parkt den aktuellen Anruf (typischerweise in Kombination mit
+einer beaufsichtigten Übertragung, um die „Parkplatznummer“
+zu bestimmen). Diese Anwendung ist intern stets registriert und muss nicht
+explizit im Wählplan eingefügt werden, jedoch müssen Sie den
+`parkedcalls`-Context mit der Zeile `include =>
+parkedcalls` einbinden. Die Parkkonfiguration wird in
+`features.conf` vorgenommen.
+
+[source]
+----
+; den Anruf auf 701 parken:
+include => parkedcalls
+exten => 123,1,Answer()
+exten => 123,n,Park(701)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Park' =-
+
+[Synopsis]
+Park yourself
+
+[Description]
+Park():Used to park yourself (typically in combination with a supervised
+transfer to know the parking space). This application is always
+registered internally and does not need to be explicitly added
+into the dialplan, although you should include the 'parkedcalls'
+context (or the context specified in features.conf).
+
+If you set the PARKINGEXTEN variable to an extension in your
+parking context, park() will park the call on that extension, unless
+it already exists. In that case, execution will continue at next
+priority.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -8,4 +8,9 @@
+transfer to know the parking space). This application is always
+registered internally and does not need to be explicitly added
+into the dialplan, although you should include the 'parkedcalls'
+- context.
++ context (or the context specified in features.conf).
++
++ If you set the PARKINGEXTEN variable to an extension in your
++ parking context, park() will park the call on that extension, unless
++ it already exists. In that case, execution will continue at next
++ priority.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,13 +4,22 @@
+Park yourself
+
+[Description]
+- Park():Used to park yourself (typically in combination with a supervised
++ Park([timeout,[return_context,[return_exten,[return_priority,[options]]]]]):Used to park yourself (typically in combination with a supervised
+transfer to know the parking space). This application is always
+registered internally and does not need to be explicitly added
+into the dialplan, although you should include the 'parkedcalls'
+context (or the context specified in features.conf).
+
+If you set the PARKINGEXTEN variable to an extension in your
+- parking context, park() will park the call on that extension, unless
++ parking context, Park() will park the call on that extension, unless
+it already exists. In that case, execution will continue at next
+priority.
++ This application can accept arguments as well.
++ timeout - A custom parking timeout for this parked call.
++ return_context - The context to return the call to after it times out.
++ return_exten - The extension to return the call to after it times out.
++ return_priority - The priority to return the call to after it times out.
++ options - A list of options for this parked call. Valid options are:
++ 'r' - Send ringing instead of MOH to the parked call.
++ 'R' - Randomize the selection of a parking space.
++ 's' - Silence announcement of the parking space number.
+
+.Siehe auch
+xref:applications-parkandannounce.adoc[Abschnitt C.111, „`ParkAndAnnounce()`“], xref:applications-parkedcall.adoc[Abschnitt C.112, „`ParkedCall()`“]

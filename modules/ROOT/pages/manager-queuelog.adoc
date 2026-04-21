@@ -1,0 +1,13 @@
+[[manager-queuelog]]
+= `QueueLog`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: QueueLog
+Synopsis: Adds custom entry in queue_log
+Privilege: agent,all
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

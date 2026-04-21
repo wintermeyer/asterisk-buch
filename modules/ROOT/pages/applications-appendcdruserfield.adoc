@@ -1,0 +1,65 @@
+[[applications-appendcdruserfield]]
+= `AppendCDRUserField()`
+
+Hängt einen String an das CDR-User-Feld an.
+
+[source]
+----
+AppendCDRUserField(String)
+----
+
+Hängt den übergebenen String an das CDR-User-Feld an.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'AppendCDRUserField' =-
+
+[Synopsis]
+Append to the CDR user field
+
+[Description]
+[Synopsis]
+AppendCDRUserField(value)
+
+[Description]
+AppendCDRUserField(value): Append value to the CDR user field
+The Call Data Record (CDR) user field is an extra field you
+can use for data not stored anywhere else in the record.
+CDR records can be used for billing or storing other arbitrary data
+(I.E. telephone survey responses)
+Also see SetCDRUserField().
+
+This application is deprecated in favor of Set(CDR(userfield)=...)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -14,3 +14,5 @@
+CDR records can be used for billing or storing other arbitrary data
+(I.E. telephone survey responses)
+Also see SetCDRUserField().
++
++ This application is deprecated in favor of Set(CDR(userfield)=...)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+[IMPORTANT]
+====
+Obwohl in der internen Hilfe noch kein Hinweis darauf steht, ist
+diese Applikation deprecated. Im Source-Code wird man
+fündig:
+
+[source]
+----
+ast_log(LOG_WARNING, "AppendCDRUserField is deprecated.  Please use CDR(userfield) instead.\n");
+----
+
+Bitte
+verwenden Sie also die Funktion `CDR(userfield)`.
+====
+
+.Siehe auch
+xref:functions-cdr.adoc[Abschnitt D.10, „`CDR()`“]

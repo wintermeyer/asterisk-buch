@@ -1,0 +1,55 @@
+[[functions-sql_esc]]
+= `SQL_ESC()`
+
+[source]
+----
+SQL_ESC(string)
+----
+
+„Escapt“ (d. h. maskiert) einfache
+Anführungszeichenfootnote:[Typografisch ist es zwar nicht korrekt, hier von „einfachen Anführungszeichen“ zu sprechen, denn es handelt sich um Apostrophe, aber das lassen wir mal außer Acht. Jeder Programmierer weiß, was gemeint ist.] (`'`) in SQL-Befehlen, um „SQL
+Injection“footnote:[SQL-Einschleusung, http://de.wikipedia.org/wiki/SQL-Injection] zu verhindern. Dies ist hilfreich bei Verwendung der
++ODBC__`...`_()+-Datenbank-Funktionen
+(siehe xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“]).
+
+[IMPORTANT]
+====
+Das ist ein gutes Beispiel dafür, warum man _nie_
+doppelte Anführungszeichen (`"`) zum Begrenzen von
+Strings in SQL-Befehlen verwenden sollte, denn diese würden hier
+_nicht_ maskiert. Also noch einmal: Verwenden Sie,
+ANSI-SQL-konform, einfache Anführungszeichen!
+====
+
+[source]
+----
+exten => 123,1,Set(name=philipp)
+exten => 123,n,Set(telnr=${ODBC_SQL(SELECT `telnr` FROM `liste` WHERE `name`='${SQL_ESC(${name})}')}
+exten => 123,n,Verbose(1,Telefonnummer ist: ${telnr})
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'SQL_ESC' =-
+
+[Syntax]
+SQL_ESC(<string>)
+
+[Synopsis]
+Escapes single ticks for use in SQL statements
+
+[Description]
+Used in SQL templates to escape data which may contain single ticks (') which
+are otherwise used to delimit data. For example:
+SELECT foo FROM bar WHERE baz='${SQL_ESC(${ARG1})}'
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“], xref:functions-odbc_sql.adoc[Abschnitt D.71, „`ODBC_SQL()`“]

@@ -1,0 +1,4 @@
+[[zaptel-to-dahdi]]
+= Zaptel zu DAHDI
+
+Informationen zur Umbenennung von Zaptel zu DAHDI.

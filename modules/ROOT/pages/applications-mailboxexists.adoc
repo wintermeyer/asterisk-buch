@@ -1,0 +1,78 @@
+[[applications-mailboxexists]]
+= `MailboxExists()`
+
+Verzweigt bedingt, falls die angegebene Voicemailbox
+existiert.
+
+[source]
+----
+MailboxExists(Mailbox[@Context][,Optionen])
+----
+
+Prüft, ob die durch `Mailbox` angegebene Voicemailbox
+existiert. Sie können zusätzlich einen Voicemail-Context
+`Context` übergeben, wenn die Mailbox nicht zum
+Standard-Voicemail-Context gehört.
+
+Setzt die Channel-Variable `VMBOXEXISTSSTATUS` auf
+`SUCCESS` (Erfolg, Mailbox vorhanden) oder `FAILED`
+(fehlgeschlagen, Mailbox nicht vorhanden).
+
+Mit der Option `j` wird bei vorhandener Mailbox zur
+Priorität n+101 gesprungen.
+
+[source]
+----
+exten => 123,1,Answer()
+exten => 123,n,MailboxExists(123@default)
+exten => 123,n,Goto(box-${VMBOXEXISTSSTATUS})
+exten => 123,10(box-SUCCESS),Voicemail(123,u)
+exten => 123,20(box-FAILED),Playback(tut-uns-leid)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'MailboxExists' =-
+
+[Synopsis]
+Check to see if Voicemail mailbox exists
+
+[Description]
+MailboxExists(mailbox[@context][|options]): Check to see if the specified
+mailbox exists. If no voicemail context is specified, the 'default' context
+will be used.
+This application will set the following channel variable upon completion:
+VMBOXEXISTSSTATUS - This will contain the status of the execution of the
+MailboxExists application. Possible values include:
+SUCCESS | FAILED
+
+Options:
+j - Jump to priority n+101 if the mailbox is found.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Check to see if Voicemail mailbox exists
+
+[Description]
+- MailboxExists(mailbox[@context][|options]): Check to see if the specified
++ MailboxExists(mailbox[@context][,options]): Check to see if the specified
+mailbox exists. If no voicemail context is specified, the 'default' context
+will be used.
+This application will set the following channel variable upon completion:
+@@ -12,5 +12,4 @@
+MailboxExists application. Possible values include:
+SUCCESS | FAILED
+
+- Options:
+- j - Jump to priority n+101 if the mailbox is found.
++ Options: (none)
+
+.Siehe auch
+xref:functions-vmcount.adoc[Abschnitt D.111, „`VMCOUNT()`“]

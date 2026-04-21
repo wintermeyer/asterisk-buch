@@ -1,0 +1,30 @@
+[[manager-sippeers]]
+= `SIPpeers`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: SIPpeers
+Synopsis: List SIP peers (text format)
+Privilege: system,all
+Description: Lists SIP peers in text format with details on current status.
+Variables:
+ActionID: <id> Action ID for this transaction. Will be returned.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,6 +1,8 @@
+Action: SIPpeers
+Synopsis: List SIP peers (text format)
+- Privilege: system,all
++ Privilege: system,reporting,all
+Description: Lists SIP peers in text format with details on current status.
++ Peerlist will follow as separate events, followed by a final event called
++ PeerlistComplete.
+Variables:
+ActionID: <id> Action ID for this transaction. Will be returned.

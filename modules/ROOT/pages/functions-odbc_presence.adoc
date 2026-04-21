@@ -1,0 +1,48 @@
+[[functions-odbc_presence]]
+= `ODBC_PRESENCE()`
+
+[source]
+----
+ODBC_PRESENCE(arg1[,arg2[,...]])
+----
+
+[IMPORTANT]
+====
+Diese Funktion wird vom Anwender in der Datei
+`func_odbc.conf` definiert. Sie ist hier angeführt, da
+sie in der Beispiel-Konfiguration von Asterisk enthalten ist. Für weitere
+Informationen siehe xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“].
+====
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'ODBC_PRESENCE' =-
+
+[Syntax]
+ODBC_PRESENCE(<arg1>[...[,<argN>]])
+
+[Synopsis]
+Runs the referenced query with the specified arguments
+
+[Description]
+Runs the following query, as defined in func_odbc.conf, performing
+substitution of the arguments into the query as specified by ${ARG1},
+${ARG2}, ... ${ARGn}. When setting the function, the values are provided
+either in whole as ${VALUE} or parsed as ${VAL1}, ${VAL2}, ... ${VALn}.
+
+Read:
+SELECT location FROM presence WHERE id='${SQL_ESC(${ARG1})}'
+
+Write:
+UPDATE presence SET location='${SQL_ESC(${VAL1})}' WHERE id='${SQL_ESC(${ARG1})}'
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-odbc_function.adoc[Abschnitt D.69, „+ODBC__`funktionsname`_()+“], xref:functions-sql_esc.adoc[Abschnitt D.96, „`SQL_ESC()`“]

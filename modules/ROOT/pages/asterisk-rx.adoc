@@ -1,0 +1,30 @@
+[[asterisk-rx]]
+= asterisk -rx "_`Befehl`_"
+
+Die einfachste Möglichkeit, mit Asterisk von außen zu kommunizieren,
+ist der Aufruf des Programms `asterisk` mit den
+Parametern _`-rx`_ und danach dem CLI-Befehl. So kann
+man jeden beliebigen CLI-Befehl von der Shell aus ausführen.
+
+[[asterisk-rx-beispiel]]
+== Beispiel
+
+Wenn Sie sich den Dialplan für die Extension
+_`23`_ im Context
+_`[meine-telefone]`_ anschauen wollen, können Sie
+dies mit der Eingabe `asterisk -rx "dialplan show
+23@meine-telefone"` erreichen:
+
+[source,shell]
+----
+root@molokai:~>asterisk -rx "dialplan show 23@meine-telefone"
+[ Context 'meine-telefone' created by 'pbx_config' ]
+ '23' => 1. Wait(1) [pbx_config]
+ 2. Answer() [pbx_config]
+ 3. Playback(hello-world) [pbx_config]
+ 4. Wait(1) [pbx_config]
+ 5. Hangup() [pbx_config]
+
+-= 1 extension (5 priorities) in 1 context. =-
+root@molokai:~>
+----

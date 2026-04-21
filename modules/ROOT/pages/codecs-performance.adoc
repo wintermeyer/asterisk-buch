@@ -1,0 +1,43 @@
+[[codecs-performance]]
+= Performance
+
+Das größte Problem beim Einsatz von hochkomprimierenden Codecs ist
+die dadurch verbrauchte Rechenleistung. Bei Ihrer aktuellen Installation
+können Sie im CLI mit dem Befehl `core show translation`
+eine Tabelle mit den Umcodierungszeiten für die verschiedenen Codecs
+erhalten:
+
+[source,shell]
+----
+big-island*CLI> core show translation
+         Translation times between formats (in milliseconds) for one second of data
+          Source Format (Rows) Destination Format (Columns)
+
+          g723 gsm ulaw alaw g726aal2 adpcm slin lpc10 g729 speex ilbc g726 g722
+     g723    -   -    -    -        -     -    -     -    -     -    -    -    -
+      gsm    -   -    2    2        2     2    1     2    -    10   14    2    -
+     ulaw    -   2    -    1        2     2    1     2    -    10   14    2    -
+     alaw    -   2    1    -        2     2    1     2    -    10   14    2    -
+ g726aal2    -   2    2    2        -     2    1     2    -    10   14    1    -
+    adpcm    -   2    2    2        2     -    1     2    -    10   14    2    -
+     slin    -   1    1    1        1     1    -     1    -     9   13    1    -
+    lpc10    -   2    2    2        2     2    1     -    -    10   14    2    -
+     g729    -   -    -    -        -     -    -     -    -     -    -    -    -
+    speex    -  11   11   11       11    11   10    11    -     -   23   11    -
+     ilbc    -   3    3    3        3     3    2     3    -    11    -    3    -
+     g726    -   2    2    2        1     2    1     2    -    10   14    -    -
+     g722    -   -    -    -        -     -    -     -    -     -    -    -    -
+big-island*CLI> 
+----
+
+In Ihrem System nicht verfügbare Codecs werden mit einem "-"
+gekennzeichnet. Man kann in dieser Tabelle sehr leicht sehen, welche
+Kodierung auf diesem System die meiste CPU-Leistung erfordert: Es sind
+ilbc und speex.
+
+Um Rechenzeit einzusparen, sollten Sie in Ihrem System so wenig
+verschiedene Codecs wie möglich einsetzen. Wenn ein Gespräch von Telefon A
+zu Telefon B mit dem gleichen Codec erfolgt, dann kann Asterisk die
+einzelnen Sprachpakete einfach durchreichen. Sollte A aber einen anderen
+Codec als B verwenden, dann muss Asterisk jedes Sprachpaket erst de- und
+dann wieder encodieren.

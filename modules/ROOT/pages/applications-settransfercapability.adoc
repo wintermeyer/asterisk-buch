@@ -1,0 +1,76 @@
+[[applications-settransfercapability]]
+= `SetTransferCapability()`
+
+Setzt den Wert der ISDN-Transfer-Capability.
+
+[source]
+----
+SetTransferCapability(transferCapability)
+----
+
+Jeder Anruf über ein ISDN-Netzwerk hat eine _Transfer
+Capability_ (besser bekannt als _Bearer
+Capability_, BC, also Fähigkeit des Träger-Kanals). Dadurch wird dem
+ISDN-Netz mitgeteilt welche Art von Daten über den Kanal übertragen werden
+sollen. Dementsprechend kann das Netzwerk z.B. bei Sprachverbindungen
+verlustbehaftete Komprimierung und Echo-Unterdrückung einsetzen oder den
+Anruf über analoge Teilstrecken routen, reine Datenverbindungen müssen aber
+Bit für Bit identisch durchgereicht werden.
+
+`SPEECH`:: _Speech_ (Asterisk-Default). Normale Sprach-Anrufe. Analoge Teilstrecken, Sprach-Komprimierung und Echo-Unterdrückung sind erlaubt.
+`3K1AUDIO`:: _3.1 kHz Audio_. Fax- oder Modem-Übertragungen im Frequenzband von 300 Hz bis 3,1 kHz. Analoge Teilstrecken sind erlaubt, aber keine Sprach-Komprimierung oder Echo-Unterdrückung.
+`DIGITAL`:: _Unrestricted Digital Information (UDI)_. Datenübertragungen mit 64 kbit/s. Wird auch „Clear Channel“ genannt. Das wird z.B. von Klasse-4-Faxgeräten oder für andere Datenverbindungen genutzt.
+`RESTRICTED_DIGITAL`:: _Restricted Digital Information (RDI)_. Ein Sonderfall in manchen US-amerikanischen Netzen die mit „Bit-Robbing“-Signalisierung _(Robbed Bit Signaling, RBS)_ arbeiten, weshalb hier nur 7 von 8 Bits für die Daten genutzt werden können und somit nur 56 kbit/s möglich sind.
+`DIGITAL_W_TONES`:: _Unrestricted Digital Information with Tones/Announcements (UDI-TA)_. Auch bekannt als _7 kHz Audio_. Hier handelt es sich um einen voll-digitalen Kanal ähnlich zu UDI mit 64 kbit/s. Wird z.B. für HiFi-Anrufe genutzt.
+`VIDEO`:: _Video_.
+
+_Speech_ und _3.1 kHz Audio_
+werden demnach als „analoge“ Audio-Verbindungen angesehen, auch
+wenn die einzelnen Samples natürlich digital übertragen werden.
+
+Bei Anrufen aus Netzen die das _Bearer Capability
+(BC)_ _Information Element (IE)_ nicht
+übertragen (also analoge oder manche US-amerikanische Netze) wird beim
+Übergang in ein ISDN-Netz meist die BC _3.1 kHz Audio_
+zugewiesen, was für Sprachanrufe und Klasse-3-Faxe funktioniert.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SetTransferCapability' =-
+
+[Synopsis]
+Set ISDN Transfer Capability
+
+[Description]
+SetTransferCapability(transfercapability): Set the ISDN Transfer
+Capability of a call to a new value.
+Valid Transfer Capabilities are:
+
+SPEECH : 0x00 - Speech (default, voice calls)
+DIGITAL : 0x08 - Unrestricted digital information (data calls)
+RESTRICTED_DIGITAL : 0x09 - Restricted digital information
+3K1AUDIO : 0x10 - 3.1kHz Audio (fax calls)
+DIGITAL_W_TONES : 0x11 - Unrestricted digital information with tones/announcements
+VIDEO : 0x18 - Video
+
+This application is deprecated in favor of Set(CHANNEL(transfercapability)=...)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -13,4 +13,6 @@
+RESTRICTED_DIGITAL : 0x09 - Restricted digital information
+3K1AUDIO : 0x10 - 3.1kHz Audio (fax calls)
+DIGITAL_W_TONES : 0x11 - Unrestricted digital information with tones/announcements
+- VIDEO : 0x18 - Video:
++ VIDEO : 0x18 - Video
++
++ This application is deprecated in favor of Set(CHANNEL(transfercapability)=...)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:functions-channel.adoc[Abschnitt D.11, „`CHANNEL()`“]

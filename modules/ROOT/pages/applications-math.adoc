@@ -1,0 +1,39 @@
+[[applications-math]]
+= `Math()`
+
+Berechnet einfache mathematische Ausdrücke.
+
+[source]
+----
+Math(Ergebnisvariable,Zahl1 Operator Zahl2)
+----
+
+[IMPORTANT]
+====
+`Math()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Funktion `MATH()` (xref:functions-math.adoc[Abschnitt D.61, „`MATH()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'Math' =-
+
+[Synopsis]
+Performs Mathematical Functions
+
+[Description]
+Math(returnvar,<number1><op><number 2>
+
+Perform floating point calculation on number 1 to number 2 and
+store the result in returnvar. Valid ops are:
++,-,/,*,%%%%,<,>,>=,<=,==
+and behave as their C equivalents.
+This application has been deprecated in favor of the MATH function.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-math.adoc[Abschnitt D.61, „`MATH()`“]

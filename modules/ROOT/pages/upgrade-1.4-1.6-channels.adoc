@@ -1,0 +1,18 @@
+[[upgrade-1.4-1.6-channels]]
+= Channel-Treiber
+
+* SIP: Der Aufnahme-Knopf („`Record`“) des Snom 360 (der in einer SIP-INFO-Nachricht einen Header „`Record: on`“ bzw. „`Record: off`“ sendet) wird jetzt unterstützt, sofern er in der `features.conf` aktiviert ist.
++
+[source]
+----
+automon => *1     ; One Touch Record a.k.a. Touch Monitor
+----
+* SIP: Der Parameter „`call-limit`“ ist veraltet (funktioniert aber noch). Um die Anzahl gleichzeitiger Gespräche für einen Benutzer (/ein _Device_/...) zu begrenzen, benutzen Sie bitte die Dialplan-Funktionen `GROUP()` und `GROUP_COUNT()` bzw. `GROUP_MATCH_COUNT()`.
++
+Der `sip.conf`-Parameter
+„`limitonpeer`“ wurde in
+„`counteronpeer`“ umbenannt.
+* SIP: Der Parameter „`username`“ wurde (analog zu „`defaultip`“) in „`defaultuser`“ umbenannt, um zu verdeutlichen, dass diese Angaben nur benutzt werden, solange der Peer noch nicht registriert ist. (Die alte Bezeichnung funktioniert aber noch.)
+* Local: Das „`,`“-(Komma)-Trennzeichen in den Channel-Namen wurde in ein „`;`“ (Semikolon) geändert, da „`,`“ das Trennzeichen für Applikationsargumente ist. (Für die meisten User dürfte diese Änderung vollkommen egal sein.)
+* H323: Die Einstellungen „`tos`“ und „`cos`“ wurden in „`tos_audio`“ und „`cos_audio`“ umbenannt (analog zur `sip.conf`).
+* Zap: Der Parameter „`msdstrip`“ ist veraltet, denn Ziffern lassen sich auch im Dialplan abschneiden.

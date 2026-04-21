@@ -1,0 +1,101 @@
+[[applications-flash]]
+= `Flash()`
+
+Flasht einen Zap-Channel.
+
+[source]
+----
+Flash()
+----
+
+Sendet einen Flash auf einen Zap-Channel. Dies ist nichts weiter
+als ein Hack für Leute, die Übermittlungen und andere Aktionendurchführen
+möchten, die einen Flash durch ein AGI-Skript benötigen.
+
+======
+
+Ein Flash (auch _Switch-Hook-Flash_ oder
+_Link_ genannt) entspricht dem ganz kurzen Drücken der
+Gabel für 80 bis 500 Millisekunden (je nach Anbieter) an einem analogen
+Telefon (manche Apparate haben dafür eine eigene Taste), wodurch z. B.
+Rückfrage-Gespräche o. ä. eingeleitet werden, ohne den aktuellen Anruf zu
+beenden.
+
+Liefert bei Erfolg 0 zurück, oder -1, falls der Channel kein
+Zap-Channel ist.
+
+[source]
+----
+exten => 123,1,Flash()
+----
+
+Falls Ihnen auf Ihrer Leitung Link-Transfer bereitgestellt wird
+(typischerweise ein Zusatzdienst), könnten Sie so einen Anruf auf eine
+andere externe Nummer umleiten:
+
+[source]
+----
+[macro-link-umleitung]
+exten => s,1,Playback(transfer)
+exten => s,n,Flash()
+exten => s,n,Wait(1)
+exten => s,n,SendDTMF(${ARG1})
+exten => s,n,Wait(1)
+exten => s,n,Hangup()
+
+[externe-apparate]
+; auf 6001 eingehende Anrufe auf die externe Nummer 0261123456 umleiten:
+exten => 6001,1,Macro(link-umleitung,0261123456)
+----
+
+Es kann
+dazu nötig sein, die Flash-Dauer (Einstellung `flash`) in der
+`zapata.conf` auf die Vorgabe Ihres Anbieters zu setzen,
+z. B. `flash=200`.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Flash' =-
+
+[Synopsis]
+Flashes a Zap Trunk
+
+[Description]
+Performs a flash on a zap trunk. This can be used
+to access features provided on an incoming analogue circuit
+such as conference and call waiting. Use with SendDTMF() to
+perform external transfers
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,6 +4,7 @@
+Flashes a Zap Trunk
+
+[Description]
+- Flash(): Sends a flash on a zap trunk. This is only a hack for
+- people who want to perform transfers and such via AGI and is generally
+- quite useless oths application will only work on Zap trunks.
++ Performs a flash on a zap trunk. This can be used
++ to access features provided on an incoming analogue circuit
++ such as conference and call waiting. Use with SendDTMF() to
++ perform external transfers
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,10 +1,10 @@
+-= Info about application 'Flash' =-
+
+[Synopsis]
+- Flashes a Zap Trunk
++ Flashes a DAHDI Trunk
+
+[Description]
+- Performs a flash on a zap trunk. This can be used
++ Performs a flash on a DAHDI trunk. This can be used
+to access features provided on an incoming analogue circuit
+such as conference and call waiting. Use with SendDTMF() to
+perform external transfers

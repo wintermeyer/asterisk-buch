@@ -1,0 +1,155 @@
+[[functions-channel]]
+= `CHANNEL()`
+
+[source]
+----
+CHANNEL(Feld)
+----
+
+Liest/setzt bestimmte Kanaldaten. `Feld` ist eines der
+folgenden (wenn nicht anders angegeben, ist nur Lesen möglich):
+
+`audioreadformat`:: Das Format eingehender Audiodaten auf dem Kanal
+`audionativeformat`:: Das native Audioformat des Kanals
+`audiowriteformat`:: Das Format ausgehender Audiodaten auf dem Kanal
+`callgroup`:: In Asterisk lassen sich Extensions in Call Groups von 0 bis 63 einordnen, z. B. als Kundennummer.footnote:[Diese Beschränkung auf 64 Gruppen scheint rein willkürlich zu sein und dürfte für den ein oder anderen Anwender nicht ausreichen.]
+`channeltype`:: Die „Technologie“ dieses Kanals, also z. B. IAX oder SIP
+`language`:: Die Sprache für Voice-Prompts. (Sie kann hier auch angegeben werden.)
+`musicclass`:: Die Musik-Klasse für Wartemusik, wie in `musiconhold.conf` definiert. (Sie kann hier auch angegeben werden.)
+`state`:: Zustand des Kanals (`Down`, `Rsrvd`, `OffHook`, `Dialing`, `Ring`, `Ringing`, `Up`, `Busy`, `Dialing Offhook`, `Pre-ring`, `Unknown`)
+`tonezone`:: Die „Tone zone“ bestimmt die Ton-Signale (Wählen, Klingeln, Besetzt, ...) für bestimmte Länder. Sie wird in der Konfigurationsdatei des Kanals (z. B. `zaptel.conf`) durch `loadzone` und `defaultzone` festgelegt. Die möglichen Werte sind (wie in der `indications.conf` definiert): `at`, `au`, `be`, `br`, `ch`, `cl`, `cn`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hu`, `it`, `lt`, `mx`, `ml`, `no`, `nz`, `pl`, `pt`, `ru`, `se`, `sg`, `uk`, `us`, `us-old`, `tw`, `ve`, `za`.
+`videonativeformat`:: Das native Videoformat dieses Kanals
+
+Zusätzlich zu diesen Feldern kann der Treiber des Kanals
+noch weitere bereitstellen, die man in der entsprechenden Dokumentation
+nachschlagen kann. Felder, die auf dem aktuellen Kanal nicht zur Verfügung
+stehen, geben einen leeren String zurück.
+
+[source]
+----
+; Typ des Kanals abfragen:
+exten => 123,1,Set(foo=${CHANNEL(channeltype)})
+
+; Sprache auf Englisch setzen:
+exten => 123,1,Set(CHANNEL(language)=en)
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'CHANNEL' =-
+
+[Syntax]
+CHANNEL(item)
+
+[Synopsis]
+Gets/sets various pieces of information about the channel.
+
+[Description]
+Gets/set various pieces of information about the channel.
+Standard items (provided by all channel technologies) are:
+R/O audioreadformat format currently being read
+R/O audionativeformat format used natively for audio
+R/O audiowriteformat format currently being written
+R/W callgroup call groups for call pickup
+R/O channeltype technology used for channel
+R/W language language for sounds played
+R/W musicclass class (from musiconhold.conf) for hold music
+R/W rxgain set rxgain level on channel drivers that support it
+R/O state state for channel
+R/W tonezone zone for indications played
+R/W txgain set txgain level on channel drivers that support it
+R/O videonativeformat format used natively for video
+
+chan_sip provides the following additional options:
+R/O rtpqos Get QOS information about the RTP stream
+This option takes two additional arguments:
+Argument 1:
+audio Get data about the audio stream
+video Get data about the video stream
+Argument 2:
+local_ssrc Local SSRC (stream ID)
+local_lostpackets Local lost packets
+local_jitter Local calculated jitter
+local_count Number of received packets
+remote_ssrc Remote SSRC (stream ID)
+remote_lostpackets Remote lost packets
+remote_jitter Remote reported jitter
+remote_count Number of transmitted packets
+rtt Round trip time
+all All statistics (in a form suited to logging, but not for parsing)
+
+Additional items may be available from the channel driver providing
+the channel; see its documentation for details.
+
+Any item requested that is not available on the current channel will
+return an empty string.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -16,6 +16,7 @@
+R/O channeltype technology used for channel
+R/W language language for sounds played
+R/W musicclass class (from musiconhold.conf) for hold music
++ R/W parkinglot parkinglot for parking
+R/W rxgain set rxgain level on channel drivers that support it
+R/O state state for channel
+R/W tonezone zone for indications played
+@@ -23,22 +24,52 @@
+R/O videonativeformat format used natively for video
+
+chan_sip provides the following additional options:
++ R/O peerip Get the IP address of the peer
++ R/O recvip Get the source IP address of the peer
++ R/O from Get the URI from the From: header
++ R/O uri Get the URI from the Contact: header
++ R/O useragent Get the useragent
++ R/O peername Get the name of the peer
++ R/O t38passthrough 1 if T38 is offered or enabled in this channel, otherwise 0
+R/O rtpqos Get QOS information about the RTP stream
+This option takes two additional arguments:
+Argument 1:
+audio Get data about the audio stream
+video Get data about the video stream
++ text Get data about the text stream
+Argument 2:
+local_ssrc Local SSRC (stream ID)
+local_lostpackets Local lost packets
+local_jitter Local calculated jitter
++ local_maxjitter Local calculated jitter (maximum)
++ local_minjitter Local calculated jitter (minimum)
++ local_normdevjitter Local calculated jitter (normal deviation)
++ local_stdevjitter Local calculated jitter (standard deviation)
+local_count Number of received packets
+remote_ssrc Remote SSRC (stream ID)
+remote_lostpackets Remote lost packets
+remote_jitter Remote reported jitter
++ remote_maxjitter Remote calculated jitter (maximum)
++ remote_minjitter Remote calculated jitter (minimum)
++ remote_normdevjitter Remote calculated jitter (normal deviation)
++ remote_stdevjitter Remote calculated jitter (standard deviation)
+remote_count Number of transmitted packets
+rtt Round trip time
++ maxrtt Round trip time (maximum)
++ minrtt Round trip time (minimum)
++ normdevrtt Round trip time (normal deviation)
++ stdevrtt Round trip time (standard deviation)
+all All statistics (in a form suited to logging, but not for parsing)
++ R/O rtpdest Get remote RTP destination information
++ This option takes one additional argument:
++ Argument 1:
++ audio Get audio destination
++ video Get video destination
++
++ chan_iax2 provides the following additional options:
++ R/W osptoken Get or set the OSP token information for a call
++ R/O peerip Get the peer's ip address
++ R/O peername Get the peer's username
+
+Additional items may be available from the channel driver providing
+the channel; see its documentation for details.

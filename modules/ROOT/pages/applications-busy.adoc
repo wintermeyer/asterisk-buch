@@ -1,0 +1,52 @@
+[[applications-busy]]
+= `Busy()`
+
+Zeigt dem Channel an, dass ein Anschluss besetzt ist.
+
+[source]
+----
+Busy([Timeout])
+----
+
+Fordert den Channel auf, ein Besetzt-Zeichen zu signalisieren, und
+wartet dann, bis der Benutzer auflegt oder auf den Ablauf der optional
+anzugebenden zeitlichen Frist (`Timeout`, in Sekunden).
+
+Diese Anwendung signalisiert einen Besetzt-Zustand nur dem
+überbrückten Channel (_bridged channel_). Jeder spezielle
+Channel-Typ hat seine eigene Art, dem Anrufer mitzuteilen, dass ein
+Anschluss besetzt ist. Sie können `Playtones(busy)` verwenden, um
+dem Anrufer ein Besetztzeichen vorzuspielen.
+
+Gibt immer -1 zurück.
+
+[source]
+----
+exten => 123,1,Playback(vm-sorry)
+exten => 123,n,Playtones(busy)
+exten => 123,n,Busy()
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Busy' =-
+
+[Synopsis]
+Indicate the Busy condition
+
+[Description]
+Busy([timeout]): This application will indicate the busy condition to
+the calling channel. If the optional timeout is specified, the calling channel
+will be hung up after the specified number of seconds. Otherwise, this
+application will wait until the calling channel hangs up.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-congestion.adoc[Abschnitt C.23, „`Congestion()`“], xref:applications-progress.adoc[Abschnitt C.121, „`Progress()`“], xref:applications-playtones.adoc[Abschnitt C.118, „`Playtones()`“]

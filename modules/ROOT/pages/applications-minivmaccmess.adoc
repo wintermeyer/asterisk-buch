@@ -1,0 +1,72 @@
+[[applications-minivmaccmess]]
+= `MinivmAccMess()`
+
+Ansage für Mini-VoiceMail aufzeichnen.
+
+[source]
+----
+MinivmAccMess(benutzer@domain,option)
+----
+
+Zeichnet eine Ansage für einen Benutzer-Account im
+Mini-VoiceMail-System (xref:minivm.adoc[Abschnitt 13.7, „Mini-VoiceMail (MiniVM)“]) auf. Falls die
+betreffenden Verzeichnisse noch nicht existieren, werden sie
+angelegt.
+
+Mögliche Werte für _`option`_:
+
+`u`:: Ansage für "nicht erreichbar" (_unavailable_)
+`b`:: Ansage für "besetzt" (_busy_)
+`t`:: temporäre Ansage (_temporary_, wird, falls gesetzt, vorrangig vor den Ansagen für "nicht erreichbar" oder "besetzt" abgespielt, siehe xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“])
+`n`:: Ansage des eigenen Namens (_name_)
+
+[source]
+----
+exten => *90,1,Answer()
+exten => *90,n,MinivmAccMess(${CALLERID(num)}@localdomain,n)
+exten => *90,n,Hangup()
+
+exten => *91,1,Answer()
+exten => *91,n,MinivmAccMess(${CALLERID(num)}@localdomain,u)
+exten => *91,n,Hangup()
+
+exten => *92,1,Answer()
+exten => *92,n,MinivmAccMess(${CALLERID(num)}@localdomain,b)
+exten => *92,n,Hangup()
+
+exten => *93,1,Answer()
+exten => *93,n,MinivmAccMess(${CALLERID(num)}@localdomain,t)
+exten => *93,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'MinivmAccMess' =-
+
+[Synopsis]
+Record account specific messages
+
+[Description]
+MinivmAccmess(username@domain,option):
+This application is part of the Mini-Voicemail system, configured in minivm.conf.
+Use this application to record account specific audio/video messages for
+busy, unavailable and temporary messages.
+Account specific directories will be created if they do not exist.
+
+The option selects message to be recorded:
+u Unavailable
+b Busy
+t Temporary (overrides busy and unavailable)
+n Account name
+
+Result is given in channel variable MINIVM_ACCMESS_STATUS
+The possible values are: SUCCESS | FAILED
+FAILED is set if the file can't be created.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-minivmdelete.adoc[Abschnitt C.95, „`MinivmDelete()`“], xref:applications-minivmgreet.adoc[Abschnitt C.96, „`MinivmGreet()`“], xref:applications-minivmnotify.adoc[Abschnitt C.97, „`MinivmNotify()`“], xref:applications-minivmrecord.adoc[Abschnitt C.98, „`MinivmRecord()`“], xref:functions-minivmaccount.adoc[Abschnitt D.64, „`MINIVMACCOUNT()`“], xref:functions-minivmcounter.adoc[Abschnitt D.65, „`MINIVMCOUNTER()`“]

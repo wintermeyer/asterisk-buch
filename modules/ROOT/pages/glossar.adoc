@@ -1,0 +1,178 @@
+[[glossar]]
+= Glossar
+
+Hier werden die im Zusammenhang mit Asterisk verwendeten Begriffe
+und Abkürzungen kurz erklärt und voneinander abgegrenzt.
+
+ADSI:: Analog Display Services Interface. Ein von einigen analogen Telefonen mit Text-Display unterstütztes Verfahren, das z. B. die Anrufernummer oder die Anzahl der eingegangenen Nachrichten überträgt und ein entsprechendes Blinklicht aktiviert. Wird per FSK (xref:glossar.adoc#glossar-fsk[FSK]) übertragen.
+AGI:: Asterisk Gateway Interface. Ein Interface, über das Asterisk mit externen Skripten kommunizieren kann (ähnlich CGI bei Webservern). Die weiteren Formen EAGI, FastAGI und DeadAGI werden in xref:applications-agi.adoc[Abschnitt C.7, „`AGI()`“] erklärt.
+AMA:: Automatic Message Accounting. Spezifiziert Mechanismen zur Erzeugung und Übermittlung von CDRs (xref:glossar.adoc#glossar-cdr[CDR]).
+Applikation:: Applikation im Dialplan (xref:glossar.adoc#glossar-dialplan[Dialplan]).
++
+Nicht zu verwechseln mit einer Funktion (xref:glossar.adoc#glossar-funktion[Funktion]).
+AstDB:: Die in Asterisk integrierte Datenbank, die auf der Berkeley DB (BDB, xref:glossar.adoc#glossar-berkeleydb[Berkeley DB]) aufbaut
+Ausdrücke:: Siehe xref:glossar.adoc#glossar-expressions[Expression].
+BDB:: Siehe xref:glossar.adoc#glossar-berkeleydb[Berkeley DB].
+Befehl:: In Bezug auf den Dialplan siehe xref:glossar.adoc#glossar-applikation[Applikation]
+Berkeley DB:: Eine alte und in der UNIX-Welt (und Derivaten) weit verbreitete Datenbank, die von vielen Anwendungen genutzt wird und meist nicht extra installiert werden muss.
+BRI:: Basic Rate Interface. Ein Basis-ISDN-Anschluss mit 2 B-Kanälen, auch bekannt als S0-Bus. Es gibt ihn in den Varianten _Mehrgeräteanschluss_ (PtMP), wie man es aus Privathaushalten kennt (dabei werden mehrere Geräte direkt an den Bus angeschlossen), und _Anlagenanschluss_ (PtP): Dabei wird nur ein Gerät angeschlossen, und das ist in der Regel eine Telefonanlage. Telefonanlagen können aber auch an PtMP betrieben werden.
+Caller ID:: Auch kurz CID. Anrufer-Identifikation bzw. -Kennung. Die Telefonnummer und gegebenenfalls auch der Name eines Anrufers. Bekannt z. B. bei ISDN oder Mobilfunkgesprächen von der Rufnummernanzeige im Display.
+CDR:: Call Detail Record oder Call Data Record, auf Deutsch auch _Kommunikationsdatensatz_ (KDS). Solche Anrufprotokolle können z. B. zur Abrechnung von Gesprächen verwendet werden. Asterisk benutzt das folgende Format:
++
+[source]
+----
+acct code, src, dst, dst context, cid, chan, dst channel, last app, last app args, start time, answer time, end time, dur, billable secs, disposition, ama flags, unique id
+----
+Channel:: So werden in Asterisk Verbindungen oder Verbindungsdefinitionen zu Teilnehmern (users) oder anderen Telefonanlagen (peers) bezeichnet. Es gibt mehrere mögliche Übertragungsprotokolle, u. a. IAX (xref:glossar.adoc#glossar-iax[IAX]), SIP (xref:glossar.adoc#glossar-sip[SIP]), H.323, CAPI etc., die in xref:kapitel-protokolle.adoc[Kapitel 8, _Protokolle_] vorgestellt und beschrieben werden.
+Codec:: So bezeichnet man Verfahren zur Kodierung und Dekodierung von Datenströmen, hier von Audiodaten. Das sind z. B. GSM, WAV oder das bekannte MP3. Meist ist auch immer ein entsprechendes Dateiformat gemeint.
+Context:: So wird in Asterisk ein Bereich oder Abschnitt in der `extensions.conf` oder `voicemail.conf` genannt, der z. B. Telefonnummern einer Firma zu einer Abteilung gruppiert. Man muss unterscheiden zwischen Dialplan-Contexten und Voicemail-Contexten. Siehe xref:kapitel-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_] und xref:voicemail-voicemail.conf.adoc[Abschnitt 13.4, „`voicemail.conf` “].
+DAHDI:: Digium Asterisk Hardware Device Interface. Seit Mitte 2008 der neue Name von Zaptel. Siehe xref:zaptel-to-dahdi.adoc[Anhang I, _Zaptel zu DAHDI_].
+Dialplan:: Im Asterisk-Umfeld: die in der Datei `extensions.conf` festgelegten Abläufe, die aufgerufen werden, sobald eine Extension (xref:glossar.adoc#glossar-extension[Extension]) gewählt wird.
+Digium:: http://www.digium.com[Digium] ist die von Mark Spencer gegründete Firma, die Asterisk entwickelt und vertreibt.
+DNS:: Domain Name System/Server/Service. Ein Name-Server löst Domain-Namen (z. B. example.com) zu IP-Adressen auf.
+DoS:: Denial of Service. Bezeichnung für einen Angriff auf einen Rechner, bei dem der Rechner mit Anfragen überschwemmt wird, wodurch er nicht mehr in der Lage ist, zu reagieren.
+Durchwahl:: Siehe xref:glossar.adoc#glossar-extension[Extension].
+DSCP:: Differentiated Service CodePoint. Eine Standardisierung von ToS-Flags (xref:glossar.adoc#glossar-tos[ToS]) in RFC 2474footnote:[http://tools.ietf.org/html/rfc2474]. Verwendet die ersten 6 Bits im ToS-Byte von IPv4-Paketen bzw. das Class Field in IPv6-Paketen zur Priorisierung von Übertragungen.
++
+Da so eine Priorisierung natürlich missbraucht werden
+kannfootnote:[Microsoft Windows 2000 z. B. setzt Gerüchten zufolge immer eine ungerechtfertigt hohe Priorität.], werden diese Flags von Internet-Providern in aller Regel
+überschrieben (_Trust boundary_). Sie können aber
+sicherstellen, dass Ihre internen Switches diese Flags erlauben (also
+keine _Trust boundaries_ bilden).
++
+Die sinnvollste Einstellung des DSCP für VoIP-Anwendungen ist
+EF (_Expedited Forwarding_, also
+Express-Übertragung), was eine geringe Latenz (xref:glossar.adoc#glossar-latenz[Latenz]), eine geringe Verlustrate und wenig Jitter
+(xref:glossar.adoc#glossar-jitter[Jitter]) bedeutet. Alternativ sind
+verschiedene Klassen von AF (_Assured Forwarding_)
+vorgesehen, die sich jedoch für die Telefonie weniger eignen. Die
+Standard-Einstellung ist BE (_Best Effort_), die
+normale (niedrigste) Priorität.
+DTMF:: Dual-Tone Multi-Frequency. Wähltöne beim Mehrfrequenz-Wählverfahren (MFV, auch Tonwahlverfahren oder _Touch Tone_), das von den meisten analogen Telefonen benutzt wird. Im Gegensatz zum älteren Impuls-Wählverfahren (IWV), _Pulse dialing_. Die meisten Telefone lassen sich bei abgenommenem Hörer vorübergehend mit der Tastenfolge `Set` `*` `Set` zwischen den beiden Verfahren umstellen (`Set` ist die Taste mit einem Pfeil nach rechts mit Karo). Mit DTMF sind außer den Ziffern `0`-`9` die Symbole `*` und `#` sowie die Buchstaben `A`-`D` (kaum verwendet) möglich.
+DUNDi:: Distributed Universal Number Discovery. Ein von Mark Spencer (Digium) entwickeltes Peer-to-Peer-System, um Gateways zu Telefondiensten zu finden. Im Gegensatz zu z. B. ENUM (xref:glossar.adoc#glossar-enum[ENUM]) arbeitet DUNDi dezentral und kann beispielsweise in einer Firma oder auch im ganzen Internet eingesetzt werden. Weitere Informationen: http://www.dundi.info/, http://www.dundi.com/, http://de.wikipedia.org/wiki/DUNDi, `doc/README.dundi` (1.2) / `doc/dundi.txt` (1.4)
+E.164:: Die Richtlinie E.164 _The international public telecommunication numbering plan_ der ITU-T regelt international die Adressierung der Telefonnetze. In E.164 ist festgelegt, aus welchen Bestandteilen eine Telefonnummer besteht und wie viele Stellen sie enthalten darf. Weiterhin sind die internationalen Vorwahlen (wie 43 für Österreich, 49 für Deutschland und 41 für die Schweiz) festgelegt. --_http://de.wikipedia.org/wiki/E.164_
+ENUM:: E.164 number and DNS. Ein Verfahren, um DNS (xref:glossar.adoc#glossar-dns[DNS]) zur Verbreitung von E.164-Telefonnummern (xref:glossar.adoc#glossar-e.164[E.164]) einzusetzen. Eine neuere Methode ist DUNDi (xref:glossar.adoc#glossar-dundi[DUNDi]). Weitere Informationen: `doc/README.enum` (1.2) / `doc/enum.txt` (1.4), RFC 3761footnote:[http://tools.ietf.org/html/rfc3761].
+Expression:: Eine _Expression_ (ein Ausdruck) besteht aus Variablen, Operatoren und Werten, die zusammen zu einem Ergebnis ausgewertet werden. Ein Ausdruck kann z. B. Werte vergleichen oder mathematische Berechnungen durchführen. Ausdrücke haben in Asterisk ein Dollar-Zeichen („`$`“) am Anfang und werden in eckige Klammern („`[` _`...`_ `]`“) eingeschlossen.
++
+Beispiele:
++
+** [source] ---- GotoIf($[ ${test} = 5 ]?ok:nein) ----
++
+(siehe
+xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“], xref:applications-gosubif.adoc[Abschnitt C.64, „`GosubIf()`“])
+** [source] ---- ExecIf($["${CALLERID(num)}" = "101"],SayDigits,123) ----
++
+(siehe
+xref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“])
+** [source] ---- Set(foo=${IF($["${Var}" = "123"]?5:9)}) ----
++
+(siehe
+xref:functions-if.adoc[Abschnitt D.49, „`IF()`“])
+** [source] ---- Set(ergebnis=$[ 10 / 2 ]) ----
++
+(siehe
+xref:extensions.ael.adoc#ael-expressions-assignments[„Ausdrücke und Zuweisungen“])
++
+Bei Vergleichen bietet es sich oft an, eine Variable und einen
+Wert in „Anführungszeichen“
+(„+"_`...`_"+“)
+einzuschließen. `$["${test}"="5"]` ist also besser als
+`$[${test}=5]`, denn wenn im zweiten Fall die Variable
+`test` nichts enthält (einen leeren String), dann tritt in
+dem Ausdruck ein Fehler auf.
++
+Die Besonderheiten bei Ausdrücken in der _Asterisk
+Extensions Language_ AEL werden in xref:extensions.ael.adoc#ael-expressions-assignments[„Ausdrücke und Zuweisungen“] und xref:extensions.ael.adoc#ael-conditionals[„Bedingte Anweisungen (_conditionals_)“] behandelt.
++
+Weitere Informationen über Ausdrücke finden Sie im
+Source-Verzeichnis von Asterisk
+(+/usr/src/asterisk-_`...`_/+)
+in `doc/channelvariables.txt`footnote:[bzw. http://svn.digium.com/svn/asterisk/branches/1.4/doc/channelvariables.txt oder http://www.asterisk.org/doxygen/1.4/AstVar.html]footnote:[oder auch auf http://www.voip-info.org/wiki/view/Asterisk+Expressions].
+Extension:: Die deutsche Übersetzung für _Extension_ ist _Durchwahl-Nummer_, und das ist auch die grundlegende Bedeutung. In dieser Verwendung besteht eine Extension nur aus Ziffern (obwohl theoretisch auch die Symbole `*` und `#` und sogar Buchstaben möglich wären, die sich aber auf einem normalen Telefon nicht wählen lassen).
++
+In Asterisk gibt es allerdings zusätzlich noch spezielle
+– in der Regel einbuchstabige – Extensions, die nicht direkt
+am Telefon eingetippt werden, sondern zu denen man unter bestimmten
+Umständen oder durch Befehle im Dialplan (xref:glossar.adoc#glossar-dialplan[Dialplan]) verbunden wird.
++
+Die besonderen Extensions sind:
++
+`a`:: (Abort) Wird aufgerufen, wenn der Anrufer während der Voicemail-Begrüßung (xref:glossar.adoc#glossar-voicemail[Voicemail]) `*` drückt.
+`h`:: (Hangup) Gespräch wird aufgelegt. Hier kann z. B. noch eine Nachricht („Auf Wiederhören“) gespielt werden.
+`i`:: (Invalid) Es wurde eine ungültige, nicht vergebene Nummer gewählt oder eine ungültige Eingabe in einem IVR(xref:glossar.adoc#glossar-ivr[IVR])-Menü vorgenommen.
+`o`:: (Operator). In einem IVR-Menü (xref:glossar.adoc#glossar-ivr[IVR]) wurde `0` (Null) gedrückt, um Verbindung mit einem Operator herzustellen.
+`s`:: (Start) Start der Befehlsabarbeitung für eingehende Anrufe.
+`t`:: (Timeout) Zeitberschreitung: User antwortet nicht auf Prompt (siehe xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]).
+`T`:: (AbsoluteTimeout) Zeitberschreitung insgesamt (siehe xref:applications-absolutetimeout.adoc[Abschnitt C.1, „`AbsoluteTimeout()`“] und xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]).
+`failed`:: Ein automatischer Anruf nach „draußen“ (auto dial-out; mit definiertem Context, Priorität und Extension) ist fehlgeschlagen.
+`fax`:: Fax-Erkennung auf Zap-Kanälen.
+`talk`:: Von der Dialplan-Applikation `BackgroundDetect()` ausgelöst.
++
+Mit einer Extension sind oft auch Extension-Muster (xref:glossar.adoc#glossar-regularexpression[Regular Expression]) gemeint, die eine Gruppe von
+Extensions beschreiben.
++
+Aus der Sicht des Administrators sind Extensions eine Reihe von
+in der `extensions.conf` festgelegten Kommandos
+(siehe xref:glossar.adoc#glossar-applikation[Applikation]), die abgearbeitet werden.
+Eine Extension ist also erst einmal nur ein Einstiegspunkt im Dialplan;
+zu einer vollwertigen Nebenstellennummer eines Endgerätes wird die
+Extension erst durch das Verbinden mit einem entsprechenden Kanal durch
+`Dial()`. Im Dialplan können auch Extensions wie z. B. das
+Muster `_0.` für ausgehende Anrufe verwendet
+werden.
+FSK:: Frequency Shift Keying, dt.: _Frequenzumtastung_, ist die digitale Frequenzmodulation. Sie kennen das z. B. vom Piepsen eines Faxgeräts, das Sie vom Telefon aus anrufen.
+Funktion:: Funktion im Dialplan (xref:glossar.adoc#glossar-dialplan[Dialplan]).
++
+Nicht zu verwechseln mit einer Applikation (xref:glossar.adoc#glossar-applikation[Applikation]).
+Hook:: In Bezug auf Telefone die „Gabel“. "On-hook" (auf der Gabel) heißt also "aufgelegt", und "Off-hook" bedeutet "abgenommen".
+IAX:: InterAsterisk eXchange Protokoll (Hier ist meist IAX2, also Version 2 gemeint.), der Asterisk-eigene Channel (xref:glossar.adoc#glossar-channel[Channel]).
+IP:: Internet Protocol. Ein grundlegendes Übertragungsprotokoll für IP-Pakete, auf dem die üblichen Protokolle TCP und UDP basieren, auf die wiederum Protokolle wie HTTP oder IAX aufgebaut sind. Die Übertragung von IP-Paketen ist nicht garantiert.
++
+IP-Pakete werden z. B. über eine Ethernet-Verbindung
+übertragen.
++
+IP wird oft auch nicht ganz korrekt kurz für "IP-Adresse"
+verwendet.
+IVR:: Interactive Voice Response System. Mit IVR kann man komplexe Menüstrukturen bauen, in denen der Anrufer mit seinem Ziffernblock am Telefon oder durch gesprochene Eingaben navigieren kann.
+Jitter:: Bezeichnet die unterschiedliche Übertragungsdauer (xref:glossar.adoc#glossar-latenz[Latenz]) von IP-Paketen, die bei VoIP (xref:glossar.adoc#glossar-voip[VoIP]) in Abhängigkeit vom eingesetzten Codec (xref:glossar.adoc#glossar-codec[Codec]) zu Sprachverzerrungen oder kurzen Aussetzern führen kann. Wird in Asterisk (wie auch in anderen Telefonanlagen oder Endgeräten) durch Jitter Buffer ausgeglichen.
+Kanal:: Siehe xref:glossar.adoc#glossar-channel[Channel].
+Kommando:: In Bezug auf den Dialplan siehe xref:glossar.adoc#glossar-applikation[Applikation]
+Context:: Siehe xref:glossar.adoc#glossar-context[Context].
+Latenz:: (engl. _latency_) Die auch _Delay_ genannte Verzögerung oder Übertragungsdauer von IP-Paketen (xref:glossar.adoc#glossar-ip[IP]). Gerade für Echtzeitkommunikation (Telefongespräche) ist eine niedrige Latenz wünschenswert.
+MAC-Adresse:: Media Access Control-Adresse. Die feste, weltweit einmalige Hardware-Adresse (auch Ethernet-ID genannt) eines Netzwerk-Interfaces (Netzwerkkarte). (Sie kann nicht physikalisch, aber unter Umständen durch Software geändert werden.) Nicht zu verwechseln mit der IP-Adresse.footnote:[Oder den bekannten Computern :-)].
+MOH:: Music on Hold. Warteschleifenmusik. Bitte beachten Sie, dass Sie entgegen der verbreiteten Meinung keine „kommerziellen“ CDs oder MP3s abspielen dürfen; hierfür fallen gegebenenfalls GEMA-Gebühren an (http://www.gema.de/). Wenn Sie selbst ein Volkslied singen, sind Sie auf der sicheren Seite. :-)
+MySQL:: Die MySQL-Datenbank (http://www.mysql.org/)
+NTP:: Network Time Protocol. Ein standardisiertes Protokoll (und entsprechende Algorithmen), mit dem sich die Uhr eines Rechners auf Millisekunden genau automatisch mit einem Zeit-Server synchronisieren lässt.
+Pattern:: Siehe xref:glossar.adoc#glossar-regularexpression[Regular Expression].
+Peer:: In Asterisk die Bezeichnung für eine andere Telefonanlage (PBX), zu der eine Verbindung über einen Channel (xref:glossar.adoc#glossar-channel[Channel]) hergestellt wird. Also z. B. ein Asterisk-System an einem anderen Standort.
+PBX:: Private Branch eXchange. Eine Telefonanlage. Verbindet Endgeräte (in der Regel Telefone) untereinander und mit dem öffentlichen Telefonnetz. Auf Deutsch auch TVA (Telefonvermittlungsanlage) oder (allgemeiner) TK-Anlage (Telekommunikationsanlage) genannt.
+Pound:: Pound sign = Raute (`#`), Pound key = Rautetaste. Auf diesen Begriff werden Sie öfter in US-amerikanischen Beschreibungen stoßen. Der britische Ausdruck ist „hash“.
+PRI:: Primary Rate Interface. Ein Primärmultiplex-ISDN-Anschluss, auch bekannt als PMX oder S2M. In Europa als E1 mit 30 B-Kanälen à 64 kbit/s, in Nordamerika als T1 mit 23 B-Kanälen à 56 kbit/s.
+Prompt:: Siehe xref:glossar.adoc#glossar-voiceprompt[Voice Prompt].
+PSTN:: Public Switched Telephone Network. Das öffentliche Telefonnetz, insbesondere das Festnetz („landline“).
+QoS:: Quality of Service (dt.: Dienstgüte). Bezeichnet die Gesamtheit der Qualität eines Übertragungsweges, die von Latenz (xref:glossar.adoc#glossar-latenz[Latenz]), Jitter (xref:glossar.adoc#glossar-jitter[Jitter]), Durchsatz, Fehlerrate und Verlustrate bestimmt wird. Kann in IP-Paketen durch die ToS-Flags (xref:glossar.adoc#glossar-tos[ToS]) beeinflusst werden.
+RegExp:: auch RegEx oder RE. Siehe xref:glossar.adoc#glossar-regularexpression[Regular Expression]
+Regulärer Ausdruck:: Siehe xref:glossar.adoc#glossar-regularexpression[Regular Expression].
+Regular Expression:: Ein „regulärer Ausdruck“. Im Falle des Dialplans (xref:glossar.adoc#glossar-dialplan[Dialplan]) ein Suchmuster, das auf mehrere Extensions (xref:glossar.adoc#glossar-extension[Extension]) zutrifft und aus Gründen der Übersichtlichkeit und leichteren Wartbarkeit verwendet wird. Pattern werden immer durch `_` (Unterstrich) eingeleitet. Möglich im Pattern sind freie Platzhalter wie `[0-9]`, `[3-6]`, `[56]` etc. oder die vordefinierten Kurzformen `X`, `Z`, `N` und `.` (Punkt).
++
+Beispiel: `_2[3-6]X`
++
+RegExe sind in Asterisk nicht die aus Perl bekannten PCREs.
+Eine ausführliche Erklärung finden Sie in xref:einleitung-regex.adoc[Abschnitt 3.3, „Pattern Matching“].
+SIP:: Session Initiation Protocol (eigentlich eine Sammlung von Protokollen), in Asterisk ein Channel (xref:glossar.adoc#glossar-channel[Channel]).
+TCP:: Transmission Control Protocol. Eine Protokollschicht über IP (xref:glossar.adoc#glossar-ip[IP]), die sicherstellt, dass bei der Übertragung keine IP-Pakete verloren gehen, was z. B. für HTTP wichtig ist, damit eine vollständige Übertragung gewährleistet ist.
+ToS:: Type of Service. Eine Form von Traffic Shaping. Manche Router beachten solche Flags in IP-Paketen (xref:glossar.adoc#glossar-ip[IP]), die dazu dienen, bestimmten Diensten (z. B. Telefongesprächen) Priorität gegenüber anderen (z. B. Dateiübertragungen) zu geben und damit die QoS (xref:glossar.adoc#glossar-qos[QoS]) zu verbessern. Kann in Asterisk bei einigen Channels (xref:glossar.adoc#glossar-channel[Channel]) eingestellt werden.
++
+Die ToS-Flags waren früher in RFC 791footnote:[http://tools.ietf.org/html/rfc791] spezifiziert und wurden in RFC 2474footnote:[http://tools.ietf.org/html/rfc2474] von der IETF als DSCP (xref:glossar.adoc#glossar-dscp[DSCP])
+rückwärtskompatibel überarbeitet.
++
+Die alten Flags waren _low-delay,
+throughput_ und _reliability_. Die neuen
+finden Sie unter xref:glossar.adoc#glossar-dscp[DSCP].
+UDP:: User Datagram Protocol. Wie TCP eine Protokollschicht über IP (xref:glossar.adoc#glossar-ip[IP]), bei der allerdings die vollständige Übertragung und richtige Reihenfolge aller Pakete nicht garantiert ist. UDP eignet sich aber durch den geringeren Overhead besonders gut für Echtzeitanwendungen wie die Übertragung von Ton- oder Videodaten, da z. B. bei einem Video-Stream ein Bild sowieso nicht einfach 2 Sekunden später eingefügt werden könnte.
+Voicemail:: Ein Ausdruck für Sprachnachrichten. Also Nachrichten auf einem (hier meist virtuellen) Anrufbeantworter (xref:glossar.adoc#glossar-voicemailbox[Voice Mailbox]).
+Voice Mailbox:: Moderner Ausdruck für einen (meist virtuellen) Anrufbeantworter. In Asterisk werden Voice-Mailboxen in der Datei `voicemail.conf` definiert.
+Voice Message:: Siehe xref:glossar.adoc#glossar-voicemail[Voicemail].
+Voice Prompt:: Ein Sprachbaustein – z. B. eine Eingabeaufforderung –, der in einem IVR-Menü (xref:glossar.adoc#glossar-ivr[IVR]) abgespielt wird.
+VoIP:: Voice over IP. Bezeichnet die Echtzeitübertragung von Gesprächen, die in IP-Pakete (xref:glossar.adoc#glossar-ip[IP]) zerlegt werden, anstatt über analoge Leitungen zu laufen. Oft eine kostengünstige Möglichkeit zu telefonieren. Die meisten Anbieter von Breitbandanschlüssen für Privathaushalte meinen damit ihren eigenen kostenpflichtigen Dienst oder die Möglichkeit, an einer mitgelieferten DSL-Modem-Router-Einheit direkt analoge Telefone anschließen zu können. Bekannte von Hausanschlüssen unabhängige Provider sind Skype oder Sipgate, die auch ein Gateway zum und vom öffentlichen Telefonnetz anbieten.
+Wählplan:: Siehe xref:glossar.adoc#glossar-dialplan[Dialplan].

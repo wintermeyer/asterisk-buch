@@ -1,0 +1,24 @@
+[[manager-zaptransfer]]
+= `ZapTransfer`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6**|————————
+(* anderer Name)
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: ZapTransfer
+Synopsis: Transfer Zap Channel
+Privilege: <none>
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6 (xref:manager-dahditransfer.adoc[Abschnitt F.21, „`DAHDITransfer`“]):
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,3 @@
+- Action: ZapTransfer
+- Synopsis: Transfer Zap Channel
++ Action: DAHDITransfer
++ Synopsis: Transfer DAHDI Channel
+Privilege: <none>

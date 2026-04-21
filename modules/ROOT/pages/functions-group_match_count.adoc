@@ -1,0 +1,41 @@
+[[functions-group_match_count]]
+= `GROUP_MATCH_COUNT()`
+
+[source]
+----
+GROUP_MATCH_COUNT(Muster[@Kategorie])
+----
+
+Gibt die Anzahl der Kanäle zurück, auf die das angegebene Suchmuster
+– ein regulärer Ausdruck – passt.
+
+[source]
+----
+; Anzahl der Kanäle in den Gruppen gruppe1 bis gruppe4 abfragen:
+exten => 123,1,Set(foo=${GROUP_MATCH_COUNT(gruppe[1-4])})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'GROUP_MATCH_COUNT' =-
+
+[Syntax]
+GROUP_MATCH_COUNT(groupmatch[@category])
+
+[Synopsis]
+Counts the number of channels in the groups matching the specified pattern
+
+[Description]
+Calculates the group count for all groups that match the specified pattern.
+Uses standard regular expression matching (see regex(7)).
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-group.adoc[Abschnitt D.39, „`GROUP()`“], xref:functions-group_count.adoc[Abschnitt D.40, „`GROUP_COUNT()`“], xref:functions-group_list.adoc[Abschnitt D.41, „`GROUP_LIST()`“]

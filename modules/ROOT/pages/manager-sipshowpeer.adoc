@@ -1,0 +1,38 @@
+[[manager-sipshowpeer]]
+= `SIPshowpeer`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: SIPshowpeer
+Synopsis: Show SIP peer (text format)
+Privilege: system,all
+Description: Show one SIP peer with details on current status.
+Variables:
+Peer: <name> The peer name you want to check.
+ActionID: <id> Optional action ID for this AMI transaction.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -2,7 +2,6 @@
+Synopsis: Show SIP peer (text format)
+Privilege: system,all
+Description: Show one SIP peer with details on current status.
+- The XML format is under development, feedback welcome! /oej
+Variables:
+Peer: <name> The peer name you want to check.
+ActionID: <id> Optional action ID for this AMI transaction.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,6 +1,6 @@
+Action: SIPshowpeer
+Synopsis: Show SIP peer (text format)
+- Privilege: system,all
++ Privilege: system,reporting,all
+Description: Show one SIP peer with details on current status.
+Variables:
+Peer: <name> The peer name you want to check.

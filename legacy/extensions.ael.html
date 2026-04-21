@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>7.3. extensions.conf &lt;-&gt; extensions.ael</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="extensions.ael" /><meta name="keywords" content="AEL, Asterisk Extension Language" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="ael.html" title="Kapitel 7. AEL" /><link rel="prev" href="aelparse.html" title="7.2. aelparse" /><link rel="next" href="extensions.ael-oder-conf.html" title="7.4. extensions.ael oder extensions.conf?" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="7.3. extensions.conf &lt;-&gt; extensions.ael" id="extensions.ael"><div class="titlepage"><div><div><h2 class="title" id="extensions.ael">7.3. extensions.conf &lt;-&gt; extensions.ael</h2></div></div></div><a id="idp11563728" class="indexterm"></a><div class="para">Wir wollen hier übersichtlich darstellen, wie AEL im Vergleich zur
+    herkömmlichen <code class="filename">extensions.conf</code> aussieht. Das kann man
+    am besten an Beispielen veranschaulichen. Es wird vorausgesetzt, dass Sie
+    bereits mit der Dialplan-Programmierung vertraut sind.</div><div class="section" title="Zeilenende/Befehlsende" id="ael-command-termination"><div class="titlepage"><div><div><h3 class="title" id="ael-command-termination">Zeilenende/Befehlsende</h3></div></div></div><div class="para">Befehle müssen in AEL immer mit <span class="quote">„<span class="quote"><code class="code">;</code></span>“</span>
+      (Semikolon) abgeschlossen werden, da theoretisch auch mehrere Befehle in
+      einer Zeile stehen könnten (was jedoch unüblich ist).</div></div><div class="section" title="Kontexte, Extensions, Prioritäten" id="ael-contexts-extensions-priorities"><div class="titlepage"><div><div><h3 class="title" id="ael-contexts-extensions-priorities">Kontexte, Extensions, Prioritäten</h3></div></div></div><a id="idp11572320" class="indexterm"></a><div class="para">Der Unterschied in der Schreibweise von Contexten, Extensions und
+      Prioritäten bestimmt das ganze Erscheinungsbild. In AEL werden
+      geschweifte Klammern (<span class="quote">„<span class="quote"><code class="code">{<em class="replaceable"><code> ...
+      </code></em>}</code></span>“</span>) verwendet. Die Angabe von Prioritäten
+      (<code class="literal">1</code>, <code class="literal">n</code>) ist nicht mehr
+      erforderlich. In der <code class="filename">extensions.ael</code> hat man also
+      endlich nicht mehr den zweifelhaften Charme früher BASIC-Programme, in
+      denen man noch die Zeilennummern angeben musste, und man erspart sich
+      auch das überflüssige mehrfache Tippen der gleichen Extension für
+      mehrere Zeilen bzw. Befehle. Diese Stärke kommt vor allem bei längeren
+      Dialplänen zum Tragen, weshalb die kurzen Beispiele hier manchmal etwas
+      unfair gegen AEL sind.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>[interne-benutzer]</strong></span>
+
+<span class="bold bold"><strong>exten =&gt; 21,1,</strong></span>Dial(SIP/anna)
+<span class="bold bold"><strong>exten =&gt; 21,n,</strong></span>VoiceMail(anna)
+
+<span class="bold bold"><strong>exten =&gt; 22,1,</strong></span>Dial(SIP/lisa)
+<span class="bold bold"><strong>exten =&gt; 22,n,</strong></span>VoiceMail(lisa)
+
+<span class="bold bold"><strong>exten =&gt; _3X,1,</strong></span>Dial(SIP/${EXTEN})
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>context interne-benutzer {</strong></span>
+  <span class="bold bold"><strong>21 =&gt; {</strong></span>
+    Dial(SIP/anna);
+    VoiceMail(anna);
+  <span class="bold bold"><strong>}</strong></span>
+  <span class="bold bold"><strong>22 =&gt; {</strong></span>
+    Dial(SIP/lisa);
+    VoiceMail(lisa);
+  <span class="bold bold"><strong>}</strong></span>
+  <span class="bold bold"><strong>_3X =&gt; {</strong></span>
+    Dial(SIP/${EXTEN});
+  <span class="bold bold"><strong>}</strong></span>
+<span class="bold bold"><strong>}</strong></span></pre></td></tr></tbody></table></div><div class="para">Bei einer Extension, in der nur ein Befehl ausgeführt wird, könnte
+      man in AEL die geschweiften Klammern übrigens auch weglassen und
+      nur<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">context default {
+  23 =&gt; Playback(hello-world);
+}</pre></td></tr></tbody></table></div>schreiben. Gewöhnen Sie sich das bitte aber erst gar
+      nicht an, und verwenden Sie immer die volle Schreibweise<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">context default {
+  23 =&gt; <span class="bold bold"><strong>{</strong></span>
+    Playback(hello-world);
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div>denn man hat ja sowieso bei den meisten Extensions
+      mehrere Befehle und erreicht so ein einheitliches Format. Nur in wenigen
+      Fällen (<code class="code">jump</code>, siehe <a class="xref" href="extensions.ael.html#ael-labels-goto-jump" title="Labels, goto und jump">„Labels, goto und jump“</a>) kann die kurze Schreibweise sinnvoll
+      sein.</div><div class="important"><h2>Wichtig</h2><div class="para">Die öffnende geschweifte Klammer <span class="quote">„<span class="quote"><code class="code">{</code></span>“</span>
+        eines Blocks muss immer auf der gleichen Zeile stehen, nicht auf einer
+        eigenen!</div></div></div><div class="section" title="Kommentare" id="ael-comments"><div class="titlepage"><div><div><h3 class="title" id="ael-comments">Kommentare</h3></div></div></div><a id="idp11621280" class="indexterm"></a><div class="para">Kommentare werden in AEL durch <span class="quote">„<span class="quote"><code class="code">//</code></span>“</span>
+      (zwei Schrägstriche) eingeleitet.</div><div class="important"><h2>Wichtig</h2><div class="para">Bitte verwenden Sie für Kommentare <span class="bold bold"><strong>nicht</strong></span> den C-Stil (<code class="code">/*<em class="replaceable"><code> ...
+        </code></em>*/</code>). Für mehrzeilige Kommentare leiten Sie bitte
+        jede Zeile separat mit <span class="quote">„<span class="quote"><code class="code">//</code></span>“</span> ein.</div></div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>;</strong></span> ein Kommentar
+exten =&gt; 10,1,Dial(SIP/anna) <span class="bold bold"><strong>;</strong></span> Dial
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>//</strong></span> ein Kommentar
+10 =&gt; {
+  Dial(SIP/anna);  <span class="bold bold"><strong>//</strong></span> Dial
+}</pre></td></tr></tbody></table></div></div><div class="section" title="Includes – Andere Contexte einbinden" id="ael-include-contexts"><div class="titlepage"><div><div><h3 class="title" id="ael-include-contexts">Includes – Andere Contexte einbinden</h3></div></div></div><a id="idp11644384" class="indexterm"></a><div class="para">Wie aus <a class="xref" href="includes-im-dialplan.html" title="3.4. Includes im Dialplan">Abschnitt 3.4, „Includes im Dialplan“</a> und <a class="xref" href="includes-im-dialplan.html#include-zeitgesteuert" title="Includes zeitgesteuert">„Includes zeitgesteuert“</a> bekannt ist, können Sie in Contexte
+      andere Contexte einbinden.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[verkauf]
+exten =&gt; 2001,1,Dial(SIP/anna)
+exten =&gt; 2002,1,Dial(SIP/hans)
+
+[lager]
+exten =&gt; 3001,1,Dial(SIP/lisa)
+
+[tag]
+<span class="bold bold"><strong>include =&gt;</strong></span> verkauf
+<span class="bold bold"><strong>include =&gt;</strong></span> lager
+
+[nacht]
+exten =&gt; _.,1,VoiceMail(${EXTEN},u)
+
+[von-extern]
+<span class="bold bold"><strong>include =&gt;</strong></span> tag|09:00-17:00|mon-fri|*|*
+ <span class="bold bold"><strong>include =&gt;</strong></span> tag|09:00-14:00|sat|*|*
+<span class="bold bold"><strong>include =&gt;</strong></span> nacht
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context verkauf {
+  2001 =&gt; {
+    Dial(SIP/anna);
+  }
+  2002 =&gt; {
+    Dial(SIP/hans);
+  }
+}
+
+context lager {
+  3001 =&gt; {
+    Dial(SIP/lisa);
+  }
+}
+
+context tag {
+  <span class="bold bold"><strong>includes {</strong></span>
+    verkauf;
+    lager;
+  <span class="bold bold"><strong>}</strong></span>
+}
+
+context nacht {
+  _. =&gt; {
+    VoiceMail(${EXTEN},u);
+  }
+}
+
+context von-extern {
+  <span class="bold bold"><strong>includes {</strong></span>
+    tag|09:00-17:00|mon-fri|*|*;
+    tag|09:00-14:00|sat|*|*;
+    nacht;
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div><div class="important"><h2>Wichtig</h2><div class="para">Bitte beachten Sie in AEL das <span class="quote">„<span class="quote"><code class="code">s</code></span>“</span> am
+        Ende von <span class="quote">„<span class="quote"><code class="code">includes</code></span>“</span>.</div></div></div><div class="section" title="Globale Variablen" id="ael-global-variables"><div class="titlepage"><div><div><h3 class="title" id="ael-global-variables">Globale Variablen</h3></div></div></div><a id="idp11671168" class="indexterm"></a><div class="para">Globale Variablen (siehe <a class="xref" href="programmierer-howto.html#programmierer-howto-variablen" title="Variablen">„Variablen“</a>) können in AEL im speziellen
+      Block <code class="code">globals</code> gesetzt werden.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>[globals]</strong></span>
+KUCHEN=Marmorkuchen
+KLINGELZEIT=60
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>globals {</strong></span>
+  KUCHEN=Marmorkuchen;
+  KLINGELZEIT=60;
+<span class="bold bold"><strong>}</strong></span></pre></td></tr></tbody></table></div></div><div class="section" title="Ausdrücke und Zuweisungen" id="ael-expressions-assignments"><div class="titlepage"><div><div><h3 class="title" id="ael-expressions-assignments">Ausdrücke und Zuweisungen</h3></div></div></div><a id="idp11691296" class="indexterm"></a><div class="para">In AEL werden intern automatisch die Ausdrücke
+      (<span class="emphasis"><em>expressions</em></span>) in Kontrollstrukturen wie
+      <code class="code">if()</code>, <code class="code">while()</code>, der (mittleren)
+      Abbruchbedingung in <code class="code">for()</code> sowie der rechten Seite von
+      Zuweisungen (<span class="emphasis"><em>assignments</em></span>) so behandelt, als stünden
+      sie in einem <code class="code">$[<em class="replaceable"><code>...</code></em>]</code>-Ausdruck
+      (siehe <a class="xref" href="glossar.html#glossar-expressions" title="Expression">Expression<a id="idp20167008" class="indexterm"></a></a>).</div><div class="para">Das klingt zuerst kompliziert, entspicht aber dem ganz normalen
+      Verhalten, wie man es von anderen Programmiersprachen kennt. Bei
+      Zuweisungen ist dieses Verhalten allerdings untypisch für Asterisk und
+      kann leicht zu merkwürdigen Fehlern führen. Denken Sie daran, dass auch
+      AEL eben keine <span class="quote">„<span class="quote">richtige</span>“</span> Programmiersprache ist und z. B.
+      Strings nie als solche mit Anführungszeichen gekennzeichnet werden. Wir
+      empfehlen daher, Zuweisungen nicht so zu schreiben:<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">context test {
+  123 =&gt; {
+    <span class="bold bold"><strong>ergebnis=10/2</strong></span>;
+    NoOp(ergebnis ist ${ergebnis});
+  }
+}</pre></td></tr></tbody></table></div>sondern nach wie vor die Applikation
+      <code class="code">Set()</code> (siehe <a class="xref" href="applications-set.html" title="C.149. Set()">Abschnitt C.149, „<code class="literal">Set()</code>“</a>) zu
+      verwenden:<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">context test {
+  123 =&gt; {
+    <span class="bold bold"><strong>Set(ergebnis=$[ 10 / 2 ])</strong></span>;
+    NoOp(ergebnis ist ${ergebnis});
+  }
+}</pre></td></tr></tbody></table></div></div><div class="para">Für Sprachkonstrukte wie <code class="code">if()</code>, <code class="code">while()</code>
+      usw. ist dieses Verhalten allerdings gut, da es die unübersichtlichen
+      Klammern <code class="code">$[<em class="replaceable"><code> ... </code></em>]</code>
+      einspart:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 50,1,Set(a=test)
+exten =&gt; 50,n,<span class="bold bold"><strong>ExecIf($["${a}" = "101"]</strong></span>,SayDigits,123)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">50 =&gt; {
+  Set(a=test);
+  <span class="bold bold"><strong>if ("${a}" = "test")</strong></span> {
+    SayDigits(123);
+  }
+}</pre></td></tr></tbody></table></div></div><div class="section" title="Labels, goto und jump" id="ael-labels-goto-jump"><div class="titlepage"><div><div><h3 class="title" id="ael-labels-goto-jump">Labels, goto und jump</h3></div></div></div><a id="idp11733200" class="indexterm"></a><div class="para">Als hartgesottener
+      <code class="filename">extensions.conf</code>-Programmierer ist man (zwangsweise)
+      daran gewöhnt, mit <code class="code">Goto()</code>, <code class="code">GotoIf()</code>,
+      <code class="code">Gosub()</code> und <code class="code">GosubIf()</code> zu
+      <span class="quote">„<span class="quote">Prioritäten</span>“</span> oder Labels (Markern) zu springen.
+      (Eigentlich ist das aber nur eine Behelfslösung, weil es in der
+      <code class="filename">extensions.conf</code> keine sauberen Kontrollstrukturen
+      für den Programmablauf gibt.)</div><div class="para">Labels befinden sich immer innerhalb einer Extension und werden in
+      AEL auf einer eigenen Zeile geschrieben. Bitte beachten Sie den
+      Doppelpunkt (<span class="quote">„<span class="quote"><code class="code">:</code></span>“</span>) am Zeilenende:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[beispiel]
+
+; zu einem Label in der
+; gleichen Extension gehen:
+;
+exten =&gt; 10,1<span class="bold bold"><strong>(anfang)</strong></span>,NoOp()
+exten =&gt; 10,n,Wait(1)
+exten =&gt; 10,n,SayNumber(1)
+exten =&gt; 10,n,NoOp(Endlosschleife)
+exten =&gt; 10,n,<span class="bold bold"><strong>Goto(anfang)</strong></span>
+
+; zu einem Label in einer
+; anderen Extension im
+; gleichen Kontext gehen:
+;
+exten =&gt; 20,1,SayNumber(20)
+exten =&gt; 20,n,<span class="bold bold"><strong>Goto(10,anfang)</strong></span>
+
+; zu einem Label in einem
+; anderen Kontext gehen:
+;
+exten =&gt; 30,1,SayNumber(30)
+exten =&gt; 30,n,<span class="bold bold"><strong>Goto(cntxt2,40,vierzig)</strong></span>
+
+[cntxt2]
+
+exten =&gt; 40,1<span class="bold bold"><strong>(vierzig)</strong></span>,NoOp()
+exten =&gt; 40,n,SayNumber(40)
+
+exten =&gt; 50,1,<span class="bold bold"><strong>Goto(40,1)</strong></span>
+exten =&gt; 60,1,<span class="bold bold"><strong>Goto(beispiel,10,1)</strong></span>
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context beispiel {
+  
+  // zu einem Label in der
+  // gleichen Extension gehen:
+  //
+  10 =&gt; {
+   <span class="bold bold"><strong>anfang:</strong></span>
+    Wait(1);
+    SayNumber(10);
+    NoOp(Endlosschleife);
+    <span class="bold bold"><strong>goto anfang</strong></span>;
+  }
+  
+  // zu einem Label in einer
+  // anderen Extension im
+  // gleichen Kontext gehen:
+  //
+  20 =&gt; {
+    SayNumber(20);
+    <span class="bold bold"><strong>goto 10|anfang</strong></span>;
+  }
+  
+  // zu einem Label in einem
+  // anderen Kontext gehen:
+  //
+  30 =&gt; {
+    SayNumber(30);
+    <span class="bold bold"><strong>goto cntxt2|40|vierzig</strong></span>;
+  }
+}
+
+context cntxt2 {
+  
+  40 =&gt; {
+   <span class="bold bold"><strong>vierzig:</strong></span>
+    SayNumber(40);
+  }
+  50 =&gt; <span class="bold bold"><strong>jump 40</strong></span>;
+  60 =&gt; <span class="bold bold"><strong>jump 10@beispiel</strong></span>;
+}</pre></td></tr></tbody></table></div><div class="para">In dem obigen Beispiel sehen wir auch eine andere Syntax für die
+      Sprünge. Während man in der <code class="filename">extensions.conf</code> auf die
+      Applikation <code class="code">Goto()</code> (siehe <a class="xref" href="applications-goto.html" title="C.65. Goto()">Abschnitt C.65, „<code class="literal">Goto()</code>“</a>) angewiesen ist, sollte man diese in AEL
+      nicht mehr verwenden (man kann es aber problemlos tun). Dafür gibt es
+      jetzt das neue Sprachkonstrukt <code class="code">goto</code>.</div><div class="para">Ein Vergleich der Syntax von <code class="code">Goto()</code> und
+      <code class="code">goto</code> zeigt, dass es hier keinen großen Erklärungsbedarf
+      gibt:<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"><code class="filename">.conf</code></td><td style="text-align: left" valign="top"><pre class="synopsis"><span class="bold bold"><strong><code class="code">Goto(</code></strong></span>[[<em class="replaceable"><code>context</code></em><span class="bold bold"><strong><code class="code">,</code></strong></span>]<em class="replaceable"><code>extension</code></em><span class="bold bold"><strong><code class="code">,</code></strong></span>]<em class="replaceable"><code>label</code></em><span class="bold bold"><strong><code class="code">)</code></strong></span></pre></td></tr><tr><td style="text-align: left" valign="top"><code class="filename">.ael</code></td><td style="text-align: left" valign="top"><pre class="synopsis"><span class="bold bold"><strong><code class="code">goto </code></strong></span>[[<em class="replaceable"><code>context</code></em><span class="bold bold"><strong><code class="code">|</code></strong></span>]<em class="replaceable"><code>extension</code></em><span class="bold bold"><strong><code class="code">|</code></strong></span>]<em class="replaceable"><code>label</code></em></pre></td></tr></tbody></table></div></div><div class="para">Dass man in AEL natürlich nicht auf Idee kommen sollte, zu einer
+      Priorität anhand ihrer Nummer zu springen, versteht sich auch von
+      selbst, denn wie der AEL-Compiler die Befehlszeilen in Prioritäten
+      umsetzt, sollte beim Schreiben von AEL nicht interessieren. Weil es aber
+      vorkommt, dass man zu einer anderen Extension (im gleichen oder in einem
+      anderen Context) springen will, gibt es in AEL zusätzlich zu
+      <code class="code">goto</code> auch noch die Anweisung
+      <code class="code">jump</code>.<div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"><code class="filename">.conf</code></td><td style="text-align: left" valign="top"><pre class="synopsis"><span class="bold bold"><strong><code class="code">Goto(</code></strong></span>[<em class="replaceable"><code>context</code></em><span class="bold bold"><strong><code class="code">,</code></strong></span>]<em class="replaceable"><code>extension</code></em><span class="bold bold"><strong><code class="code">,</code></strong></span><span class="bold bold"><strong><code class="code">1</code></strong></span><span class="bold bold"><strong><code class="code">)</code></strong></span></pre></td></tr><tr><td style="text-align: left" valign="top"><code class="filename">.ael</code> (schlecht!)</td><td style="text-align: left" valign="top"><pre class="synopsis"><span class="bold bold"><strong><code class="code">goto </code></strong></span>[<em class="replaceable"><code>context</code></em><span class="bold bold"><strong><code class="code">|</code></strong></span>]<em class="replaceable"><code>extension</code></em><span class="bold bold"><strong><code class="code">|</code></strong></span><span class="bold bold"><strong><code class="code">1</code></strong></span></pre></td></tr><tr><td style="text-align: left" valign="top"><code class="filename">.ael</code> (gut)</td><td style="text-align: left" valign="top"><pre class="synopsis"><span class="bold bold"><strong><code class="code">jump </code></strong></span><em class="replaceable"><code>extension</code></em>[<span class="bold bold"><strong><code class="code">@</code></strong></span><em class="replaceable"><code>context</code></em>]</pre></td></tr></tbody></table></div></div><div class="para">Im Folgenden (<a class="xref" href="extensions.ael.html#ael-conditionals" title="Bedingte Anweisungen (conditionals)">„Bedingte Anweisungen (<span class="emphasis"><em>conditionals</em></span>)“</a> und <a class="xref" href="extensions.ael.html#ael-loops" title="Schleifen (loops)">„Schleifen (<span class="emphasis"><em>loops</em></span>)“</a>) werden wir aber lernen, dass man in AEL nicht
+      mehr darauf angewiesen ist, den Kontrollfluss (<span class="emphasis"><em>control
+      flow</em></span>) des Programms durch <code class="code">goto</code>-Sprünge zu
+      definieren, da es echte Kontrollstrukturen gibt.</div></div><div class="section" title="Bedingte Anweisungen (conditionals)" id="ael-conditionals"><div class="titlepage"><div><div><h3 class="title" id="ael-conditionals">Bedingte Anweisungen (<span class="emphasis"><em>conditionals</em></span>)</h3></div></div></div><a id="idp12877568" class="indexterm"></a><div class="para">Bedingte Anweisungen<sup>[<a id="idp12879216" href="#ftn.idp12879216" class="footnote">31</a>]</sup> (<span class="emphasis"><em>conditionals</em></span><sup>[<a id="idp12880608" href="#ftn.idp12880608" class="footnote">32</a>]</sup>) gehören zu den Kontrollstrukturen (<span class="emphasis"><em>control
+      structures</em></span>) eines Programmablaufs.</div><div class="note"><h2>Anmerkung</h2><div class="para">Für Informationen über Ausdrücke
+        (<span class="emphasis"><em>expressions</em></span>) siehe auch <a class="xref" href="glossar.html#glossar-expressions" title="Expression">Expression<a id="idp20167008" class="indexterm"></a></a>.</div></div><div class="para">In AEL gibt es sowohl <span class="bold bold"><strong><code class="code">if</code></strong></span>- als auch <span class="bold bold"><strong><code class="code">switch</code></strong></span>-Blöcke. Das ist ein riesiger
+      Vorteil, denn es erleichtert die Lesbarkeit ganz entscheidend, und je
+      umfangreicher die Programmlogik wird, desto mehr kommt dieser Vorteil
+      zum Tragen. Vergleichen Sie selbst:</div><h4><code class="code">if</code></h4><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 90,1,Dial(SIP/anna)
+exten =&gt; 90,n,<span class="bold bold"><strong>GotoIf($["${DIALSTATUS}" = "BUSY"]?b:n)</strong></span>
+
+exten =&gt; 90,10(b),Answer()
+exten =&gt; 90,11,Playback(hello-world)
+exten =&gt; 90,12,Voicemail(anna,b)
+exten =&gt; 90,13,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; 90,20(n),Dial(SIP/lisa)
+exten =&gt; 90,21,Playback(beeperr)
+exten =&gt; 90,22,<span class="bold bold"><strong>Goto</strong></span>(ende)
+exten =&gt; 90,30(ende),NoOp(Fertig)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">90 =&gt; {
+  Dial(SIP/anna);
+  <span class="bold bold"><strong>if ("${DIALSTATUS}" = "BUSY") {</strong></span>
+    Answer();
+    Playback(hello-world)
+    Voicemail(anna,b);
+  <span class="bold bold"><strong>}</strong></span>
+  <span class="bold bold"><strong>else {</strong></span>
+    Dial(SIP/lisa);
+    Playback(beeperr);
+  <span class="bold bold"><strong>}</strong></span>
+  NoOp(Fertig);
+}</pre></td></tr></tbody></table></div><div class="para">Wer an AEL gewöhnt ist, empfindet das unübersichtliche
+      Herumspringen mit <code class="code">GotoIf()</code> zu Recht als umständlich, mal
+      ganz zu schweigen davon, dass man bei einem Befehl wie
+      <code class="code">GotoIf($["${DIALSTATUS}" = "BUSY"]?b:n)</code> nicht auf den
+      ersten Blick sieht, ob all die Klammern richtig sind.</div><div class="important"><h2>Wichtig</h2><div class="para">Auch hier gilt, dass die öffnende geschweifte Klammer
+        <span class="quote">„<span class="quote"><code class="code">{</code></span>“</span> eines Blocks auf der gleichen Zeile
+        stehen muss, nicht auf einer eigenen!</div></div><h4><code class="code">switch</code></h4><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 70,1,Dial(SIP/anna)
+exten =&gt; 70,n,<span class="bold bold"><strong>Goto(70-${DIALSTATUS},10)</strong></span>
+exten =&gt; 70,n(ende),NoOp(Fertig)
+
+exten =&gt; 70-<span class="bold bold"><strong>BUSY</strong></span>,10,NoOp(besetzt)
+exten =&gt; 70-<span class="bold bold"><strong>BUSY</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; 70-<span class="bold bold"><strong>NOANSWER</strong></span>,10,NoOp(hebt nicht ab)
+exten =&gt; 70-<span class="bold bold"><strong>NOANSWER</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>.</strong></span>,10,NoOp(was anderes)
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>.</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">70 =&gt; {
+  Dial(SIP/anna);
+  <span class="bold bold"><strong>switch ("${DIALSTATUS}") {</strong></span>
+    <span class="bold bold"><strong>case "BUSY":</strong></span>
+      NoOp(besetzt);
+      <span class="bold bold"><strong>break</strong></span>;
+    <span class="bold bold"><strong>case "NOANSWER":</strong></span>
+      NoOp(hebt nicht ab);
+      <span class="bold bold"><strong>break</strong></span>;
+    <span class="bold bold"><strong>default:</strong></span>
+      NoOp(was anderes);
+  <span class="bold bold"><strong>}</strong></span>
+  
+  NoOp(Fertig);
+}</pre></td></tr></tbody></table></div><div class="important"><h2>Wichtig</h2><div class="para">Bitte denken Sie bei den <code class="code">case</code>-Sprungpunkten im
+        <code class="code">switch</code>-Block in AEL immer an die
+        <code class="code">break</code>-Anweisungen! Ohne diese Begrenzung läuft die
+        Programmausführung einfach nach unten weiter, also zum nächsten
+        <code class="code">case</code> oder <code class="code">default</code> – eben zur nächsten
+        Zeile.</div></div><div class="para">Dass das Äquivalent einer einfachen <code class="code">switch</code>-Anweisung
+      in der traditionellen <code class="filename">extensions.conf</code> eine mittlere
+      Katastrophe ist, braucht wohl nicht groß erwähnt zu werden.
+      Verschachtelte <code class="code">if</code>- oder <code class="code">switch</code>-Blöcke wären
+      vollkommen unübersichtlich und unwartbar.</div><div class="para">Übrigens gibt es – falls man das wirklich mal brauchen
+      sollte – in <code class="code">switch</code>-Blöcken nicht nur
+      <code class="code">case</code>-Vergleiche, sondern auch <code class="code">pattern</code>:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; _70,1,NoOp(Gewaehlt: ${EXTEN})
+exten =&gt; _70,n,<span class="bold bold"><strong>Goto(70-${EXTEN},10)</strong></span>
+
+exten =&gt; 70-<span class="bold bold"><strong>703</strong></span>,10,NoOp(703)
+exten =&gt; 70-<span class="bold bold"><strong>703</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; 70-<span class="bold bold"><strong>704</strong></span>,10,NoOp(704)
+exten =&gt; 70-<span class="bold bold"><strong>704</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>70[5-8]</strong></span>,10,NoOp(70[5-8]);
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>70[5-8]</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>.</strong></span>,10,NoOp(was anderes)
+exten =&gt; <span class="bold bold"><strong>_</strong></span>70-<span class="bold bold"><strong>.</strong></span>,11,<span class="bold bold"><strong>Goto</strong></span>(ende)
+
+exten =&gt; 70,n(ende),NoOp(Fertig) </pre></td><td style="text-align: left" valign="top"><pre class="programlisting">_70. =&gt; {
+  NoOp(Gewaehlt: ${EXTEN});
+  <span class="bold bold"><strong>switch (${EXTEN}) {</strong></span>
+    <span class="bold bold"><strong>case 703:</strong></span>
+      NoOp(703);
+      <span class="bold bold"><strong>break</strong></span>;
+    <span class="bold bold"><strong>case 704:</strong></span>
+      NoOp(704);
+      <span class="bold bold"><strong>break</strong></span>;
+    <span class="bold bold"><strong>pattern 70[5-8]:</strong></span>
+      NoOp(70[5-8]);
+      <span class="bold bold"><strong>break</strong></span>;
+    <span class="bold bold"><strong>default:</strong></span>
+      NoOp(was anderes);
+  <span class="bold bold"><strong>}</strong></span>
+  
+  NoOp(Fertig);
+}</pre></td></tr></tbody></table></div><h4><code class="code">ifTime</code></h4><div class="para">Es sei noch erwähnt, dass es in AEL auch eine Entsprechung für
+      <code class="code">GotoIfTime()</code> (siehe <a class="xref" href="applications-gotoiftime.html" title="C.67. GotoIfTime()">Abschnitt C.67, „<code class="literal">GotoIfTime()</code>“</a>) gibt, nämlich das Sprachkonstrukt
+      <code class="code">ifTime</code>.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">20 =&gt; {
+  <span class="bold bold"><strong>ifTime (</strong></span>08:00-18:00|mon-fri|*|*<span class="bold bold"><strong>) {</strong></span>
+    Dial(SIP/20);
+  <span class="bold bold"><strong>} else {</strong></span>
+    Playback(ansage-geschlossen);
+    Voicemail(20,s);
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div><div class="para">Die Syntax der Zeitangabe entspricht der von
+      <code class="code">GotoIfTime()</code>. <code class="code">ifTime</code> ist eigentlich
+      überflüssig, denn mit einem normalen <code class="code">if</code> und der Funktion
+      <code class="code">IFTIME()</code> (<a class="xref" href="functions-iftime.html" title="D.51. IFTIME()">Abschnitt D.51, „<code class="literal">IFTIME()</code>“</a>) kann man das
+      Gleiche erreichen. Der Programmcode ist nur etwas länger:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">20 =&gt; {
+  <span class="bold bold"><strong>if (</strong></span>${IFTIME(08:00-18:00|mon-fri|*|*?1:0)}<span class="bold bold"><strong>) {</strong></span>
+    Dial(SIP/20);
+  <span class="bold bold"><strong>} else {</strong></span>
+    Playback(ansage-geschlossen);
+    Voicemail(20,s);
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div><h4><code class="code">random</code></h4><div class="para"><code class="code">random(){...}</code> ist ein Sprachkonstrukt, bei dem man in
+      Klammern einen ganzzahligen Prozentwert von 1 bis 99 angibt, der
+      bestimmt, mit welcher Wahrscheinlichkeit der Code-Block ausgeführt
+      wird.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">20 =&gt; {
+  <span class="bold bold"><strong>random (</strong></span>42<span class="bold bold"><strong>) {</strong></span>
+    NoOp(42 % Chance);
+  <span class="bold bold"><strong>} else {</strong></span>
+    NoOp(58 % Chance);
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div><div class="para">Das Sprachkonstrukt <code class="code">random</code> ist eigentlich
+      überflüssig, denn mit einem normalen <code class="code">if</code> und der Funktion
+      <code class="code">RAND()</code> (<a class="xref" href="functions-rand.html" title="D.80. RAND()">Abschnitt D.80, „<code class="literal">RAND()</code>“</a>) kann man das
+      Gleiche erreichen. Der Code ist nur etwas länger:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><tbody valign="top"><tr><td style="text-align: left" valign="top"> </td><td style="text-align: left" valign="top"><pre class="programlisting">20 =&gt; {
+  <span class="bold bold"><strong>if (</strong></span>${RAND(0,100)} &lt; 42<span class="bold bold"><strong>) {</strong></span>
+    NoOp(42 % Chance);
+  <span class="bold bold"><strong>} else {</strong></span>
+    NoOp(58 % Chance);
+  <span class="bold bold"><strong>}</strong></span>
+}</pre></td></tr></tbody></table></div></div><div class="section" title="Schleifen (loops)" id="ael-loops"><div class="titlepage"><div><div><h3 class="title" id="ael-loops">Schleifen (<span class="emphasis"><em>loops</em></span>)</h3></div></div></div><a id="idp13006144" class="indexterm"></a><div class="para">Schleifen (<span class="emphasis"><em>loops</em></span>) gehören – wie
+      bedingte Anweisungen – zu den Kontrollstrukturen
+      (<span class="emphasis"><em>control structures</em></span>) eines Programmablaufs.</div><div class="para">In AEL gibt es <span class="bold bold"><strong><code class="code">for</code></strong></span>-
+      und <span class="bold bold"><strong><code class="code">while</code></strong></span>-Schleifen, wie
+      sie aus anderen Programmiersprachen bekannt sind.</div><h4><code class="code">while</code></h4><div class="para">Ein <code class="code">while</code>-Block in AEL entspricht in etwa der
+      Verwendung von <code class="code">While()</code> (<a class="xref" href="applications-while.html" title="C.195. While()">Abschnitt C.195, „<code class="literal">While()</code>“</a>) und <code class="code">EndWhile()</code> (<a class="xref" href="applications-endwhile.html" title="C.47. EndWhile()">Abschnitt C.47, „<code class="literal">EndWhile()</code>“</a>).</div><div class="para">Auch die aus anderen Sprachen bekannten Befehle <code class="code">break</code>
+      und <code class="code">continue</code> lassen sich in Schleifen nutzen.
+      <code class="code">break</code> springt zum Ende des Schleifenblocks,
+      <code class="code">continue</code> zum Anfang. Das ist also die Entsprechung zu
+      <code class="code">ExitWhile()</code> (<a class="xref" href="applications-exitwhile.html" title="C.53. ExitWhile()">Abschnitt C.53, „<code class="literal">ExitWhile()</code>“</a>)
+      bzw. <code class="code">ContinueWhile()</code> (<a class="xref" href="applications-continuewhile.html" title="C.24. ContinueWhile()">Abschnitt C.24, „<code class="literal">ContinueWhile()</code>“</a>).</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 30,1,Set(x=0)
+exten =&gt; 30,n,<span class="bold bold"><strong>While($[${x} &lt;= 9])</strong></span>
+exten =&gt; 30,n,NoOp(x ist ${x})
+exten =&gt; 30,n,ExecIf($[${x} &gt; 5],<span class="bold bold"><strong>ExitWhile</strong></span>)
+exten =&gt; 30,n,Playback(beep)
+exten =&gt; 30,n,<span class="bold bold"><strong>Set(x=$[${x} + 1])</strong></span>
+exten =&gt; 30,n,<span class="bold bold"><strong>EndWhile()</strong></span>
+exten =&gt; 30,n,NoOp(Fertig)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">30 =&gt; {
+  x=0;
+  <span class="bold bold"><strong>while (${x} &lt;= 9) {</strong></span>
+    NoOp(x ist ${x});
+    if (${x} &gt; 5) {
+      <span class="bold bold"><strong>break</strong></span>;
+    }
+    Playback(beep);
+    <span class="bold bold"><strong>x=${x} + 1</strong></span>;
+  <span class="bold bold"><strong>}</strong></span>
+  NoOp(Fertig);
+}</pre></td></tr></tbody></table></div><div class="note"><h2>Anmerkung</h2><div class="para">In AEL brauchen wir hier nur deshalb mehr Zeilen, weil wir
+        darauf verzichten, in dem <code class="code">if</code>-Block vor dem
+        <code class="code">break</code> noch einen zweiten Befehl wie <code class="code">NoOp()</code>
+        auszuführen. Dann nämlich reicht im <code class="filename">.conf</code>-Format
+        nicht mehr ein <code class="code">ExecIf()</code>, sondern man braucht ein
+        kompliziertes mehrzeiliges Konstrukt mit <code class="code">GotoIf()</code>.</div></div><h4><code class="code">for</code></h4><div class="para">Zusätzlich zu <code class="code">while</code> gibt es in AEL auch
+      <code class="code">for</code>-Schleifen. Diese habe keine Entsprechung im
+      <code class="filename">.conf</code>-Format. (Allerdings lässt sich jede
+      <code class="code">for</code>-Schleife als <code class="code">while</code>-Schleife
+      schreiben.)</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 40,1,<span class="bold bold"><strong>Set(x=0)</strong></span>
+exten =&gt; 40,n,<span class="bold bold"><strong>While($[${x} &lt;= 5])</strong></span>
+exten =&gt; 40,n,NoOp(x ist ${x})
+exten =&gt; 40,n,Playback(beep)
+exten =&gt; 40,n,<span class="bold bold"><strong>Set(x=$[${x} + 1])</strong></span>
+exten =&gt; 40,n,<span class="bold bold"><strong>EndWhile()</strong></span>
+exten =&gt; 40,n,NoOp(Fertig)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">40 =&gt; {
+  <span class="bold bold"><strong>for (x=0; ${x}&lt;=5; x=${x}+1) {</strong></span>
+    NoOp(x ist ${x});
+    Playback(beep);
+  <span class="bold bold"><strong>}</strong></span>
+  NoOp(Fertig);
+}</pre></td></tr></tbody></table></div></div><div class="section" title="Makros (macros)" id="ael-macros"><div class="titlepage"><div><div><h3 class="title" id="ael-macros">Makros (<span class="emphasis"><em>macros</em></span>)</h3></div></div></div><a id="idp13055824" class="indexterm"></a><a id="idp13057216" class="indexterm"></a><div class="para">In AEL muss man sich keine Gedanken darüber machen, ob man die
+      nicht mehr empfohlene Applikation <code class="code">Macro()</code> (<a class="xref" href="applications-macro.html" title="C.81. Macro()">Abschnitt C.81, „<code class="literal">Macro()</code>“</a>) oder <code class="code">Gosub()</code> (<a class="xref" href="applications-gosub.html" title="C.63. Gosub()">Abschnitt C.63, „<code class="literal">Gosub()</code>“</a>) verwenden soll, denn Makros gibt es in
+      AEL als Sprachkonstrukt <code class="code">macro</code>.</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>[macro-countdown]</strong></span>
+exten =&gt; s,1,Set(c=${ARG1})
+exten =&gt; s,n,While($[ ${c} &gt; 0])
+exten =&gt; s,n,SayNumber(${c})
+exten =&gt; s,n,Set(c=$[ ${c} - 1 ])
+exten =&gt; s,n,EndWhile()
+
+[default]
+exten =&gt; 123,1,<span class="bold bold"><strong>Macro(countdown,3)</strong></span>
+exten =&gt; 124,1,<span class="bold bold"><strong>Macro(countdown,5)</strong></span>
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting"><span class="bold bold"><strong>macro countdown( count ) {</strong></span>
+  for (c=${count}; ${c}&gt;0; c=${c}-1) {
+    SayNumber(${c});
+  }
+<span class="bold bold"><strong>}</strong></span>
+
+context default {
+  123 =&gt; {
+    <span class="bold bold"><strong>&amp;countdown(3)</strong></span>;
+  }
+  124 =&gt; <span class="bold bold"><strong>&amp;countdown(5)</strong></span>;
+}</pre></td></tr></tbody></table></div><div class="para">Intern macht der AEL-Compiler aus <code class="code">macro</code> automatisch
+      eine <code class="code">Gosub()</code>-Subroutine, was uns aber glücklicherweise
+      nicht interessieren muss.</div></div><div class="section" title="Hints" id="ael-hints"><div class="titlepage"><div><div><h3 class="title" id="ael-hints">Hints</h3></div></div></div><a id="idp13079408" class="indexterm"></a><div class="para">Wie sogenannte <span class="quote">„<span class="quote">Hints</span>“</span> in AEL geschrieben werden,
+      erklären wir ausführlich in <a class="xref" href="blf-hints-pickup.html" title="Kapitel 23. BLF, Hints, Pickup">Kapitel 23, <i>BLF, Hints, Pickup</i></a>. Hier
+      nur ein einfaches Beispiel:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+exten =&gt; 21,<span class="bold bold"><strong>hint,SIP/anna</strong></span>
+exten =&gt; 21,1,Dial(SIP/anna)
+
+exten =&gt; 22,<span class="bold bold"><strong>hint,SIP/lisa</strong></span>
+exten =&gt; 22,1,Dial(SIP/lisa)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  <span class="bold bold"><strong>hint(SIP/anna)</strong></span> 21 =&gt; {
+    Dial(SIP/anna);
+  }
+  <span class="bold bold"><strong>hint(SIP/lisa)</strong></span> 22 =&gt; {
+    Dial(SIP/lisa);
+  }
+}</pre></td></tr></tbody></table></div><div class="para">... und eines mit Pattern:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+exten =&gt; 21,<span class="bold bold"><strong>hint,SIP/21</strong></span>
+exten =&gt; 22,<span class="bold bold"><strong>hint,SIP/22</strong></span>
+
+exten =&gt; _2X,1,Dial(SIP/${EXTEN})
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  <span class="bold bold"><strong>hint(SIP/21)</strong></span> 21 =&gt; {}
+  <span class="bold bold"><strong>hint(SIP/22)</strong></span> 22 =&gt; {}
+  
+  _2X =&gt; {
+    Dial(SIP/${EXTEN});
+  }
+}</pre></td></tr></tbody></table></div></div><div class="section" title="Filtern nach Anrufernummer" id="ael-match-caller-id"><div class="titlepage"><div><div><h3 class="title" id="ael-match-caller-id">Filtern nach Anrufernummer</h3></div></div></div><div class="para">Man braucht es zwar in der Praxis eher selten, aber die Syntax für
+      eine (in der Asterisk-Community viel zitierte) <span class="quote">„<span class="quote">Ex-Girlfriend
+      Extension</span>“</span> sähe so aus:</div><div class="informaltable"><table width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">exten =&gt; 10<span class="bold bold"><strong>/55555</strong></span>,1,NoOp(Ex-Freundin)
+exten =&gt; 10<span class="bold bold"><strong>/55555</strong></span>,n,Busy()
+
+exten =&gt; 10,1,Dial(SIP/karl)
+exten =&gt; 10,n,Voicemail(karl)
+</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">10<span class="bold bold"><strong>/55555</strong></span> =&gt; {
+  NoOp(Ex-Freundin);
+  Busy();
+}
+10 =&gt; {
+  Dial(SIP/karl);
+  Voicemail(karl);
+}</pre></td></tr></tbody></table></div><div class="para">Wenn also die Ex-Freundin von der Nummer (Caller-ID)
+      <code class="literal">55555</code> anruft, würde sie auf <code class="literal">Busy()</code>
+      geleitet, alle anderen Anrufer jedoch nicht.</div><div class="para">Übrigens sind hier auch Pattern erlaubt. Mit <code class="code">/_0123.</code>
+      könnte man also direkt einen ganzen Vorwahl-Bereich matchen.</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp12879216" href="#idp12879216" class="para">31</a>] </sup><a href="http://de.wikipedia.org/wiki/Bedingte_Anweisung">http://de.wikipedia.org/wiki/Bedingte_Anweisung</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp12880608" href="#idp12880608" class="para">32</a>] </sup><a href="http://en.wikipedia.org/wiki/Conditional_(programming)">http://en.wikipedia.org/wiki/Conditional_(programming)</a></p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="ael.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="ael-cli.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">CLI-Befehle für AEL</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="aelparse.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">aelparse</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">extensions.conf &lt;-&gt; extensions.ael</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-command-termination" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Zeilenende/Befehlsende</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-contexts-extensions-priorities" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Kontexte, Extensions, Prioritäten</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-comments" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Kommentare</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-include-contexts" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Includes – Andere Contexte einbinden</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-global-variables" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Globale Variablen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-expressions-assignments" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Ausdrücke und Zuweisungen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-labels-goto-jump" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Labels, goto und jump</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-conditionals" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Bedingte Anweisungen (<span xmlns="http://www.w3.org/1999/xhtml" class="emphasis"><em>conditionals</em></span>)</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-loops" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Schleifen (<span xmlns="http://www.w3.org/1999/xhtml" class="emphasis"><em>loops</em></span>)</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-macros" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Makros (<span xmlns="http://www.w3.org/1999/xhtml" class="emphasis"><em>macros</em></span>)</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-hints" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Hints</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="extensions.ael.html#ael-match-caller-id" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Filtern nach Anrufernummer</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="extensions.ael-oder-conf.html" title="pfc level3 breadcrumb-link section sectlevel1">extensions.ael oder extensions.conf?</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="aelparse.html"><strong>Zurück</strong>7.2. aelparse</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="extensions.ael-oder-conf.html"><strong>Weiter</strong>7.4. extensions.ael oder extensions.conf?</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

@@ -1,0 +1,55 @@
+[[codecs-konfiguration]]
+= Konfiguration des Codecs
+
+Die Konfiguration des Codecs erfolgt immer technologieabhängig.
+IAX-Telefone werden in der `iax.conf` und SIP-Telefone
+in der `sip.conf` konfiguriert.
+
+[[codecs-allow-1]]
+== Beispiel mit einem festen Codec
+
+Will man alle SIP-Telefone auf den Codec G.711 (also alaw)
+einstellen, dann geschieht das mit folgendem Code in der
+`sip.conf`:
+
+[source]
+----
+[general]
+disallow=all
+allow=alaw
+----
+
+Wollen Sie im gleichen System das Telefon mit dem SIP-User 2000 so
+einstellen, dass es nur GSM sprechen kann, so geschieht dies
+folgendermaßen:
+
+[source]
+----
+[general]
+disallow=all
+allow=alaw
+
+[2000]
+disallow=all
+allow=gsm
+----
+
+[[codecs-allow-n]]
+== Beispiel mit mehreren Codecs zur Auswahl
+
+Wenn Sie in einer SIP-Umgebung Telefone mit unterschiedlichen
+Codecs betreiben, so können Sie in der `sip.conf`
+auch eine gewünschte Reihenfolge eintragen:
+
+[source]
+----
+[general]
+disallow=all
+allow=alaw
+allow=gsm
+allow=ilbc
+----
+
+Jetzt wird Asterisk mit jedem SIP-Telefon den optimalen Codec
+aushandeln. Dabei hat alaw die höchste und ilbc die niedrigste
+Chance.

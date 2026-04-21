@@ -1,0 +1,18 @@
+[[manager-bridge]]
+= `Bridge`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: Bridge
+Synopsis: Bridge two channels already in the PBX
+Privilege: call,all
+Description: Bridge together two channels already in the PBX
+Variables: ( Headers marked with * are required )
+*Channel1: Channel to Bridge to Channel2
+*Channel2: Channel to Bridge to Channel1
+Tone: (Yes|No) Play courtesy tone to Channel 2
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

@@ -1,0 +1,17 @@
+[[manager-listcategories]]
+= `ListCategories`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: ListCategories
+Synopsis: List categories in configuration file
+Privilege: config,all
+Description: A 'ListCategories' action will dump the categories in
+a given file.
+Variables:
+Filename: Configuration filename (e.g. foo.conf)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

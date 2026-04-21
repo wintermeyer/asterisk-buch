@@ -1,0 +1,165 @@
+[[applications-agi]]
+= `AGI()`
+
+Ruft eine AGI-konforme Anwendung auf.
+
+[source]
+----
+AGI(Skript[,Parameter1[,Parameter2[,...]]])
+----
+
+Führt ein Asterisk-Gateway-Interface-kompatibles Programm
+`Programm` auf dem aktuellen Channel aus. Solche externen
+Programme (die in fast jeder beliebigen Sprache vorliegen können – z.
+B. Perl, PHP, ...) können den Telefonkanal steuern, Audiodateien abspielen,
+DTMF-Ziffern auslesen und so weiter (siehe xref:kapitel-agi.adoc[Kapitel 20, _Asterisk Gateway Interface (AGI)_]).
+Asterisk kommuniziert dabei mit dem AGI-Programm über `STDIN` und
+`STDOUT`. Die spezifizierten `Argumente` werden an das
+AGI-Programm durchgereicht.
+
+Das +_`Skript`_+ muss im
+zugrunde liegenden Dateisystem als executable (ausführbar) gekennzeichnet
+sein. Der Pfad zum Programm ist relativ zum Asterisk-AGI-Verzeichnis
+(standardmäßig `/var/lib/asterisk/agi-bin/`) oder
+absolut.
+
+Das +_`Skript`_+ kann aber
+auch eine URL-Angabe in der Form
++agi://_`host`_[:_`port`_][/_`skript`_]+
+sein, dann wird das Skript über das Netzwerk als FastAGI-Skript (FastAGI-Protokoll) aufgerufen. Der wichtigste
+Verwendungszweck dafür ist, rechenintensive AGI-Skripte von separaten
+Servern ausführen zu lassen und die Startzeiten von AGI-Skripten zu
+reduzieren (ein FastAGI-Skript/Programm läuft bereits, bevor Asterisk sich
+mit ihm verbindet, ähnlich FastCGI bei Webservern). Als Standardport wird
+4573 benutzt, falls kein anderer angegeben ist. Ist
++_`skript`_+ angegeben, wird es als
+Variable `agi_network_script` an das FastAGI-Programm
+übergeben. Im Verzeichnis `agi` befindet sich ein in Perl
+geschriebenes Beispiel-FastAGI-Skript (`fastagi-test`).
+Verwenden Sie es als Ansatzpunkt für Ihre eigenen FastAGI-Programme.
+
+Für eine Liste der Befehle, die ein AGI-Skript an Asterisk senden
+kann, siehe xref:agi-commands.adoc[Anhang E, _AGI-Befehle_], oder geben Sie
++`agi show`+ auf dem Asterisk-CLI
+ein.
+
+Soll ein AGI-Programm laufen, ohne dass ein Channel offen ist (wie in
+einer `h`-Extension, aufgelegt), muss statt `AGI()`
+die `DeadAGI()`-Anwendung verwendet werden. Benötigen Sie aus
+Ihrem AGI-Programm heraus Zugriff auf den eingehenden Audiostream, benutzen
+Sie `EAGI()`.
+
+Liefert -1 mit dem Auflegen oder falls ein Auflegen durch das Programm
+verlangt wurde, oder 0, falls nicht aufgelegt werden soll.
+
+[source]
+----
+; ein AGI-Skript aufrufen:
+exten => 123,1,AGI(mein-agi-skript.agi,hallo,welt)
+exten => 123,n,Verbose(1,AGISTATUS: ${AGISTATUS})
+
+; ein weiteres AGI-Skript aufrufen:
+exten => 124,1,AGI(mein-agi-skript-2.agi,--x=hallo,--y=welt)
+exten => 124,n,Verbose(1,AGISTATUS: ${AGISTATUS})
+
+; ein FastAGI-Skript aufrufen:
+exten => 125,1,AGI(agi://192.168.1.130/test,--x=hallo,--y=welt)
+exten => 125,n,Verbose(1,AGISTATUS: ${AGISTATUS})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'AGI' =-
+
+[Synopsis]
+Executes an AGI compliant application
+
+[Description]
+[E|Dead]AGI(command|args): Executes an Asterisk Gateway Interface compliant
+program on a channel. AGI allows Asterisk to launch external programs
+written in any language to control a telephony channel, play audio,
+read DTMF digits, etc. by communicating with the AGI protocol on stdin
+and stdout.
+This channel will stop dialplan execution on hangup inside of this
+application, except when using DeadAGI. Otherwise, dialplan execution
+will continue normally.
+A locally executed AGI script will receive SIGHUP on hangup from the channel
+except when using DeadAGI. This can be disabled by setting the AGISIGHUP channel
+variable to "no" before executing the AGI application.
+Using 'EAGI' provides enhanced AGI, with incoming audio available out of band
+on file descriptor 3
+
+Use the CLI command 'agi show' to list available agi commands
+This application sets the following channel variable upon completion:
+AGISTATUS The status of the attempt to the run the AGI script
+text string, one of SUCCESS | FAILURE | HANGUP
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -9,9 +9,16 @@
+written in any language to control a telephony channel, play audio,
+read DTMF digits, etc. by communicating with the AGI protocol on stdin
+and stdout.
+- Returns -1 on hangup (except for DeadAGI) or if application requested
+- hangup, or 0 on non-hangup exit.
+- Using 'EAGI' provides enhanced AGI, with incoming audio available out of band
++ This channel will stop dialplan execution on hangup inside of this
++ application, except when using DeadAGI. Otherwise, dialplan execution
++ will continue normally.
++ A locally executed AGI script will receive SIGHUP on hangup from the channel
++ except when using DeadAGI. This can be disabled by setting the AGISIGHUP channel
++ variable to "no" before executing the AGI application.
++ Using 'EAGI' provides enhanced AGI, with incoming audio available out of band
+on file descriptor 3
+
+- Use the CLI command 'show agi' to list available agi commands
++ Use the CLI command 'agi show' to list available agi commands
++ This application sets the following channel variable upon completion:
++ AGISTATUS The status of the attempt to the run the AGI script
++ text string, one of SUCCESS | FAILURE | HANGUP
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,21 +4,22 @@
+Executes an AGI compliant application
+
+[Description]
+- [E|Dead]AGI(command|args): Executes an Asterisk Gateway Interface compliant
+- program on a channel. AGI allows Asterisk to launch external programs
+- written in any language to control a telephony channel, play audio,
+- read DTMF digits, etc. by communicating with the AGI protocol on stdin
+- and stdout.
+- This channel will stop dialplan execution on hangup inside of this
+- application, except when using DeadAGI. Otherwise, dialplan execution
+- will continue normally.
++ [E|Dead]AGI(command,args): Executes an Asterisk Gateway Interface compliant
++ program on a channel. AGI allows Asterisk to launch external programs written
++ in any language to control a telephony channel, play audio, read DTMF digits,
++ etc. by communicating with the AGI protocol on stdin and stdout.
++ As of 1.6.0, this channel will not stop dialplan execution on hangup inside
++ of this application. Dialplan execution will continue normally, even upon
++ hangup until the AGI application signals a desire to stop (either by exiting
++ or, in the case of a net script, by closing the connection).
+A locally executed AGI script will receive SIGHUP on hangup from the channel
+- except when using DeadAGI. This can be disabled by setting the AGISIGHUP channel
+- variable to "no" before executing the AGI application.
++ except when using DeadAGI. A fast AGI server will correspondingly receive a
++ HANGUP in OOB data. Both of these signals may be disabled by setting the
++ AGISIGHUP channel variable to "no" before executing the AGI application.
+Using 'EAGI' provides enhanced AGI, with incoming audio available out of band
+- on file descriptor 3
++ on file descriptor 3.
+
+- Use the CLI command 'agi show' to list available agi commands
++ Use the CLI command 'agi show' to list available agi commands.
+This application sets the following channel variable upon completion:
+AGISTATUS The status of the attempt to the run the AGI script
+- text string, one of SUCCESS | FAILURE | HANGUP
++ text string, one of SUCCESS | FAILURE | NOTFOUND | HANGUP
+
+.Siehe auch
+xref:applications-deadagi.adoc[Abschnitt C.37, „`DeadAGI()`“], xref:applications-eagi.adoc[Abschnitt C.45, „`EAGI()`“]

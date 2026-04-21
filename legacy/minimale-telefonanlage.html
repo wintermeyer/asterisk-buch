@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2.5. Eine Minimal-Telefonanlage mit zwei SIP-Telefonen</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-hello-world.html" title="Kapitel 2. „Hello World“" /><link rel="prev" href="hello-world-mit-einem-sip-telefon.html" title="2.4. Hello-World mit einem SIP-Telefon" /><link rel="next" href="rechteverwaltung-mit-contexten.html" title="2.6. Rechteverwaltung mit Contexten" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="2.5. Eine Minimal-Telefonanlage mit zwei SIP-Telefonen" id="minimale-telefonanlage"><div class="titlepage"><div><div><h2 class="title" id="minimale-telefonanlage">2.5. Eine Minimal-Telefonanlage mit zwei SIP-Telefonen</h2></div></div></div><div class="para">Wie sieht die einfachste mögliche Telefonanlage aus? Zwei Telefone
+    und ein Asterisk.</div><div class="para">Wir haben schon alle Einzelteile in diesem Puzzle behandelt und
+    müssen sie jetzt nur noch richtig zusammenfügen. Als Erstes konfigurieren
+    wir die zwei SIP-Telefone in der
+    <code class="filename">/etc/asterisk/sip.conf</code>:<pre class="programlisting">[general] 
+port=5060 
+bindaddr=0.0.0.0 
+
+[2000] 
+type=friend 
+secret=1234 
+host=dynamic
+
+[2001] 
+type=friend 
+secret=1234 
+host=dynamic</pre></div><div class="para">Als Nächstes müssen wir noch die
+    <code class="filename">/etc/asterisk/extensions.conf</code> anpassen. Das
+    Hello-World-Beispiel lassen wir zu Testzwecken im Dialplan. So können wir
+    die Funktion jedes einzelnen Telefons durch Anwahl der 1001 überprüfen.
+    Der Dialplan sieht wie folgt aus:<pre class="programlisting">[default] 
+exten =&gt; 1001,1,Answer()
+exten =&gt; 1001,2,Playback(hello-world)
+exten =&gt; 1001,3,Hangup()
+
+exten =&gt; 2000,1,Dial(SIP/2000)
+exten =&gt; 2001,1,Dial(SIP/2001)</pre></div><div class="para">Nach einem Neustart von Asterisk und der SIP-Telefone können Sie,
+    nachdem die Telefone sich registriert haben, von einem Telefon zum anderen
+    und zur 1001 anrufen.</div><div class="section" title="... und jetzt mit einem Anrufbeantworter" id="min-anlage-ab"><div class="titlepage"><div><div><h3 class="title" id="min-anlage-ab">... und jetzt mit einem
+      Anrufbeantworter</h3></div></div></div><a id="idp10341408" class="indexterm"></a><div class="para">Asterisk beinhaltet bereits ein fertiges Voicemail-Modul. Wir
+      müssen es lediglich in der Datei
+      <code class="filename">/etc/asterisk/voicemail.conf</code> aktivieren. Als ersten
+      Schritt verschieben wir diese Default-Datei in unser Verzeichnis mit den
+      Sicherungskopien der Konfigurationsdateien:</div><pre class="screen">debian:/etc/asterisk# <span class="bold bold"><strong><code class="command">mv voicemail.conf /var/tmp/asterisk-etc-backup/</code></strong></span></pre><div class="para">Daraufhin erstellen wir eine neue
+      <code class="filename">/etc/asterisk/voicemail.conf</code> und versehen diese mit
+      folgendem Inhalt:</div><pre class="programlisting">[general]
+format = wav
+
+[default]
+2000 =&gt; 4711,Hans Mustermann,hansi@company.de
+2001 =&gt; 0815,Ute Beispiel,ute.beispiel@company.de</pre><div class="para">Damit sind die Voicemailboxen grundsätzlich eingerichtet (ja, so
+      einfach geht das!). Jetzt müssen wir aber noch in der
+      <code class="filename">/etc/asterisk/extensions.conf</code> einige weitere Zeilen
+      eintragen, um die Voicemail-Funktionalität unseren Telefonen zuzuweisen.
+      Bitte vergessen Sie dabei nicht den neuen Eintrag
+      <em class="parameter"><code>",20"</code></em> bei der Dial-Applikation.</div><pre class="programlisting">[default] 
+exten =&gt; 1001,1,Answer()
+exten =&gt; 1001,2,Playback(hello-world)
+exten =&gt; 1001,3,Hangup()
+
+exten =&gt; 2000,1,Dial(SIP/2000,20)
+exten =&gt; 2000,2,VoiceMail(2000,u)
+
+exten =&gt; 2001,1,Dial(SIP/2001)
+exten =&gt; 2001,2,VoiceMail(2001,u)
+
+exten =&gt; 2999,1,VoiceMailMain(${CALLERID(num)},s)</pre><div class="para">Fertig! Jetzt müssen Sie Asterisk nur noch mit <code class="command">asterisk
+      -vvvvvc</code> neu starten<div class="tip"><h2>Tipp</h2><div class="para">In einem laufenden Asterisk-System reicht auch ein
+          <code class="command">reload</code> im CLI aus.</div></div>und mit einem Telefon das andere anrufen. Nachdem es 20 Sekunden
+      lang geklingelt hat (deshalb die <em class="parameter"><code>20</code></em> am Ende des
+      Dial-Befehls), kommt man auf die Voicemailbox. Ist die Gegenstelle
+      besetzt, wird man direkt auf die Voicemailbox 2000 geleitet. Sie können
+      vom Telefon mit der Nummer 2000 die entsprechende Mailbox abhören, indem
+      Sie die Nummer 2999 anrufen. Dann bekommen Sie Ihre Voicemailbox als
+      Menü vorgespielt.<div class="note"><h2>Anmerkung</h2><div class="para">Ist auf Ihrem System ein Mail Transfer Agent (MTA)
+          eingerichtet (z. B. sendmail oder postfix), so werden von Ihnen neu
+          aufgesprochene Nachrichten direkt an die in der
+          <code class="filename">voicemail.conf</code> angegebene E-Mail-Adresse
+          geschickt.</div></div></div><div class="para">Wenn Sie das Ganze noch mit einer Passwortabfrage absichern wollen
+      oder eine Auflistung des Menüs suchen, finden Sie dazu in <a class="xref" href="kapitel-voicemail.html" title="Kapitel 13. Voicemail-System">Kapitel 13, <i>Voicemail-System</i></a> die nötigen Informationen.</div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="breadcrumb-first-level level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="installation-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="Asterisk-auf-dem-Server-installieren.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Asterisk auf dem Server installieren</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="hello-world-im-cli.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Hello-World im CLI aufrufen</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="hello-world-mit-einem-sip-telefon.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Hello-World mit einem
+    SIP-Telefon</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Eine Minimal-Telefonanlage mit zwei SIP-Telefonen</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="minimale-telefonanlage.html#min-anlage-ab" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">... und jetzt mit einem
+      Anrufbeantworter</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="rechteverwaltung-mit-contexten.html" title="pfc level3 breadcrumb-link section sectlevel1">Rechteverwaltung mit Contexten</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="sip-ins-oeffentliche-netz.html" title="pfc level3 breadcrumb-link section sectlevel1">Telefonate vom und in das öffentliche Netz</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="pfc level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="pfc level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="case-study.html" title="pfc level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="pfc level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="ael.html" title="pfc level2 breadcrumb-link chapter">AEL</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="hello-world-mit-einem-sip-telefon.html"><strong>Zurück</strong>2.4. Hello-World mit einem
+    SIP-Telefon</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="rechteverwaltung-mit-contexten.html"><strong>Weiter</strong>2.6. Rechteverwaltung mit Contexten</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

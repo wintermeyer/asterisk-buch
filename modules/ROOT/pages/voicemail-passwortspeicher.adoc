@@ -1,0 +1,41 @@
+[[voicemail-passwortspeicher]]
+= `voicemail.conf` als Passwortspeicher
+
+Nicht nur als internes Rufnummernverzeichnis kann die
+`voicemail.conf` sehr nützlich sein, sondern auch als
+Speicherort für Passwörter. Sie werden vielleicht eine Situation haben, in
+der sich Ihre internen Benutzer (aus welchem Grund auch immer) am System
+authentifizieren sollen – ein konkreter Fall wären
+Call-Center-Agenten, die sich anmelden.
+
+Es bietet sich in solchen Fällen manchmal an, für die
+betreffenden User einen Eintrag in der `voicemail.conf`
+anzulegen, obwohl diese vielleicht gar keine Mailbox brauchen. Keine
+Angst: Auf den so angelegten Mailboxen wird niemand versehentlich eine
+Nachricht hinterlassen können, solange Sie nicht im Dialplan mit
+`VoiceMail()` (oder `VoiceMailMain()`) darauf
+verweisen.
+
+Sie könnten beispielsweise die Voicemailboxen
+
+[source]
+----
+1001 => 1234,Hans Glueck,,,hidefromdir=yes
+1002 => 1234,Peter Pech,,,hidefromdir=yes
+----
+
+im Abschnitt
+`[call-center-agenten]` anlegen und die User an geeigneter
+Stelle im Dialplan mit `VMAuthenticate` (xref:applications-vmauthenticate.adoc[Abschnitt C.185, „`VMAuthenticate()`“]) dem System gegenüber
+authentifizieren:
+
+[source]
+----
+exten => 988,n,Read(agentennr,agent-user,10,,3)
+exten => 988,n,VMAuthenticate(${agentennr}@call-center-agenten)
+----
+
+Betrachten Sie das aber nur als Denkanstoß bzw. als Beschreibung
+einer von vielen Möglichkeiten zur Authentifizierung. Eine Speicherung der
+Passwörter in der AstDB oder einer anderen Datenbank wäre diesem Ansatz in
+den meisten Fällen vorzuziehen.

@@ -1,0 +1,66 @@
+[[applications-sendfax]]
+= `SendFAX()`
+
+Sendet ein Fax.
+
+[source]
+----
+SendFAX(Datei[,Optionen])
+----
+
+Sendet eine TIFF-Datei als Fax.
+
+[source]
+----
+exten => 123,1,Set(LOCALSTATIONID=Meine Firma)
+exten => 123,n,Set(LOCALHEADERINFO=Meine Firma - Wir sind fuer Sie da)
+exten => 123,n,SendFAX(/tmp/angebot.tiff)
+exten => 123,n,Verbose(1,###       FAXSTATUS: ${FAXSTATUS})
+exten => 123,n,Verbose(1,###        FAXERROR: ${FAXERROR})
+exten => 123,n,Verbose(1,###         FAXMODE: ${FAXMODE})
+exten => 123,n,Verbose(1,###        FAXPAGES: ${FAXPAGES})
+exten => 123,n,Verbose(1,###      FAXBITRATE: ${FAXBITRATE})
+exten => 123,n,Verbose(1,###   FAXRESOLUTION: ${FAXRESOLUTION})
+exten => 123,n,Verbose(1,### REMOTESTATIONID: ${REMOTESTATIONID})
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'SendFAX' =-
+
+[Synopsis]
+Send a FAX
+
+[Description]
+SendFAX(filename[|options]):
+Send a given TIFF file to the channel as a FAX.
+The option string may contain zero or more of the following characters:
+'a' - makes the application behave as an answering machine
+The default behaviour is to behave as a calling machine.
+
+This application uses following variables:
+LOCALSTATIONID to identify itself to the remote end.
+LOCALHEADERINFO to generate a header line on each page.
+
+This application sets the following channel variables upon completion:
+FAXSTATUS - status of operation:
+SUCCESS | FAILED
+FAXERROR - Error when FAILED
+FAXMODE - Mode used:
+audio | T38
+REMOTESTATIONID - CSID of the remote side.
+FAXPAGES - number of pages sent.
+FAXBITRATE - transmition rate.
+FAXRESOLUTION - resolution.
+
+Returns -1 in case of user hang up or any channel error.
+Returns 0 on success.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-receivefax.adoc[Abschnitt C.131, „`ReceiveFAX()`“]

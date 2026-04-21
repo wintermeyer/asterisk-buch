@@ -1,0 +1,105 @@
+[[applications-addqueuemember]]
+= `AddQueueMember()`
+
+Reiht Interfaces dynamisch in eine Anruf-Warteschleife
+ein.
+
+[source]
+----
+AddQueueMember(Warteschleife[,Interface[,Malus[|,Optionen]]])
+----
+
+Reiht das angegebene Interface dynamisch als Agent in eine
+vorhandene Warteschleife (Queue) ein, die in
+`queues.conf` definiert wurde. Die Malus-Punkte
+beeinflussen ggf. die Position bei der Abarbeitung. Agenten mit niedrigerem
+Malus werden vor Einträgen mit höherem Malus aufgerufen.
+
+Falls das angegebene Interface bereits in die Warteschlange
+eingereiht ist und eine n+101-Priorität existiert (n ist die aktuelle
+Priorität), wird die Abarbeitung bei dieser Priorität fortgesetzt,
+andernfalls wird ein Fehler (d. h. -1) zurückgeliefert. (Je nach
+Asterisk-Version muss für das Springen zu n+101 die Option `j`
+(jump) angegeben werden.)
+
+Wird `AddQueueMember()` ohne den Interface-Parameter
+aufgerufen, findet das vom Teilnehmer zu diesem Zeitpunkt benutzte Interface
+Verwendung.
+
+In manchen Asterisk-Versionen kann man statt der Pipe-Zeichen
+(`|`) auch Kommas verwenden.
+
+Die Applikation setzt auch die Channelvariable
+`${AQMSTATUS}` auf `ADDED` (hinzugefügt),
+`MEMBERALREADY` (ist bereits Mitglied) oder
+`NOSUCHQUEUE` (Warteschlange nicht vorhanden).
+
+[source]
+----
+; SIP/3000 zur "supportschlange" hinzufügen:
+exten => 123,1,AddQueueMember(supportschlange,SIP/3000)
+
+; das aktuelle Interface mit Malus 2 hinzufügen:
+exten => 123,1,AddQueueMember(supportschlange,,2)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'AddQueueMember' =-
+
+[Synopsis]
+Dynamically adds queue members
+
+[Description]
+AddQueueMember(queuename[|interface[|penalty[|options[|membername]]]]):
+Dynamically adds interface to an existing queue.
+If the interface is already in the queue and there exists an n+101 priority
+then it will then jump to this priority. Otherwise it will return an error
+The option string may contain zero or more of the following characters:
+'j' -- jump to +101 priority when appropriate.
+This application sets the following channel variable upon completion:
+AQMSTATUS The status of the attempt to add a queue member as a
+text string, one of
+ADDED | MEMBERALREADY | NOSUCHQUEUE
+Example: AddQueueMember(techsupport|SIP/3000)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,7 +4,7 @@
+Dynamically adds queue members
+
+[Description]
+- AddQueueMember(queuename[|interface[|penalty[|options]]]):
++ AddQueueMember(queuename[|interface[|penalty[|options[|membername]]]]):
+Dynamically adds interface to an existing queue.
+If the interface is already in the queue and there exists an n+101 priority
+then it will then jump to this priority. Otherwise it will return an error
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,14 +4,11 @@
+Dynamically adds queue members
+
+[Description]
+- AddQueueMember(queuename[|interface[|penalty[|options[|membername]]]]):
++ AddQueueMember(queuename[,interface[,penalty[,options[,membername[,stateinterface]]]]]):
+Dynamically adds interface to an existing queue.
+- If the interface is already in the queue and there exists an n+101 priority
+- then it will then jump to this priority. Otherwise it will return an error
+- The option string may contain zero or more of the following characters:
+- 'j' -- jump to +101 priority when appropriate.
++ If the interface is already in the queue it will return an error.
+This application sets the following channel variable upon completion:
+AQMSTATUS The status of the attempt to add a queue member as a
+text string, one of
+ADDED | MEMBERALREADY | NOSUCHQUEUE
+- Example: AddQueueMember(techsupport|SIP/3000)
++ Example: AddQueueMember(techsupport,SIP/3000)
+
+.Siehe auch
+xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“], xref:applications-removequeuemember.adoc[Abschnitt C.133, „`RemoveQueueMember()`“],
+`queues.conf`

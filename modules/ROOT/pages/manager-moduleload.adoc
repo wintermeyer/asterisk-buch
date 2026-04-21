@@ -1,0 +1,22 @@
+[[manager-moduleload]]
+= `ModuleLoad`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: ModuleLoad
+Synopsis: Module management
+Privilege: system,all
+Description: Loads, unloads or reloads an Asterisk module in a running system.
+Variables:
+ActionID: <id> Action ID for this transaction. Will be returned.
+Module: <name> Asterisk module name (including .so extension)
+or subsystem identifier:
+cdr, enum, dnsmgr, extconfig, manager, rtp, http
+LoadType: load | unload | reload
+The operation to be done on module
+If no module is specified for a reload loadtype, all modules are reloaded
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

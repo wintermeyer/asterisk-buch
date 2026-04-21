@@ -1,0 +1,19 @@
+[[manager-listcommands]]
+= `ListCommands`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: ListCommands
+Synopsis: List available manager commands
+Privilege: <none>
+Description: Returns the action name and synopsis for every
+action that is available to the user
+Variables: NONE
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

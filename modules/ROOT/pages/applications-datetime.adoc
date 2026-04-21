@@ -1,0 +1,57 @@
+[[applications-datetime]]
+= `DateTime()`
+
+Sagt die angegebene Uhrzeit an.
+
+[source]
+----
+DateTime([Unix-Zeit[,timezone[,Format]]])
+----
+
+Sagt die angegebene Uhrzeit an. `DateTime()` ist zwar
+(noch?) nicht deprecated, ist aber intern nur noch ein Alias auf
+`SayUnixTime()`. (Siehe dort für Aufruf und
+Funktionsweise.)
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'DateTime' =-
+
+[Synopsis]
+Says a specified time in a custom format
+
+[Description]
+DateTime([unixtime][|[timezone][|format]])
+unixtime: time, in seconds since Jan 1, 1970. May be negative.
+defaults to now.
+timezone: timezone, see /usr/share/zoneinfo for a list.
+defaults to machine default.
+format: a format the time is to be said in. See voicemail.conf.
+defaults to "ABdY 'digits/at' IMp"
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,10 +4,10 @@
+Says a specified time in a custom format
+
+[Description]
+- DateTime([unixtime][|[timezone][|format]])
+- unixtime: time, in seconds since Jan 1, 1970. May be negative.
++ DateTime([unixtime][,[timezone][,format]])
++ unixtime - time, in seconds since Jan 1, 1970. May be negative.
+defaults to now.
+- timezone: timezone, see /usr/share/zoneinfo for a list.
++ timezone - timezone, see /usr/share/zoneinfo for a list.
+defaults to machine default.
+- format: a format the time is to be said in. See voicemail.conf.
++ format: - a format the time is to be said in. See voicemail.conf.
+defaults to "ABdY 'digits/at' IMp"
+
+.Siehe auch
+xref:applications-sayunixtime.adoc[Abschnitt C.143, „`SayUnixTime()`“]

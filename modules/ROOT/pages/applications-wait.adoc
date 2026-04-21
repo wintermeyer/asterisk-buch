@@ -1,0 +1,44 @@
+[[applications-wait]]
+= `Wait()`
+
+Wartet für eine in Sekunden vorgegebene Dauer.
+
+[source]
+----
+Wait(Sekunden)
+----
+
+Wartet die angegebene Anzahl Sekunden und liefert dann 0 zurück. Es
+können auch Sekundenbruchteile übergeben werden (z. B. `1.5` für
+1,5 Sekunden).
+
+[source]
+----
+exten => s,1,Answer()
+exten => s,n,Wait(1.5)                        ; 1,5 Sekunden warten
+exten => s,n,Background(enter-ext-of-person)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Wait' =-
+
+[Synopsis]
+Waits for some time
+
+[Description]
+Wait(seconds): This application waits for a specified number of seconds.
+Then, dialplan execution will continue at the next priority.
+Note that the seconds can be passed with fractions of a second. For example,
+'1.5' will ask the application to wait for 1.5 seconds.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-waitexten.adoc[Abschnitt C.189, „`WaitExten()`“]

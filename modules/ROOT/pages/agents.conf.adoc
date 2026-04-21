@@ -1,0 +1,175 @@
+[[agents.conf]]
+= `agents.conf`
+
+In der `agents.conf` werden die Agenten, also
+Call-Center-Mitarbeiter, die auch „Members“ genannt werden,
+definiert und entsprechende Einstellungen vorgenommen. Auch diese Datei
+ist wieder in Abschnitte unterteilt.
+
+Unter `[general]` stellen wir `persistentagents =
+yes` ein, damit die Logins der Agenten persistent (dauerhaft) sind
+und in der Asterisk-Datenbank gespeichert werden. Die Agenten werden
+dadurch beim Neustart von Asterisk automatisch wieder in ihre
+Warteschlangen aufgenommen.
+
+Im Abschnitt `[agents]` nehmen wir weitere
+Einstellungen vor und definieren dann die Agenten. Folgende Parameter
+stehen zur Verfügung:
+
+[[agents.conf-autologoff]]
+== `autologoff`
+
+Hiermit können wir einstellen, wie lange (in Sekunden) ein
+Telefon klingeln muss, bis der Agent automatisch ausgeloggt
+wird.
+
+Beachten Sie, dass Agenten nicht ausgeloggt werden, wenn diese
+Dauer über dem Timeout (xref:queues.conf.adoc#queues.conf-timeout[„`timeout`“]) der
+Warteschlange liegt! Da haben wir 15 Sekunden eingestellt, also wählen
+wir hier 14.
+
+[source]
+----
+autologoff = 14
+----
+
+[[agents.conf-ackcall]]
+== `ackcall`
+
+Stellt ein (`yes`|`no`), ob Agenten, die mit
+`AgentCallbackLogin()` eingeloggt wurden, die Raute
+(`#`) drücken müssen, um ein Gespräch anzunehmen. Beachten
+Sie, dass in bisherigen Asterisk-Versionen der Voiceprompt dem Agenten
+nicht mitgeteilt hat, dass er `#` drücken
+muss.
+
+[source]
+----
+ackcall = no
+----
+
+[[agents.conf-endcall]]
+== `endcall`
+
+Stellt ein (`yes`|`no`), ob Agenten Anrufe
+durch Drücken der Stern-Taste (`*`) beenden
+können.
+
+[source]
+----
+endcall = yes
+----
+
+[[agents.conf-wrapuptime]]
+== `wrapuptime`
+
+Legt (ähnlich der `wrapuptime` in der
+`queues.conf`) die Wartezeit fest, bis ein Agent, der
+gerade einen Anruf beendet hat, erneut einen Anruf erhält – hier
+allerdings in Millisekunden. Default: 5000.
+
+[source]
+----
+wrapuptime = 5000   ; 5 Sekunden Pause
+----
+
+[[agents.conf-musiconhold]]
+== `musiconhold`
+
+Legt die Music-on-Hold-Klasse für die Agenten
+fest.
+
+[source]
+----
+musiconhold = default
+----
+
+[[agents.conf-updatecdr]]
+== `updatecdr`
+
+Den CDR-Record anpassen (`yes`|`no`), sodass
+die Kanalangabe
++_`Agent`_/_`AgentenNr`_+
+enthält, damit wir wissen, welcher Agent das Gespräch geführt
+hat.
+
+[source]
+----
+updatecdr = yes
+----
+
+[[agents.conf-recordagentcalls]]
+== `recordagentcalls`
+
+Gespräche mit Agenten aufzeichnen
+(`yes`|`no`). Default:
+`no`.
+
+[source]
+----
+recordagentcalls = no
+----
+
+[[agents.conf-recordformat]]
+== `recordformat`
+
+Aufzeichnungsformat für Mitschnitte. `gsm`,
+`wav` (große Dateien!) oder `wav49`. Default:
+`wav`.
+
+[source]
+----
+recordformat = gsm
+----
+
+[[agents.conf-createlink]]
+== `createlink`
+
+Legt fest (`yes`|`no`), ob im User-Field
+(dem Freitextfeld) des CDR der Dateiname der Aufzeichnung gespeichert
+werden soll, damit man sie später zuordnen kann.
+
+[source]
+----
+createlink = yes
+----
+
+[[agents.conf-urlprefix]]
+== `urlprefix`
+
+Wenn Sie `createlink` verwenden, kann mit
+`urlprefix` direkt eine URL vor den Dateinamen gesetzt
+werden, unter der Sie die Aufzeichnungen mit einem Webserver im Intranet
+verfügbar gemacht haben.
+
+[source]
+----
+; so könnte ein Beispiel aussehen:
+;urlprefix = http://astbox/anrufe/
+----
+
+[[agents.conf-savecallsin]]
+== `savecallsin`
+
+Hier können Sie angeben, in welchem Verzeichnis die Mitschnitte
+gespeichert werden sollen. Default:
+`/var/spool/asterisk/monitor`
+
+[source]
+----
+; wenn wir z. B. die Mitschnitte in /var/calls/ speichern wollen:
+;savecallsin = /var/calls
+----
+
+[[agents.conf-agent]]
+== `agent`
+
+`agent` wird zur Definition von Agenten verwendet (kann
+mehrfach vorkommen).
+
+[source]
+----
+; Format: agent => AgentenNr,Passwort,Name
+agent => 1001,0000,Mark Spencer
+agent => 1002,0000,Will Meadows
+----

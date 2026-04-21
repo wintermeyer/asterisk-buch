@@ -1,0 +1,60 @@
+[[applications-softhangup]]
+= `SoftHangup()`
+
+Legt den angegebenen Channel auf.
+
+[source]
+----
+SoftHangup(Technologie/Ressource[,Optionen])
+----
+
+Legt den angegebenen Channel auf. Liefert stets 0 zurück. Der
+`Optionen`-Parameter kann den Buchstaben `a`
+enthalten, was bewirkt, dass alle Kanäle auf dem angegebenen Gerät (statt
+nur auf der Ressource) aufgelegt werden.
+
+[source]
+----
+; alle Kanäle auflegen, die Zap/4 benutzen:
+exten => 123,1,SoftHangup(Zap/4,a)
+exten => 123,n,Wait(2)
+exten => 123,n,Dial(Zap/4/1234567)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SoftHangup' =-
+
+[Synopsis]
+Soft Hangup Application
+
+[Description]
+SoftHangup(Technology/resource|options)
+Hangs up the requested channel. If there are no channels to hangup,
+the application will report it.
+- 'options' may contain the following letter:
+'a' : hang up all channels on a specified device instead of a single resource
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,8 +4,8 @@
+Soft Hangup Application
+
+[Description]
+- SoftHangup(Technology/resource|options)
++ SoftHangup(Technology/resource[,options]):
+Hangs up the requested channel. If there are no channels to hangup,
+the application will report it.
+- - 'options' may contain the following letter:
+- 'a' : hang up all channels on a specified device instead of a single resource
++ Options:
++ 'a' - hang up all channels on a specified device instead of a single resource
+
+.Siehe auch
+xref:applications-hangup.adoc[Abschnitt C.68, „`Hangup()`“]

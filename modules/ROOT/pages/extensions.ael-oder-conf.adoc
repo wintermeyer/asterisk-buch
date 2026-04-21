@@ -1,0 +1,21 @@
+[[extensions.ael-oder-conf]]
+= extensions.ael oder extensions.conf?
+
+Zwangsläufig stellt sich jeder Entwickler von Asterisk-Dialplänen
+die Frage, ob es besser ist, in AEL oder im traditionellen Stil zu
+schreiben. Leider bleibt an dieser Stelle Digium eine klare Antwort
+schuldig. Es ist also nicht klar, ob es eine strategische Ausrichtung
+gibt. Für ein gutes Verständnis von Asterisk ist die Einführung in die
+`extensions.conf` unverzichtbar – schon allein
+deshalb, weil noch ein Großteil der Dokumentation, die man im Web findet,
+für die `extensions.conf` geschrieben ist.
+
+Wer nur hin und wieder mal in den Dialplan schaut und ansonsten mit
+Asterisk nichts zu tun hat, fährt sicherlich die nächste Zeit mit der
+konventionellen `extensions.conf` besser. Für
+Entwickler, die aber sehr viel mit Asterisk arbeiten, ist die neue
+AEL-Variante viel zu verführerisch, als dass man den Sprung nicht wagt.
+Selbst auf die Gefahr hin, dass Digium AEL irgendwann nicht mehr
+unterstützen sollte (was sehr unwahrscheinlich ist), hat man mit
+`aelparse` ein Tool an der Hand, mit dem man wieder in
+die alte Welt zurückkehren kann.

@@ -1,0 +1,89 @@
+[[applications-realtime]]
+= `RealTime()`
+
+Holt Informationen vom
+RealTime-Konfigurationssteuerprogramm.
+
+[source]
+----
+RealTime(Familie,Spalte,Wert[,Präfix])
+----
+
+Benutzt das RealTime-Konfigurationssteuerprogramm, um Daten in
+Channel-Variablen einzulesen. Alle eindeutigen Spaltennamen aus der
+angegebenen Familie werden als Channel-Variablen gesetzt. Dabei kann ihr
+Name ein optionales Namenspräfix `Präfix` erhalten (zum Beispiel
+würde ein Präfix `var_` den Spaltennamen `test` in die
+Variable `${var_test}` überführen).
+
+Die Channel-Variable `REALTIMECOUNT` wird auf die Anzahl
+der gelesenen Werte gesetzt.
+
+In der `extconfig.conf`:
+
+[source]
+----
+; Familie => DBMS,DB-Name,Tabelle
+sipusers => mysql,asterisk,sip_users
+----
+
+In der
+`extensions.conf`:
+
+[source]
+----
+exten => 123,1,RealTime(sipusers,ext,5678,var_)
+----
+
+führt
+die folgende SQL-Query in der Datenbank `asterisk` aus:
+
+`SELECT * FROM sip_users WHERE ext = 5678`
+
+Angenommen, die Tabelle hat eine Spalte `vorname` und eine
+Spalte `nachname`, dann können wir die Werte so im CLI
+ausgeben:
+
+[source]
+----
+exten => 123,n,NoOp(Der Vorname von Ext. 5678: ${var_vorname})
+exten => 123,n,NoOp(Der Nachname von Ext. 5678: ${var_nachname})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'RealTime' =-
+
+[Synopsis]
+Realtime Data Lookup
+
+[Description]
+Use the RealTime config handler system to read data into channel variables.
+RealTime(<family>|<colmatch>|<value>[|<prefix>])
+
+All unique column names will be set as channel variables with optional prefix
+to the name. For example, a prefix of 'var_' would make the column 'name'
+become the variable ${var_name}. REALTIMECOUNT will be set with the number
+of values read.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -7,5 +7,7 @@
+Use the RealTime config handler system to read data into channel variables.
+RealTime(<family>|<colmatch>|<value>[|<prefix>])
+
+- All unique column names will be set as channel variables with optional prefix to the name.
+- e.g. prefix of 'var_' would make the column 'name' become the variable ${var_name}
++ All unique column names will be set as channel variables with optional prefix
++ to the name. For example, a prefix of 'var_' would make the column 'name'
++ become the variable ${var_name}. REALTIMECOUNT will be set with the number
++ of values read.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.6 nicht vorhanden —
+
+.Siehe auch
+xref:applications-realtimeupdate.adoc[Abschnitt C.130, „`RealTimeUpdate()`“], xref:functions-realtime.adoc[Abschnitt D.81, „`REALTIME()`“]

@@ -1,0 +1,46 @@
+[[agi-command-get-variable]]
+= `GET VARIABLE`
+
+[source]
+----
+GET VARIABLE Variablenname
+----
+
+Ähnlich wie `GET FULL VARIABLE`. Allerdings versteht
+`GET VARIABLE` keine komplexen oder systemeigenen
+Variablen.
+
+[WARNING]
+====
+Im Zweifelsfall sollte man `GET FULL VARIABLE`
+benutzen.
+====
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| 0 | Fehler. Kein Channel, oder die Variable existiert nicht.
+| 1 (_`Wert`_) | Erfolgreich. Wert der Variablen (in Klammern)
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: GET VARIABLE <variablename>
+Returns 0 if <variablename> is not set. Returns 1 if <variablename>
+is set and returns the variable in parentheses.
+example return code: 200 result=1 (testvariable)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -2,3 +2,4 @@
+Returns 0 if <variablename> is not set. Returns 1 if <variablename>
+is set and returns the variable in parentheses.
+example return code: 200 result=1 (testvariable)
++ Runs Dead : Yes

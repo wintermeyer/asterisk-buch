@@ -1,0 +1,62 @@
+[[der-context]]
+= Context
+
+Der Dialplan wird in verschiedene Abschnitte unterteilt. Diese
+Abschnitte heißen im Asterisk-Jargon „Contexte“. Am Anfang eines Dialplans
+muss es immer einen `[general]`-Context für allgemeine
+Konfigurationen geben, die danach folgenden Contexte können beliebig
+benannt werden. Die Contexte bilden das Verbindungsstück zwischen der
+Definition eines Telefons (z. B. SIP oder ISDN) und dem Dialplan. Für ein
+Telefon wird immer ein Context definiert. Hier sehen Sie ein Beispiel aus
+einer `sip.conf`:
+
+[source]
+----
+[2000]
+type=friend
+context=interne-telefone
+secret=1234
+host=dynamic
+----
+
+Das SIP-Telefon mit der Nummer 2000 ruft in
+dieser Konfiguration immer den Context `interne-telefone` auf.
+Wenn also ein Benutzer mit dem Telefon 2000 eine bestimmte Nummer wählt,
+dann sucht Asterisk im Context `interne-telefone` nach der
+entsprechenden Extension (also der dazu passenden Regel). Ist diese
+Extension nicht vorhanden, passiert auch nichts.
+
+[WARNING]
+====
+Zu verstehen, wie man Contexte benutzt, ist essenziell für
+Programmierung und Administration einer Asterisk-Telefonanlage. Es ist
+für Anfänger nicht immer ersichtlich, warum die korrekte Benutzung von
+Contexten so wichtig ist. Sollten Sie sich jetzt nicht ganz sicher sein,
+dann gehen Sie bitte das Beispiel für eine minimale Telefonanlage, das
+in xref:kapitel-hello-world.adoc[Kapitel 2, _„Hello World“_] beschrieben ist, Schritt für
+Schritt durch.
+Über diese Hürde stolpert am Anfang fast jeder, und es ist
+sinnvoll, sich die Zeit zu nehmen, die man braucht, um das Konzept der
+Contexte zu verinnerlichen!
+====
+
+[[context-syntax]]
+== Syntax
+
+Ein Context selbst wird durch Text in eckigen Klammern
+eingeleitet. „Text“ ist hierbei ein sinnvoller Name, der
+den Context benennt und als spätere Referenz für denselben verwendet
+wird. Alle Zeilen nach einer solchen Einleitung bis zum nächsten Context
+werden als Bestandteil (Regeln, Anweisungen) dieses Contextes
+behandelt:
+
+[source]
+----
+[general]
+
+[interne-telefone]
+Regeln, Anweisungen, ...
+
+[apfelmus]
+Regeln, Anweisungen, ...
+----

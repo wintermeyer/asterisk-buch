@@ -1,0 +1,31 @@
+[[applications-clearhash]]
+= `ClearHash()`
+
+Löscht alle Einträge aus einem Hash.
+
+[source]
+----
+ClearHash(Hashname)
+----
+
+Entfernt alle Schlüssel-Wert-Paare aus dem angegebenen Hash. Siehe
+xref:functions-hash.adoc[Abschnitt D.43, „`HASH()`“].
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'ClearHash' =-
+
+[Synopsis]
+Clear the keys from a specified hashname
+
+[Description]
+ClearHash(<hashname>)
+Clears all keys out of the specified hashname
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-hash.adoc[Abschnitt D.43, „`HASH()`“], xref:functions-hashkeys.adoc[Abschnitt D.44, „`HASHKEYS()`“]

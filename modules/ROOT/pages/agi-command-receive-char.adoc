@@ -1,0 +1,44 @@
+[[agi-command-receive-char]]
+= `RECEIVE CHAR`
+
+[source]
+----
+RECEIVE CHAR Timeout
+----
+
+Wenn ein Channel die Übermittlung von Text unterstützt, dann kann
+mit `RECEIVE CHAR` ein einzelnes Zeichen empfangen werden.
+_`Timeout`_ gibt die Wartezeit für den Empfang in
+Millisekunden an (0 für unendlich).
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| -1 | Fehler oder Hangup
+| _`Wert`_ (timeout) | Das empfangene Zeichen bei Timeout
+| _`Wert`_ | Das empfangene Zeichen
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: RECEIVE CHAR <timeout>
+Receives a character of text on a channel. Specify timeout to be the
+maximum time to wait for input in milliseconds, or 0 for infinite. Most channels
+do not support the reception of text. Returns the decimal value of the character
+if one is received, or 0 if the channel does not support text reception. Returns
+-1 only on error/hangup.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,3 +4,4 @@
+do not support the reception of text. Returns the decimal value of the character
+if one is received, or 0 if the channel does not support text reception. Returns
+-1 only on error/hangup.
++ Runs Dead : No

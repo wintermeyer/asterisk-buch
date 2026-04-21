@@ -1,0 +1,62 @@
+[[applications-mset]]
+= `MSet()`
+
+Setzt mehrere Variablen gleichzeitig.
+
+[source]
+----
+MSet(Variable=Wert)
+----
+
+In Asterisk 1.2 und 1.4 erlaubt `Set()` das Setzen
+von mehreren Variablen gleichzeitig. Diese Funktionalität wurde jedoch in
+1.6 entfernt. Stattdessen wurde `MSet()`
+hinzugefügt.
+
+[source]
+----
+exten => 123,1,MSet(var1=wert1,var2=wert2)
+----
+
+[IMPORTANT]
+====
+`MSet()` ist eine Applikation, die Sie nicht
+brauchen. Wer eh umstellen muss, sollte lieber direkt mehrere
+`Set()` verwenden:
+
+[source]
+----
+Set(var1=wert1);
+Set(var2=wert2);
+----
+====
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'MSet' =-
+
+[Synopsis]
+Set channel variable(s) or function value(s)
+
+[Description]
+MSet(name1=value1,name2=value2,...)
+This function can be used to set the value of channel variables or dialplan
+functions. When setting variables, if the variable name is prefixed with _,
+the variable will be inherited into channels created from the current
+channel. If the variable name is prefixed with __, the variable will be
+inherited into channels created from the current channel and all children
+channels.
+
+MSet behaves in a similar fashion to the way Set worked in 1.2/1.4 and is thus
+prone to doing things that you may not expect. For example, it strips surrounding
+double-quotes from the right-hand side (value). If you need to put a separator
+character (comma or vert-bar), you will need to escape them by inserting a backslash
+before them. Avoid its use if possible.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-set.adoc[Abschnitt C.149, „`Set()`“], xref:functions-array.adoc[Abschnitt D.3, „`ARRAY()`“]

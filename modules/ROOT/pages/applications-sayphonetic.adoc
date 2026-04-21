@@ -1,0 +1,47 @@
+[[applications-sayphonetic]]
+= `SayPhonetic()`
+
+Buchstabiert die angegebene Zeichenkette phonetisch.
+
+[source]
+----
+SayPhonetic(String)
+----
+
+Buchstabiert den angegebenen String unter Verwendung des
+phonetischen NATO-Alphabets bzw. Funker-Alphabets (je nach Sprache). Die
+Sprache kann mit der Funktion `LANGUAGE()` geändert werden.
+Umlaute/Sonderzeichen sind bisher nicht möglich.
+
+[source]
+----
+exten => 123,1,Set(LANGUAGE=en)
+exten => 123,n,SayPhonetic(asterisk)
+; Alpha Sierra Tango Echo Romeo India Sierra Kilo
+
+exten => 123,n,Set(LANGUAGE=de)
+exten => 123,n,SayPhonetic(asterisk)
+; Anton Samuel Theodor Emil Richard Ida Samuel Kaufmann
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SayPhonetic' =-
+
+[Synopsis]
+Say Phonetic
+
+[Description]
+SayPhonetic(string): This application will play the sounds from the phonetic
+alphabet that correspond to the letters in the given string.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-sayalpha.adoc[Abschnitt C.139, „`SayAlpha()`“], xref:applications-saydigits.adoc[Abschnitt C.140, „`SayDigits()`“], xref:applications-saynumber.adoc[Abschnitt C.141, „`SayNumber()`“]

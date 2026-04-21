@@ -1,0 +1,89 @@
+[[applications-exec]]
+= `Exec()`
+
+Führt eine Asterisk-Anwendung dynamisch aus.
+
+[source]
+----
+Exec(Applikationsname(Argumente))
+----
+
+Erlaubt den Aufruf einer beliebigen Anwendung, selbst wenn er
+nicht fest im Wählplan einprogrammiert ist. Liefert den Wert zurück, den
+diese Asterisk-Anwendung zurückliefert, oder -2, wenn die aufgerufene
+Anwendung nicht gefunden werden kann. Die `Argumente` werden an
+die aufgerufene Anwendung durchgereicht.
+
+Diese Anwendung erlaubt den dynamischen Aufruf von Anwendungen,
+die aus einer Datenbank oder externen Quelle gelesen werden.
+
+[source]
+----
+exten => 123,1,Set(app=SayDigits(12345))
+exten => 123,2,Exec(${app})
+----
+
+[IMPORTANT]
+====
+Bei einem negativen Rückgabewert wird die Ausführung des Dialplans
+beendet. Will man das nicht, verwendet man
+`TryExec()`.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Exec' =-
+
+[Synopsis]
+Executes dialplan application
+
+[Description]
+Usage: Exec(appname(arguments))
+Allows an arbitrary application to be invoked even when not
+hardcoded into the dialplan. If the underlying application
+terminates the dialplan, or if the application cannot be found,
+Exec will terminate the dialplan.
+To invoke external applications, see the application System.
+If you would like to catch any error instead, see TryExec.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,11 +1,13 @@
+-= Info about application 'Exec' =-
+
+[Synopsis]
+- Executes internal application
++ Executes dialplan application
+
+[Description]
+Usage: Exec(appname(arguments))
+Allows an arbitrary application to be invoked even when not
+- hardcoded into the dialplan. To invoke external applications
+- see the application System. Returns whatever value the
+- app returns or a non-zero value if the app cannot be found.
++ hardcoded into the dialplan. If the underlying application
++ terminates the dialplan, or if the application cannot be found,
++ Exec will terminate the dialplan.
++ To invoke external applications, see the application System.
++ If you would like to catch any error instead, see TryExec.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,8 +4,8 @@
+Executes dialplan application
+
+[Description]
+- Usage: Exec(appname(arguments))
+- Allows an arbitrary application to be invoked even when not
++ Exec(appname(arguments)):
++ Allows an arbitrary application to be invoked even when not
+hardcoded into the dialplan. If the underlying application
+terminates the dialplan, or if the application cannot be found,
+Exec will terminate the dialplan.
+
+.Siehe auch
+xref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“], xref:applications-tryexec.adoc[Abschnitt C.178, „`TryExec()`“], xref:applications-system.adoc[Abschnitt C.176, „`System()`“]

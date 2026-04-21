@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.4. voicemail.conf</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-voicemail.html" title="Kapitel 13. Voicemail-System" /><link rel="prev" href="voicemail-applikationen.html" title="13.3. Applikationen" /><link rel="next" href="voicemail-telefonbuch.html" title="13.5. Telefonbuch (Dial-by-Name)" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="13.4. voicemail.conf" id="voicemail-voicemail.conf"><div class="titlepage"><div><div><h2 class="title" id="voicemail-voicemail.conf">13.4. <code class="filename">voicemail.conf</code>
+    <a id="idp11534432" class="indexterm"></a></h2></div></div></div><div class="para">In der Datei <code class="filename">voicemail.conf</code> wird das
+    Voicemail-System von Asterisk konfiguriert. Es besteht aus drei
+    Bereichen:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><code class="code">[general]</code></div></li><li class="listitem"><div class="para"><code class="code">[zonemessages]</code></div></li><li class="listitem"><div class="para">Freie Contexte</div></li></ul></div><div class="section" title="[general]" id="voicemail-voicemail.conf-general"><div class="titlepage"><div><div><h3 class="title" id="voicemail-voicemail.conf-general"><code class="code">[general]</code>
+      <a id="idp11156304" class="indexterm"></a> <a id="idp11303584" class="indexterm"></a></h3></div></div></div><div class="para">Im Bereich <code class="code">[general]</code> werden allgemeine
+      Konfigurationen des Voicemail-Systems vorgenommen. Es stehen folgende
+      Optionen zur Verfügung:</div><div class="variablelist"><dl><dt><span class="term"><pre class="synopsis">attach = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp14344208" class="indexterm"></a> <a id="idp14346800" class="indexterm"></a></span></dt><dd><div class="para">Legt fest, ob an die Benachrichtigungs-E-Mails an die
+            Nutzer auch die Sprachnachricht als Sounddatei angehängt wird.
+            Default: <code class="code">yes</code>. Normalerweise wird das erste unter
+            <code class="code">format</code> eingestellte Format verwendet.</div><div class="para">Beispiel:</div><div class="para"><code class="code">attach = no</code></div></dd><dt><span class="term"><pre class="synopsis">callback = <em class="replaceable"><code>[Context]</code></em></pre>
+          <a id="idp14838048" class="indexterm"></a> <a id="idp16153264" class="indexterm"></a></span></dt><dd><div class="para">Legt einen Context fest, der für Rückrufe aus dem System
+            benutzt wird. Ist dieser Wert nicht gesetzt, was per Default der
+            Fall ist, dann kann der User keine Rückrufe aus dem
+            Voicemail-System machen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">callback = intern</code></div></dd><dt><span class="term"><pre class="synopsis">charset = <em class="replaceable"><code>[Zeichensatz]</code></em></pre>
+          <a id="idp17218256" class="indexterm"></a> <a id="idp17220848" class="indexterm"></a></span></dt><dd><div class="para">Gibt den Zeichensatz (Charset) vor, in dem die E-Mails
+            vom Voicemail-System kodiert werden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">charset = ISO-8859-1</code></div></dd><dt><span class="term"><pre class="synopsis">delete = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp14339776" class="indexterm"></a> <a id="idp15470256" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob eine Sprachnachricht nach dem Versenden per
+            E-Mail automatisch gelöscht werden soll. Dies spart
+            Festplattenplatz auf dem Server, falls man Sprachnachrichten nur
+            per E-Mail empfangen will.</div><div class="para">Beispiel:</div><div class="para"><code class="code">delete = yes</code></div></dd><dt><span class="term"><pre class="synopsis">directoryintro = <em class="replaceable"><code>[Dateiname]</code></em></pre>
+          <a id="idp16000064" class="indexterm"></a> <a id="idp16002656" class="indexterm"></a></span></dt><dd><div class="para">Definiert eine Sprachdatei innerhalb des
+            Default-Verzeichnisses
+            <code class="filename">/var/lib/asterisk/sounds/</code>, die anstatt der
+            normalen Datei für das Dial-by-Name-System abgespielt wird (siehe
+            <a class="xref" href="voicemail-telefonbuch.html" title="13.5. Telefonbuch (Dial-by-Name)">Abschnitt 13.5, „Telefonbuch
+    (Dial-by-Name)“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">directoryintro = intro-telefonbuch</code></div></dd><dt><span class="term"><pre class="synopsis">emailsubject = <em class="replaceable"><code>[Text der Betreffzeile]</code></em></pre>
+          <a id="idp14999696" class="indexterm"></a> <a id="idp11231968" class="indexterm"></a></span></dt><dd><div class="para">Definiert den Betreff (Subject) einer
+            Benachrichtigungs-E-Mail. Für Informationen über Variablen siehe
+            <code class="code">emailbody</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">emailsubject = Neue Sprachnachricht von
+            ${VM_CALLERID}</code></div></dd><dt><span class="term"><pre class="synopsis">pbxskip = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp16146256" class="indexterm"></a> <a id="idp16148848" class="indexterm"></a></span></dt><dd><div class="para">Standardmäßig schreibt Asterisk am Anfang der
+            Betreffzeile der E-Mail-Benachrichtigung über eine Sprachnachricht
+            den Text <code class="code">[PBX]:</code> Dies kann mit <code class="code">yes</code>
+            unterdrückt werden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">pbxskip = yes</code></div></dd><dt><span class="term"><pre class="synopsis">emailbody = <em class="replaceable"><code>[Text der Email]</code></em></pre>
+          <a id="idp16369296" class="indexterm"></a> <a id="idp15601456" class="indexterm"></a></span></dt><dd><div class="para">Definiert den E-Mail-Body<sup>[<a id="idp15603968" href="#ftn.idp15603968" class="footnote">60</a>]</sup> einer Benachrichtigungs-E-Mail (maximal 512
+            Zeichen).</div><div class="para">Im Betreff und im Body einer solchen E-Mail kann auf
+            folgende Variablen zugegriffen werden:</div><div class="informaltable"><table border="0"><colgroup><col /><col /></colgroup><tbody><tr><td><code class="code">${VM_NAME}</code> <a id="idp18303504" class="indexterm"></a></td><td><div class="para">Name des
+                    Mailbox-Inhabers</div></td></tr><tr><td><code class="code">${VM_DUR}</code> <a id="idp18306256" class="indexterm"></a></td><td><div class="para">Länge der Nachricht</div></td></tr><tr><td><code class="code">${VM_MSGNUM}</code> <a id="idp6297680" class="indexterm"></a></td><td><div class="para">Nummer der Nachricht</div></td></tr><tr><td><code class="code">${VM_MAILBOX}</code> <a id="idp6300464" class="indexterm"></a></td><td><div class="para">Name der Mailbox</div></td></tr><tr><td><code class="code">${VM_CALLERID}</code> <a id="idp12214560" class="indexterm"></a></td><td><div class="para">Telefonnummer und Name des
+                    Anrufers</div></td></tr><tr><td><code class="code">${VM_CIDNUM}</code> <a id="idp12217264" class="indexterm"></a></td><td><div class="para">Telefonnummer des
+                    Anrufers</div></td></tr><tr><td><code class="code">${VM_CIDNAME}</code> <a id="idp12220016" class="indexterm"></a></td><td><div class="para">Name des Anrufers</div></td></tr><tr><td><code class="code">${VM_DATE}</code> <a id="idp11920416" class="indexterm"></a></td><td><div class="para">Datum und Uhrzeit des
+                    Anrufs</div></td></tr><tr><td><code class="code">${VM_MESSAGEFILE}</code> <a id="idp11923168" class="indexterm"></a></td><td><div class="para">Name der Sounddatei, in der die Nachricht
+                    abgespeichert ist</div></td></tr></tbody></table></div><div class="para">Beispiel:</div><div class="para"><code class="code">emailbody = Hallo ${VM_NAME},\n\nSie haben eine
+            neue Nachricht von ${VM_CALLERID} in Mailbox ${VM_MAILBOX}.</code>
+            <sup>[<a id="idp14349792" href="#ftn.idp14349792" class="footnote">61</a>]</sup></div></dd><dt><span class="term"><pre class="synopsis">serveremail = <em class="replaceable"><code>[Absenderadresse]</code></em></pre>
+          <a id="idp14352704" class="indexterm"></a> <a id="idp14315456" class="indexterm"></a></span></dt><dd><div class="para">Die E-Mail-Adresse, die als Absender der E-Mail vom
+            Voicemail-System an den User übermittelt wird.</div><div class="para">Beispiel:</div><div class="para"><code class="code">serveremail =
+            voicemail@apfelmus-gmbh.de</code></div></dd><dt><span class="term"><pre class="synopsis">fromstring = <em class="replaceable"><code>[Absendername]</code></em></pre>
+          <a id="idp14321056" class="indexterm"></a> <a id="idp12541520" class="indexterm"></a></span></dt><dd><div class="para">Definiert den Absender (<code class="code">From</code>-Header) in
+            E-Mails vom Voicemail-System.</div><div class="para">Beispiel:</div><div class="para"><code class="code">fromstring = AB</code></div></dd><dt><span class="term"><pre class="synopsis">mailcmd = <em class="replaceable"><code>[Shell-Befehl]</code></em></pre>
+          <a id="idp12547488" class="indexterm"></a> <a id="idp15477200" class="indexterm"></a></span></dt><dd><div class="para">Definiert das Programm (mit absolutem Pfad und
+            gegebenenfalls mit Parametern), das zum Versenden von E-Mails
+            benutzt werden soll. Default: <code class="code">/usr/sbin/sendmail
+            -t</code></div><div class="para">Beispiele:</div><div class="para"><code class="code">mailcmd = /usr/sbin/sendmail -t</code></div><div class="para"><code class="code">mailcmd = /usr/exim/bin/exim -t</code></div></dd><dt><span class="term"><pre class="synopsis">externnotify = <em class="replaceable"><code>[Shell-Befehl]</code></em></pre>
+          <a id="idp12549648" class="indexterm"></a> <a id="idp12552240" class="indexterm"></a></span></dt><dd><div class="para">Definiert ein Programm (mit absolutem Pfad), das von
+            Asterisk aufgerufen wird, wenn eine neue Sprachnachricht für einen
+            User vorliegt.</div><div class="para">Beispiel:</div><div class="para"><code class="code">externnotify =
+            /usr/bin/local/mach-was.sh</code></div></dd><dt><span class="term"><pre class="synopsis">externpass = <em class="replaceable"><code>[Shell-Befehl]</code></em></pre>
+          <a id="idp16261232" class="indexterm"></a> <a id="idp16263824" class="indexterm"></a></span></dt><dd><div class="para">Definiert ein Programm (mit absolutem Pfad), das von
+            Asterisk aufgerufen wird, wenn ein User sein Passwort geändert
+            hat.</div><div class="para">Beispiel:</div><div class="para"><code class="code">externpass =
+            /usr/bin/local/mach-was.sh</code></div></dd><dt><span class="term"><pre class="synopsis">forcegreetings = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp19143264" class="indexterm"></a> <a id="idp19145856" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob ein User vom System dazu gezwungen wird,
+            beim ersten Benutzen des Systems eine Begrüßungsnachricht
+            aufzunehmen. Default: <code class="code">no</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">forcegreetings = no</code></div></dd><dt><span class="term"><pre class="synopsis">forcename = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp19113040" class="indexterm"></a> <a id="idp19131904" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob der User vom System dazu gezwungen wird,
+            bei der ersten Nutzung seinen Namen aufzunehmen. Default:
+            <code class="code">no</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">forcename = yes</code></div></dd><dt><span class="term"><pre class="synopsis">format = <em class="replaceable"><code>[gsm|wav|wav49]</code></em></pre>
+          <a id="idp19137856" class="indexterm"></a> <a id="idp11790064" class="indexterm"></a></span></dt><dd><div class="para">Listet die Codecs auf, mit denen eine Sprachnachricht
+            abgespeichert werden soll. Werden mehrere Codecs aufgeführt,
+            werden auch mehrere Dateien gespeichert. Das kann im Extremfall zu
+            Platzproblemen auf der Festplatte führen. Der Vorteil besteht
+            darin, dass bei einer Abfrage die Nachricht nicht noch einmal neu
+            kodiert werden muss, falls der Abfragende mit einem anderen Codec
+            abfragt als mit dem, in dem die Nachricht bereits gespeichert
+            wurde.</div><div class="para">Bei aktiviertem <code class="code">attach</code> wird das erste Format
+            dieser Liste für E-Mail-Anhänge verwendet.</div><div class="para">Beispiele:</div><div class="para"><code class="code">format = gsm|wav</code></div><div class="para">Jede Sprachnachricht wird im GSM- und im WAV-Format
+            abgespeichert.</div><div class="para"><code class="code">format = wav</code></div><div class="para">Jede Sprachnachricht wird nur im WAV-Format
+            abgespeichert.</div><div class="caution"><h2>Achtung</h2><div class="para">Wird diese Einstellung im laufenden Betrieb verändert,
+              müssen vorher vom System angelegte Sounddateien manuell gelöscht
+              werden.</div></div></dd><dt><span class="term"><pre class="synopsis">searchcontexts = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp11239248" class="indexterm"></a> <a id="idp11241840" class="indexterm"></a></span></dt><dd><div class="para">Standardmäßig werden Voicemailboxen nur im angegebenen
+            Context gesucht. Mit diesem Schalter kann man das Suchverhalten
+            auf alle Contexte erweitern. Default: <code class="code">no</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">searchcontexts = no</code></div></dd><dt><span class="term"><pre class="synopsis">maxmsg = <em class="replaceable"><code>[Anzahl Nachrichten]</code></em></pre>
+          <a id="idp11891664" class="indexterm"></a> <a id="idp11894256" class="indexterm"></a></span></dt><dd><div class="para">Definiert die maximale Anzahl an Sprachnachrichten in
+            einer Voicemailbox. Default: <code class="code">100</code>. Danach können keine
+            neuen Nachrichten mehr aufgenommen werden, und der Anrufer hört
+            die Nachricht aus
+            <code class="filename">/var/lib/asterisk/sounds/vm-mailboxfull.gsm</code><sup>[<a id="idp19126880" href="#ftn.idp19126880" class="footnote">62</a>]</sup>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxmsg = 50</code></div></dd><dt><span class="term"><pre class="synopsis">maxmessage = <em class="replaceable"><code>[Länge in Sekunden]</code></em></pre>
+          <a id="idp19131312" class="indexterm"></a> <a id="idp19118272" class="indexterm"></a></span></dt><dd><div class="para">Definiert die maximale Länge einer Sprachnachricht in
+            Sekunden. Default: unendlich.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxmessage = 120</code></div></dd><dt><span class="term"><pre class="synopsis">minmessage = <em class="replaceable"><code>[Länge in Sekunden]</code></em></pre>
+          <a id="idp16168752" class="indexterm"></a> <a id="idp16171344" class="indexterm"></a></span></dt><dd><div class="para">Definiert die minimale Länge einer Sprachnachricht in
+            Sekunden. Default: <code class="code">0</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">minmessage = 5</code></div></dd><dt><span class="term"><pre class="synopsis">maxgreet = <em class="replaceable"><code>[Länge in Sekunden]</code></em></pre>
+          <a id="idp15681408" class="indexterm"></a> <a id="idp15684000" class="indexterm"></a></span></dt><dd><div class="para">Definiert die maximale Länge einer Begrüßungsnachricht in
+            Sekunden. Default: unendlich.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxgreet=240</code></div></dd><dt><span class="term"><pre class="synopsis">maxsilence = <em class="replaceable"><code>[Länge in Sekunden]</code></em></pre>
+          <a id="idp11935824" class="indexterm"></a> <a id="idp11938416" class="indexterm"></a></span></dt><dd><div class="para">Definiert die Anzahl der Sekunden an Stille, die das
+            System wartet, bevor es davon ausgeht, dass die Nachricht zu Ende
+            gesprochen wurde.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxsilence=10</code></div></dd><dt><span class="term"><pre class="synopsis">silencethreshold = <em class="replaceable"><code>[Schwellenwert]</code></em></pre>
+          <a id="idp18489696" class="indexterm"></a> <a id="idp18492288" class="indexterm"></a></span></dt><dd><div class="para">Definiert, was für Asterisk bei der Einstellung
+            <code class="code">maxsilence</code> Stille (also <span class="emphasis"><em>Silence</em></span>)
+            ist. Je niedriger dieser Wert ist, desto höher ist die
+            Empfindlichkeit. Default: <code class="code">128</code><sup>[<a id="idp12091344" href="#ftn.idp12091344" class="footnote">63</a>]</sup></div><div class="para">Beispiel:</div><div class="para"><code class="code">silencethreshold = 50</code></div></dd><dt><span class="term"><pre class="synopsis">maxlogins = <em class="replaceable"><code>[Anzahl]</code></em></pre>
+          <a id="idp12095136" class="indexterm"></a> <a id="idp12097728" class="indexterm"></a></span></dt><dd><div class="para">Definiert die maximale Anzahl von fehlerhaften
+            Einlogversuchen (falsches Passwort durch den User), bevor Asterisk
+            auflegt. Default: <code class="code">3</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxlogins = 3</code></div></dd><dt><span class="term"><pre class="synopsis">skipms = <em class="replaceable"><code>[Millisekunden]</code></em></pre>
+          <a id="idp11930768" class="indexterm"></a> <a id="idp12002192" class="indexterm"></a></span></dt><dd><div class="para">Setzt die Anzahl an Millisekunden, um die während des
+            Abhörens einer Sprachnachricht mit den Tasten für
+            <span class="guimenuitem"><strong>Weiter</strong></span> und
+            <span class="guimenuitem"><strong>Zurück</strong></span> in der Nachricht gesprungen
+            wird. Default: <code class="code">3000</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">skipms = 6000</code></div></dd><dt><span class="term"><pre class="synopsis">usedirectory = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp12009696" class="indexterm"></a> <a id="idp16548416" class="indexterm"></a></span></dt><dd><div class="para">Erlaubt es dem User von Voicemailboxen, die Einträge
+            eines Dial-by-Name-Systems zur Weiterleitung von Nachrichten zu
+            benutzen. Default: <code class="code">no</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">usedirectory = yes</code></div></dd><dt><span class="term"><pre class="synopsis">saycid = <em class="replaceable"><code>[yes|no]</code></em></pre>
+          <a id="idp18237920" class="indexterm"></a> <a id="idp18240512" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob die Telefonnummer des Anrufers beim Abrufen
+            der Nachrichten angesagt werden soll. Default:
+            <code class="code">no</code>.</div><div class="para">Beispiel:</div><div class="para"><code class="code">saycid = yes</code></div></dd><dt><span class="term"><pre class="synopsis">cidinternalcontexts = <em class="replaceable"><code>[context,context,...]</code></em></pre>
+          <a id="idp16200928" class="indexterm"></a> <a id="idp16203520" class="indexterm"></a></span></dt><dd><div class="para">Legt die Contexte fest (durch Kommata getrennt), die beim
+            Abrufen einer Voicemail-Nachricht als intern gelten, für die also
+            z. B. nur die Durchwahl (Extension) als Caller-ID angesagt wird.
+            Default: keine.</div></dd><dt><span class="term"><pre class="synopsis">pagerfromstring = <em class="replaceable"><code>[Absendername]</code></em></pre>
+          <a id="idp16268672" class="indexterm"></a> <a id="idp16271264" class="indexterm"></a></span></dt><dd><div class="para">Analog zu <code class="code">fromstring</code> für Nachrichten an
+            Pager.</div><div class="para">Beispiel:</div><div class="para"><code class="code">pagerfromstring = Apfelmus GmbH</code></div></dd><dt><span class="term"><pre class="synopsis">pagersubject = <em class="replaceable"><code>[Betreff]</code></em></pre>
+          <a id="idp17998496" class="indexterm"></a> <a id="idp18001088" class="indexterm"></a></span></dt><dd><div class="para">Analog zu <code class="code">emailsubject</code> für Nachrichten an
+            Pager.</div><div class="para">Beispiel:</div><div class="para"><code class="code">pagersubject = Neue Voicemail</code></div></dd><dt><span class="term"><pre class="synopsis">pagerbody = <em class="replaceable"><code>[Absendername]</code></em></pre>
+          <a id="idp17407104" class="indexterm"></a> <a id="idp17409584" class="indexterm"></a></span></dt><dd><div class="para">Analog zu <code class="code">emailbody</code> für Nachrichten an
+            Pager.</div><div class="para">Beispiel:</div><div class="para"><code class="code">pagerbody = Neue Voicemail in Mailbox ${VM_MAILBOX}
+            von ${VM_CALLERID}.</code></div></dd></dl></div><div class="para">Neben den hier aufgeführten Parametern gibt es noch weitere;
+      die genannten sind jedoch die wichtigsten für gängige Konfigurationen.
+      Eine Auflistung aller verfügbaren Parameter finden Sie in der Datei
+      <code class="filename">voicemail.conf</code>. In der Grundinstallation sind dort
+      alle Parameter mit einer kurzen Beschreibung enthalten.</div></div><div class="section" title="[zonemessages]" id="voicemail-voicemail.conf-zonemessages"><div class="titlepage"><div><div><h3 class="title" id="voicemail-voicemail.conf-zonemessages"><code class="code">[zonemessages]</code>
+      <a id="idp11296624" class="indexterm"></a> <a id="idp11299040" class="indexterm"></a> <a id="idp11300608" class="indexterm"></a> <a id="idp11301776" class="indexterm"></a></h3></div></div></div><div class="para">Da es vorkommt, dass sich die User eines Voicemail-Systems in
+      unterschiedlichen Zeitzonen befinden, kann im Bereich
+      <code class="code">[zonemessages]</code> für jede Zeitzone ein unterschiedliches
+      Format definiert werden, mit dem dem User die Uhrzeit angesagt
+      wird.<sup>[<a id="idp16160912" href="#ftn.idp16160912" class="footnote">64</a>]</sup></div><div class="section" title="Syntax" id="voicemail-voicemail.conf-zonemessages-syntax"><div class="titlepage"><div><div><h4 class="title" id="voicemail-voicemail.conf-zonemessages-syntax">Syntax</h4></div></div></div><pre class="synopsis">zonenname = timezone | format</pre><div class="variablelist"><dl><dt><span class="term"><code class="code">zonenname</code></span></dt><dd><div class="para">Unter diesem Namen kann man später auf das
+              entsprechende Format zugreifen. Verwenden Sie nur
+              Kleinbuchstaben, Ziffern, Bindestrich (<code class="code">-</code>) und
+              Unterstrich (<code class="code">_</code>).</div></dd><dt><span class="term"><code class="code">timezone</code></span></dt><dd><div class="para">In einem normalen Debian-Linux-System finden Sie im
+              Verzeichnis <code class="filename">/usr/share/zoneinfo/</code> eine
+              Auflistung von verschiedenen Regionen. Jede Region wird mit
+              einem Unterverzeichnis dargestellt. In diesem Unterverzeichnis
+              stehen Städtenamen. Ein <code class="code">timezone</code>-Eintrag besteht
+              aus der Region und dem Städtenamen (getrennt durch ein
+              <code class="code">/</code>).</div><div class="para">Beispiele:</div><div class="para"><code class="code">Europe/Berlin</code></div><div class="para"><code class="code">Australia/Sydney</code></div></dd><dt><span class="term"><code class="code">format</code></span></dt><dd><div class="para">Definiert das Format, in dem die Zeit angesagt wird. Es
+              stehen folgende Variablen zur Verfügung:</div><div class="informaltable"><table border="0"><colgroup><col width="20pt" /><col /></colgroup><tbody><tr><td><code class="code">A</code></td><td>Wochentag (Montag bis Sonntag)</td></tr><tr><td><code class="code">a</code></td><td>siehe <code class="code">A</code></td></tr><tr><td><code class="code">B</code></td><td>Monat (Januar bis Dezember)</td></tr><tr><td><code class="code">b</code></td><td>siehe <code class="code">B</code></td></tr><tr><td><code class="code">h</code></td><td>siehe <code class="code">B</code></td></tr><tr><td><code class="code">d</code></td><td>Tag des Monats (1. bis 31.)</td></tr><tr><td><code class="code">e</code></td><td>siehe <code class="code">d</code></td></tr><tr><td><code class="code">Y</code></td><td>Jahr (z. B. 2006)</td></tr><tr><td><code class="code">I</code></td><td>Stunde im amerikanischen
+                      12-Stunden-Format</td></tr><tr><td><code class="code">l</code></td><td>siehe <code class="code">I</code></td></tr><tr><td><code class="code">H</code></td><td>Stunde im europäischen 24-Stunden-Format. Dabei
+                      wird beim englischen Sprachmenü einstelligen Uhrzeiten
+                      eine 0 (englische Aussprache <span class="quote">„<span class="quote">oh</span>“</span>)
+                      vorangestellt.</td></tr><tr><td><code class="code">k</code></td><td>Stunde im europäischen 24-Stunden-Format</td></tr><tr><td><code class="code">M</code></td><td>Minute</td></tr><tr><td><code class="code">P</code></td><td>AM oder PM</td></tr><tr><td><code class="code">p</code></td><td>siehe <code class="code">P</code></td></tr><tr><td><code class="code">Q</code></td><td><span class="quote">„<span class="quote">heute</span>“</span>, <span class="quote">„<span class="quote">gestern</span>“</span> oder
+                      <code class="code">ABdY</code> (Wochentag, Monat, Tag, Jahr)</td></tr><tr><td><code class="code">q</code></td><td><span class="quote">„<span class="quote"></span>“</span> (also nichts, wenn es heute ist),
+                      <span class="quote">„<span class="quote">gestern</span>“</span> oder <code class="code">ABdY</code>
+                      (Wochentag, Monat, Tag, Jahr)</td></tr><tr><td><code class="code">R</code></td><td>Stunde:Minute:Sekunde</td></tr></tbody></table></div><div class="para">Daneben gibt es noch die Sonderfälle
+              <code class="code">${<em class="replaceable"><code>VAR</code></em>}</code> (der Inhalt
+              dieser Variablen wird eingefügt) und<code class="code">
+              '<em class="replaceable"><code>sprachdatei</code></em>'</code>. Dabei ist zu
+              beachten, dass '<em class="replaceable"><code>sprachdatei</code></em>' ohne
+              <span class="quote">„<span class="quote"> <code class="filename">.gsm</code> </span>“</span> ist. Dieser
+              Sprachbaustein aus dem Verzeichnis <code class="filename">sounds/</code>
+              wird dann abgespielt. Die einfachen Anführungszeichen sind
+              zwingend.</div></dd></dl></div><div class="para">Beispiel:</div><pre class="programlisting">[zonemessages]
+deutschland = Europe/Berlin | 'vm-received' Q 'digits/at' kM
+england = Europe/London | 'vm-received' Q 'digits/at' R
+military = Zulu | 'vm-received' q 'digits/at' H N 'hours' 'phonetic/z_p'</pre></div></div><div class="section" title="Freie Contexte" id="voicemail-voicemail.conf-contexte"><div class="titlepage"><div><div><h3 class="title" id="voicemail-voicemail.conf-contexte">Freie
+      Contexte<a id="idp14598208" class="indexterm"></a><a id="idp14600064" class="indexterm"></a><a id="idp14601072" class="indexterm"></a></h3></div></div></div><div class="para">Genau wie in der <code class="filename">extensions.conf</code> gibt es
+      auch in der <code class="filename">voicemail.conf</code> die Möglichkeit, einen
+      Context zu definieren. Das ist praktisch, um zum Beispiel verschiedene
+      Firmenabteilungen separat zu behandeln. Dadurch können auch
+      unterschiedliche Adress- oder Telefonbücher definiert werden (siehe
+      <a class="xref" href="voicemail-telefonbuch.html" title="13.5. Telefonbuch (Dial-by-Name)">Abschnitt 13.5, „Telefonbuch
+    (Dial-by-Name)“</a>).</div><div class="section" title="Der Default-Context" id="voicemail-voicemail.conf-contexte-default"><div class="titlepage"><div><div><h4 class="title" id="voicemail-voicemail.conf-contexte-default">Der
+        Default-Context<a id="idp18064976" class="indexterm"></a><a id="idp18067232" class="indexterm"></a></h4></div></div></div><div class="para">Wenn kein anderer Context eingerichtet wurde, muss zumindest
+        der <code class="code">[default]</code>-Context existieren. Für die meisten aller
+        Installationen reicht dieser aus.</div></div></div><div class="section" title="Mailbox-Definition" id="voicemail-voicemail.conf-mailbox"><div class="titlepage"><div><div><h3 class="title" id="voicemail-voicemail.conf-mailbox">Mailbox-Definition<a id="idp14605264" class="indexterm"></a><a id="idp14607120" class="indexterm"></a><a id="idp14608576" class="indexterm"></a></h3></div></div></div><div class="para">In einem Context können beliebig viele Mailboxen definiert
+      werden.</div><div class="section" title="Syntax" id="voicemail-voicemail.conf-mailbox-syntax"><div class="titlepage"><div><div><h4 class="title" id="voicemail-voicemail.conf-mailbox-syntax">Syntax</h4></div></div></div><pre class="synopsis">mailbox =&gt; passwort,name[,e-mail[,pager-e-mail[,optionen]]]</pre><div class="para">Beispiel:</div><pre class="programlisting">202 =&gt; 1234,Peter Meier,peter@familie-meier.de,,attachfmt=wav|delete=yes</pre><div class="variablelist"><dl><dt><span class="term"><code class="code">mailbox</code></span></dt><dd><div class="para">Der Name der Mailbox (in Ziffern)</div></dd><dt><span class="term"><code class="code">passwort</code></span></dt><dd><div class="para">Das Passwort für die Mailbox (in Ziffern oder
+              Buchstaben). Ziffern sind in der Regel praktischer, da sie auch
+              auf normalen Telefonen vom User eingegeben werden
+              können.</div></dd><dt><span class="term"><code class="code">e-mail</code></span></dt><dd><div class="para">Die E-Mail-Adresse, an die Sprachnachrichten gesendet
+              werden sollen</div></dd><dt><span class="term"><code class="code">pager-e-mail</code></span></dt><dd><div class="para">Die E-Mail Adresse des Pagers, an die
+              Benachrichtigungen (eine Textzeile) geschickt werden
+              sollen<sup>[<a id="idp6311408" href="#ftn.idp6311408" class="footnote">65</a>]</sup></div></dd><dt><span class="term"><code class="code">optionen</code></span></dt><dd><div class="para">Unterschiedliche Optionen, die, durch ein Pipe-Zeichen
+              (<code class="code">|</code>) voneinander getrennt, aneinandergereiht werden.
+              Sie können hier die unter <code class="code">[general]</code> (siehe <a class="xref" href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-general" title="[general]">„<code class="code">[general]</code>
+       “</a>) global
+              festgelegten Einstellungen pro Mailbox verändern. Bitte beachten
+              Sie, dass zwischen dem Parameternamen, dem Gleichheitszeichen
+              (<code class="code">=</code>) und dem Wert keine Leerzeichen sein dürfen.
+              Dasselbe gilt für das Pipe-Zeichen (<code class="code">|</code>).</div><div class="para">Die wichtigsten Optionen in diesem Zusammenhang
+              sind:</div><div class="variablelist"><dl><dt><span class="term"><pre class="synopsis">tz=<em class="replaceable"><code>[Zeitzone]</code></em></pre>
+                  <a id="idp14636800" class="indexterm"></a> <a id="idp18174544" class="indexterm"></a></span></dt><dd><div class="para">Setzt die gewünschte Zeitzone aus dem vorher
+                    definierten <code class="code">[zonemessages]</code> Context (siehe
+                    <a class="xref" href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-zonemessages" title="[zonemessages]">„<code class="code">[zonemessages]</code>
+         “</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">tz=deutschland</code></div></dd><dt><span class="term"><pre class="synopsis">attach=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp18181104" class="indexterm"></a> <a id="idp16278800" class="indexterm"></a></span></dt><dd><div class="para">Legt fest, ob die Sounddatei der Sprachnachricht
+                    der E-Mail beigefügt werden soll.</div></dd><dt><span class="term"><pre class="synopsis">attachfmt=<em class="replaceable"><code>[gsm|wav|wav49]</code></em></pre>
+                  <a id="idp16283408" class="indexterm"></a> <a id="idp16286032" class="indexterm"></a></span></dt><dd><div class="para">Legt gegebenenfalls ein anderes Format fest als
+                    das unter <code class="code">[general]</code> mittels
+                    <code class="code">format</code> eingestellte Format, das für
+                    E-Mail-Anhänge verwendet wird.</div></dd><dt><span class="term"><pre class="synopsis">saycid=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp14299520" class="indexterm"></a> <a id="idp14302144" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob die Telefonnummer des Anrufers
+                    angesagt werden soll.</div></dd><dt><span class="term"><pre class="synopsis">sayduration=<em class="replaceable"><code>[yes|no]</code></em><a id="idp14306640" class="indexterm"></a>
+<a id="idp14309280" class="indexterm"></a></pre></span></dt><dd><div class="para">Definiert, ob die Länge der Nachricht angesagt
+                    werden soll. Default: <code class="code">yes</code>.</div></dd><dt><span class="term"><pre class="synopsis">saydurationm=<em class="replaceable"><code>[ab Dauer in Minuten]</code></em></pre>
+                  <a id="idp14314352" class="indexterm"></a> <a id="idp18497120" class="indexterm"></a></span></dt><dd><div class="para">Legt die Mindestlänge einer Nachricht in Minuten
+                    fest, ab der die Länge angesagt wird. Default:
+                    <code class="code">0</code>.</div></dd><dt><span class="term"><pre class="synopsis">dialout=<em class="replaceable"><code>[context]</code></em></pre>
+                  <a id="idp18502224" class="indexterm"></a> <a id="idp18504848" class="indexterm"></a></span></dt><dd><div class="para">Definiert den Context, der zum Hinauswählen
+                    benutzt werden soll. Ohne diese Angabe kann man aus dem
+                    Voicemail-System heraus keine Telefonate führen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">dialout=intern</code></div></dd><dt><span class="term"><pre class="synopsis">sendvoicemail=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp14987392" class="indexterm"></a> <a id="idp14990016" class="indexterm"></a></span></dt><dd><div class="para">Bestimmt, ob Teilnehmer Sprachnachrichten an
+                    andere Teilnehmer des Voicemail-Systems schicken
+                    können.</div></dd><dt><span class="term"><pre class="synopsis">callback=<em class="replaceable"><code>[context]</code></em></pre>
+                  <a id="idp12557312" class="indexterm"></a> <a id="idp12559936" class="indexterm"></a></span></dt><dd><div class="para">Definiert den Context, der für Rückrufe benutzt
+                    wird. Ist er festgelegt, kann man den Anrufer, der eine
+                    Sprachnachricht hinterlassen hat, einfach aus dem
+                    Voicemailboxsystem zurückrufen.</div></dd><dt><span class="term"><pre class="synopsis">review=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp12564704" class="indexterm"></a> <a id="idp18247312" class="indexterm"></a></span></dt><dd><div class="para">Legt fest, ob der Anrufer die von ihm
+                    hinterlassene Sprachnachricht vor dem Speichern erneut
+                    anhören kann. Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">operator=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp18252432" class="indexterm"></a> <a id="idp18255056" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob der Anrufer vor, während oder nach
+                    der Aufnahme seiner Sprachnachricht mit der Eingabe von
+                    <code class="code">0</code> (indem er also Null auf dem Telefon drückt)
+                    zum Operator durchgestellt wird. Der Operator hat immer
+                    die Extension <code class="code">o</code> (kleiner Buchstabe o) im
+                    aktuellen Context. Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">envelope=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp16992960" class="indexterm"></a> <a id="idp16995584" class="indexterm"></a></span></dt><dd><div class="para">Legt fest, ob allgemeine Informationen vor der
+                    Sprachnachricht angesagt werden sollen. Wenn dieser
+                    Parameter auf <code class="code">no</code> gesetzt ist, dann werden
+                    dadurch bestimmte andere Einstellungen (wie zum Beispiel
+                    <code class="code">tz</code>) überschrieben. Default:
+                    <code class="code">yes</code>.</div></dd><dt><span class="term"><pre class="synopsis">delete=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp14858864" class="indexterm"></a> <a id="idp14861488" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob Sprachnachrichten nach dem
+                    Versenden per E-Mail automatisch gelöscht werden sollen.
+                    Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">nextaftercmd=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp14866592" class="indexterm"></a> <a id="idp19415760" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob das System nach dem Löschen oder
+                    Abspeichern einer Sprachnachricht automatisch zur nächsten
+                    Nachricht springt. Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">forcename=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp19420896" class="indexterm"></a> <a id="idp19423360" class="indexterm"></a></span></dt><dd><div class="para">Bestimmt, ob das System den User beim ersten
+                    Abruf des Systems dazu zwingt, seinen Namen aufnehmen zu
+                    lassen. Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">forcegreetings=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp15672496" class="indexterm"></a> <a id="idp15675072" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob das System den User bei der ersten
+                    Nutzung des Voicemail-Systems dazu zwingt, eine
+                    persönliche Ansage für seine Voicemailbox aufzunehmen.
+                    Default: <code class="code">no</code>.</div></dd><dt><span class="term"><pre class="synopsis">hidefromdir=<em class="replaceable"><code>[yes|no]</code></em></pre>
+                  <a id="idp19147488" class="indexterm"></a> <a id="idp19150000" class="indexterm"></a></span></dt><dd><div class="para">Definiert, ob dieser Eintrag aus dem
+                    Dial-by-Name-Verzeichnis herausgenommen (versteckt) werden
+                    soll. Default: <code class="code">no</code>.</div></dd></dl></div></dd></dl></div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><div class="para">Textteil einer E-Mail</div></div><div class="footnote"><div class="para">Es muss alles in eine Zeile geschrieben werden. Durch
+                <code class="code">\n</code> wird in der E-Mail ein Zeilenumbruch
+                eingefügt.</div></div><div class="footnote"><div class="para">Der Pfad ist von der Installation abhängig, siehe z.
+                B. auch
+                <code class="filename">/usr/share/asterisk/sounds/.</code></div></div><div class="footnote"><div class="para">Es lässt sich selbst im Source-Code von Asterisk
+                keine Information dazu finden, in welchem Rahmen sich dieser
+                Wert sinnvoll bewegen kann (es handelt sich um einen Int).
+                Gegebenenfalls müssen Sie das ausprobieren.</div></div><div class="footnote"><div class="para">Beachten Sie, dass Sie eine wie hier beschrieben definierte
+          Zeitzone noch für die User aktivieren müssen (siehe <a class="xref" href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-mailbox" title="Mailbox-Definition">„Mailbox-Definition“</a>).</div></div><div class="footnote"><div class="para">Bitte beachten Sie, dass diese Nachrichten
+                  ebenfalls E-Mails sind. Sollten Sie SMS-Nachrichten
+                  verschicken wollen, suchen Sie im Internet nach <span class="quote">„<span class="quote">sms
+                  gateway</span>“</span> oder <span class="quote">„<span class="quote">asterisk sms
+                  gateway</span>“</span>.</div></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="voicemail-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="voicemail-beispiele.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Beispielanwendungen</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="voicemail-applikationen.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Applikationen</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">voicemail.conf</code>
+    </li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-general" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><code xmlns="http://www.w3.org/1999/xhtml" class="code">[general]</code>
+       </a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-zonemessages" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><code xmlns="http://www.w3.org/1999/xhtml" class="code">[zonemessages]</code>
+         </a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-contexte" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Freie
+      Contexte</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-voicemail.conf.html#voicemail-voicemail.conf-mailbox" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Mailbox-Definition</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-telefonbuch.html" title="pfc level3 breadcrumb-link section sectlevel1">Telefonbuch
+    (Dial-by-Name)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-passwortspeicher.html" title="pfc level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">voicemail.conf</code> als Passwortspeicher</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="minivm.html" title="pfc level3 breadcrumb-link section sectlevel1">Mini-VoiceMail (MiniVM)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="voicemail-applikationen.html"><strong>Zurück</strong>13.3. Applikationen</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="voicemail-telefonbuch.html"><strong>Weiter</strong>13.5. Telefonbuch
+    (Dial-by-Name)</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

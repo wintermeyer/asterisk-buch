@@ -1,0 +1,52 @@
+[[applications-setamaflags]]
+= `SetAMAFlags()`
+
+Setzt AMA-Flags im
+Anrufprotokoll.
+
+[source]
+----
+SetAMAFlags(Flags)
+----
+
+Setzt zu Abrechnungszwecken die AMA-Flags im Anrufprotokoll (Call
+Detail
+Record), wobei die AMA-Einstellungen in den Channel-Konfigurationsdateien
+überschrieben werden. Gültige Werte sind `default`,
+`omit`, `billing` und
+`documentation`.
+
+Liefert stets 0 zurück.
+
+[source]
+----
+exten => 123,1,SetAMAFlags(billing)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SetAMAFlags' =-
+
+[Synopsis]
+Set the AMA Flags
+
+[Description]
+SetAMAFlags([flag]): This application will set the channel's AMA Flags for
+billing purposes.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -4,5 +4,5 @@
+Set the AMA Flags
+
+[Description]
+- SetAMAFlags([flag]): This channel will set the channel's AMA Flags for billing
+- purposes.
++ SetAMAFlags([flag]): This application will set the channel's AMA Flags for
++ billing purposes.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

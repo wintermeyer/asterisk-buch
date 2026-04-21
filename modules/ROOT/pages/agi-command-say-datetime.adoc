@@ -1,0 +1,75 @@
+[[agi-command-say-datetime]]
+= `SAY DATETIME`
+
+[source]
+----
+SAY DATETIME Timestamp [Escape_Ziffern] [Format] [Zeitzone]
+----
+
+Sagt das übergebene Datum. _`Timestamp`_ ist
+dabei die Anzahl der Sekunden seit 00:00:00 Uhr am 1. Januar 1970. Das
+_`Format`_ bestimmt die Art der Ausgabe. Folgende Werte
+sind dabei möglich:
+
+[cols="2*"]
+|===
+| +'_`dateiname`_'+ | Eine Sounddatei
+| +${_`VAR`_}+ | Eine Variable
+| `A` oder `a` | Tag der Woche (z. B. Montag oder Dienstag)
+| `B`, `b` oder `h` | Name des Monats (z. B. Januar)
+| `d` oder `e` | Ordnungseinheit des Tages im Monat (z. B. erster, zweiter, dritter)
+| `Y` | Jahr
+| `I` oder `i` | Stunde (im 12-Stunden-System)
+| `H` | Stunde (im 24-Stunden-System). Dabei wird 07 als „Null - Sieben“ ausgesprochen!
+| `k` | Stunde (im 24-Stunden-System). Dabei wird 07 nur als „Sieben“ ausgesprochen.
+| `M` | Minuten
+| `P` oder `p` | AM oder PM
+| `Q` | „Heute“, „Gestern“ oder der Inhalt der Werte `ABdY`
+| `q` | „ “ (für heute), „Gestern“, der Wochentag oder `ABdY`
+| `R` | Zeit inklusive Minuten im 24-Stunden-System
+|===
+
+Die _`Zeitzone`_ wird wie in der
+Konfigurationsdatei `/etc/asterisk/voicemail.conf`
+angegeben.
+
+Die Ausgabe kann durch Eingabe einer Ziffer, die in
+_`Escape_Ziffern`_ bestimmt wird, abgebrochen werden.
+Wenn _`Escape_Ziffern`_ oder
+_`Format`_ ausgelassen werden soll, muss stattdessen
+`""` angegeben werden.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| -1 | Fehler
+| 0 | Erfolgreich
+| _`Wert`_ | ASCII-Wert der Eingabe, die zum Abbruch geführt hat
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: SAY DATETIME <time> <escape digits> [format] [timezone]
+Say a given time, returning early if any of the given DTMF digits are
+received on the channel. <time> is number of seconds elapsed since 00:00:00
+on January 1, 1970, Coordinated Universal Time (UTC). [format] is the format
+the time should be said in. See voicemail.conf (defaults to "ABdY
+'digits/at' IMp"). Acceptable values for [timezone] can be found in
+/usr/share/zoneinfo. Defaults to machine default. Returns 0 if playback
+completes without a digit being pressed, or the ASCII numerical value of the
+digit if one was pressed or -1 on error/hangup.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -7,3 +7,4 @@
+/usr/share/zoneinfo. Defaults to machine default. Returns 0 if playback
+completes without a digit being pressed, or the ASCII numerical value of the
+digit if one was pressed or -1 on error/hangup.
++ Runs Dead : No

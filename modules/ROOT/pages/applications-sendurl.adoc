@@ -1,0 +1,116 @@
+[[applications-sendurl]]
+= `SendURL()`
+
+Sendet dem Channel eine URL.
+
+[source]
+----
+SendURL(URL[,Option])
+----
+
+Sendet dem Channel eine URL, die das Gerät aufrufen soll (IAX2).
+Setzt die Ausführung beim nächsten Schritt fort.
+
+Mit der Option `j` wird, wenn der Channel keine
+Übertragung von URLs unterstützt, zur Priorität n+101 gesprungen. Mit der
+Option `wait` wird vor dem Fortfahren auf eine Bestätigung
+gewartet, dass die URL geladen wurde.
+
+Liefert 0 zurück, wenn die URL fehlerfrei übertragen wurde oder der
+Channel die Übertragung nicht unterstützt, sonst -1. Setzt die
+Channel-Variable `SENDURLSTATUS` auf `SUCCESS`
+(Erfolg), `FAILURE` (Sendefehler), `UNSUPPORTED`
+(nicht unterstützt) oder `NOLOAD` (bei `wait`: Client
+konnte die URL nicht laden).
+
+[source]
+----
+exten => 123,1,SendURL(http://www.asterisk.org/,wait)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'SendURL' =-
+
+[Synopsis]
+Send a URL
+
+[Description]
+SendURL(URL[|option]): Requests client go to URL (IAX2) or sends the
+URL to the client (other channels).
+Result is returned in the SENDURLSTATUS channel variable:
+SUCCESS URL successfully sent to client
+FAILURE Failed to send URL
+NOLOAD Client failed to load URL (wait enabled)
+UNSUPPORTED Channel does not support URL transport
+
+If the option 'wait' is specified, execution will wait for an
+acknowledgement that the URL has been loaded before continuing
+
+If jumping is specified as an option (the 'j' flag), the client does not
+support Asterisk "html" transport, and there exists a step with priority
+n + 101, then execution will continue at that step.
+
+SendURL continues normally if the URL was sent correctly or if the channel
+does not support HTML transport. Otherwise, the channel is hung up.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -9,17 +9,15 @@
+Result is returned in the SENDURLSTATUS channel variable:
+SUCCESS URL successfully sent to client
+FAILURE Failed to send URL
+- NOLOAD Clien failed to load URL (wait enabled)
++ NOLOAD Client failed to load URL (wait enabled)
+UNSUPPORTED Channel does not support URL transport
+
+If the option 'wait' is specified, execution will wait for an
+acknowledgement that the URL has been loaded before continuing
+- and will return -1 if the peer is unable to load the URL
+
+- Old behaviour (deprecated):
+- If the client does not support Asterisk "html" transport,
+- and there exists a step with priority n + 101, then execution will
+- continue at that step.
+- Otherwise, execution will continue at the next priority level.
+- SendURL only returns 0 if the URL was sent correctly or if
+- the channel does not support HTML transport, and -1 otherwise.
++ If jumping is specified as an option (the 'j' flag), the client does not
++ support Asterisk "html" transport, and there exists a step with priority
++ n + 101, then execution will continue at that step.
++
++ SendURL continues normally if the URL was sent correctly or if the channel
++ does not support HTML transport. Otherwise, the channel is hung up.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Send a URL
+
+[Description]
+- SendURL(URL[|option]): Requests client go to URL (IAX2) or sends the
++ SendURL(URL[,option]): Requests client go to URL (IAX2) or sends the
+URL to the client (other channels).
+Result is returned in the SENDURLSTATUS channel variable:
+SUCCESS URL successfully sent to client
+@@ -12,12 +12,8 @@
+NOLOAD Client failed to load URL (wait enabled)
+UNSUPPORTED Channel does not support URL transport
+
+- If the option 'wait' is specified, execution will wait for an
++ If the option 'w' is specified, execution will wait for an
+acknowledgement that the URL has been loaded before continuing
+
+- If jumping is specified as an option (the 'j' flag), the client does not
+- support Asterisk "html" transport, and there exists a step with priority
+- n + 101, then execution will continue at that step.
+-
+SendURL continues normally if the URL was sent correctly or if the channel
+does not support HTML transport. Otherwise, the channel is hung up.
+
+.Siehe auch
+xref:applications-sendimage.adoc[Abschnitt C.146, „`SendImage()`“], xref:applications-sendtext.adoc[Abschnitt C.147, „`SendText()`“]

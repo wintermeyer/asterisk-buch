@@ -1,0 +1,11 @@
+[[media-gateways-fazit]]
+= Fazit
+
+Die Frage, ob man ein Media Gateway oder eine ISDN-Karte benutzen
+soll, führt regelmäßig zu Diskussionen in der Asterisk-Community. Beide
+Lager führen gute Argumente an, und man kann mit beiden Varianten
+glücklich werden. Es kommt immer auf die Gegebenheiten an. Wenn man einen
+genauen Takt im System benötigt, dann kommt man nicht um eine ISDN-Karte
+herum. Wenn man aber physikalisch nicht an den Server herankommt oder es
+sonst Verkabelungsprobleme gibt, dann ist ein Media Gateway die richtige
+Lösung.

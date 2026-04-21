@@ -1,0 +1,21 @@
+[[manager-userevent]]
+= `UserEvent`
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: UserEvent
+Synopsis: Send an arbitrary event
+Privilege: user,all
+Description: Send an event to manager sessions.
+Variables: (Names marked with * are required)
+*UserEvent: EventStringToSend
+Header1: Content1
+HeaderN: ContentN
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

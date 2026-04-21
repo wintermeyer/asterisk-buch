@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.2. Beispielanwendungen</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-voicemail.html" title="Kapitel 13. Voicemail-System" /><link rel="prev" href="voicemail-einleitung.html" title="13.1. Einleitung" /><link rel="next" href="voicemail-applikationen.html" title="13.3. Applikationen" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="13.2. Beispielanwendungen" id="voicemail-beispiele"><div class="titlepage"><div><div><h2 class="title" id="voicemail-beispiele">13.2. Beispielanwendungen</h2></div></div></div><div class="para">Die folgenden Beispiele geben einen schnellen Überblick über
+    typische Konstellationen. Anschließend (in <a class="xref" href="voicemail-applikationen.html" title="13.3. Applikationen">Abschnitt 13.3, „Applikationen“</a>) gehen wir auf die Besonderheiten und
+    Möglichkeiten von Voicemail-Systemen unter Asterisk ein.</div><div class="section" title="Die Voicemailbox der Familie Meier" id="voicemail-beispiele-meier"><div class="titlepage"><div><div><h3 class="title" id="voicemail-beispiele-meier">Die Voicemailbox der Familie
+      Meier</h3></div></div></div><div class="para">Die Familie Meier stellt im Zuge der Modernisierung des
+      Haushalts auf eine Asterisk-Telefonanlage um. Dies beinhaltet eine
+      moderne Voicemailbox für alle Familienmitglieder.</div><div class="section" title="Aufgabenstellung" id="voicemail-beispiele-meier-aufgabe"><div class="titlepage"><div><div><h4 class="title" id="voicemail-beispiele-meier-aufgabe">Aufgabenstellung</h4></div></div></div><div class="para">Folgende Personen müssen mit einer Voicemailbox ausgerüstet
+        werden:</div><div class="informaltable"><table border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>Name</th><th>Extension</th><th>Bemerkung</th></tr></thead><tbody><tr><td>Horst Meier</td><td>200</td><td>Normale Voicemailbox</td></tr><tr><td>Eva Meier</td><td>201</td><td>Normale Voicemailbox</td></tr><tr><td>Peter Meier</td><td>202</td><td>Normale Voicemailbox und Benachrichtigung per E-Mail.
+                Die Sprachnachricht wird der E-Mail beigefügt.</td></tr><tr><td>Lisa Meier</td><td>203</td><td>Normale Voicemailbox, Benachrichtung per E-Mail
+                (Sprachnachricht wird der E-Mail beigefügt) und danach
+                automatische Löschung der Voicemail im System</td></tr></tbody></table></div></div><div class="section" title="Lösung" id="voicemail-beispiele-meier-loesung"><div class="titlepage"><div><div><h4 class="title" id="voicemail-beispiele-meier-loesung">Lösung</h4></div></div></div><div class="para">Die <code class="filename">voicemail.conf</code> sieht in diesem Fall
+        wie folgt aus:</div><pre class="programlisting">[general]
+format = wav
+attach = yes
+
+[default]
+; Die Syntax fuer die Eintraege lautet:
+; MailboxNr =&gt; Passwort,Name,E-Mail,Pager,Optionen
+; (wobei die MailboxNr oft der Extension entspricht)
+200 =&gt; 1234,Horst Meier
+201 =&gt; 1234,Eva Meier
+202 =&gt; 1234,Peter Meier,peter@die-familie-meier.de
+203 =&gt; 1234,Lisa Meier,lisa@die-familie-meier.de,,delete=yes</pre><div class="para">In der <code class="filename">extensions.conf</code> wird wie folgt
+        auf die Voicemailbox verwiesen:</div><pre class="programlisting">[familie-meier]
+; Wenn nach 30 Sekunden niemand abnimmt, geht das Gespräch 
+; auf die Voicemailbox, das Gleiche passiert bei besetzt:
+exten =&gt; _20[0-3],1,Set(ZIELNR=${EXTEN})
+exten =&gt; _20[0-3],n,Dial(SIP/${EXTEN},30)
+exten =&gt; _20[0-3],n,Goto(s-${DIALSTATUS},1)  ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten =&gt; s-NOANSWER,1,VoiceMail(${ZIELNR},u) ; Ansage "nicht erreichbar"
+exten =&gt; s-BUSY,1,VoiceMail(${ZIELNR},b)     ; Ansage "besetzt"
+exten =&gt; s-ANSWER,1,Hangup()                 ; zur Sicherheit nach Gespräch auflegen
+exten =&gt; _s-.,1,Goto(s-NOANSWER,1)           ; alles andere wie nicht erreichbar behandeln
+
+; auf der Extension 250 kann jeder Teilnehmer mit seinem 
+; Telefon seine persönliche Voicemailbox abrufen:
+exten =&gt; 250,1,VoiceMailMain(${CALLERID(num)})</pre><div class="para">Schöner wäre es so:<pre class="programlisting">[familie-meier]
+exten =&gt; _20[0-3],1,Macro(normal|SIP/${EXTEN}|${EXTEN})
+
+exten =&gt; 250,1,VoiceMailMain(${CALLERID(num)})
+
+[macro-normal];
+;  ${ARG1} - anzurufendes(s) Gerät(e) (z. B. SIP/123&amp;SIP/124)
+;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
+exten =&gt; s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
+exten =&gt; s,n,Goto(s-${DIALSTATUS},1)        ; zum Status (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten =&gt; s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Ansage "nicht erreichbar"
+exten =&gt; s-BUSY,1,VoiceMail(${ARG2},b)      ; Ansage "besetzt"
+exten =&gt; s-ANSWER,1,Hangup()                ; zur Sicherheit nach dem Gespräch auflegen
+exten =&gt; _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln</pre></div></div></div><div class="section" title="Die Apfelmus GmbH" id="voicemail-beispiele-firma"><div class="titlepage"><div><div><h3 class="title" id="voicemail-beispiele-firma">Die Apfelmus GmbH</h3></div></div></div><div class="para">Die in <a class="xref" href="case-study.html" title="Kapitel 5. Case-Study einer Beispielfirma">Kapitel 5, <i>Case-Study einer Beispielfirma</i></a> vorgestellte Apfelmus GmbH
+      benötigt ein umfangreicheres Voicemail-System. Wir bedienen uns dieses
+      Szenarios, um die Möglichkeiten des Voicemail-Systems näher zu
+      erläutern.</div><div class="section" title="Aufgabenstellung" id="voicemail-beispiele-firma-aufgabe"><div class="titlepage"><div><div><h4 class="title" id="voicemail-beispiele-firma-aufgabe">Aufgabenstellung</h4></div></div></div><div class="para">Folgende Einstellungen sollen für jede Voicemailbox als
+        Grundeinstellung vorgegeben werden:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para">Sprachnachrichten werden im WAV-Format
+            abgespeichert.</div></li><li class="listitem"><div class="para">Jede Voicemailbox kann maximal 200 Nachrichten
+            abspeichern.</div></li><li class="listitem"><div class="para">Eine Sprachnachricht darf maximal 5 Minuten lang
+            sein.</div></li><li class="listitem"><div class="para">Sprachnachrichten werden auf dem System gespeichert und
+            dem Nutzer als Attachment per E-Mail zugestellt.</div></li></ul></div><div class="para">Einzelne Abteilungen haben darüber hinaus noch zusätzliche
+        Wünsche und Bedürfnisse für ihre Voicemailboxen:</div><div class="informaltable"><table border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>Voicemailbox</th><th>Funktion</th><th>Bemerkung</th></tr></thead><tbody><tr><td>150</td><td>Hausmeister</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Eine Benachrichtigung wird nur per Pager
+                      zugestellt und nicht per E-Mail.</div></li><li class="listitem"><div class="para">Anrufer dürfen die Sprachnachricht vor dem
+                      Abspeichern noch einmal anhören und gegebenenfalls
+                      ändern.</div></li><li class="listitem"><div class="para">Nach dem Abhören der Nachricht kann der Anrufer
+                      aus dem Menü zurückgerufen werden.</div></li></ul></div></td></tr><tr><td>160 - 169</td><td>IT</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">In der IT-Abteilung bekommt jeder Mitarbeiter
+                      eine eigene Voicemailbox.</div></li><li class="listitem"><div class="para">Es wird nur dann auf die Voicemailboxen
+                      umgeleitet, wenn kein Mitarbeiter ans Telefon geht. Bei
+                      besetztem Anschluss kann hingegen keine Nachricht
+                      hinterlassen werden.<sup>[<a id="idp20205040" href="#ftn.idp20205040" class="footnote">a</a>]</sup></div></li></ul></div></td></tr><tr><td>802</td><td>Verkauf Inland</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Es wird keine E-Mail verschickt.<sup>[<a id="idp20201888" href="#ftn.idp20201888" class="footnote">b</a>]</sup></div></li><li class="listitem"><div class="para">Bei der Abfrage der Voicemailbox muss kein
+                      Passwort eingegeben werden.</div></li></ul></div></td></tr><tr><td>803</td><td>Verkauf Ausland</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Es wird keine E-Mail verschickt.</div></li><li class="listitem"><div class="para">Bei der Abfrage der Voicemailbox muss kein
+                      Passwort eingegeben werden.</div></li></ul></div></td></tr><tr><td>201</td><td>Geschäftsführer 1</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Anrufer dürfen die Sprachnachricht vor dem
+                      Abspeichern noch einmal anhören und gegebenenfalls
+                      ändern.</div></li><li class="listitem"><div class="para">Nach dem Abhören der Nachricht kann der Anrufer
+                      aus dem Menü zurückgerufen werden.</div></li></ul></div></td></tr><tr><td>202</td><td>Geschäftsführer 2</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Anrufer dürfen die Sprachnachricht vor dem
+                      Abspeichern noch einmal anhören und gegebenenfalls
+                      ändern.</div></li><li class="listitem"><div class="para">Nach dem Abhören der Nachricht kann der Anrufer
+                      aus dem Menü zurückgerufen werden.</div></li></ul></div></td></tr><tr><td>804</td><td>Sekretariat</td><td><div class="itemizedlist"><ul><li class="listitem"><div class="para">Anrufer dürfen die Sprachnachricht vor dem
+                      Abspeichern noch einmal anhören und gegebenenfalls
+                      ändern.</div></li></ul></div></td></tr></tbody><tbody class="footnotes"><tr><td colspan="3"><div class="footnote"><div class="para">Dies ist eine Vorsichtsmaßnahme, die einen
+                          Denial-of-Service im Falle eines großen IT-Problems
+                          verhindern soll. Wenn alle Mitarbeiter eine
+                          Nachricht auf dem Voicemail-System hinterlassen
+                          würden, dann käme die IT-Abteilung mit dem Abhören
+                          dieser Nachrichten nicht mehr nach.</div></div><div class="footnote"><div class="para">In der Verkäufergruppe sind mehrere
+                          Personen, es soll daher nicht eine E-Mail an eine
+                          bestimmte Einzelperson geschickt werden. Man könnte
+                          aber die Funktion vieler SIP-Telefone nutzen, mit
+                          einem Blinklicht anzuzeigen, ob eine Nachricht in
+                          der Voicemailbox vorhanden ist.</div></div></td></tr></tbody></table></div></div><div class="section" title="Lösung" id="voicemail-beispiele-firma-loesung"><div class="titlepage"><div><div><h4 class="title" id="voicemail-beispiele-firma-loesung">Lösung</h4></div></div></div><div class="para">Die <code class="filename">voicemail.conf</code> der Apfelmus GmbH
+        sieht wie folgt aus:</div><pre class="programlisting">[general]
+; Die Sprachnachrichten werden im qualitativ hochwertigen 
+; WAV-Format gespeichert.
+format = wav
+
+; Die E-Mails mit den Sprachnachrichten für die Nutzer erhalten 
+; als Absender: voicemailsystem@apfelmus-gmbh.de
+serveremail = voicemailsystem@apfelmus-gmbh.de
+
+; Es dürfen maximal 200 Nachrichten pro Mailbox 
+; gespeichert werden.
+maxmsg = 200
+
+; Die maximale Länge einer Sprachnachricht ist 5 Minuten.
+maxmessage = 300
+
+; Text für die Benachrichtigungs-E-Mail.
+; Muss in einer Zeile stehen!
+emailbody = Guten Tag ${VM_NAME},\n\nSie haben eine neue Nachricht von ${VM_CALLERID} in Ihrer Voicemailbox ${VM_MAILBOX}. Bitte rufen Sie die 800 an, um die Nachricht abzuhoeren.\n\n-- Asterisk Voicemail System\n
+
+; Text für die Benachrichtigung per Pager.
+; Muss in einer Zeile stehen!
+pagerbody = Neue Voicemail von ${VM_CALLERID} um ${VM_DATE}.
+
+; Voice-Nachrichten anhängen:
+attach = yes
+
+[default]
+; Die Syntax für die Konfigurationszeilen ist:
+; MailboxNr =&gt; Passwort,Name,E-Mail,Pager,Optionen
+150 =&gt; 1234,Hans Hausmeister,,pager.hausmeister@apfelmus-gmbh.de,review=yes|callback=interne-gespraeche
+802 =&gt; 1234,Verkauf Inland
+803 =&gt; 1234,Verkauf Ausland
+201 =&gt; 1234,Hans Wichtig,geschaeftsfuehrer1@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
+202 =&gt; 1234,Uwe Wichtig,geschaeftsfuehrer2@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
+804 =&gt; 1234,Sekretariat,sekr@apfelmus-gmbh.de,,,review=yes</pre><div class="para">Und in der <code class="filename">extensions.conf</code> wird auf die
+        Voicemailbox wie folgt verwiesen:</div><pre class="programlisting">[hausmeister]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-hausmeister
+
+[it]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+include =&gt; voicemailsystem-normal
+
+[geschaeftsfuehrer]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[sekretariat]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[verkauf-national]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-verkauf-national
+
+[verkauf-ausland]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-verkauf-ausland
+
+[versand]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[produktion]
+include =&gt; interne-gespraeche
+include =&gt; voicemailsystem-komfort
+
+[sonstige]
+
+[macro-simple];
+;  ${ARG1} - anzuklingelnde(s) Gerät(e) (z. B. SIP/123&amp;SIP/124)
+;  ${ARG2} - Mailbox (oft gleich ${MACRO_EXTEN})
+exten =&gt; s,1,Dial(${ARG1},30)               ; max. 30 Sekunden klingeln
+exten =&gt; s,n,Goto(s-${DIALSTATUS},1)        ; je nach Status springen (NOANSWER,BUSY,CHANUNAVAIL,CONGESTION,ANSWER)
+exten =&gt; s-NOANSWER,1,VoiceMail(${ARG2},u)  ; Voicemail mit Ansage "nicht erreichbar"
+exten =&gt; s-BUSY,1,VoiceMail(${ARG2},b)      ; Voicemail mit Ansage "besetzt"
+exten =&gt; s-ANSWER,1,Hangup()                ; zur Sicherheit nach Gespräch auflegen
+exten =&gt; _s-.,1,Goto(s-NOANSWER,1)          ; alles andere wie nicht erreichbar behandeln
+
+[interne-gespraeche]
+; Wenn der Hausmeister nicht ans Telefon geht, wird
+; das Telefonat auf die Voicemailbox 150 geleitet:
+exten =&gt; _15X,1,Macro(simple|SIP/${EXTEN}|150)
+
+; Die IT hat normale Voicemailboxen:
+exten =&gt; _16X,1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+
+; Die beiden Geschäftsführer haben eine eigene Voicemailbox:
+exten =&gt; _20[1-2],1,Macro(simple|SIP/${EXTEN}|${EXTEN})
+
+; Das Sekretariat hat eine Gruppenmailbox:
+exten =&gt; _2[3-6]X,1,Macro(simple|SIP/${EXTEN}|804)
+
+; Der Verkauf Inland hat eine Gruppenmailbox:
+exten =&gt; _3[0-4]X,1,Macro(simple|SIP/${EXTEN}|802)
+
+; Der Verkauf Ausland hat eine Gruppenmailbox:
+exten =&gt; _3[5-9]X,1,Macro(simple|SIP/${EXTEN}|803)
+
+; Alle anderen erhalten keine Voicemailbox.
+exten =&gt; _[4-5]XX,1,Dial(SIP/${EXTEN},30)
+
+
+[voicemailsystem-komfort]
+exten =&gt; 800,1,VoiceMailMain(${CALLERID(num)})
+
+[voicemailsystem-normal]
+exten =&gt; 801,1,VoiceMailMain()
+
+[voicemailsystem-hausmeister]
+exten =&gt; 800,1,VoiceMailMain(150)
+
+[voicemailsystem-verkauf-national]
+exten =&gt; 800,1,VoiceMailMain(802,s)
+
+[voicemailsystem-verkauf-ausland]
+exten =&gt; 800,1,VoiceMailMain(803,s)</pre></div><div class="section" title="Besonderheiten" id="voicemail-beispiele-firma-besonderheiten"><div class="titlepage"><div><div><h4 class="title" id="voicemail-beispiele-firma-besonderheiten">Besonderheiten</h4></div></div></div><div class="para">Die <code class="filename">extensions.conf</code> der Apfelmus GmbH
+        sieht jetzt schon etwas aufwendiger aus. Das liegt daran, dass wir
+        verschiedene Voicemailbox-Arten verwenden. Es gibt einmal die normale
+        Voicemailbox und dann noch die Gruppenvoicemailboxen für den Verkauf
+        und das Sekretariat. Weiterhin sollen die Mitarbeiter des Verkaufs
+        ihre Voicemailboxen ohne Passwort-Eingabe abrufen können. Das Ganze
+        soll natürlich für den einzelnen Mitarbeiter möglichst komfortabel
+        abgebildet werden. Aus diesem Grund bleibt für alle User des Systems
+        die <code class="code">800</code> die Rufnummer der Voicemailbox, unter der sie
+        dieselbe abrufen können.</div></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="voicemail-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Beispielanwendungen</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-beispiele.html#voicemail-beispiele-meier" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Die Voicemailbox der Familie
+      Meier</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="voicemail-beispiele.html#voicemail-beispiele-firma" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Die Apfelmus GmbH</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-applikationen.html" title="pfc level3 breadcrumb-link section sectlevel1">Applikationen</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-voicemail.conf.html" title="pfc level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">voicemail.conf</code>
+    </a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-telefonbuch.html" title="pfc level3 breadcrumb-link section sectlevel1">Telefonbuch
+    (Dial-by-Name)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="voicemail-passwortspeicher.html" title="pfc level3 breadcrumb-link section sectlevel1"><code xmlns="http://www.w3.org/1999/xhtml" class="filename">voicemail.conf</code> als Passwortspeicher</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="minivm.html" title="pfc level3 breadcrumb-link section sectlevel1">Mini-VoiceMail (MiniVM)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="voicemail-einleitung.html"><strong>Zurück</strong>13.1. Einleitung</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="voicemail-applikationen.html"><strong>Weiter</strong>13.3. Applikationen</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

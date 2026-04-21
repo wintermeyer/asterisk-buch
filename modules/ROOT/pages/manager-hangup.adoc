@@ -1,0 +1,28 @@
+[[manager-hangup]]
+= `Hangup`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Hangup
+Synopsis: Hangup Channel
+Privilege: call,all
+Description: Hangup a channel
+Variables:
+Channel: The channel name to be hungup
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,6 +1,6 @@
+Action: Hangup
+Synopsis: Hangup Channel
+- Privilege: call,all
++ Privilege: system,call,all
+Description: Hangup a channel
+Variables:
+Channel: The channel name to be hungup

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.7. IAX</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-protokolle.html" title="Kapitel 8. Protokolle" /><link rel="prev" href="sip.html" title="8.6. SIP" /><link rel="next" href="codecs.html" title="Kapitel 9. Codecs" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div xml:lang="de" class="section" title="8.7. IAX" id="iax" lang="de"><div class="titlepage"><div><div><h2 class="title" id="iax">8.7. IAX</h2></div></div></div><a id="idp16121776" class="indexterm"></a><div class="para">IAX<sup>[<a id="idp13944016" href="#ftn.idp13944016" class="footnote">42</a>]</sup> ist das Inter-Asterisk-eXchange-Protokoll, also das
+  Asterisk-eigene VoIP-Protokoll, das bevorzugt verwendet werden
+  soll.</div><div class="section" title="Warum IAX?" id="warum-iax"><div class="titlepage"><div><div><h3 class="title" id="warum-iax">Warum IAX?</h3></div></div></div><div class="para">Braucht die Welt eigentlich <span class="emphasis"><em>noch</em></span> ein
+    VoIP-Protokoll, wo es doch schon SIP, H.323 etc. und eine Reihe
+    proprietärer Protokolle gibt? Darüber lässt sich natürlich streiten. IAX
+    hat aber einige Vorteile. Hier die wichtigsten, neben weiteren technischen
+    Details:</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><span class="bold bold"><strong>Geringer Overhead:</strong></span> Im
+        Vergleich zu beispielsweise SIP (und dem darin verwendeten RTP) hat
+        IAX als reines UDP-Protokoll ein deutlich besseres
+        Nutzdaten-Overhead-Verhältnis.</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>NAT/Firewall-tauglich:</strong></span> Trotz
+        solcher Hürden kann IAX problemlos Anrufe initiieren und
+        entgegennehmen etc. Es muss nur ein einziger Firewall-Port freigegeben
+        werden (bei SIP mindestens 3).</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>Einfaches Protokoll:</strong></span> Es
+        müssen keinerlei Strings geparst werden, was IAX kaum anfällig für
+        Speicherüberläufe macht.</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>Gesprächstransfers:</strong></span>
+        Gespräche können sowohl über einen zentralen Server laufen als auch
+        direkt zwischen zwei Teilnehmern.</div></li><li class="listitem"><div class="para"><span class="bold bold"><strong>Trunking:</strong></span> Dadurch kann über die
+        gleiche Datenleitung eine viel höhere Anzahl von simultanen Gesprächen
+        geführt werden.</div></li></ul></div></div><div class="section" title="Beispiel für eine IAX-Konfiguration" id="iax-beispielkonf"><div class="titlepage"><div><div><h3 class="title" id="iax-beispielkonf">Beispiel für eine IAX-Konfiguration</h3></div></div></div><div class="para">Am Anfang der <code class="filename">iax.conf</code> steht immer der
+    Eintrag <code class="code">[general]</code>. Ähnlich wie bei der
+    <code class="filename">sip.conf</code> werden im <code class="code">[general]</code>-Abschnitt
+    allgemeine Parameter übergeben. Darunter kommt dann die Definition der
+    einzelnen Channels.</div><div class="para">Als Beispiel für die Möglichkeiten des IAX-Protokolls verbinden
+    wir zwei voneinander unabhängige Telefonanlagen mit dem IAX-Protokoll. So
+    können Gespräche von der einen zur anderen Anlage geführt werden und
+    müssen nicht über das Festnetz geroutet werden.</div><div class="section" title="Aufgabenstellung" id="iax-beispielkonf-aufgabe"><div class="titlepage"><div><div><h4 class="title" id="iax-beispielkonf-aufgabe">Aufgabenstellung</h4></div></div></div><div class="para">Es gibt zwei Anlagen mit jeweils zwei Telefonen (1000 und
+      1001). Die Anlagen heißen <code class="code">ast1</code> und <code class="code">ast2</code>. Jede
+      Anlage soll in der Lage sein, Gespräche an die andere Anlage mit dem
+      IAX-Protokoll zu übermitteln. Dazu wird eine Vorwahl benutzt. Die
+      Vorwahl <code class="code">0901</code> verbindet zur Anlage <code class="code">ast1</code>, und
+      <code class="code">0902</code> verbindet zur Anlage <code class="code">ast2</code>. Die Anlage
+      <code class="code">ast1</code> besitzt in diesem Beispiel die IP-Adresse
+      <code class="code">192.168.0.101</code> und die Anlage <code class="code">ast2</code> die
+      IP-Adresse <code class="code">192.168.0.102</code>.</div></div><div class="section" title="Konfiguration ast1" id="iax-beispielkonf-ast1"><div class="titlepage"><div><div><h4 class="title" id="iax-beispielkonf-ast1">Konfiguration ast1</h4></div></div></div><div class="para">Die <code class="filename">iax.conf</code> enthält folgende Konfiguration:
+      <pre class="programlisting">[ast2]
+type = friend
+host = 192.168.0.102
+secret = 1234
+context = test-telefone
+permit = 0.0.0.0/0.0.0.0</pre> Die
+      <code class="filename">extensions.conf</code> enthält folgende Konfiguration:
+      <pre class="programlisting">[via-asterisk2]
+exten =&gt; 09021000,1,Dial(IAX2/ast2/1000)
+exten =&gt; 09021001,1,Dial(IAX2/ast2/1001)
+;          ^   ^               ^     ^
+;          |   |               |     |
+; virt.Vorwahl ext      Verbindung  ext</pre></div></div><div class="section" title="Konfiguration ast2" id="iax-beispielkonf-ast2"><div class="titlepage"><div><div><h4 class="title" id="iax-beispielkonf-ast2">Konfiguration ast2</h4></div></div></div><div class="para">Die <code class="filename">iax.conf</code> enthält folgende Konfiguration:
+      <pre class="programlisting">[ast1]
+type = friend
+host = 192.168.0.101
+secret = 1234
+context = test-telefone
+permit = 0.0.0.0/0.0.0.0</pre> Die
+      <code class="filename">extensions.conf</code> enthält folgende Konfiguration:
+      <pre class="programlisting">[via-asterisk1]
+exten =&gt; 09011000,1,Dial(IAX2/ast1/1000)
+exten =&gt; 09011001,1,Dial(IAX2/ast1/1001)</pre></div></div></div><div class="section" title="Globale Einstellungen" id="iax-globalekonf"><div class="titlepage"><div><div><h3 class="title" id="iax-globalekonf">Globale Einstellungen</h3></div></div></div><div class="para">Die folgenden Parameter können nur im <code class="code">[general]</code>-Teil
+    definiert werden, sind also gültig für alle Channels. Sie können hier
+    außerdem auch einige der in <a class="xref" href="iax.html#iax-channelkonf" title="Channel-Einstellungen">„Channel-Einstellungen“</a>
+    beschriebenen Einstellungen verwenden.</div><div class="section" title="bandwidth" id="iax-globalekonf-bandwidth"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-bandwidth"><code class="code">bandwidth</code></h4></div></div></div><a id="idp16802480" class="indexterm"></a><a id="idp17064960" class="indexterm"></a><pre class="synopsis">bandwidth = <em class="replaceable"><code>[low|medium|high]</code></em></pre><div class="para">Dient als Gruppierung verschiedener Soundcodecs. Auf diese
+      Weise kann man einfacher bestimmte Situationen definieren. Das ist eine
+      komfortable Alternative zu <code class="code">allow</code> und <code class="code">disallow</code>
+      (<a class="xref" href="iax.html#iax-globalekonf-allow" title="allow">„<code class="code">allow</code>“</a>).</div><div class="variablelist"><dl><dt><span class="term"><code class="code">high</code></span></dt><dd><div class="para">Erlaubt alle Codecs: G.723.1, GSM, ulaw (G.711), alaw,
+            G.726, ADPCM, slinear, LPC10, G.729, Speex, iLBC. Sollte nur bei
+            Verbindungen ab 10 Mbit/s verwendet werden.</div></dd><dt><span class="term"><code class="code">medium</code></span></dt><dd><div class="para">Verbietet die Codecs slinear, ulaw und alaw.</div></dd><dt><span class="term"><code class="code">low</code></span></dt><dd><div class="para">Verbietet zusätzlich die Codecs G.726 und
+            ADPCM.</div></dd></dl></div><div class="para">Beispiel:</div><pre class="programlisting">bandwidth = low
+disallow = lpc10   ; hat schlechte Qualität</pre></div><div class="section" title="allow" id="iax-globalekonf-allow"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-allow"><code class="code">allow</code></h4></div></div></div><a id="idp18549264" class="indexterm"></a><a id="idp15890320" class="indexterm"></a><pre class="synopsis">allow = <em class="replaceable"><code>[all|Name des Codecs]</code></em></pre><div class="para">Bestimmte Soundcodecs können gezielt erlaubt
+      (<code class="code">allow</code>) oder verboten (<code class="code">disallow</code>) werden.
+      Default ist <code class="code">allow=all</code>. Die möglichen Codecs sind:
+      <code class="code">g723.1</code>, <code class="code">gsm</code>, <code class="code">ulaw</code>,
+      <code class="code">alaw</code>, <code class="code">g726</code>, <code class="code">slinear</code>,
+      <code class="code">plc10</code>, <code class="code">adpcm</code>, <code class="code">g729</code>,
+      <code class="code">speex</code>, <code class="code">ilbc</code>, <code class="code">h261</code>,
+      <code class="code">h263</code> und der Platzhalter <code class="code">all</code>. Siehe auch
+      <code class="code">bandwidth</code> (<a class="xref" href="iax.html#iax-globalekonf-bandwidth" title="bandwidth">„<code class="code">bandwidth</code>“</a>)
+      für eine komfortable Einstellung. <code class="code">allow</code> und
+      <code class="code">disallow</code> können mehrmals verwendet werden und sind damit
+      eine Ausnahme.</div><div class="para">Beispiel:</div><pre class="programlisting">disallow = all
+allow = ulaw
+allow = gsm</pre></div><div class="section" title="disallow" id="iax-globalekonf-disallow"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-disallow"><code class="code">disallow</code></h4></div></div></div><a id="idp18509968" class="indexterm"></a><a id="idp15946320" class="indexterm"></a><pre class="synopsis">disallow = <em class="replaceable"><code>[all|Name des Codecs]</code></em></pre><div class="para">Siehe <code class="code">allow</code> (<a class="xref" href="iax.html#iax-globalekonf-allow" title="allow">„<code class="code">allow</code>“</a>).</div></div><div class="section" title="codecpriority" id="iax-globalekonf-codecpriority"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-codecpriority"><code class="code">codecpriority</code></h4></div></div></div><a id="idp16422304" class="indexterm"></a><a id="idp18787904" class="indexterm"></a><pre class="synopsis">codecpriority = <em class="replaceable"><code>[caller|host|disabled|reqonly]</code></em></pre><div class="para">Definiert, welcher Teilnehmer einer eingehenden Verbindung die
+      höhere Priorität bei der Verhandlung des Soundcodecs hat. Default:
+      <code class="code">host.</code></div><div class="variablelist"><dl><dt><span class="term"><code class="code">caller</code></span></dt><dd><div class="para">Der Anrufer hat Vorrang vor dem Host.</div></dd><dt><span class="term"><code class="code">host</code></span></dt><dd><div class="para">Der Host hat Vorrang vor dem Anrufer.</div></dd><dt><span class="term"><code class="code">disabled</code></span></dt><dd><div class="para">Codec-Präferenzen werden nicht berücksichtigt.</div></dd><dt><span class="term"><code class="code">reqonly</code></span></dt><dd><div class="para">Codec-Präferenzen werden ignoriert, und der Anruf wird
+            nur dann akzeptiert, wenn der angeforderte Codec verfügbar
+            ist.</div></dd></dl></div><div class="para">Beispiel:</div><div class="para"><code class="code">codecpriority = caller</code></div></div><div class="section" title="authdebug" id="iax-globalekonf-authdebug"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-authdebug"><code class="code">authdebug</code></h4></div></div></div><a id="idp15735056" class="indexterm"></a><a id="idp16372928" class="indexterm"></a><pre class="synopsis">authdebug = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Standardmäßig ist ein minimales Debugging bei der Autorisierung
+      von IAX-Verbindungen eingestellt. Dies kann mit
+      <code class="code">authdebug=no</code> deaktiviert werden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">authdebug = no</code></div></div><div class="section" title="autokill" id="iax-globalekonf-autokill"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-autokill"><code class="code">autokill</code></h4></div></div></div><a id="idp15972112" class="indexterm"></a><a id="idp17262176" class="indexterm"></a><pre class="synopsis">autokill = <em class="replaceable"><code>[yes|Timeout in Millisekunden]</code></em></pre><div class="para">Falls <code class="code">autokill</code> nicht gesetzt ist, versucht
+      Asterisk einen nicht erreichbaren Host sehr lange zu erreichen. Dies
+      kann bei vielen gleichzeitigen Versuchen (auf mehreren Channels) zu
+      Performance-Problemen führen. Mit <code class="code">autokill=yes</code> wird die
+      Verbindung nach 2000 Millisekunden abgebrochen. Alternativ kann man auch
+      die Anzahl der Millisekunden angeben.</div><div class="para">Beispiel:</div><div class="para"><code class="code">autokill = 3500</code></div></div><div class="section" title="amaflags" id="iax-globalekonf-amaflags"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-amaflags"><code class="code">amaflags</code></h4></div></div></div><a id="idp14404496" class="indexterm"></a><a id="idp11252512" class="indexterm"></a><pre class="synopsis">amaflags = <em class="replaceable"><code>[default|omit|billing|documentation]</code></em></pre><div class="para">AMA ist die Abkürzung für <span class="quote">„<span class="quote">Automatic Message
+      Accounting</span>“</span> und spezifiziert uunter anderem Standardmechanismen
+      zur Erzeugung und Übermittlung von Anrufprotokollen (Call Data Records
+      bzw. Call Detail Records bzw. CDRs; auf Deutsch auch
+      Kommunikationsdatensatz, KDS, genannt).</div><div class="para">Mit <code class="code">omit</code> werden keine Aufzeichnungen
+      gemacht.</div><div class="para">Beispiel:</div><div class="para"><code class="code">amaflags = billing</code></div></div><div class="section" title="bindaddr" id="iax-globalekonf-bindaddr"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-bindaddr"><code class="code">bindaddr</code></h4></div></div></div><a id="idp16626816" class="indexterm"></a><a id="idp14035232" class="indexterm"></a><pre class="synopsis">bindaddr = <em class="replaceable"><code>[IP-Adresse]</code></em></pre><div class="para">Definiert die IP-Adresse, auf der Verbindungsanfragen
+      beantwortet werden. Default: <code class="code">0.0.0.0</code> für alle
+      Adressen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">bindaddr = 0.0.0.0</code></div></div><div class="section" title="bindport" id="iax-globalekonf-bindport"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-bindport"><code class="code">bindport</code></h4></div></div></div><a id="idp16234640" class="indexterm"></a><a id="idp17200864" class="indexterm"></a><pre class="synopsis">bindport = <em class="replaceable"><code>[Port-Nummer]</code></em></pre><div class="para">Definiert den Netzwerkport, auf dem Verbindungsanfragen
+      beantwortet werden. Der Default-Port für IAX (IAX2!) ist 4569 (IAX
+      Version 1: 5036).</div><div class="important"><h2>Wichtig</h2><div class="para">Diese Einstellung muss immer <span class="emphasis"><em>vor</em></span> dem
+        <code class="code">bindaddr</code>-Eintrag erfolgen!</div></div><div class="para">Beispiel:</div><div class="para"><code class="code">bindport = 4569</code></div></div><div class="section" title="delayreject" id="iax-globalekonf-delayreject"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-delayreject"><code class="code">delayreject</code></h4></div></div></div><a id="idp12144432" class="indexterm"></a><a id="idp16256928" class="indexterm"></a><pre class="synopsis">delayreject = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Diese Einstellung kann auf <code class="code">yes</code> gesetzt werden, um
+      eventuelle Brute-Force-Attacken (zum Passwortknacken) abzuschwächen.
+      Dann wird nach jedem falschen Einlogversuch 1000 Millisekunden (also 1
+      Sekunde) gewartet, bis der nächste Versuch akzeptiert wird. Default:
+      <code class="code">no.</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">delayreject = yes</code></div></div><div class="section" title="language" id="iax-globalekonf-language"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-language"><code class="code">language</code></h4></div></div></div><a id="idp15886112" class="indexterm"></a><a id="idp15888704" class="indexterm"></a><pre class="synopsis">language = <em class="replaceable"><code>[en|de|...]</code></em></pre><div class="para">Konfiguriert die Sprache für den entsprechenden Channel. Die
+      gobale Standardsprache ist Englisch. Die Sprache, die gesetzt ist, wird
+      vom Kanal als Informationselement gesendet. Diese Einstellung wird auch
+      von Anwendungen wie <code class="code">SayNumber()</code> gelesen, die für
+      verschiedene Sprachen unterschiedliche Sprachbausteine
+      verwenden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">language = de</code></div></div><div class="section" title="mailboxdetail" id="iax-globalekonf-mailboxdetail"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-mailboxdetail"><code class="code">mailboxdetail</code></h4></div></div></div><a id="idp15963904" class="indexterm"></a><a id="idp16798752" class="indexterm"></a><pre class="synopsis">mailboxdetail = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Wenn <code class="code">mailboxdetail</code> auf <code class="code">yes</code> gesetzt
+      ist, wird dem Apparat des Mailboxbenutzers die Anzahl der neuen (und die
+      der alten) Nachrichten übermittelt (zur Anzeige auf dem Display o. Ä.).
+      Ansonsten wird nur signalisiert, dass es neue Nachrichten gibt, ohne die
+      Anzahl zu nennen.</div><div class="para">Diese Einstellung ist bei neueren Asterisk-Versionen nicht mehr
+      verfügbar. Mittlerweile verhält sich Asterisk immer (standardkonform)
+      wie <code class="code">mailboxdetail=yes.</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">mailboxdetail = yes</code></div></div><div class="section" title="tos" id="iax-globalekonf-tos"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-tos"><code class="code">tos</code></h4></div></div></div><a id="idp18887040" class="indexterm"></a><a id="idp18647008" class="indexterm"></a><pre class="synopsis">tos = <em class="replaceable"><code>[...]</code></em></pre><div class="para">ToS steht für <span class="quote">„<span class="quote">Type of Service</span>“</span>; das sind Flags im
+      IP-Header, die von manchen Routern ausgelesen und befolgt werden. Damit
+      kann das Routingverhalten optimiert werden. Die empfohlene Einstellung
+      für IAX ist <code class="code">tos=ef</code>. ef steht für Expedited Forwarding, also
+      etwa Express-Übertragung, was nach geringer Latenz, geringer Verlustrate
+      und wenig Jitter verlangt. Default ist <code class="code">none</code> (wegen der
+      Rückwärtskompatibilität).</div><div class="para">Die Vielzahl der möglichen Werte soll hier nicht weiter
+      beschrieben werden, Wenn Sie sich dafür interessieren, lesen Sie die
+      Spezifizierung von Differentiated Services in RFC 2474 und die
+      IANA-DSCP<sup>[<a id="idp16341904" href="#ftn.idp16341904" class="footnote">43</a>]</sup>. Hier folgt nur ein ins Deutsche übersetzter Auszug aus
+      der Asterisk beiliegenden Datei <code class="filename">doc/README.tos</code>
+      (1.2) / <code class="filename">doc/ip-tos.txt</code> (1.4):</div><div class="blockquote"><table border="0" width="100%" cellspacing="0" cellpadding="0" class="blockquote" summary="Block quote"><tr><td valign="top"> </td><td valign="top"><div class="para">Die zulässigen Werte für die tos*-Einstellungen
+        sind:</div><div class="para"><code class="code">be</code> (best effort, die normale, geringste
+        Priorität), <code class="code">cs1</code>, <code class="code">af11</code>, <code class="code">af12</code>,
+        <code class="code">af13</code>, <code class="code">cs2</code>, <code class="code">af21</code>,
+        <code class="code">af22</code>, <code class="code">af23</code>, <code class="code">cs3</code>,
+        <code class="code">af31</code>, <code class="code">af32</code>, <code class="code">af33</code>,
+        <code class="code">cs4</code>, <code class="code">af41</code>, <code class="code">af42</code>,
+        <code class="code">af42</code>, <code class="code">ef</code> (expedited forwarding),
+        <code class="code">lowdelay</code> (geringe Latenz), <code class="code">throughput</code>
+        (Durchsatz), <code class="code">reliability</code> (Zuverlässigkeit),
+        <code class="code">mincost</code> (geringste monetäre Kosten), <code class="code">none</code>
+        (wie <code class="code">be</code>)</div><div class="para">Außerdem kann man auch deren numerische Pendants angeben (z.
+        B. <code class="code">tos=0x18</code>).</div><div class="para">Die Werte <code class="code">lowdelay</code>, <code class="code">throughput</code>,
+        <code class="code">reliability</code>, <code class="code">mincost</code> und <code class="code">none</code>
+        sind veraltet und sollen nicht mehr verwendet werden, da sie das
+        ToS-Byte nach dem alten <span class="quote">„<span class="quote">IP precedence</span>“</span>-Modell aus RFC
+        791 und 1349 setzen.</div><pre class="screen">===========================================
+Konfig.-         Parameter     Empfohlene
+Datei                          Einstellung
+-------------------------------------------
+sip.conf         tos_sip       cs3
+sip.conf         tos_audio     ef
+sip.conf         tos_video     af41
+-------------------------------------------
+iax.conf         tos           ef
+-------------------------------------------
+iaxprov.conf     tos           ef
+===========================================</pre><div class="para">Für den größtmöglichen Nutzen müssen Sie sicherstellen, dass
+        Ihre Netzwerk-Hardware ToS unterstützt (ggf. aktivieren). Für
+        Cisco-Geräte siehe <span class="quote">„<span class="quote">Enterprise QoS Solution Reference Network
+        Design Guide</span>“</span><sup>[<a id="idp11208928" href="#ftn.idp11208928" class="footnote">44</a>]</sup> , für Linux-Systeme siehe <span class="quote">„<span class="quote">Linux Advanced Routing
+        &amp; Traffic Control HowTo</span>“</span><sup>[<a id="idp16796112" href="#ftn.idp16796112" class="footnote">45</a>]</sup>.</div></td><td valign="top"> </td></tr><tr><td valign="top"> </td><td colspan="2" align="right" valign="top">--<span class="attribution"><code class="filename">doc/ip-tos.txt</code></span></td></tr></table></div><div class="para">Beispiel:</div><div class="para"><code class="code">tos = ef</code></div></div><div class="section" title="adsi" id="iax-globalekonf-adsi"><div class="titlepage"><div><div><h4 class="title" id="iax-globalekonf-adsi"><code class="code">adsi</code></h4></div></div></div><a id="idp11204976" class="indexterm"></a><a id="idp16955120" class="indexterm"></a><pre class="synopsis">adsi = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">ADSI (Analog Display Services Interface)<sup>[<a id="idp14443408" href="#ftn.idp14443408" class="footnote">46</a>]</sup> sind verschiedene Datendienste für analoge Telefone mit
+      einem Display, z. B. blinkende LED/Anzeige im Display bei wartenden
+      Nachrichten etc.</div><div class="para">Falls Sie kompatible Telefone haben, können Sie diesen Dienst
+      aktivieren.</div><div class="para">Beispiel:</div><div class="para"><code class="code">adsi = yes</code></div></div><div class="section" title="register" id="iax-channelkonf-register"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-register"><code class="code">register</code></h4></div></div></div><a id="idp18267184" class="indexterm"></a><a id="idp16983968" class="indexterm"></a><pre class="synopsis">register =&gt; <em class="replaceable"><code>username[:password]@remote-host</code></em></pre><div class="para">Ist unser Asterisk-Server nur über eine dynamische IP-Adresse
+      erreichbar (also kein DNS, sondern nur eine IP-Adresse), so muss er sich
+      bei jedem IP-Adresswechsel bei seiner Gegenstelle neu registrieren,
+      sonst weiß die Gegenstelle nicht, an welche IP-Adresse sie Gespräche
+      durchstellen soll. Dazu wird <code class="code">register =&gt;</code>
+      verwendet.</div><div class="para">Beachten Sie, dass <code class="code">register</code>-Angaben nur benutzt
+      werden, wenn das entfernte Ende Sie als Peer und
+      <code class="code">host=dynamic</code> eingestellt hat.</div><div class="para">Das grundlegende Format einer Registerangabe sieht wie folgt
+      aus:</div><div class="para"><code class="code">register =&gt;
+      username[:password]@remote-host</code></div><div class="para">Alternativ können Sie, indem Sie den Namen eines geeigneten
+      RSA-Schlüssels<sup>[<a id="idp14325568" href="#ftn.idp14325568" class="footnote">47</a>]</sup> in eckige Klammern (<code class="code">[]</code>) setzen, einen
+      RSA-Schlüssel spezifizieren:<sup>[<a id="idp14418320" href="#ftn.idp14418320" class="footnote">48</a>]</sup></div><div class="para"><code class="code">register =&gt;
+      username:[rsa-key-name]@remote-host</code></div><div class="para">Standardmäßig werden Registeranfragen über Port 4569 gesendet.
+      Sie können aber durch Anhängen von
+      <code class="code">:<em class="replaceable"><code>Portnummer</code></em></code> (also z. B.
+      <code class="code">:4444</code>) an den Hostnamen explizit einen anderen
+      angeben.</div></div></div><div class="section" title="Channel-Einstellungen" id="iax-channelkonf"><div class="titlepage"><div><div><h3 class="title" id="iax-channelkonf">Channel-Einstellungen</h3></div></div></div><div class="para">Die folgenden Parameter können für die einzelnen Channel
+    definiert werden. Einige können aber auch im Abschnitt
+    <code class="code">[general]</code> verwendet werden.</div><div class="section" title="type" id="iax-channelkonf-type"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-type"><code class="code">type</code></h4></div></div></div><a id="idp14383616" class="indexterm"></a><a id="idp13963104" class="indexterm"></a><pre class="synopsis">type = <em class="replaceable"><code>[user|peer|friend]</code></em></pre><div class="para">Legt fest, ob es sich um eine Verbindung zu einem
+      <code class="code">user</code> (z. B. einem Benutzer-Endgerät, das sich mit uns
+      verbindet) oder einem <code class="code">peer</code> (z. B. einem Gateway in ein
+      anderes Asterisk-Netzwerk, zu dem wir die Verbindung herstellen)
+      handelt. <code class="code">friend</code> ist eine Kurzschreibweise, um einen
+      <code class="code">user</code> und einen <code class="code">peer</code> mit den gleichen Angaben
+      zu definieren.</div><div class="para">Beispiel:</div><div class="para"><code class="code">type = peer</code></div><div class="warning"><h2>Warnung</h2><div class="para">Wenn Sie nicht für alle User-Einträge
+        (<code class="code">type=user</code>) IP-basierte Zugangsbeschränkungen (siehe
+        <a class="xref" href="iax.html#iax-channelkonf-permit" title="permit">„<code class="code">permit</code>“</a>) definiert haben, müssen Sie
+        in der <code class="filename">iax.conf</code> einen Eintrag
+        <code class="code">[guest]</code> haben, bei dem Sie weder <code class="code">auth</code> noch
+        <code class="code">secret</code> angeben. Andernfalls können sich beliebige User
+        verbinden, indem sie ein Passwort erraten.</div><div class="para">Beispiel:</div><pre class="programlisting">[guest]
+type=user
+callerid="IAX-Gast-Benutzer"</pre></div></div><div class="section" title="accountcode" id="iax-channelkonf-accountcode"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-accountcode"><code class="code">accountcode</code></h4></div></div></div><a id="idp16787264" class="indexterm"></a><a id="idp16789856" class="indexterm"></a><pre class="synopsis">accountcode = <em class="replaceable"><code>[Abrechnungsnummer]</code></em></pre><div class="para">Der angegebene String wird als Dateiname für die
+      Abrechnungsdateien im Verzeichnis
+      <code class="filename">/var/log/asterisk/cdr-csv/</code> benutzt. Verwenden Sie
+      daher nur Kleinbuchstaben, Ziffern, den Bindestrich und den
+      Unterstrich.</div><div class="para">Beispiel:</div><div class="para"><code class="code">accountcode = iax-hausmeister</code></div></div><div class="section" title="bandwidth" id="iax-channelkonf-bandwidth"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-bandwidth"><code class="code">bandwidth</code></h4></div></div></div><a id="idp16829968" class="indexterm"></a><a id="idp16669952" class="indexterm"></a><pre class="synopsis">bandwidth = <em class="replaceable"><code>[low|medium|high]</code></em></pre><div class="para"><code class="code">bandwidth</code> dient als Gruppierung verschiedener
+      Soundcodecs. Auf diese Weise kann man einfacher bestimmte Situationen
+      definieren (siehe <a class="xref" href="iax.html#iax-globalekonf-bandwidth" title="bandwidth">„<code class="code">bandwidth</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">bandwidth = low</code></div></div><div class="section" title="allow" id="iax-channelkonf-allow"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-allow"><code class="code">allow</code></h4></div></div></div><a id="idp11211072" class="indexterm"></a><a id="idp15366880" class="indexterm"></a><pre class="synopsis">allow = <em class="replaceable"><code>[all|Name des Codecs]</code></em></pre><div class="para">Bestimmte Soundcodecs können gezielt erlaubt
+      (<code class="code">allow</code>) oder verboten (<code class="code">disallow</code>) werden (siehe
+      <a class="xref" href="iax.html#iax-globalekonf-allow" title="allow">„<code class="code">allow</code>“</a>). Dabei ist zu beachten, das
+      eventuell im <code class="code">[general]</code>-Bereich erlaubte Codecs erst durch
+      ein <code class="code">disallow=all</code> wieder verboten werden müssen.</div><div class="para">Diese Parameter sind nicht zu verwechseln mit
+      <code class="code">permit</code> und <code class="code">deny</code> (siehe <a class="xref" href="iax.html#iax-channelkonf-permit" title="permit">„<code class="code">permit</code>“</a>).</div><div class="para">Beispiel:</div><pre class="programlisting">disallow = all
+allow = ulaw
+allow = gsm</pre></div><div class="section" title="disallow" id="iax-channelkonf-disallow"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-disallow"><code class="code">disallow</code></h4></div></div></div><a id="idp18273888" class="indexterm"></a><a id="idp14645920" class="indexterm"></a><pre class="synopsis">disallow = <em class="replaceable"><code>[all|Name des Codecs]</code></em></pre><div class="para">Siehe <code class="code">allow</code> (<a class="xref" href="iax.html#iax-channelkonf-allow" title="allow">„<code class="code">allow</code>“</a>).</div></div><div class="section" title="codecpriority" id="iax-channelkonf-codecpriority"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-codecpriority"><code class="code">codecpriority</code></h4></div></div></div><a id="idp17028336" class="indexterm"></a><a id="idp17030928" class="indexterm"></a><pre class="synopsis">codecpriority = <em class="replaceable"><code>[caller|host|disabled|reqonly]</code></em></pre><div class="para">Definiert, welcher Teilnehmer der Verbindung die höhere
+      Priorität bei der Verhandlung des Soundcodecs hat (siehe <a class="xref" href="iax.html#iax-globalekonf-codecpriority" title="codecpriority">„<code class="code">codecpriority</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">codecpriority = caller</code></div></div><div class="section" title="amaflags" id="iax-channelkonf-amaflags"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-amaflags"><code class="code">amaflags</code></h4></div></div></div><a id="idp14292048" class="indexterm"></a><a id="idp15034624" class="indexterm"></a><pre class="synopsis">amaflags = <em class="replaceable"><code>[default|omit|billing|documentation]</code></em></pre><div class="para">AMA ist die Abkürzung für <span class="quote">„<span class="quote">Automatic Message
+      Accounting</span>“</span> und spezifiziert unter anderem Standardmechanismen
+      zur Erzeugung und Übermittlung von Anrufprotokollen (CDRs) (siehe <a class="xref" href="iax.html#iax-globalekonf-amaflags" title="amaflags">„<code class="code">amaflags</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">amaflags = documentation</code></div></div><div class="section" title="callerid" id="iax-channelkonf-callerid"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-callerid"><code class="code">callerid</code></h4></div></div></div><a id="idp17258080" class="indexterm"></a><a id="idp17260672" class="indexterm"></a><pre class="synopsis">callerid = <em class="replaceable"><code>[Name[ &lt;Nummer&gt;]]</code></em></pre><div class="para">Mit <code class="code">callerid</code> können Sie die angezeigte Caller-ID
+      für einen Nutzer oder ein Peer setzen. Wenn Sie ein Caller-ID-Feld für
+      einen Benutzer definieren, werden alle Anrufe, die auf diesem Kanal
+      eingehen, mit dieser Caller-ID verknüpft, unabhängig davon, was Ihnen
+      das andere Ende sendet. Das ist aus Sicherheitsgründen zu empfehlen
+      (außer, Sie vertrauen dem anderen Ende), da es sehr leicht möglich ist,
+      seine Caller-ID zu fälschen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">callerid = "Mark Spencer" &lt;(256) 428
+      6000&gt;</code></div></div><div class="section" title="host" id="iax-channelkonf-host"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-host"><code class="code">host</code></h4></div></div></div><a id="idp18188800" class="indexterm"></a><a id="idp14430272" class="indexterm"></a><pre class="synopsis">host=<em class="replaceable"><code>[Host|dynamic]</code></em></pre><div class="para">Als <code class="code">host</code> wird entweder der Hostname oder die
+      IP-Adresse des anderen Rechners angegeben. Bei Hosts mit dynamisch
+      vergebenen (also wechselnden) IP-Adressen verwenden Sie den Sonderfall
+      <code class="code">host=dynamic</code>, vorzugsweise in Kombination mit der
+      Einstellung <code class="code">defaultip</code> (<a class="xref" href="iax.html#iax-channelkonf-defaultip" title="defaultip">„<code class="code">defaultip</code>“</a>).</div><div class="para">Beispiele:</div><div class="para"><code class="code">host = 192.168.0.201</code></div><div class="para"><code class="code">host = dynamic</code></div></div><div class="section" title="defaultip" id="iax-channelkonf-defaultip"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-defaultip"><code class="code">defaultip</code></h4></div></div></div><a id="idp16544560" class="indexterm"></a><a id="idp13971008" class="indexterm"></a><pre class="synopsis">defaultip = <em class="replaceable"><code>[IP-Adresse]</code></em></pre><div class="para">Die <code class="code">defaultip</code>-Einstellung ergänzt
+      <code class="code">host=dynamic</code> (siehe <a class="xref" href="iax.html#iax-channelkonf-host" title="host">„<code class="code">host</code>“</a>). Ist ein Host noch nicht bei Ihrem
+      Server angemeldet, versucht Asterisk, Nachrichten an die hier definierte
+      Standard-IP-Adresse zu schicken.</div><div class="para">Beispiel:</div><div class="para"><code class="code">defaultip = 192.168.0.201</code></div></div><div class="section" title="permit" id="iax-channelkonf-permit"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-permit"><code class="code">permit</code></h4></div></div></div><a id="idp14829184" class="indexterm"></a><a id="idp14831776" class="indexterm"></a><pre class="synopsis">permit = <em class="replaceable"><code>IP-Adresse[/Netzmaske]</code></em></pre><div class="para"><code class="code">permit</code> und <code class="code">deny</code> erlauben und
+      beschränken die IP-Adressen, von denen Verbindungen zum entsprechenden
+      Eintrag möglich sind. Üblicherweise wird zuerst ein
+      <code class="code">deny=0.0.0.0/0.0.0.0</code> (alle verbieten) vorangestellt und
+      dann mit <code class="code">permit</code> die erlaubte IP-Adresse oder ein Bereich
+      von Adressen freigegeben. Die Reihenfolge von <code class="code">deny</code> und
+      <code class="code">permit</code> ist entscheidend, und beide können für mehrere
+      Hosts/Bereiche auch mehrfach auftreten. Wenn genau ein Host gemeint ist,
+      können Sie die Netzmaske (wäre <code class="code">255.255.255.255</code>)
+      weglassen.</div><div class="para">Dieses Beispiel erlaubt nur Verbindungen aus dem Bereich
+      <code class="code">192.168.0.*</code> (Netzmaske 24 Bits,
+      Klasse-C-Netzwerk):<pre class="programlisting">deny = 0.0.0.0/0.0.0.0                ; alle verbieten
+permit = 192.168.0.102/255.255.255.0  ; 192.168.0.* erlauben
+permit = 192.168.5.5                  ; 192.168.5.5 erlauben</pre></div><div class="para">Alle erlauben bis auf <code class="code">192.168.*.*</code>:<pre class="programlisting">permit = 0.0.0.0/0.0.0.0              ; alle erlauben
+deny = 192.168.0.0/255.255.0.0        ; 192.168.*.* verbieten</pre></div><div class="para">Das nächste Beispiel ist nicht sinnvoll, da zuerst
+      <code class="code">192.168.0.0</code> bis <code class="code">192.168.0.127</code> verboten, dann
+      aber wieder <span class="emphasis"><em>alle</em></span> erlaubt werden, was die erste
+      Regel überschreibt. So wird also nichts verboten:<pre class="programlisting">deny = 192.168.0.0/255.255.255.127
+permit = 0.0.0.0/0.0.0.0              ; alle erlauben</pre></div></div><div class="section" title="deny" id="iax-channelkonf-deny"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-deny"><code class="code">deny</code></h4></div></div></div><a id="idp14328736" class="indexterm"></a><a id="idp14331328" class="indexterm"></a><pre class="synopsis">deny = <em class="replaceable"><code>[IP-Adresse]/[Netzmaske]</code></em></pre><div class="para">Siehe <code class="code">permit</code> (<a class="xref" href="iax.html#iax-channelkonf-permit" title="permit">„<code class="code">permit</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">deny = 0.0.0.0/0.0.0.0</code></div></div><div class="section" title="auth" id="iax-channelkonf-auth"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-auth"><code class="code">auth</code></h4></div></div></div><a id="idp16101808" class="indexterm"></a><a id="idp18697536" class="indexterm"></a><pre class="synopsis">auth = <em class="replaceable"><code>[plaintext|md5|rsa]</code></em></pre><div class="para">Zum Identifizieren des anderen Peers/Users stehen drei Methoden
+      zur Auswahl: <code class="code">plaintext</code>, <code class="code">md5</code> und
+      <code class="code">rsa</code>.</div><div class="variablelist"><dl><dt><span class="term"><code class="code">plaintext</code><a id="idp16240384" class="indexterm"></a><a id="idp17326608" class="indexterm"></a></span></dt><dd><div class="para">Diese Methode ist sehr unsicher, da das Passwort im
+            Klartext übertragen wird. Sie sollte daher nicht verwendet werden.
+            Das Passwort wird mit <code class="code">secret</code> (<a class="xref" href="iax.html#iax-channelkonf-secret" title="secret">„<code class="code">secret</code>“</a>) angegeben.</div></dd><dt><span class="term"><code class="code">md5</code><a id="idp14447120" class="indexterm"></a><a id="idp18277296" class="indexterm"></a></span></dt><dd><div class="para">In diesem Challenge/Response-Verfahren wird eine
+            MD5-Prüfsumme übertragen. Das Passwort wird mit
+            <code class="code">secret</code> (<a class="xref" href="iax.html#iax-channelkonf-secret" title="secret">„<code class="code">secret</code>“</a>)
+            angegeben.</div></dd><dt><span class="term"><code class="code">rsa</code><a id="idp16979216" class="indexterm"></a><a id="idp16981664" class="indexterm"></a></span></dt><dd><div class="para">Die <code class="filename">rsa</code>-Methode ist das sicherste
+            Verfahren durch öffentliche und private Schlüssel. Diese Schlüssel
+            werden bei <code class="code">inkeys</code> (<a class="xref" href="iax.html#iax-channelkonf-inkeys" title="inkeys">„<code class="code">inkeys</code>“</a>) und <code class="code">outkeys</code>
+            (<a class="xref" href="iax.html#iax-channelkonf-outkey" title="outkey">„<code class="code">outkey</code>“</a>) angegeben.</div></dd></dl></div><div class="para">Mit <code class="code">auth</code> legen Sie eine durch Komma getrennte
+      Liste von erlaubten Authentifizierungsmethoden fest.</div><div class="para">Beispiel:</div><div class="para"><code class="code">auth = rsa,md5</code></div><div class="para">Wenn Sie weder <code class="code">auth</code> noch <code class="code">secret</code>
+      angeben, bedeutet das, dass keine Authentifizierung notwendig
+      ist.</div></div><div class="section" title="secret" id="iax-channelkonf-secret"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-secret"><code class="code">secret</code></h4></div></div></div><a id="idp16680080" class="indexterm"></a><a id="idp15538352" class="indexterm"></a><pre class="synopsis">secret = <em class="replaceable"><code>[Passwort]</code></em></pre><div class="para">Legt das Passwort für die Authentifizierungsmethoden
+      <code class="code">plaintext</code> oder <code class="code">md5</code> fest (siehe <a class="xref" href="iax.html#iax-channelkonf-auth" title="auth">„<code class="code">auth</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">secret = meinpasswort</code></div></div><div class="section" title="inkeys" id="iax-channelkonf-inkeys"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-inkeys"><code class="code">inkeys</code></h4></div></div></div><a id="idp14095792" class="indexterm"></a><a id="idp16478064" class="indexterm"></a><pre class="synopsis">inkeys = <em class="replaceable"><code>[rsa-key:rsa-key:...]</code></em></pre><div class="para">Legt für die Authentifizierungsmethode <code class="code">rsa</code> (siehe
+      <a class="xref" href="iax.html#iax-channelkonf-auth" title="auth">„<code class="code">auth</code>“</a>) den öffentlichen RSA-Schlüssel
+      des zu authentifizierenden Systems fest. Um mehr als einen RSA-Schlüssel
+      mit einer Benutzer-Kanaldefinition zu verknüpfen, trennen Sie die
+      Schlüsselnamen mit einem Doppelpunkt (<code class="code">:</code>). Jeder dieser
+      Schlüssel wird dann eine Verbindung für gültig erklären
+      können.</div><div class="para">Diese Schlüssel müssen als Dateien so benannt sein:
+      <code class="filename">/var/lib/asterisk/keys/<em class="replaceable"><code>schluesselname</code></em>.pub</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">inkeys = server-koblenz:server-bonn</code></div></div><div class="section" title="outkey" id="iax-channelkonf-outkey"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-outkey"><code class="code">outkey</code></h4></div></div></div><a id="idp14438304" class="indexterm"></a><a id="idp14440896" class="indexterm"></a><pre class="synopsis">outkey = <em class="replaceable"><code>[rsa-key]</code></em></pre><div class="para">Sie können die <code class="code">outkey</code>-Option verwenden, um sich
+      bei einem Peer mithilfe eines RSA-Schlüssels zu authentifizieren. Für
+      ausgehende Authentifizierung kann nur ein RSA-Schlüssel verwendet
+      werden. Der <code class="code">outkey</code> wird nicht verteilt, er ist Ihr privater
+      Schlüssel und sollte 3DES-verschlüsselt sein.</div><div class="para">Diese Schlüssel müssen als Dateien so benannt sein:
+      <code class="filename">/var/lib/asterisk/keys/<em class="replaceable"><code>schluesselname</code></em>.key</code></div><div class="para">Beispiel:</div><div class="para"><code class="code">outkey = privater-schluessel</code></div></div><div class="section" title="mailbox" id="iax-channelkonf-mailbox"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-mailbox"><code class="code">mailbox</code></h4></div></div></div><a id="idp16346128" class="indexterm"></a><a id="idp14192400" class="indexterm"></a><pre class="synopsis">mailbox = <em class="replaceable"><code>[Mailboxname[@Mailbox-Context]]</code></em></pre><div class="para">Wenn Sie in einer Kanaldefinition einen Peer mit einer Mailbox
+      verknüpfen, wird Voicemail eine MWI-Nachricht (Message Waiting
+      Indication) an die Knoten am Ende dieses Kanals schicken. Befindet sich
+      die Mailboxnummer in einem anderen Voicemail-Context als
+      <code class="code">default</code>, können Sie sie als
+      <code class="code"><em class="replaceable"><code>mailbox@context</code></em></code> angeben. Um
+      mehrere Mailboxen mit einem einzigen Peer zu verknüpfen, müssen Sie den
+      <code class="code">mailbox</code>-Befehl mehrmals verwenden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">mailbox = 1000</code></div></div><div class="section" title="language" id="iax-channelkonf-language"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-language"><code class="code">language</code></h4></div></div></div><a id="idp15736464" class="indexterm"></a><a id="idp15739056" class="indexterm"></a><pre class="synopsis">language = <em class="replaceable"><code>[en|de|...]</code></em></pre><div class="para">Konfiguriert die Sprache für den entsprechenden Channel. Die
+      Standardsprache ist Englisch. Diese Einstellung wird von verschiedenen
+      Anwendungen wie z. B. der Voicemailbox oder auch der Applikation
+      <code class="code">SayNumber()</code> verwendet, um unterschiedliche Sprachbausteine
+      zu benutzen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">language = de</code></div></div><div class="section" title="context" id="iax-channelkonf-context"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-context"><code class="code">context</code></h4></div></div></div><a id="idp16064048" class="indexterm"></a><a id="idp16066640" class="indexterm"></a><pre class="synopsis">context = <em class="replaceable"><code>[Context]</code></em></pre><div class="para">Der Context soll dem Benutzer dieser Verbindung zugeordnet
+      werden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">context = default</code></div></div><div class="section" title="regcontext" id="iax-channelkonf-regcontext"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-regcontext"><code class="code">regcontext</code></h4></div></div></div><a id="idp18574336" class="indexterm"></a><a id="idp17253040" class="indexterm"></a><pre class="synopsis">regcontext = <em class="replaceable"><code>[Context]</code></em></pre><div class="para">Sie können einen Context definieren, der automatisch beim
+      ersten Registrieren eines Peers ausgeführt wird. Ist mit
+      <code class="code">regexten</code> keine Extension angegeben, so wird als
+      auszuführende Extension der Name des Peers benutzt. Dabei ist zu
+      beachten, dass Asterisk als Erstes automatisch ein <code class="code">NoOp</code> mit
+      der Priorität 1 ausführt. Als erste Priorität danach ist also die 2 zu
+      benutzen. Mehrere Contexte können nacheinander aufgeführt werden; als
+      Trennungszeichen wird ein <code class="code">&amp;</code> verwendet.</div><div class="para">Beispiel:</div><div class="para"><code class="code">regcontext = from-iax</code></div></div><div class="section" title="regexten" id="iax-channelkonf-regexten"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-regexten"><code class="code">regexten</code></h4></div></div></div><a id="idp18586800" class="indexterm"></a><a id="idp18589392" class="indexterm"></a><pre class="synopsis">regexten = <em class="replaceable"><code>[Nummer]</code></em></pre><div class="para">Wird in Verbindung mit <code class="code">regcontext</code> verwendet, um
+      die Extension zu spezifizieren, die in dem konfigurierten Context
+      ausgeführt werden soll. Falls <code class="code">regexten</code> nicht explizit
+      konfiguriert ist, wird der Name des Peers als Extension
+      verwendet.</div><div class="para">Beispiel:</div><div class="para"><code class="code">regexten = 3000</code></div></div><div class="section" title="jitterbuffer" id="iax-channelkonf-jitterbuffer"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-jitterbuffer"><code class="code">jitterbuffer</code></h4></div></div></div><a id="idp14077952" class="indexterm"></a><a id="idp14080544" class="indexterm"></a><pre class="synopsis">jitterbuffer = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Schaltet den Jitter-Buffer an oder aus (dies gilt bei
+      Verbindungen, bei denen Asterisk als Endgerät fungiert). Der
+      Jitter-Buffer gleicht unterschiedliche Laufzeiten der IP-Pakete
+      aus.</div><div class="para">Der Jitter-Buffer hat eventuell Probleme bei eingeschaltetem
+      <code class="code">trunk</code> (siehe <a class="xref" href="iax.html#iax-channelkonf-trunk" title="trunk">„<code class="code">trunk</code>“</a>).</div><div class="para">Beispiel:</div><div class="para"><code class="code">jitterbuffer = yes</code></div></div><div class="section" title="forcejitterbuffer" id="iax-channelkonf-forcejitterbuffer"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-forcejitterbuffer"><code class="code">forcejitterbuffer</code></h4></div></div></div><a id="idp14087520" class="indexterm"></a><a id="idp14090112" class="indexterm"></a><pre class="synopsis">forcejitterbuffer = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Normalerweise ist es die Aufgabe der Endgeräte, einen
+      Jitter-Buffer <sup>[<a id="idp14040704" href="#ftn.idp14040704" class="footnote">49</a>]</sup> einzurichten. Sollte dies aus irgendeinem Grund nicht oder
+      nur schlecht funktionieren (manche Geräte haben einen schlechten
+      Jitter-Buffer), kann man diesen Buffer auch auf Asterisk als VoIP-Brücke
+      aktivieren.</div><div class="para">Beispiel:</div><div class="para"><code class="code">forcejitterbuffer = yes</code></div></div><div class="section" title="maxjitterbuffer" id="iax-channelkonf-maxjitterbuffer"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-maxjitterbuffer"><code class="code">maxjitterbuffer</code></h4></div></div></div><a id="idp18259184" class="indexterm"></a><a id="idp18319408" class="indexterm"></a><pre class="synopsis">maxjitterbuffer = <em class="replaceable"><code>[Laenge in Millisekunden]</code></em></pre><div class="para">Mit diesem Parameter wird die maximale Größe des Jitter-Buffers
+      eingestellt. Sie sollten diesen Wert in der Regel nicht höher als 500
+      einstellen, sonst kann es zu Tonaussetzern kommen.</div><div class="para">Beispiel:</div><div class="para"><code class="code">maxjitterbuffer = 400</code></div></div><div class="section" title="resyncthreshold" id="iax-channelkonf-resyncthreshold"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-resyncthreshold"><code class="code">resyncthreshold</code></h4></div></div></div><a id="idp14120112" class="indexterm"></a><a id="idp14122704" class="indexterm"></a><pre class="synopsis">resyncthreshold=<em class="replaceable"><code>[Wert in Millisekunden]</code></em></pre><div class="para">Der Resynchronisierungsgrenzwert wird benutzt, um den
+      Jitter-Bufferneu zu takten bzw. neu abzustimmen, falls eine signifikante
+      Änderung über wenige Frames hinweg erkannt wird. Dabei wird angenommen,
+      dass der Veränderung eine Verwechslung von Zeitstempeln zugrunde liegt.
+      Der Resynchronisierungsgrenzwert ist definiert als die gemessene
+      Schwankung plus dem Wert von <code class="code">resyncthreshold</code>, der in
+      Millisekunden angegeben wird.</div><div class="para">Beispiel:</div><div class="para"><code class="code">resyncthreshold = 800</code></div></div><div class="section" title="trunk" id="iax-channelkonf-trunk"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-trunk"><code class="code">trunk</code></h4></div></div></div><a id="idp16251184" class="indexterm"></a><a id="idp16253776" class="indexterm"></a><pre class="synopsis">trunk = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Asterisk kann bei IAX-Verbindungen zu einer bestimmten
+      IP-Adresse (z. B. beim Verbinden von zwei Asterisk-Servern) alle Channels
+      über einen Trunk versehen. Dadurch wird der Overhead von mehreren
+      Verbindungen zu einer Adresse reduziert. Der Trunk-Modus funktioniert
+      nur mit geeigneter Hardware (Digium Zaptel) oder entsprechender
+      Emulationssoftware für Timing-Zwecke.<sup>[<a id="idp16073184" href="#ftn.idp16073184" class="footnote">50</a>]</sup>In Version 1.2.x arbeitet der Jitter-Buffer (siehe <a class="xref" href="iax.html#iax-channelkonf-jitterbuffer" title="jitterbuffer">„<code class="code">jitterbuffer</code>“</a>) nicht gut bei eingeschaltetem
+      Trunk-Modus.</div><div class="para">Beispiel:</div><div class="para"><code class="code">trunk = yes</code></div></div><div class="section" title="trunkfreq" id="iax-channelkonf-trunkfreq"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-trunkfreq"><code class="code">trunkfreq</code></h4></div></div></div><a id="idp13956784" class="indexterm"></a><a id="idp15840816" class="indexterm"></a><pre class="synopsis">trunkfreq = <em class="replaceable"><code>[Wiederholrate in Millisekunden]</code></em></pre><div class="para">Mit <code class="code">trunkfreq</code> wird in Millisekunden angegeben, wie
+      oft Trunk-Nachrichten gesendet werden. Gilt nur, wenn
+      <code class="code">trunk=yes</code> gesetzt wurde.</div><div class="para">Beispiel:</div><div class="para"><code class="code">trunkfreq = 20</code></div></div><div class="section" title="qualify" id="iax-channelkonf-qualify"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-qualify"><code class="code">qualify</code></h4></div></div></div><a id="idp14102992" class="indexterm"></a><a id="idp16973408" class="indexterm"></a><pre class="synopsis">qualify = <em class="replaceable"><code>[yes|no|Zeit in Millisekunden]</code></em></pre><div class="para">Mit <code class="code">qualify=yes</code> werden in festen Zeitabständen
+      Ping-Nachrichten an die entfernten Peers gesendet, um herauszufinden, ob
+      sie verfügbar sind und welche Latenz zwischen den Antworten liegt. Die
+      Peers antworten mit Pong-Nachrichten. Ein Peer wird als nicht erreichbar
+      angesehen, wenn innerhalb von 2000 ms noch keine Antwort vorliegt (um
+      diese Voreinstellung zu ändern, setzen Sie <code class="code">qualify</code> auf die
+      entsprechende Anzahl an Millisekunden, die auf eine Anwort gewartet
+      werden soll). Einige Endgeräte (bzw. deren Software) kommen nicht mit
+      diesen Nachrichten zurecht.</div><div class="para">Beispiel:</div><div class="para"><code class="code">qualify = yes</code></div></div><div class="section" title="qualifysmoothing" id="iax-channelkonf-qualifysmoothing"><div class="titlepage"><div><div><h4 class="title" id="iax-channelkonf-qualifysmoothing"><code class="code">qualifysmoothing</code></h4></div></div></div><a id="idp18221488" class="indexterm"></a><a id="idp15659840" class="indexterm"></a><pre class="synopsis">qualifysmoothing = <em class="replaceable"><code>[yes|no]</code></em></pre><div class="para">Stellt ein, ob für die Verfügbarkeitsprüfung durch
+      <code class="code">qualify</code> immer der Mittelwert der letzten beiden
+      Pong-Nachrichten verwendet werden soll. Hosts mit schlechter Verbindung
+      könnten sonst fälschlicherweise als nicht verfügbar eingestuft
+      werden.</div><div class="para">Beispiel:</div><div class="para"><code class="code">qualifysmoothing = yes</code></div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><div class="para">Hier ist immer IAX2, also IAX Version 2 gemeint.</div></div><div class="footnote"><div class="para"><a href="http://www.iana.org/assignments/dscp-registry">http://www.iana.org/assignments/dscp-registry</a></div></div><div class="footnote"><div class="para"><a href="http://www.cisco.com/application/pdf/en/us/guest/netsol/ns432/c649/ccmigration_09186a008049b062.pdf">http://www.cisco.com/application/pdf/en/us/guest/netsol/ns432/c649/ccmigration_09186a008049b062.pdf</a></div></div><div class="footnote"><div class="para"><a href="http://www.lartc.org/">http://www.lartc.org/</a></div></div><div class="footnote"><div class="para">Wird per FSK (Frequency Shift Keying, dt.:
+          Frequenzumtastung) übertragen.</div></div><div class="footnote"><div class="para">Asterisk-RSA-Schlüssel finden sich normalerweise in
+          <code class="filename">/var/lib/asterisk/keys/</code>. Sie können mittels des
+          <code class="command">astkey</code>-Skripts eigene Schlüssel
+          generieren.</div></div><div class="footnote"><div class="para">Die eckigen Klammern sind hier Pflicht und nicht wie im
+          Rest des Buches als Optionsangabe zu lesen.</div></div><div class="footnote"><div class="para">Jitter bezieht sich auf die variierende Latenz zwischen den
+          Datenpaketen. Bei zu großen Schwankungen kann es zu Tonausfällen
+          kommen.</div></div><div class="footnote"><p><sup>[<a id="ftn.idp16073184" href="#idp16073184" class="para">50</a>] </sup>Zum Beispiel das bei Asterisk enthaltene Kernel-Modul
+          <code class="code">ztdummy</code> oder <code class="code">zaprtc</code> von Junghanns (<a href="http://www.junghanns.net/downloads/">http://www.junghanns.net/downloads/</a>).</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="protokolle-einleitung.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Einleitung</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="netzwerkprotokolle.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Netzwerkprotokolle</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="definition-channel.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Channels</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="peers-users-friends.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Peers, Users und Friends</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="iax-vs-sip.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">IAX versus SIP</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="sip.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">SIP</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">IAX</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="iax.html#warum-iax" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Warum IAX?</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="iax.html#iax-beispielkonf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Beispiel für eine IAX-Konfiguration</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="iax.html#iax-globalekonf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Globale Einstellungen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="iax.html#iax-channelkonf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Channel-Einstellungen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="sip.html"><strong>Zurück</strong>8.6. SIP</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="codecs.html"><strong>Weiter</strong>Kapitel 9. Codecs</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

@@ -1,0 +1,56 @@
+[[functions-lock]]
+= `LOCK()`
+
+[source]
+----
+LOCK(String)
+----
+
+Mit dieser Funktion können Sie einige Passagen des Rufnummernplans
+serialisieren. Das heißt, dass immer nur ein Anrufer nach dem anderen das
+mit dem LOCK-Mechanismus "gesicherte" Stück Rufnummernplan durchlaufen kann.
+Diese Technologie ist aus der Threadprogrammierung auch in Form eines
+Mutex bekannt. Als Parameter muss der frei wählbare Name des
+Mutexes übergeben werden. Wenn der Mutex schon blockiert ist, dann wartet
+die Funktion max. 3 Sekunden und liefert danach `0` zurück. Wenn
+der Mutex normal gelockt werden konnte, liefert die Funktion `1`
+zurück. Der Mutex ist wieder frei, wenn der Channel aufgelegt wurde oder
+`UNLOCK()` aufgerufen wurde.
+
+[source]
+----
+; Sperre das Ausführen eines Systembefehls durch einen Mutex
+exten => 123,1,GotoIf(${LOCK(lock1)}?locked,1)
+exten => 123,n,System(kritisches-skript.sh)
+exten => 123,n,Hangup()
+exten => locked,1,Playback(mutex-ist-gelockt-bitte-warten)
+exten => locked,n,Goto(,123,1)
+
+    
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'LOCK' =-
+
+[Syntax]
+LOCK(<lockname>)
+
+[Synopsis]
+Attempt to obtain a named mutex
+
+[Description]
+Attempts to grab a named lock exclusively, and prevents other channels from
+obtaining the same lock. LOCK will wait for the lock to become available.
+Returns 1 if the lock was obtained or 0 on error.
+
+Note: to avoid the possibility of a deadlock, LOCK will only attempt to
+obtain the lock for 3 seconds if the channel already has another lock.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-unlock.adoc[Abschnitt D.106, „`UNLOCK()`“], xref:functions-trylock.adoc[Abschnitt D.104, „`TRYLOCK()`“]

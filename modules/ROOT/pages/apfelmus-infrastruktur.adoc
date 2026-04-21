@@ -1,0 +1,183 @@
+[[apfelmus-infrastruktur]]
+= Auswahl der Infrastruktur
+
+Da in dem neuen Gebäude bereits eine strukturierte und moderne
+Netzwerkverkabelung vorliegt, ist es eine naheliegende Idee, jeden
+Arbeitsplatz mit einem SIP-Telefon auszustatten. So müssen nicht extra
+Kabel für das Telefonnetz verlegt werden. Die Faxe und schnurlosen
+Telefone werden über SIP-to-Analog-Adapter angeschlossen. Der
+Asterisk-Server wird in einem ordentlich ausgestatteten Serverraum mit
+entsprechender Klimatisierung untergebracht, mit Sicherheitseinrichtungen
+und Zugangskonzept. Durch das Zugangskonzept und die
+Sicherheitseinrichtungen haben auch nur diejenigen Personen Zugriff auf
+die Anlage, die dazu berechtigt sind.footnote:[Noch vor 10 Jahren war es bei vielen Telefonanlagenherstellern üblich, sich „Hintertüren“ in große Anlagen einzubauen. So konnte der Hersteller ohne großen Aufwand bei Problemen schnell helfen, indem er sich über einen offenen Port von außen in die Anlage einwählte. Böse Geister nutzten diese Möglichkeit allerdings auch, um auf Kosten der Eigentümer (meistens großer Behörden, in denen die Übersicht fehlte) Fern- oder Auslandsgespräche zu führen.]
+
+[[apfelmus-netzwerk]]
+== Netzwerk
+
+Die wichtigste Regel, der man sich stets bewusst sein sollte, ist,
+dass Telefonie ein synchrones Medium ist, d. h., die Informationen
+müssen für den Sender und den Empfänger praktisch "gleichzeitig"
+vorliegen, und dies über die Dauer der gesamten Kommunikation. Während
+wir in einem Telefongespräch Verzögerungen bis ca. 300 ms noch
+einigermaßen tolerieren, werden Pausen von einer halben Sekunde und mehr
+als sehr störend empfunden und kaum akzeptiert. Bei der IP-Telefonie
+wird ein synchrones Kommunikationsmittel über eine asynchrone Technik
+transportiert. Die Funktionsweise des TCP/IP-Protokolls des Internets
+wurde auf Störfestigkeit und Robustheit hin ausgelegt und nicht auf
+einen Datentransport in Echtzeit. Für den Transport von E-Mails zum
+Beispiel ist es völlig unerheblich, ob im Datentransport mehrere
+Unterbrechungen von einigen Sekunden stattfinden. Dass es überhaupt
+möglich ist, Telefonie via IP unter diesen Bedingungen erfolgreich
+umzusetzen, liegt an der Leistungsfähigkeit der heutigen
+Netzwerktechnologie. Dadurch, dass die zu übertragene Datenmenge im
+Verhältnis zur vorhandenen Übertragungskapazität deutlich geringer ist,
+können die Anforderungen quasi in Echtzeit umgesetzt werden. Bei den
+meisten Netzwerken liegen jedoch häufig unterschiedliche Lastzustände
+vor, d. h., die zur Verfügung stehende Bandbreite wird zu
+unterschiedlichen Zeiten mal stärker und mal weniger stark ausgenutzt.
+In fast allen Unternehmen kann man beobachten, wie die Auslastung des
+Netzwerks dem Rhythmus des Arbeitstages folgt. Zwischen 8 Uhr morgens
+und 18 Uhr abends steigt die Auslastung in der Regel, da die Mitarbeiter
+zum Beispiel E-Mails schreiben, im Web surfen, Daten herunterladen etc.
+Zu den Zeiten, in denen die Mitarbeiter intensiv arbeiten, telefonieren
+sie aber auch, d. h., unsere IP-Telefone konkurrieren mit dem restlichen
+Netzwerkverkehr um die zur Verfügung stehende Bandbreite. Und während es
+für die Zustellung einer E-Mail kein größeres Problem darstellt, wenn
+die Verbindungsgeschwindigkeit sinkt – es dauert halt etwas länger
+–, kann es für unsere IP-Telefone kritisch werden, wenn die
+Bandbreite unter den Mindestbedarf fällt. Die Sprachqualität leidet dann
+deutlich, es kommt zu Aussetzern und Sprachfetzen. Wie störend das ist,
+kennt sicherlich jeder von Telefonaten mit dem Mobiltelefon bei einer
+schlechten Verbindung. Um mit den unterschiedlichen Anforderungen der
+jeweiligen Verbindungsarten besser umgehen zu können, verfügen
+professionelle Netzwerkrouter über die Möglichkeit, Netzwerkverkehr je
+nach Typ zu priorisieren.footnote:[TOS – Type Of Service]
+
+Diese Maßnahme ist zwar geeignet, um den Netzwerkverkehr nach
+innen und außerhalb des eigenen Netzwerkanschlusses zum
+Internet-Provider entsprechend zu regeln, jedoch hat dies keinen
+Einfluss auf die Lastsituation im Netz des Providers. Erst dann, wenn
+der Provider entsprechende Garantien für Übertragungskapazitäten für
+bestimmte Verbindungstypenfootnote:[QOS – Quality Of Service] anbietet, kann die Kette lückenlos geschlossen werden.
+Falls Sie also mehrere Standorte in Ihrem Unternehmen via IP-Telefonie
+verbinden möchten, sollten Sie dies in Ihrer Planung berücksichtigen und
+mit Ihrem Provider darüber sprechen. Die Telefonanlage der Apfelmus GmbH
+bedient 78 Endgeräte. Das heißt, dass im schlimmsten Fall 39 zeitgleiche
+interne Verbindungen zustande kommen können, wenn die Mitarbeiter sich
+nur intern anrufen. Abhängig vom verwendeten Codec für die Kodierung des
+Audiosignals ergibt sich ein Netzwerkverkehr von maximal 6.500
+kbit/sfootnote:[kbps = kilobits per second], was für die heute gängigen 100 Mbpsfootnote:[Mbps = Megabits per second, also 1.024 kbps] an Netzwerkbandbreite in strukturierten
+Inhouse-Verkabelungen keine Herausforderung darstellt. Dennoch sollten
+Sie berücksichtigen, dass anderer Netzwerkverkehr ebenfalls übertragen
+wird und die verfügbare Bandbreite rasch an Grenzen stoßen kann. Wie
+kommt der Wert von 6.500 kbit/s zustande? Für die Inhouse-Verbindungen
+greifen wir in unserem Beispiel auf den a-lawfootnote:[Eigentlich G.711, der in zwei Varianten vorkommt: als a-law und als u-law.]-Codec zurück, der auch im ISDN-Netz zum Einsatz kommt. Er
+bietet eine sehr gute Sprachqualität, benötigt dafür aber auch 64 kbit/s
+Bandbreite. Jede Verbindung besteht aus einem eingehenden und einem
+ausgehenden Kanal mit jeweils 64 kbit/s. Die 39 Verbindungen summieren
+sich auf: 2*39*64 kbit/s = 4.992 kbit/s. Zum Bandbreitenbedarf des
+Codecs kommt noch ein Overhead durch das TCP/IP-Protokoll hinzu, sodass
+aus den 64 kbit/s ca. 80 kbit/s an Netzwerkverkehr werden. Legt man der
+Rechnung nun die 80 kbit/s zugrunde, ergibt das 6.280 kbit/s,
+aufgerundet erhält man die genannten 6.500 kbit/s. Dabei sind die 6.500
+kbit/s natürlich nur ein Worst-Case-Szenario. Trotzdem sollte man immer
+für genau dieses Szenario gerüstet sein!footnote:[Auf der Webseite http://www.asteriskguru.com/tools/bandwidth_calculator.php oder auf http://www.bandcalc.com/ finden Sie ein einfaches Online-Tool zur Bandbreitenberechnung verschiedener Codecs.]
+
+[TIP]
+====
+Wer sich am Anfang einer solchen Installation nicht sicher
+ist, ob die Netzwerkbandbreite ausreicht, sollte lieber einen
+verlustbehafteteren Codec wie GSM benutzen. Der benötigt mit 13-15
+kbps nur ein Fünftel der Bandbreite des a-law-Codecs und hat eine
+akzeptable Sprachqualität. Später kann man dann einzelne Bereiche
+Stück für Stück auf bessere Codecs umstellen und dabei beobachten,
+ob es Netzwerkprobleme gibt. Sie sollten dabei jedoch die Auslastung
+der CPU im Auge behalten, da die komprimierenden Codecs deutlich
+mehr Rechenleistung in Anspruch nehmen.
+====
+
+[[apfelmus-server-hardware]]
+== Server-Hardware
+
+Die Anforderungen, die an das Netzwerk gestellt werden, treffen im
+Prinzip auch auf die verwendete Hardware des Rechners zu. Die
+Notwendigkeit der synchronen Datenübertragung erfordert auch eine
+entsprechend zeitnahe Abarbeitung der notwendigen Vorgänge durch den
+verwendeten Rechner. Hierbei gibt die Kodierung und Dekodierung des
+Sprachsignals den Leistungsbedarf vor – insbesondere dann, wenn
+die beteiligten Endgeräte unterschiedliche Codecs verwenden und Asterisk
+die ankommenden und ausgehenden Datenströme umkodieren muss. Aufgrund
+der großen Bandbreite an verfügbarer Hardware und dem jeweils
+spezifischen Leistungsvermögen gibt es keine einfache Regel für die
+Bemessung. Als eine erste Orientierung soll folgende Staffelung
+dienen:
+
+[cols="3*"]
+|===
+| CPU | Anzahl der Verbindungen | Anzahl der Nebenstellen
+| 1,0 GHz | 15 | 40
+| 1,5 GHz | 40 | 100
+| 2,0 GHz | 80 | 200
+|===
+
+Mit CPU ist an dieser Stelle eine handelsübliche CPU eines IBM-PC
+kompatiblen Rechners (z. B. von Intel, AMD) gemeint. Bei der Berechnung
+der möglichen Anzahl von Nebenstellen gehen wir davon aus, dass nicht
+alle Nutzer zur gleichen Zeit telefonieren, sondern im Mittel ein
+Drittel bis die Hälfte. Bitte betrachten Sie die angegebenen Werte
+lediglich als eine grobe Orientierung, die zudem eher konservativ
+geschätzt wurde, d.h. mit deutlicher Reserve. Fallen wenige
+Umkodierungen, Konferenzschaltungen und Echo-Unterdrückungen an, dann
+können deutlich mehr gleichzeitige Verbindungen bewältigt werden. Die
+genaue Zahl kann oftmals nur durch sinnvolles Ausprobieren ermittelt
+werden.
+
+[TIP]
+====
+Unter Linux gibt es mit `top` ein einfaches
+Tool, um im laufenden Betrieb zu sehen, wie hoch die Last auf dem
+Rechner ist. Allerdings gibt Ihnen das natürlich immer nur den
+aktuellen Wert und reicht nicht für eine Langzeitanalyse. Dazu können
+Sie leistungsstarke Tools wie Nagios http://www.nagios.org verwenden.
+Wer sich mit "Bordmitteln" weiterhelfen will, kann auch einen Cronjob
+(siehe `man crontab`) mit folgendem Befehl
+aufsetzen:
+
+[source]
+----
+w | head -n 1 | logger
+----
+Damit kann man sich (wenn es entsprechend in
+`/etc/cronjob` eingestellt ist) jede Minute einmal
+die aktuelle Systemlast in die Datei
+`/var/log/messages` schreiben lassen und diese dann
+am Monatsende auswerten.footnote:[Es sollte Ihnen bewusst sein, dass dieser Cronjob wirklich nur ein sehr einfaches Mittel zur Analyse ist.]
+====
+
+In unserem Beispiel haben wir 78 Benutzer, bei denen im Mittel
+nicht mehr als 40 gleichzeitige Verbindungen vorliegen sollten, somit
+wäre ein Rechner mit einer halbwegs aktuellen CPUfootnote:[Zum Beispiel Pentium 4, AMD Athlon]
+
+mit 1,5 GHz Taktfrequenz geeignet. Je aktueller CPU und
+Gesamtsystem sind, desto höher ist in der Regel die Leistung, und es
+können bei gleicher Taktfrequenz deutlich mehr Gespräche gleichzeitig
+abgearbeitet werden. Ein Dual-CPU-System verbessert hier den Wert
+ebenfalls, da die Rechenleistung für notwendige Aufgaben des
+Betriebssystems besser verteilt wird. Für die Voicemailboxen benötigt
+man ca. 0,1 MB an Speicherplatz pro aufgezeichneter Minute.footnote:[Dies gilt für das Format wav49 oder GSM. Wenn Sie hingegen das unkomprimierte Format WAV verwenden, steigt der Platzbedarf um ein Vielfaches.] Stattet man jeden Nutzer mit 30 Minuten aus, wären für
+unser Beispiel ca. 2 GByte an freiem Festplattenspeicher ausreichend
+bemessen. Da die aufgezeichneten Daten denselben Stellenwert wie
+Geschäftsdaten haben, sollten sie entsprechend gegen Ausfall und Verlust
+abgesichert werden. Ein RAID-Systemfootnote:[Bitte beachten Sie, dass ein Software-RAID die CPU entsprechend zusätzlich belastet, was in unserem Fall eher unerwünscht ist, deshalb ist eine vernünftige Lösung in Hardware angeraten.] mit zwei Festplatten im Mirroring-Modus (Level 1) sollte
+hierbei ausreichend Absicherung gewährleisten. Für unser Beispiel würden
+zwei 18-GB-SCSI-Festplatten im RAID-1-Verbund ausreichend sein. Die
+Anforderungen an den verfügbaren Arbeitsspeicher (RAM) sind sehr
+moderat. Mit 512 MB ist das System ausreichend bemessen, und ab 1 GByte
+können selbst große Gruppen problemlos versorgt werden. Alle
+zusätzlichen Maßnahmen, wie die Auswahl professioneller Hardware für den
+Einsatz in Servern, die Ausstattung mit redundanten Netzteilen und mit
+hochwertigen Komponenten erhöhen die Ausfallsicherheit und Betriebstreue
+des Systems und damit später die Akzeptanz durch die Nutzer – die
+es eher gelassen nehmen, wenn der E-Mail-Server mal 10 Minuten offline
+ist, aber das Telefon muss immer funktionieren.

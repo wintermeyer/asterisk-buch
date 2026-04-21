@@ -1,0 +1,116 @@
+[[warteschleifen-extensions.conf]]
+= `extensions.conf`
+
+Im Dialplan (xref:kapitel-programmieren.adoc[Kapitel 6, _Programmieren im Dialplan_]) können sich
+zum einen die Agenten über eine bestimmte Extension in die Warteschleife
+einloggen, zum anderen werden Anrufe mit der Applikation
+`Queue()` (xref:applications-queue.adoc[Abschnitt C.122, „`Queue()`“]) in eine
+Warteschlange eingereiht.
+
+Eine minimale Extension, die die Anrufer in die Warteschleife
+einreiht, sähe so aus:
+
+[source]
+----
+exten => 20,1,Answer()                   ; abheben
+exten => 20,n,Set(MUSICCLASS()=default)  ; Musikklasse "default" setzen
+exten => 20,n,Queue(support,t)           ; in Warteschlange "support" einreihen
+exten => 20,n,Hangup()                   ; hinterher auflegen
+----
+
+Wir lieben es etwas vollständiger und verwenden diese
+Extension:
+
+[source]
+----
+exten => 20,n,Wait(2)
+exten => 20,n,Answer()                   ; abheben
+exten => 20,n,Set(MUSICCLASS()=default)  ; Musikklasse "default" setzen
+exten => 20,n,Queue(support)             ; in Warteschlange "support" einreihen
+; setzt QUEUESTATUS =
+; TIMEOUT | FULL | JOINEMPTY | JOINUNAVAIL | LEAVEEMPTY | LEAVEUNAVAIL
+exten => 20,n,Goto(q-${QUEUESTATUS})     ; je nach QUEUESTATUS springen
+
+; keine Agenten auf der Warteschlange:
+; (hier könnte man alternativ auf VoiceMail() leiten)
+exten => 20,n(q-JOINEMPTY),Wait(1)
+exten => 20,n,Playback(vm-nobodyavail,noanswer)
+exten => 20,n,Playback(vm-goodbye,noanswer)
+exten => 20,n,Hangup()
+
+; keine Agenten (oder nur nicht-verfügbare) auf der Warteschlange:
+exten => 20,n(q-JOINUNAVAIL),Goto(q-JOINEMPTY)   ; wie JOINEMPTY behandeln
+
+; alle Agenten haben die Warteschlange verlassen:
+exten => 20,n(q-LEAVEEMPTY),Goto(q-JOINEMPTY)    ; wie JOINEMPTY behandeln
+
+; alle Agenten (auch nicht-verfügbare) haben die Warteschlange verlassen:
+exten => 20,n(q-LEAVEUNAVAIL),Goto(q-JOINEMPTY)  ; wie JOINEMPTY behandeln
+
+; kein Agent antwortet:
+exten => 20,n(q-TIMEOUT),Goto(q-JOINEMPTY)       ; wie JOINEMPTY behandeln
+
+; max. Anruferzahl für die Warteschlange ist erreicht:
+; (hier könnte man alternativ auf VoiceMail() leiten)
+exten => 20,n(q-FULL),Busy(5)
+exten => 20,n,Hangup()
+----
+
+Wenn wir diese Extension anrufen,
+werden wir, da keine Agenten angemeldet sind, die Ansage hören, dass zur
+Zeit[xref:queues.conf.adoc#ftn.footnote-zurzeit[85]] niemand unseren Anruf
+entgegennehmen kann. (Wenn Sie das verschleiern wollen, setzen Sie in der
+`queues.conf` die Parameter `joinempty=yes`
+und `leaveempty=no`.)
+
+Es fehlt also noch eine Extension, unter der sich die Agenten
+einloggen, d. h. als anwesend melden:
+
+[source]
+----
+exten => 25,1,Answer()       ; abheben
+exten => 25,n,AgentLogin()   ; Agent einloggen
+exten => 25,n,Hangup()       ; hinterher auflegen
+----
+
+Mit
+`AgentLogin()` bleibt die Verbindung zum Agenten dauerhaft
+bestehen, und die eingehenden Anrufe werden auf diesen bereits aufgebauten
+Sprachkanal aufgeschaltet. Wenn der Agent den Hörer auflegt, wird er
+abgemeldet. Das bedeutet auch, dass ein Agent nicht gleichzeitig
+eingeloggt sein kann und ausgehende Gespräche machen kann.
+`AgentLogin()` ist daher in der Praxis wirklich nur dann
+geeignet, wenn es sich um ein reines Inbound-Call-Center handelt.
+
+`AgentCallbackLogin()` hingegen hat den Vorteil, dass
+sich Agenten einmal anmelden können und bei eingehenden Gesprächen
+zurückgerufen werden. Sie bleiben also auch beim Auflegen angemeldet und
+können ausgehende Gespräche führen. Diese Applikation ist aber seit
+Version 1.4 „deprecated“, wird also zukünftig nicht mehr
+vorhanden sein.
+
+Digium verwendet im Beispiel
+`doc/queues-with-callback-members.txt` (in AEL, lässt
+sich aber leicht in einen „herkömmlichen“ Dialplan
+umwandeln)
+
+[source]
+----
+Read(agentennr,agent-user);
+VMAuthenticate(${agentennr},s);
+----
+
+zum Authentifizieren der
+Agenten, `AddQueueMember()` zum dynamischen Hinzufügen zur
+Warteschlange und `Dial()` zum Anrufen der Agenten.
+
+Sollte AgentCallbackLogin() tatsächlich ersatzlos wegfallen, gehen
+damit tatsächlich Funktionalität und das leichte Setup verloren. (An
+dieser Stelle noch einmal vielen Dank an Markus Bönke!)
+
+.Aufgabe
+Es bleibt Ihnen als Aufgabe überlassen, vor die Einreihung in eine
+Warteschlange noch ein Menü zu schalten, z. B. „Um eine Bestellung
+aufzugeben, drücken Sie die 1. Für Reklamationen drücken Sie die
+2.“, und dann zwei Warteschlangen einzurichten, denen die Agenten
+der entsprechenden Abteilung angehören.

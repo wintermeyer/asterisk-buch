@@ -1,0 +1,46 @@
+[[agi-command-say-number]]
+= `SAY NUMBER`
+
+[source]
+----
+SAY NUMBER Zahl [Escape_Ziffern]
+----
+
+Sagt die angegebene _`Zahl`_ an (z. B. wird 123
+als „ein-hundert-drei-und-zwanzig“ gesprochen). Die Ausgabe
+kann durch Eingabe einer Ziffer abgebrochen werden, die in
+`Escape_Ziffern` bestimmt wird.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| -1 | Fehler
+| 0 | Erfolgreich
+| _`Wert`_ | ASCII-Wert der Eingabe, die zum Abbruch geführt hat
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: SAY NUMBER <number> <escape digits>
+Say a given number, returning early if any of the given DTMF digits
+are received on the channel. Returns 0 if playback completes without a digit
+being pressed, or the ASCII numerical value of the digit if one was pressed or
+-1 on error/hangup.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,5 +1,6 @@
+- Usage: SAY NUMBER <number> <escape digits>
++ Usage: SAY NUMBER <number> <escape digits> [gender]
+Say a given number, returning early if any of the given DTMF digits
+are received on the channel. Returns 0 if playback completes without a digit
+being pressed, or the ASCII numerical value of the digit if one was pressed or
+-1 on error/hangup.
++ Runs Dead : No

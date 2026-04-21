@@ -1,0 +1,53 @@
+[[applications-dahdiscan]]
+= `DAHDIScan()`
+
+Durchsucht DAHDI-Kanäle, um Anrufe zu überwachen.
+
+[source]
+----
+DAHDIScan([KanalGruppe])
+----
+
+[NOTE]
+====
+Diese Applikation ist durch die Umbenennung von Zaptel in
+DAHDIfootnote:[xref:glossar.adoc#glossar-dahdi[DAHDI\]] entstanden. Für eine Beschreibung siehe xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“].
+====
+
+.Asterisk-Versionen:
+————————| *1.2**|————————| *1.4**|————————| *1.6* |————————
+(* anderer Name)
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'DAHDIScan' =-
+
+[Synopsis]
+Scan DAHDI channels to monitor calls
+
+[Description]
+DAHDIScan([group]) allows a call center manager to monitor DAHDI channels in
+a convenient way. Use '#' to select the next channel and use '*' to exit
+Limit scanning to a channel GROUP by setting the option group argument.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 (xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“]) zu 1.4 (xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“]):
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 (xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“]) zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,9 +1,9 @@
+- -= Info about application 'ZapScan' =-
++ -= Info about application 'DAHDIScan' =-
+
+[Synopsis]
+- Scan Zap channels to monitor calls
++ Scan DAHDI channels to monitor calls
+
+[Description]
+- ZapScan([group]) allows a call center manager to monitor Zap channels in
++ DAHDIScan([group]) allows a call center manager to monitor DAHDI channels in
+a convenient way. Use '#' to select the next channel and use '*' to exit
+Limit scanning to a channel GROUP by setting the option group argument.
+
+.Siehe auch
+xref:applications-zapscan.adoc[Abschnitt C.199, „`ZapScan()`“]

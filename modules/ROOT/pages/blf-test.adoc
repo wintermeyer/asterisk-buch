@@ -1,0 +1,81 @@
+[[blf-test]]
+= Test der Hints
+
+Jetzt können wir überprüfen, ob alles richtig konfiguriert wurde.
+Dazu geben Sie im Asterisk-CLI den Befehl +`core show
+hints`+ ein:footnote:[Die Ausgabe wurde hier aus Platzgründen etwas verkürzt.]
+
+[source,shell]
+----
+*CLI> core show hints
+    -= Registered Asterisk Dial Plan Hints =-
+   21         : SIP/21        State:Unavailable     Watchers  0
+   22         : SIP/22        State:Unavailable     Watchers  0
+----------------
+- 2 hints registered
+----
+
+Im obigen Beispiel wird deutlich, dass die zu überwachenden Telefone
+noch nicht am Asterisk-Server angemeldet sind
+(`Unavailable`). Ebenso hat auch noch kein überwachendes
+Telefon den Status dieser Extensions abonniert (0
+`Watchers`). Letzteres wird auch durch die Auflistung der
+aktiven _Subscriptions_ bestätigt,
+die durch das Kommando +`sip show
+subscriptions`+ ausgegeben wird:footnote:[Die Ausgabe wurde hier aus Platzgründen etwas verkürzt.]
+
+[source,shell]
+----
+*CLI> sip show subscriptions
+Peer          User   Call ID      Extension   Last state    Type
+0 active SIP subscriptions
+----
+
+Nachdem sich das überwachende Telefon angemeldet hat, setzen wir den
+Befehl erneut ab:
+
+[source,shell]
+----
+*CLI> sip show subscriptions
+Peer          User   Call ID      Extension   Last state    Type
+192.168.0.2   21     815d944554e  22          Unavailable   dialog-info+xml
+1 active SIP subscription
+----
+
+Hier wird deutlich, dass der User `21` die Extension
+`22` überwacht. Wenn sich das überwachte Telefon bei Asterisk
+anmeldet, dann erscheint im CLI folgende Zeile:
+
+[source,shell]
+----
+Extension Changed 22 new state Idle for Notify User 21
+----
+
+Setzen Sie den Befehl +`core show
+hints`+ erneut ab:
+
+[source,shell]
+----
+*CLI> core show hints
+    -= Registered Asterisk Dial Plan Hints =-
+   21         : SIP/21        State:Idle            Watchers  0
+   22         : SIP/22        State:Idle            Watchers  1
+----------------
+- 2 hints registered
+----
+
+Im Gegensatz zu vorher sieht man, dass das Telefon einen definierten
+Zustand hat (`Idle`) und zudem ein weiteres Telefon den
+Zustand überwacht (`Watchers 1`). Die Konfiguration ist
+nun komplett, Asterisk meldet einen Statuswechsel der überwachten
+Extension sofort an das überwachende Telefon. Befindet sich das überwachte
+Telefon im Gespräch, leuchtet die LED dauerhaft. Wird das überwachte
+Telefon angerufen, blinkt die LED. Ohne Aktivität ist auch die LED aus.
+Die Status-Wechsel werden ebenfalls auf der Konsole gemeldet:
+
+[source,shell]
+----
+Extension Changed 22 new state Ringing for Notify User 21
+Extension Changed 22 new state InUse for Notify User 21
+Extension Changed 22 new state Idle for Notify User 21
+----

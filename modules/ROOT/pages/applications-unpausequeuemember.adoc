@@ -1,0 +1,70 @@
+[[applications-unpausequeuemember]]
+= `UnpauseQueueMember()`
+
+Hebt das Pausieren eines Warteschlangenmitglieds auf.
+
+[source]
+----
+UnpauseQueueMember([Schlange,]Interface[,Optionen])
+----
+
+Hebt das Pausieren für ein Mitglied einer Warteschlange auf, d. h.,
+es kann wieder Anrufe entgegennehmen. Dies ist das Gegenstück zu
+`PauseQueueMember()` – siehe das Beispiel dort. Die Arbeitsweise
+ist die gleiche, außer dass das gegebene Interface nicht pausiert, sondern
+wieder aktiviert wird.
+
+Setzt die Channel-Variable `UPQMSTATUS` auf
+`UNPAUSED` (Pausieren aufgehoben) oder `NOTFOUND`
+(nicht gefunden).
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'UnpauseQueueMember' =-
+
+[Synopsis]
+Unpauses a queue member
+
+[Description]
+UnpauseQueueMember([queuename]|interface[|options]):
+Unpauses (resumes calls to) a queue member.
+This is the counterpart to PauseQueueMember and operates exactly the
+same way, except it unpauses instead of pausing the given interface.
+The option string may contain zero or more of the following characters:
+'j' -- jump to +101 priority when appropriate.
+This application sets the following channel variable upon completion:
+UPQMSTATUS The status of the attempt to unpause a queue
+member as a text string, one of
+UNPAUSED | NOTFOUND
+Example: UnpauseQueueMember(|SIP/3000)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,14 +4,14 @@
+Unpauses a queue member
+
+[Description]
+- UnpauseQueueMember([queuename]|interface[|options]):
++ UnpauseQueueMember([queuename],interface[,options[,reason]]):
+Unpauses (resumes calls to) a queue member.
+This is the counterpart to PauseQueueMember and operates exactly the
+same way, except it unpauses instead of pausing the given interface.
+- The option string may contain zero or more of the following characters:
+- 'j' -- jump to +101 priority when appropriate.
++ The reason string is entirely optional and is used to add extra information
++ to the appropriate queue_log entries and manager events.
+This application sets the following channel variable upon completion:
+UPQMSTATUS The status of the attempt to unpause a queue
+member as a text string, one of
+UNPAUSED | NOTFOUND
+- Example: UnpauseQueueMember(|SIP/3000)
++ Example: UnpauseQueueMember(,SIP/3000)
+
+.Siehe auch
+xref:applications-pausequeuemember.adoc[Abschnitt C.114, „`PauseQueueMember()`“]

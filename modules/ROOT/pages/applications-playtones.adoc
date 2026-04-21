@@ -1,0 +1,70 @@
+[[applications-playtones]]
+= `Playtones()`
+
+Wiedergabe einer Tonliste.
+
+[source]
+----
+Playtones(Tonliste)
+----
+
+Spielt eine Liste von Tönen ab. Die Ausführung wird
+augenblicklich mit dem nächsten Schritt fortgesetzt, während die Töne
+weiter abgespielt werden. `Tonliste` ist entweder ein Tonname,
+der in der `indications.conf` definiert ist, oder eine
+Liste von Tonfrequenzen und -dauern. Für eine Beschreibung der
+Spezifikation einer eigenen Tonliste siehe
+`indications.conf`.
+
+Verwendet die `StopPlaytones()`-Anwendung, um die
+Wiedergabe der Töne anzuhalten.
+
+[source]
+----
+; 2 Sekunden Besetzt-, dann 2 Sekunden Stau-Signal spielen:
+exten => 123,1,Playtones(busy)
+exten => 123,n,Wait(2)
+exten => 123,n,StopPlaytones()
+exten => 123,n,Playtones(congestion)
+exten => 123,n,Wait(2)
+exten => 123,n,StopPlaytones()
+exten => 123,n,Goto(1)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'PlayTones' =-
+
+[Synopsis]
+Play a tone list
+
+[Description]
+PlayTones(arg): Plays a tone list. Execution will continue with the next step immediately,
+while the tones continue to play.
+Arg is either the tone name defined in the indications.conf configuration file, or a directly
+specified list of frequencies and durations.
+See the sample indications.conf for a description of the specification of a tonelist.
+
+Use the StopPlayTones application to stop the tones playing.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Play a tone list
+
+[Description]
+- PlayTones(arg): Plays a tone list. Execution will continue with the next step immediately,
++ PlayTones(arg): Plays a tone list. Execution will continue with the next step immediately,
+while the tones continue to play.
+Arg is either the tone name defined in the indications.conf configuration file, or a directly
+specified list of frequencies and durations.
+
+.Siehe auch
+xref:applications-stopplaytones.adoc[Abschnitt C.175, „`StopPlaytones()`“],
+`indications.conf`, xref:applications-busy.adoc[Abschnitt C.16, „`Busy()`“], xref:applications-congestion.adoc[Abschnitt C.23, „`Congestion()`“], xref:applications-progress.adoc[Abschnitt C.121, „`Progress()`“], xref:applications-ringing.adoc[Abschnitt C.138, „`Ringing()`“]

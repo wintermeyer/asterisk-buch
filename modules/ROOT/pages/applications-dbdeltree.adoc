@@ -1,0 +1,45 @@
+[[applications-dbdeltree]]
+= `DBdeltree()`
+
+Löscht eine Familie oder einen Schlüsselbaum aus der
+AstDB.
+
+[source]
+----
+DBdeltree(Familie[/Schlüsselzweig])
+----
+
+Löscht den angegebenen Schlüsselzweig aus der AstDB.
+
+Liefert immer 0 zurück.
+
+[source]
+----
+; Einträge in der AstDB anlegen:
+exten => 123,1,Set(DB(farben/eins)=rot)
+exten => 123,n,Set(DB(farben/zwei)=blau)
+; now delete the key family named test
+exten => 123,n,DBdeltree(farben)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'DBdeltree' =-
+
+[Synopsis]
+Delete a family or keytree from the database
+
+[Description]
+DBdeltree(family[/keytree]): This application will delete a family or keytree
+from the Asterisk database
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-dbdel.adoc[Abschnitt C.33, „`DBdel()`“], xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]

@@ -1,0 +1,56 @@
+[[functions-extension_state]]
+= `EXTENSION_STATE()`
+
+[source]
+----
+EXTENSION_STATE(extension[@context])
+----
+
+Gibt den Status einer Extension zurück. Für die Extension muss ein
+„hint“ gesetzt sein.
+
+[source]
+----
+exten => 123,hint,SIP/lisa
+exten => 123,1,Dial(SIP/lisa)
+
+exten => 456,1,Verbose(1,Status von Nst. 123: ${EXTENSION_STATE(123)})
+----
+
+Die Funktion gibt einen der folgenden Werte zurück:
+`UNKNOWN` (unbekannt bzw. nicht angemeldet),
+`NOT_INUSE` (frei), `INUSE` (im Gespräch),
+`BUSY` (im Gespräch bzw. besetzt),
+`INVALID` (ungültig), `UNAVAILABLE` (nicht
+erreichbar), `RINGING` (klingelt),
+`RINGINUSE` (im Gespräch und klingelt bzw. Anklopfen),
+`HOLDINUSE` (auf Halten und im Gespräch),
+`ONHOLD` (auf Halten).
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'EXTENSION_STATE' =-
+
+[Syntax]
+EXTENSION_STATE(extension[@context])
+
+[Synopsis]
+Get an extension's state
+
+[Description]
+The EXTENSION_STATE function can be used to retrieve the state from any
+hinted extension. For example:
+NoOp(1234@default has state ${EXTENSION_STATE(1234)})
+NoOp(4567@home has state ${EXTENSION_STATE(4567@home)})
+
+The possible values returned by this function are:
+UNKNOWN | NOT_INUSE | INUSE | BUSY | INVALID | UNAVAILABLE | RINGING
+RINGINUSE | HOLDINUSE | ONHOLD
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-device_state.adoc[Abschnitt D.21, „`DEVICE_STATE()`“], xref:functions-hint.adoc[Abschnitt D.45, „`HINT()`“]

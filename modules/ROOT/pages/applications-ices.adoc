@@ -1,0 +1,41 @@
+[[applications-ices]]
+= `ICES()`
+
+Streamt zu einem IceCast-Server.
+
+[source]
+----
+ICES(KonfigDatei)
+----
+
+Sendet einen Audio-Stream zu einem IceCast-Serverfootnote:[http://de.wikipedia.org/wiki/Icecast]. Als Beispiel für eine _`KonfigDatei`_
+siehe `contrib/asterisk-ices.xml`.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ICES' =-
+
+[Synopsis]
+Encode and stream using 'ices'
+
+[Description]
+ICES(config.xml) Streams to an icecast server using ices
+(available separately). A configuration file must be supplied
+for ices (see examples/asterisk-ices.conf).
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -6,4 +6,6 @@
+[Description]
+ICES(config.xml) Streams to an icecast server using ices
+(available separately). A configuration file must be supplied
+- for ices (see examples/asterisk-ices.conf).
++ for ices (see contrib/asterisk-ices.xml).
++
++ - ICES version 2 cient and server required.

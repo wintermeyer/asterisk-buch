@@ -1,0 +1,275 @@
+[[installation-1.8-debian]]
+= Installation von Asterisk 1.8 auf Debian Linux
+
+Die hier aufgeführte Installationsanleitung gilt für ein normales
+Asterisk-System mit dem Sie schnell anfangen können zu arbeiten.
+
+[NOTE]
+====
+Diese Anleitung kann auch als Screencast unter http://www.youtube.com/watch?v=h6BZk_Cx0lw
+abgerufen werden.
+====
+
+Es wird ein frisch installiertes Debian GNU/Linux 6.0
+(„Squeeze“) vorausgesetzt. Ein ISO-Image für die Installation
+finden Sie auf http://www.debian.org/releases/lenny/debian-installer/[http://www.debian.org/releases/squeeze/debian-installer/].
+Wir empfehlen das etwa 175 MByte große Netzinstallations-CD-Imagefootnote:[In der Regel werden Sie das für die Architektur `i386` benötigen.]. Eine Debian GNU/Linux-Installationsanleitung für i386
+kompatible Systeme findet sich unter http://www.debian.org/releases/squeeze/i386/.
+Ein allgemeines Anwenderhandbuch steht unter http://debiananwenderhandbuch.de.
+
+[NOTE]
+====
+Bitte loggen Sie sich nach der Installation als Benutzer
+`root` am System ein, und führen Sie alle hier
+angegebenen Befehle mit diesem Benutzer aus.
+====
+
+[NOTE]
+====
+Einige Anwender werden wohl direkt einen SSH-Server installieren
+wollen, um von ihrem normalen Arbeitsplatz aus im Terminal auf dem Server
+arbeiten zu können. Der Befehl dazu lautet: +`aptitude
+install ssh`+. Dann kann man hier im Folgenden auch
+wunderbar mit Kopieren und Einsetzen der meisten Befehle arbeiten. Wir
+setzen voraus, dass Sie entweder mit der grundsätzlichen Verwendung von
+`ssh` vertraut sind oder direkt am System selbst
+arbeiten.
+====
+
+Es versteht sich von selbst, dass man auf jedem System (egal ob
+neuinstalliert oder bereits bestehend) erst einmal sicherstellt, dass die
+Paketverwaltung (APTfootnote:[http://de.wikipedia.org/wiki/Advanced_Packaging_Tool] bzw. `aptitude`) die aktuellen Paketlisten
+zur Verfügung hat ...
+
+[source,shell]
+----
+root@debian6:~# aptitude update
+Treffer http://ftp.de.debian.org squeeze Release.gpg
+Treffer http://ftp.de.debian.org/debian/ squeeze/main Translation-de
+
+[...]
+
+Treffer http://security.debian.org squeeze/updates/main Sources
+Treffer http://security.debian.org squeeze/updates/main i386 Packages
+119 kB wurden in 0 s heruntergeladen (151 kB/s)
+                                 
+root@debian6:~#
+----
+
+... und dass alle Pakete auf dem neusten Stand sind:
+
+[source,shell]
+----
+root@debian6:~# aptitude -y upgrade
+Es werden keine Pakete installiert, aktualisiert oder entfernt.
+0 Pakete aktualisiert, 0 zusätzlich installiert, 0 werden entfernt und 0 nicht aktualisiert.
+Muss 0 B an Archiven herunterladen. Nach dem Entpacken werden 0 B zusätzlich belegt sein.
+                                            
+root@debian6:~#
+----
+
+Für den Fall, dass beim Upgrade der Pakete auch ein neuer Kernel
+installiert wurde, müssen wir jetzt das System mit
++`shutdown -r now`+ (oder mit
++`reboot`+) neu starten:
+
+[source,shell]
+----
+root@debian6:~# shutdown -r now
+
+Broadcast message from root@debian6 (pts/0) (Sun Nov 13 06:24:43 2011):
+
+The system is going down for reboot NOW!
+----
+
+Nach dem Booten loggen Sie sich bitte wieder als
+`root` ein.
+
+[NOTE]
+====
+Das hat zwar nichts mit Asterisk zu tun, aber typischerweise
+installiert man auch NTP, um immer die aktuelle Zeit zu haben:
+
+[source,shell]
+----
+debian:~# aptitude -y install ntp ntpdate
+----
+
+Ein
+Muss ist das natürlich nicht.
+====
+
+Zuerst installieren wir eine Build-Umgebung – d.h. Compiler usw. – und
+diverse Abhängigkeiten, damit das Kompilieren von Asterisk erfolgreich
+durchgeführt werden kann.
+
+[source,shell]
+----
+debian:~# aptitude -y install build-essential libxml2-dev libncurses5-dev
+Die folgenden NEUEN Pakete werden zusätzlich installiert:
+  binutils{a} build-essential bzip2{a} cpp{a} cpp-4.3{a} 
+  dpkg-dev{a} g++{a} g++-4.3{a} gcc{a} gcc-4.3{a} 
+[...]
+----
+
+Jetzt haben Sie ein System, auf dem man problemlos Asterisk
+kompilieren kann.
+
+=== Asterisk
+
+Auf der Asterisk-Homepage http://www.asterisk.org/[http://www.asterisk.org] finden Sie
+die notwendigen Quellen, um Asterisk zu installieren.
+
+[IMPORTANT]
+====
+Bitte suchen Sie auf http://www.asterisk.org/[http://www.asterisk.org] immer nach
+der aktuellen 10.0er Version für das folgenden `wget`
+Kommando.
+====
+
+[source,shell]
+----
+root@debian6:~# cd /usr/src
+root@debian6:/usr/src# wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-1.8-current.tar.gz
+--2011-11-13 11:14:59--  http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-1.8-current.tar.gz
+Auflösen des Hostnamen downloads.asterisk.org... 76.164.171.233, 2001:470:e0d4::e9
+Verbindungsaufbau zu downloads.asterisk.org|76.164.171.233|:80... verbunden.
+HTTP-Anforderung gesendet, warte auf Antwort... 200 OK
+Länge: 28557326 (27M) [application/x-gzip]
+In »asterisk-1.8-current.tar.gz« speichern.
+
+100%[======================================>] 28.557.326   423K/s   in 69s     
+
+2011-11-13 11:16:10 (405 KB/s) - »asterisk-1.8-current.tar.gz« gespeichert [28557326/28557326]
+
+root@debian6:/usr/src#
+----
+
+Entpacken:
+
+[source,shell]
+----
+root@debian6:/usr/src# tar xzf asterisk-1.8-current.tar.gz 
+root@debian6:/usr/src#
+----
+
+Kompilierung vorbereiten:
+
+[source,shell]
+----
+root@debian6:/usr/src# cd asterisk-1.8.7.1
+root@debian6:/usr/src/asterisk-1.8.7.1# ./configure 
+checking build system type... i686-pc-linux-gnu
+checking host system type... i686-pc-linux-gnu
+checking for gcc... gcc
+
+[...]
+
+configure: OS type  : linux-gnu
+configure: Host CPU : i686
+configure: build-cpu:vendor:os: i686 : pc : linux-gnu :
+configure: host-cpu:vendor:os: i686 : pc : linux-gnu :
+root@debian6:/usr/src/asterisk-1.8.7.1#
+----
+
+Kompilierenfootnote:[An dieser Stelle vor dem Kompilieren könnte man als erfahrenerer Asterisk-Benutzer mit +`make menuselect`+ in einem interaktiven Dialog bestimmte Module deaktivieren.]:
+
+[source,shell]
+----
+root@debian6:/usr/src/asterisk-1.8.7.1# make
+CC="cc" CXX="" LD="" AR="" RANLIB="" CFLAGS="" make -C menuselect CONFIGURE_SILENT="--silent" menuselect
+make[1]: Entering directory `/usr/src/asterisk-1.8.7.1/menuselect'
+gcc -g -c -D_GNU_SOURCE -Wall   -c -o menuselect.o menuselect.c
+
+[...]
+
+Building Documentation For: channels pbx apps codecs formats cdr cel bridges funcs tests main res addons 
+ +--------- Asterisk Build Complete ---------+
+ + Asterisk has successfully been built, and +
+ + can be installed by running:              +
+ +                                           +
+ +                make install               +
+ +-------------------------------------------+
+root@debian6:/usr/src/asterisk-1.8.7.1#
+----
+
+Installieren:
+
+[source,shell]
+----
+root@debian6:/usr/src/asterisk-1.8.7.1# make install
+/usr/bin/install -c -d "/usr/lib/asterisk/modules"
+/usr/bin/install -c -d "/usr/sbin"
+/usr/bin/install -c -d "/etc/asterisk"
+
+[...]
+
+make[1]: Leaving directory `/usr/src/asterisk-1.8.7.1/sounds'
+ +---- Asterisk Installation Complete -------+
+ +                                           +
+ +    YOU MUST READ THE SECURITY DOCUMENT    +
+ +                                           +
+ + Asterisk has successfully been installed. +
+ + If you would like to install the sample   +
+ + configuration files (overwriting any      +
+ + existing config files), run:              +
+ +                                           +
+ +                make samples               +
+ +                                           +
+ +-----------------  or ---------------------+
+ +                                           +
+ + You can go ahead and install the asterisk +
+ + program documentation now or later run:   +
+ +                                           +
+ +               make progdocs               +
+ +                                           +
+ + **Note** This requires that you have      +
+ + doxygen installed on your local system    +
+ +-------------------------------------------+
+root@debian6:/usr/src/asterisk-1.8.7.1#
+----
+
+Die eben kompilierten Programmdateien sind jetzt auf dem System
+installiert. Allerdings finden wir im Asterisk-Konfigurationsverzeichnis
+`/etc/asterisk/` noch gähnende Leere vor. Da wir nicht
+von Grund auf beginnen möchten, lassen wir uns die Standard-Beispieldateien
+erstellen:
+
+[source,shell]
+----
+root@debian6:/usr/src/asterisk-1.8.7.1# make samples
+Installing adsi config files...
+/usr/bin/install -c -d "/etc/asterisk"
+Installing configs/asterisk.adsi
+Installing configs/telcordia-1.adsi
+Installing other config files...
+
+[...]
+
+Installing file phoneprov/polycom.xml
+Installing file phoneprov/snom-mac.xml
+root@debian6:/usr/src/asterisk-1.8.7.1#
+----
+
+Damit Asterisk beim Booten des Rechners auch automatisch gestartet und
+bei einem Shutdown ordentlich gestoppt wird, benötigen wir noch
+entsprechende Init-Skripte:
+
+[source,shell]
+----
+root@debian6:/usr/src/asterisk-1.8.7.1# make config
+update-rc.d: using dependency based boot sequencing
+root@debian6:/usr/src/asterisk-1.8.7.1# 
+----
+
+Fertig! Asterisk ist auf Ihrem System installiert. Mit dem Befehl
++`asterisk -V`+ können Sie die
+installierte Version herausfinden (bitte achten Sie auf das großgeschriebene
+V):
+
+[source,shell]
+----
+root@debian6:/usr/src/asterisk-1.8.7.1# asterisk -V
+Asterisk 1.8.7.1
+root@debian6:/usr/src/asterisk-1.8.7.1#
+----

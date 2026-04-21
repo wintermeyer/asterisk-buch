@@ -1,0 +1,20 @@
+[[manager-atxfer]]
+= `Atxfer`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: Atxfer
+Synopsis: Attended transfer
+Privilege: call,all
+Description: Attended transfer.
+Variables: (Names marked with * are required)
+*Channel: Transferer's channel
+*Exten: Extension to transfer to
+*Context: Context to transfer to
+*Priority: Priority to transfer to
+ActionID: Optional Action id for message matching.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

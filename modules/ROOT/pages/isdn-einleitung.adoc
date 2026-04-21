@@ -1,0 +1,77 @@
+[[isdn-einleitung]]
+= Einleitung
+
+ISDN ist in Deutschland die vorherrschende Technik, um Sprachdienste
+zur Verfügung zu stellen. Nur noch in wenigen Privathaushalten gibt es
+analoge Telefonanschlüsse. Im geschäftlichen Bereich ist ISDN der
+De-facto-Standard. Die Verfügbarkeit von schnellen und günstigen
+Internetanschlüssen und damit die Nutzung von Sprachdiensten via
+TCP/IP-Netzwerke (VoIP) wird ISDN wahrscheinlich mittel- bis langfristig
+ablösen (mit diesem Buch tragen wir auch unmittelbar dazu bei), aber bis
+dahin ist noch etwas Zeit.
+
+Erwarten Sie an dieser Stelle keine grundlegende Einführung in das
+Thema ISDN und in die nähere Funktionsweise. ISDN wird in diesem Kapitel
+nur so weit besprochen, wie es für die Benutzung mit Asterisk relevant
+ist.
+
+[[minimalgrundlagen-isdn]]
+== Minimalgrundlagen von ISDN
+
+Ein ISDN-Anschluss stellt sogenannte B- und D-Kanäle zur
+Verfügung. Ein einzelner B-Kanal ist (vereinfacht gesagt) vergleichbar
+mit einer analogen Telefonleitung: Es kann genau ein Gespräch darüber
+geführt werden. Im Gegensatz zur analogen Telefonie können aber pro
+Leitungspaar zwei B-Kanäle gleichzeitig übertragen werden (also zwei
+Gespräche). So werden bestehende Ressourcen besser genutzt. Außerdem
+werden die Daten digital und nicht analog übertragen. Dadurch ist die
+subjektive Sprachqualität viel besser.
+
+Es gibt folgende Unterschiede zwischen einem B- und einem
+D-Kanal:
+
+* Der B-Kanal (B für Bearer = Träger) ist in unserem Fall ein Sprachkanal. Die Datenübertragungsmöglichkeit (64 kbit/s) ist für uns ohne Belang.
+* Der D-Kanal ist ein reiner Datenkanal (16 kbit/s). Allerdings kann darauf vom Endbenutzer nicht direkt zugriffen werden.footnote:[In den 90er Jahren gab es tatsächlich ein paar Projekte, die sich mit der prinzipiell kostenlosen Datenübertragung über den D-Kanal beschäftigt haben. Allerdings ist das durch günstige und deutlich breitbandigere Internetverbindungen sehr schnell unattraktiv geworden.] Vereinfacht gesagt, benutzen ISDN-Telefone, ISDN-Telefonanlagen oder auch ISDN-Karten den D-Kanal, um sich mit der Vermittlungsstelle zu unterhalten.
+
+Wir gehen in diesem Kapitel von einem funktionierenden
+ISDN-Anschluss in den Varianten Basis und Multiplex aus.
+
+[[isdn-basis-anschluss]]
+=== ISDN-Basis-Anschluss
+
+Der normale Basis-Anschluss wird im Telefonie-Umfeld häufig als
+BRI (für "Basic Rate ISDN") genannt. Dieser Anschluss genügt für fast
+alle privaten Haushalte und auch für die meisten mittelständischen
+Betriebe. Er bietet 2 B-Kanäle und einen D-Kanal. Um es aber etwas
+komplizierter zu machen, gibt es diesen Anschluss in zwei
+verschiedenen Varianten:
+
+* Mehrgeräteanschluss (PtMP, Point-to-Multipoint)
++
+An ihm können bis zu 8 ISDN-Endgeräte angeschlossen werden,
+die dann über eigene MSNs (Telefonnummern) anwählbar sind. Mehrere
+Endgeräte können auf die gleichen MSN konfiguriert sein.
++
+Der Mehrgeräteanschluss ist das, was der normale
+Heimanwender als ISDN kennt.
+* Anlagenanschluss (PtP, Point-to-Point)
++
+An diesen kann nur eine ISDN-Telefonanlage angeschlossen
+werden (bei uns eine ISDN-Karte, die im Asterisk-Server läuft).
+Wer mehr als zwei B-Kanäle benötigt, kann mehrere
+Anlagenanschlüsse mit der gleichen Rufnummer auf eine oder mehrere
+ISDN-Karten anschließen.
+
+[[isdn-multiplex-anschluss]]
+=== ISDN-Primär-Multiplex-Anschluss
+
+Der Primär-Multiplex-Anschluss kann als großer Bruder des
+Anlagenanschlusses bezeichnet werden. Auch er akzeptiert nur ein
+ISDN-Endgerät (dies ist auch hier fast immer eine Telefonanlage) und
+bietet in Europa 30 B-Kanäle und einen D-Kanal (diesmal allerdings mit
+64 kbps). Er wird entweder S2M oder E1 genannt. In den USA wird er
+übrigens T1 genannt und bietet nur 24 B-Kanäle (und einen
+D-Kanal).
+
+Im Telefonie-Umfeld wird vom PMX auch häufig als PRI (für
+"Primary Rate Interface") gesprochen.

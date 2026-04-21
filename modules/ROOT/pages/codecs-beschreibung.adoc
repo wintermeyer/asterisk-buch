@@ -1,0 +1,17 @@
+[[codecs-beschreibung]]
+= Was macht ein Codec?
+
+Ein Codec wandelt analoge Audiosignale in ein digitales Format um.
+Dies kann nahezu verlustfrei (z. B. G.711)footnote:[Aber auch „nahezu verlustfrei“ ist immer relativ.] oder auch mit einem gewissen Verlust (z. B. GSM) geschehen.
+Ohne einen Codec kann man keine Sprache übertragen. Welchen Codec man
+nimmt, hängt von der zur Verfügung stehenden Bandbreite und von der
+verfügbaren Rechenleistung ab. Die Benutzung von Codecs ist immer ein
+Kompromiss zwischen den beiden Werten Bandbreite und
+Rechenleistung.
+
+Wir gehen in diesem Kapitel nicht allzu ausführlich auf die
+Funktionsweisen der verschiedenen Codecs ein. Dem interessierten Leser sei
+hier ein Blick in die Wikipedia empfohlen. Für uns reicht ein genereller
+Überblick. 99 % aller deutschen Asterisk-Installationen benutzen als
+Standard alaw. Da sollte man sich nicht ohne Not mit irgendwelchen Exoten
+abmühen.

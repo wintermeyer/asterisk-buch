@@ -1,0 +1,28 @@
+[[manager-monitor]]
+= `Monitor`
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.4:
+Action: Monitor
+Synopsis: Monitor a channel
+Privilege: call,all
+Description: The 'Monitor' action may be used to record the audio on a
+specified channel. The following parameters may be used to control
+this:
+Channel - Required. Used to specify the channel to record.
+File - Optional. Is the name of the file created in the
+monitor spool directory. Defaults to the same name
+as the channel (with slashes replaced with dashes).
+Format - Optional. Is the audio recording format. Defaults
+to "wav".
+Mix - Optional. Boolean parameter as to whether to mix
+the input and output channels together after the
+recording is finished.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —

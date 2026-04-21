@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>23.1. Ansteuerung der LEDs</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="blf-hints-pickup.html" title="Kapitel 23. BLF, Hints, Pickup" /><link rel="prev" href="blf-hints-pickup.html" title="Kapitel 23. BLF, Hints, Pickup" /><link rel="next" href="blf-subscriptions.html" title="23.2. Verfahren für SIP-Subscriptions" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="23.1. Ansteuerung der LEDs" id="blf-leds"><div class="titlepage"><div><div><h2 class="title" id="blf-leds">23.1. Ansteuerung der LEDs</h2></div></div></div><div class="section" title="sip.conf" id="blf-sip.conf"><div class="titlepage"><div><div><h3 class="title" id="blf-sip.conf">sip.conf</h3></div></div></div><div class="para">Zuerst sind bestimmte Einstellungen im Abschnitt
+      <code class="code">[general]</code> der <code class="filename">sip.conf</code>
+      erforderlich:</div><pre class="programlisting">[general]
+allowsubscribe = yes
+notifyringing = yes
+notifyhold = yes
+limitonpeers = yes</pre><div class="para">Auch in den Abschnitten der einzelnen SIP-Benutzer sind
+      Einstellungen hinzuzufügen, nämlich <code class="code">subscribecontext</code> und
+      <code class="code">call-limit</code>. <code class="code">subscribecontext</code> besagt, in
+      welchem Context Asterisk suchen soll, wenn dieser Benutzer den Status
+      anderer Benutzer "abonnieren" will. In der Regel ist das der Context, in
+      dem sich auch die internen Benutzer befinden. <code class="code">call-limit</code>
+      hat eigentlich eine andere Aufgabe, nämlich die Anzahl der
+      gleichzeitigen Gespräche dieses Benutzers zu beschränken (wenn es auf
+      einen Wert &gt; 0 gesetzt wird). Es dient hier aber auch dazu, dass
+      Asterisk überhaupt die Anzahl der gleichzeitigen Gespräche dieses
+      Benutzers mitzählt, was für den Status (frei/besetzt) wichtig ist. Es
+      muss also auf einen beliebigen Wert &gt; 0 gesetzt werden, am besten
+      mindestens auf 2, sonst hat man Probleme bei Transfers.</div><div class="para">Zudem sind (für das spätere Heranholen von Gesprächen) noch die
+      zwei Parameter <code class="code">callgroup</code><sup>[<a id="idp22071392" href="#ftn.idp22071392" class="footnote">119</a>]</sup> und <code class="code">pickupgroup</code><sup>[<a id="idp22072976" href="#ftn.idp22072976" class="footnote">120</a>]</sup> von Bedeutung. Zum Beispiel darf ein Benutzer mit
+      <code class="code">pickupgroup=2</code> Gespräche von anderen Benutzern mit
+      <code class="code">callgroup=2</code> heranholen. Dies dient also der
+      Rechteverwaltung. Da es allerdings nur 64 mögliche Gruppen gibt (0 bis
+      63), ist diese Methode nur für kleine bis mittelgroße Installationen
+      brauchbar. Bei großen Installationen setzt man für alle User die gleiche
+      Gruppe und muss sich dann um die Rechteverwaltung selber kümmern (dazu
+      später noch ein Hinweis).</div><pre class="programlisting">[21]
+type = friend
+context = interne-benutzer
+secret = 9847825134
+host = dynamic
+mailbox = 2000
+<span class="bold bold"><strong>subscribecontext = interne-benutzer</strong></span>
+<span class="bold bold"><strong>call-limit = 10</strong></span>
+<span class="bold bold"><strong>callgroup = 2</strong></span>
+<span class="bold bold"><strong>pickupgroup = 2</strong></span></pre></div><div class="section" title="Hints" id="blf-hints"><div class="titlepage"><div><div><h3 class="title" id="blf-hints">Hints<a id="idp17393280" class="indexterm"></a></h3></div></div></div><div class="para">Als Nächstes muss man Asterisk die Zuordnung zwischen Extensions
+      und Benutzern (oder Geräten) mitteilen. Dies macht man im Dialplan mit
+      sogenannten <span class="quote">„<span class="quote"><span xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Hints</em></span></span>“</span>. Wenn man in
+      Dialplan-Prioritäten denkt, dann ist ein <code class="code">hint</code> eine
+      spezielle Priorität, die noch vor der Priorität <code class="code">1</code> steht.
+      Wichtig ist, dass sich die Hints in dem Context befinden, den man in der
+      <code class="filename">sip.conf</code> (s. o.) mit <code class="code">subscribecontext</code>
+      angegeben hat, ansonsten werden die Status-Informationen nicht
+      weitergeleitet. Das ist durchaus Absicht, damit man nicht per se von
+      allen Telefonen aus alle weiteren überwachen kann. Durch
+      unterschiedliche Contexte lässt sich also auch eine Art
+      Berechtigungssystem bauen.<sup>[<a id="idp17398096" href="#ftn.idp17398096" class="footnote">121</a>]</sup> Wir beschreiben hier anhand von Beispielen, wie ein Hint
+      definiert wird. Je nachdem, ob Ihr Dialplan im
+      <code class="filename">extensions.conf</code>-Format oder in AEL geschrieben ist,
+      verwenden Sie die eine oder die andere Variante.</div><div class="table"><div class="table-contents"><table summary="Hints – Einfaches Beispiel" width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+
+exten =&gt; 21,<span class="bold bold"><strong>hint,SIP/21</strong></span>
+exten =&gt; 21,1,Dial(SIP/${EXTEN},40)
+exten =&gt; 21,n,VoiceMail(${EXTEN},u)
+
+exten =&gt; 22,<span class="bold bold"><strong>hint,SIP/22</strong></span>
+exten =&gt; 22,1,Dial(SIP/${EXTEN},40)
+exten =&gt; 22,n,VoiceMail(${EXTEN},u)</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  
+  <span class="bold bold"><strong>hint(SIP/21)</strong></span> 21 =&gt; {
+    Dial(SIP/${EXTEN},40);
+    VoiceMail(${EXTEN},u);
+  }
+  <span class="bold bold"><strong>hint(SIP/22)</strong></span> 22 =&gt; {
+    Dial(SIP/${EXTEN},40);
+    VoiceMail(${EXTEN},u);
+  }
+}</pre></td></tr></tbody></table></div><h6>Tabelle 23.1. Hints – Einfaches Beispiel</h6></div><br class="table-break" /><div class="table"><div class="table-contents"><table summary="Hints – Beispiel mit Pattern (Asterisk 1.4)" width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+
+exten =&gt; 21,<span class="bold bold"><strong>hint,SIP/21</strong></span>
+exten =&gt; 22,<span class="bold bold"><strong>hint,SIP/22</strong></span>
+
+exten =&gt; _2X,1,Dial(SIP/${EXTEN},40)
+exten =&gt; _2X,n,VoiceMail(${EXTEN},u)</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  
+  <span class="bold bold"><strong>hint(SIP/21)</strong></span> 21 =&gt; {}
+  <span class="bold bold"><strong>hint(SIP/22)</strong></span> 22 =&gt; {}
+  
+  _2X =&gt; {
+    Dial(SIP/${EXTEN},40);
+    VoiceMail(${EXTEN},u);
+  }
+}</pre></td></tr></tbody></table></div><h6>Tabelle 23.2. Hints – Beispiel mit Pattern (Asterisk 1.4)</h6></div><br class="table-break" /><div class="important"><h2>Wichtig</h2><div class="para">Beachten Sie hierbei, dass ein <code class="code">hint</code> in Asterisk 1.4
+        nicht mit Pattern<sup>[<a id="idp6195776" href="#ftn.idp6195776" class="footnote">122</a>]</sup> geschrieben werden kann.<pre class="programlisting">exten =&gt; _2X,hint,SIP/${EXTEN}</pre>bzw.<pre class="programlisting">hint(SIP/${EXTEN}) _2X =&gt; {<em class="replaceable"><code>...</code></em>}</pre>wäre
+        also unzulässig.</div><div class="para">Ab Asterisk 1.6 ist diese Schreibweise möglich, auch wenn es
+        anfänglich noch zu Problemen kam. Bitte beachten Sie aber, dass
+        während der Interpretation eines Hints noch kein Channel besteht, was
+        bedeutet, dass auch keine Channel-Variablen in der Hint-Definition zur
+        Verfügung stehen – mit Ausnahme von
+        <code class="code">${EXTEN}</code>.</div></div><div class="table"><div class="table-contents"><table summary="Hints – Beispiel mit Pattern (Asterisk 1.6)" width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+
+exten =&gt; _2X,<span class="bold bold"><strong>hint,SIP/${EXTEN}</strong></span>
+exten =&gt; _2X,1,Dial(SIP/${EXTEN},40)
+exten =&gt; _2X,n,VoiceMail(${EXTEN},u)</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  
+  <span class="bold bold"><strong>hint(SIP/${EXTEN})</strong></span> _2X =&gt; {
+    Dial(SIP/${EXTEN},40);
+    VoiceMail(${EXTEN},u);
+  }
+}</pre></td></tr></tbody></table></div><h6>Tabelle 23.3. Hints – Beispiel mit Pattern (Asterisk 1.6)</h6></div><br class="table-break" /><div class="table"><div class="table-contents"><table summary="Hints – Beispiel mit mehreren Benutzern in einem&#10;        hint" width="100%" border="0"><colgroup><col style="text-align: left" /><col style="text-align: left" /></colgroup><thead valign="middle"><tr><th style="text-align: center" valign="middle"><code class="filename">extensions.conf</code></th><th style="text-align: center" valign="middle"><code class="filename">extensions.ael</code></th></tr></thead><tbody valign="top"><tr><td style="text-align: left" valign="top"><pre class="programlisting">[interne-benutzer]
+
+exten =&gt; 20,<span class="bold bold"><strong>hint,SIP/21&amp;SIP/22</strong></span>
+
+exten =&gt; 20,1,Dial(SIP/21&amp;SIP/22,40)</pre></td><td style="text-align: left" valign="top"><pre class="programlisting">context interne-benutzer {
+  
+  <span class="bold bold"><strong>hint(SIP/21&amp;SIP/22)</strong></span> 20 =&gt; {}
+  
+  20 =&gt; {
+    Dial(SIP/21&amp;SIP/22,40);
+  }
+}</pre></td></tr></tbody></table></div><h6>Tabelle 23.4. Hints – Beispiel mit mehreren Benutzern in einem
+        <code class="code">hint</code></h6></div><br class="table-break" /><div class="tip"><h2>Tipp</h2><div class="para">Der Übersichtlichkeit halber kann man alle Hints auch in einen
+        eigenen Context legen und diesen überall dort mit <code class="code">include =&gt;
+        meine-hints</code> einbinden, wo er benötigt wird. Dies ist vor allem
+        in Asterisk-Versionen vor 1.6 interessant.</div></div><div class="para">Danach müssen Sie Asterisk neu starten (<span class="bold bold"><strong><code class="literal"><code class="command">/etc/init.d/asterisk
+      reload</code></code></strong></span> oder <span class="bold bold"><strong><code class="literal"><code class="command">asterisk -rx 'module
+      reload'</code></code></strong></span>).</div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp22071392" href="#idp22071392" class="para">119</a>] </sup>siehe <a class="xref" href="sip.html#sip-channel-callgroup" title="callgroup">„<code class="code">callgroup</code>“</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp22072976" href="#idp22072976" class="para">120</a>] </sup>siehe <a class="xref" href="sip.html#sip-channel-pickupgroup" title="pickupgroup">„<code class="code">pickupgroup</code>“</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp17398096" href="#idp17398096" class="para">121</a>] </sup>Diese Methode eignet sich allerdings nicht so gut für
+          datenbankgestützte <span class="quote">„<span class="quote">Realtime</span>“</span>-Installationen.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp6195776" href="#idp6195776" class="para">122</a>] </sup><a class="xref" href="einleitung-regex.html" title="3.3. Pattern Matching">Abschnitt 3.3, „Pattern Matching“</a></p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="ael.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">AEL</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Protokolle</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="codecs.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Codecs</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">ISDN</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="analog.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="media-gateways.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Media Gateways</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="features.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Features</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="faxserver.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Fax-Server</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="telefone.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link formalpara"><a href="blf-hints-pickup.html#blf-beschreibung" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link formalpara">Beschreibung des Leistungsmerkmals BLF</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Ansteuerung der LEDs</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="blf-leds.html#blf-sip.conf" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">sip.conf</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="blf-leds.html#blf-hints" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Hints</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-subscriptions.html" title="pfc level3 breadcrumb-link section sectlevel1">Verfahren für SIP-<span xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="foreignphrase" lang="en"><em xml:lang="en" class="foreignphrase" lang="en">Subscriptions</em></span></a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-telefon-konfiguration-snom.html" title="pfc level3 breadcrumb-link section sectlevel1">Konfiguration der Telefone für BLF</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-test.html" title="pfc level3 breadcrumb-link section sectlevel1">Test der Hints</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-pickup.html" title="pfc level3 breadcrumb-link section sectlevel1">Heranholen eines Anrufs (<span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Pickup</span>“</span>)</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="blf-device-state.html" title="pfc level3 breadcrumb-link section sectlevel1">Gezielte Ansteuerung der LEDs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="blf-hints-pickup.html"><strong>Zurück</strong>Kapitel 23. BLF, Hints, Pickup</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="blf-subscriptions.html"><strong>Weiter</strong>23.2. Verfahren für SIP-Subscriptions</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

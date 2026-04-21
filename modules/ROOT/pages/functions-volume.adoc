@@ -1,0 +1,47 @@
+[[functions-volume]]
+= `VOLUME()`
+
+[source]
+----
+VOLUME(param)
+----
+
+Diese Funktion setzt unabhängig von der Kanaltechnologie die
+Lautstärke des Audiostreams von Empfangs- und Senderichtung. Die Werte, die
+gesetzt werden können, sollten zwischen 0 und 9 liegen. Als Parameter gibt
+man die Richtung an:
+
+`RX`:: Für Sprache, die vom Channel empfangen wird
+`TX`:: Für Sprache, die vom Channel gesendet wird
+
+[source]
+----
+; Setzt die Lautstärke des Channels in Senderichtung auf Level 2
+exten => 123,1,Answer()
+exten => 123,n,Set(VOLUME(TX)=2)
+exten => 123,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'VOLUME' =-
+
+[Syntax]
+VOLUME(TX|RX)
+
+[Synopsis]
+Set the TX or RX volume of a channel
+
+[Description]
+The VOLUME function can be used to increase or decrease the tx or
+rx gain of any channel. For example:
+Set(VOLUME(TX)=3)
+Set(VOLUME(RX)=2)
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-agc.adoc[Abschnitt D.1, „`AGC()`“], xref:functions-denoise.adoc[Abschnitt D.20, „`DENOISE()`“]

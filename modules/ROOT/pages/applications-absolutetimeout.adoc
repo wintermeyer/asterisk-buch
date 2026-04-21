@@ -1,0 +1,40 @@
+[[applications-absolutetimeout]]
+= `AbsoluteTimeout()`
+
+Setzt einen Timeout auf einem Kanal.
+
+[source]
+----
+AbsoluteTimeout(Sekunden)
+----
+
+[IMPORTANT]
+====
+`AbsoluteTimeout()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `TIMEOUT()` (xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]) ersetzt:
+
+[source]
+----
+Set(TIMEOUT(absolute)=Sekunden)
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'AbsoluteTimeout' =-
+
+[Synopsis]
+Set absolute maximum time of call
+
+[Description]
+AbsoluteTimeout(seconds): This application will set the absolute maximum
+amount of time permitted for a call. A setting of 0 disables the timeout.
+AbsoluteTimeout has been deprecated in favor of Set(TIMEOUT(absolute)=timeout)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-digittimeout.adoc[Abschnitt C.40, „`DigitTimeout()`“], xref:applications-responsetimeout.adoc[Abschnitt C.135, „`ResponseTimeout()`“], xref:functions-timeout.adoc[Abschnitt D.101, „`TIMEOUT()`“]

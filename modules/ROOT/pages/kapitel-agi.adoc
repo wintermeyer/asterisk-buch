@@ -1,0 +1,25 @@
+[[kapitel-agi]]
+= Asterisk Gateway Interface (AGI)
+
+In diesem Kapitel:
+
+* xref:agi-datenstroeme.adoc[Datenströme]
+** xref:agi-datenstroeme.adoc#agi-stdin[STDIN]
+** xref:agi-datenstroeme.adoc#agi-stdout[STDOUT]
+** xref:agi-datenstroeme.adoc#agi-stderr[STDERR]
+* xref:agi-verzeichnisse.adoc[Verzeichnisse und Rechte]
+* xref:agi-aufruf-im-dialplan.adoc[Aufruf eines AGI-Skripts im Dialplan]
+* xref:ch20s04.adoc[Beispiele in verschiedenen Programmiersprachen]
+** xref:ch20s04.adoc#agi-perl[Perl]
+** xref:ch20s04.adoc#agi-php[PHP]
+** xref:ch20s04.adoc#adhearsion[Ruby und Adhearsion]
+** xref:ch20s04.adoc#agi-andere-programmiersprachen[Andere Programmiersprachen]
+
+Das Asterisk Gateway Interface (AGI) ist vergleichbar mit CGI auf
+Webservern. Es sind externe Programme, die innerhalb des Dialplans (der
+`extensions.conf`) aufgerufen werden. AGI-Skripte können
+mit Asterisk interagieren und Befehle ausführen. AGI-Skripte können
+prinzipiell in allen Programmier- und Skriptsprachen (z. B. Shell-Skript)
+geschrieben werden, die mit den Standard-Sockets unter Unix umgehen können.
+Die folgenden Beschreibungen gelten also nur als Beispiele für eine
+Implementierung. Für die Befehlsreferenz siehe xref:agi-commands.adoc[Anhang E, _AGI-Befehle_].

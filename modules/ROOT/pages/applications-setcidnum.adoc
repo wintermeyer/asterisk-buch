@@ -1,0 +1,45 @@
+[[applications-setcidnum]]
+= `SetCIDNum()`
+
+Setzt die Caller-ID-Nummer.
+
+[source]
+----
+SetCIDNum(Nummer,Optionen)
+----
+
+[IMPORTANT]
+====
+`SetCIDNum()` ist ab Asterisk 1.4 nicht mehr
+vorhanden und wurde durch die Funktion `CALLERID()`
+(xref:functions-callerid.adoc[Abschnitt D.8, „`CALLERID()`“]) ersetzt:
+
+[source]
+----
+Set(CALLERID(num)=Nummer)
+Set(CALLERID(ani)=Nummer)
+----
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'SetCIDNum' =-
+
+[Synopsis]
+Set CallerID Number
+
+[Description]
+SetCIDNum(cnum[|a]): Set Caller*ID Number on a call to a new
+value, while preserving the original Caller*ID name. This is
+useful for providing additional information to the called
+party. Sets ANI as well if a flag is used.
+SetCIDNum has been deprecated in favor of the function
+CALLERID(number)
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:applications-setcidname.adoc[Abschnitt C.155, „`SetCIDName()`“], xref:functions-callerid.adoc[Abschnitt D.8, „`CALLERID()`“]

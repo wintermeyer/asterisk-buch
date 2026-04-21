@@ -1,0 +1,61 @@
+[[applications-dahdiras]]
+= `DAHDIRAS()`
+
+Führt den _DAHDI ISDN Remote Access Server_
+aus.
+
+[source]
+----
+DAHDIRAS(Parameter)
+----
+
+[NOTE]
+====
+Diese Applikation ist durch die Umbenennung von Zaptel in
+DAHDIfootnote:[xref:glossar.adoc#glossar-dahdi[DAHDI\]] entstanden. Für eine Beschreibung siehe xref:applications-zapras.adoc[Abschnitt C.198, „`ZapRAS()`“].
+====
+
+.Asterisk-Versionen:
+————————| *1.2**|————————| *1.4**|————————| *1.6* |————————
+(* anderer Name)
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.6:
+-= Info about application 'DAHDIRAS' =-
+
+[Synopsis]
+Executes DAHDI ISDN RAS application
+
+[Description]
+DAHDIRAS(args): Executes a RAS server using pppd on the given channel.
+The channel must be a clear channel (i.e. PRI source) and a DAHDI
+channel to be able to use this function (No modem emulation is included).
+Your pppd must be patched to be DAHDI aware. Arguments should be
+separated by , characters.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 (xref:applications-zapras.adoc[Abschnitt C.198, „`ZapRAS()`“]) zu 1.4 (xref:applications-zapras.adoc[Abschnitt C.198, „`ZapRAS()`“]):
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 (xref:applications-zapras.adoc[Abschnitt C.198, „`ZapRAS()`“]) zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,11 +1,11 @@
+- -= Info about application 'ZapRAS' =-
++ -= Info about application 'DAHDIRAS' =-
+
+[Synopsis]
+- Executes Zaptel ISDN RAS application
++ Executes DAHDI ISDN RAS application
+
+[Description]
+- ZapRAS(args): Executes a RAS server using pppd on the given channel.
+- The channel must be a clear channel (i.e. PRI source) and a Zaptel
++ DAHDIRAS(args): Executes a RAS server using pppd on the given channel.
++ The channel must be a clear channel (i.e. PRI source) and a DAHDI
+channel to be able to use this function (No modem emulation is included).
+- Your pppd must be patched to be zaptel aware. Arguments should be
+- separated by | characters.
++ Your pppd must be patched to be DAHDI aware. Arguments should be
++ separated by , characters.
+
+.Siehe auch
+xref:applications-zapras.adoc[Abschnitt C.198, „`ZapRAS()`“]

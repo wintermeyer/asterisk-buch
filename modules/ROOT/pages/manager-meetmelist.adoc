@@ -1,0 +1,19 @@
+[[manager-meetmelist]]
+= `MeetmeList`
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu diesem AMI-Befehl in Asterisk 1.6:
+Action: MeetmeList
+Synopsis: List participants in a conference
+Privilege: reporting,all
+Description: Lists all users in a particular MeetMe conference.
+MeetmeList will follow as separate events, followed by a final event called
+MeetmeListComplete.
+Variables:
+*ActionId: <id>
+*Conference: <confno>
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —

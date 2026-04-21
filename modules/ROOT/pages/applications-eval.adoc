@@ -1,0 +1,37 @@
+[[applications-eval]]
+= `Eval()`
+
+Wertet eine Variable doppelt aus.
+
+[source]
+----
+Eval(ErgebnisVariable=Ausdruck)
+----
+
+[IMPORTANT]
+====
+`Eval()` ist ab Asterisk 1.4 nicht mehr vorhanden
+und wurde durch die Funktion `EVAL()` (xref:functions-eval.adoc[Abschnitt D.31, „`EVAL()`“]) ersetzt.
+====
+
+.Asterisk-Versionen:
+————————| *1.2* | | | | |
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.2:
+-= Info about application 'Eval' =-
+
+[Synopsis]
+Evaluates a string
+
+[Description]
+Usage: Eval(newvar=somestring)
+Normally Asterisk evaluates variables inline. But what if you want to
+store variable offsets in a database, to be evaluated later? Eval is
+the answer, by allowing a string to be evaluated twice in the dialplan,
+the first time as part of the normal dialplan, and the second using Eval.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-eval.adoc[Abschnitt D.31, „`EVAL()`“]

@@ -1,0 +1,74 @@
+[[applications-gosubif]]
+= `GosubIf()`
+
+Springt bedingt zu der angegebenen Priorität (mit der Möglichkeit
+der Rückkehr).
+
+[source]
+----
+GosubIf(Bedingung?PrioWahr:PrioFalsch)
+----
+
+Springt wie `GotoIf()` unter einer bestimmten Bedingung
+(siehe xref:glossar.adoc#glossar-expressions[Expression]) im Dialplan, erlaubt es dem
+Unterprogramm aber, mit `Return()` zurückzukehren.
+
+Gibt 0 zurück oder -1, wenn das Sprungziel ungültig ist.
+
+[source]
+----
+exten => telcid,1,Set(CALLERID(all)=Apfelmus <0123456780>)
+exten => telcid,n,Return()
+exten => faxcid,1,Set(CALLERID(all)=Apfelmus <0123456785>)
+exten => faxcid,n,Return()
+
+exten => _0.,1,GosubIf($[${CHANNEL:4:2} = 43]?faxcid,1:telcid,1)
+exten => _0.,n,Dial(${TRUNK}/${EXTEN:1},,T)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'GosubIf' =-
+
+[Synopsis]
+Conditionally jump to label, saving return address
+
+[Description]
+GosubIf(condition?labeliftrue[:labeliffalse])
+If the condition is true, then jump to labeliftrue. If false, jumps to
+labeliffalse, if specified. In either case, a jump saves the return point
+in the dialplan, to be returned to with a Return.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,7 @@
+-= Info about application 'GosubIf' =-
+
+[Synopsis]
+- Jump to label, saving return address
++ Conditionally jump to label, saving return address
+
+[Description]
+GosubIf(condition?labeliftrue[:labeliffalse])
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,7 +4,7 @@
+Conditionally jump to label, saving return address
+
+[Description]
+- GosubIf(condition?labeliftrue[:labeliffalse])
+- If the condition is true, then jump to labeliftrue. If false, jumps to
++ GosubIf(condition?labeliftrue[(arg1[,...])][:labeliffalse[(arg1[,...])]]):
++ If the condition is true, then jump to labeliftrue. If false, jumps to
+labeliffalse, if specified. In either case, a jump saves the return point
+in the dialplan, to be returned to with a Return.
+
+.Siehe auch
+xref:applications-gosub.adoc[Abschnitt C.63, „`Gosub()`“], xref:applications-goto.adoc[Abschnitt C.65, „`Goto()`“], xref:applications-gotoif.adoc[Abschnitt C.66, „`GotoIf()`“],
+xref:applications-return.adoc[Abschnitt C.137, „`Return()`“], xref:applications-macro.adoc[Abschnitt C.81, „`Macro()`“], xref:extensions.ael.adoc#ael-conditionals[„Bedingte Anweisungen (_conditionals_)“],
+xref:extensions.ael.adoc#ael-macros[„Makros (_macros_)“]

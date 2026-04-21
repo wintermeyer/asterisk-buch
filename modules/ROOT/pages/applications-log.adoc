@@ -1,0 +1,46 @@
+[[applications-log]]
+= `Log()`
+
+Sendet den angegebenen Text an den angegebenen
+Log-Level.
+
+[source]
+----
+Log(Level,Nachricht)
+----
+
+Gibt die angegebene Nachricht an den entsprechenden Log-Level
+weiter.
+
+`Level`:: Einer der folgenden Ziellevel: `ERROR`, `WARNING`, `NOTICE`, `DEBUG`, `VERBOSE`, `DTMF`
+`Nachricht`:: Zu loggende Nachricht
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Log' =-
+
+[Synopsis]
+Send arbitrary text to a selected log level
+
+[Description]
+Log(<level>|<message>)
+level must be one of ERROR, WARNING, NOTICE, DEBUG, VERBOSE, DTMF
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,5 @@
+Send arbitrary text to a selected log level
+
+[Description]
+- Log(<level>|<message>)
++ Log(<level>,<message>)
+level must be one of ERROR, WARNING, NOTICE, DEBUG, VERBOSE, DTMF
+
+.Siehe auch
+xref:applications-noop.adoc[Abschnitt C.107, „`NoOp()`“], xref:applications-dumpchan.adoc[Abschnitt C.43, „`DumpChan()`“], xref:applications-verbose.adoc[Abschnitt C.184, „`Verbose()`“]

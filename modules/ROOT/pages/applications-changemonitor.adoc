@@ -1,0 +1,55 @@
+[[applications-changemonitor]]
+= `ChangeMonitor()`
+
+Ändert den Dateinamen der Protokolldatei für einen
+Channel.
+
+[source]
+----
+ChangeMonitor(Basis-Dateiname)
+----
+
+Ändert den Namen der Datei, die bei der Überwachung eines Channels
+mit `Monitor()` aufgezeichnet wird. Diese Anwendung hat keinerlei
+Auswirkungen, wenn der fragliche Channel nicht überwacht wird.
+
+[source]
+----
+; Channel mitschneiden mit Datei-Basisname 'mitschnitt'
+exten => 123,1,Monitor(mitschnitt)
+; den Datei-Basisnamen in 'mitschnitt2' ändern
+exten => 123,n,ChangeMonitor(mitschnitt2)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ChangeMonitor' =-
+
+[Synopsis]
+Change monitoring filename of a channel
+
+[Description]
+ChangeMonitor(filename_base)
+Changes monitoring filename of a channel. Has no effect if the channel is not monitored
+The argument is the new filename base to use for monitoring this channel.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,6 @@
+Change monitoring filename of a channel
+
+[Description]
+- ChangeMonitor(filename_base)
+- Changes monitoring filename of a channel. Has no effect if the channel is not monitored
++ ChangeMonitor(filename_base):
++ Changes monitoring filename of a channel. Has no effect if the channel is not monitored.
+The argument is the new filename base to use for monitoring this channel.
+
+.Siehe auch
+xref:applications-monitor.adoc[Abschnitt C.100, „`Monitor()`“], xref:applications-stopmonitor.adoc[Abschnitt C.173, „`StopMonitor()`“]

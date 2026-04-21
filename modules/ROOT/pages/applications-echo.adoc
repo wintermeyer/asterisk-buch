@@ -1,0 +1,61 @@
+[[applications-echo]]
+= `Echo()`
+
+Wiederholt inwärtiges Audio für den Anrufer.
+
+[source]
+----
+Echo()
+----
+
+Gibt auf dem Channel eingehendes Audio direkt wieder auf diesem
+Channel aus. Diese Anwendung findet häufig zum Testen der Verzögerung
+(Latenz) und Sprachqualität einer VoIP-Verbindung Verwendung. Der Anrufer
+kann zum Beenden die `#`-Taste drücken.
+
+Gibt 0 zurück, falls der Benutzer durch die `#`-Taste
+beendet, oder -1, falls der Benutzer auflegt.
+
+[source]
+----
+exten => 123,1,Echo()
+exten => 123,n,Playback(vm-goodbye)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'Echo' =-
+
+[Synopsis]
+Echo audio, video, or DTMF back to the calling party
+
+[Description]
+Echo(): This application will echo any audio, video, or DTMF frames read from
+the calling channel back to itself. If the DTMF digit '#' is received, the
+application will exit.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,9 +1,9 @@
+-= Info about application 'Echo' =-
+
+[Synopsis]
+- Echo audio read back to the user
++ Echo audio, video, or DTMF back to the calling party
+
+[Description]
+- Echo(): Echo audio read from channel back to the channel.
+- User can exit the application by either pressing the '#' key,
+- or hanging up.
++ Echo(): This application will echo any audio, video, or DTMF frames read from
++ the calling channel back to itself. If the DTMF digit '#' is received, the
++ application will exit.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-milliwatt.adoc[Abschnitt C.93, „`Milliwatt()`“]

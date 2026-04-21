@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:suwl="http://nwalsh.com/xslt/ext/com.nwalsh.saxon.UnwrapLinks" lang="de" xml:lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6.2. Variablen</title><link rel="stylesheet" href="default.css" type="text/css" /><link rel="stylesheet" media="print" href="default.css" type="text/css" /><meta name="package" content="" /><meta name="keywords" content="asterisk buch, asterisk" /><link rel="home" href="index.html" title="Asterisk 1.4 - 1.6" /><link rel="up" href="kapitel-programmieren.html" title="Kapitel 6. Programmieren im Dialplan" /><link rel="prev" href="programmierer-howto.html" title="6.1. Kleines Programmierer-Howto" /><link rel="next" href="besondere-extensions.html" title="6.3. Besondere Extensions" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><body><div class="navbar navbar-inverse navbar-fixed-top"><div class="navbar-inner"><div class="container-fluid"><a class="brand" href="index.html">Asterisk 1.4 - 1.6</a><div class="nav-collapse collapse"><p class="navbar-text pull-right"><a href="http://www.amazon.de/gp/product/3827330335?tag=wwwamoomade-21" class="navbar-link">Buch bei Amazon kaufen</a></p></div></div></div></div><div id="container-fluid"><div id="row-fluid"><div class="span9"><div id="adsense-small-rectangle" class="pull-right"><script type="text/javascript">
+  <!--
+  google_ad_client = "ca-pub-9538764634478220";
+  /* das-asterisk-buch.de Small Rectangle */
+  google_ad_slot = "5241753472";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+                 </script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div><div class="section" title="6.2. Variablen" id="variablen"><div class="titlepage"><div><div><h2 class="title" id="variablen">6.2. Variablen</h2></div></div></div><a id="idp7095792" class="indexterm"></a><div class="para">Variablen sind Platzhalter für konkrete Werte. Diese konkreten Werte
+    hängen von der Definition der Variablen ab, also dem Typ, und können bei
+    Asterisk Zahlen, Buchstaben und Buchstabenfolgen sein. Variablen dienen
+    dazu, das kompilierte Programm flexibler zu gestalten und für
+    unterschiedliche oder wechselnde Einsatzzwecke anzupassen. Die Verwendung
+    von Variablen ermöglicht erst den individuellen Einsatz eines Programms,
+    ohne die erneute Übersetzung des Programmcodes in ein ausführbares
+    Programm.</div><div class="tip"><h2>Tipp</h2><div class="para">Wenn Sie noch nie programmiert haben oder mit Variablen in
+      Berührung gekommen sind, sollten Sie sich an dieser Stelle kurz bei
+      <a href="http://de.wikipedia.org/wiki/Variable_%28Programmierung%29">http://de.wikipedia.org/wiki/Variable_%28Programmierung%29</a>
+      in die Materie einlesen.</div></div><div class="para">Variablen haben bei Asterisk unterschiedliche Geltungsbereiche. Es
+    gibt Channel-Variablen, die Werte nur für den jeweiligen und aktiven
+    Channel (also das aktuelle Gespräch) setzen, und globale Variablen, die
+    Werte für alle Channels setzen. Die bereits von Asterisk vorgesehenen
+    Variablen haben wir ja in Form der Parameter in den Konfigurationsdateien
+    schon ausführlich kennengelernt. Neben diesen gibt es auch die
+    Möglichkeit, eigene Variablen zu definieren und diese in den
+    Konfigurationsdateien zu verwenden.</div><div class="section" title="Variablen in einer Extension auslesen" id="variablen-auslesen"><div class="titlepage"><div><div><h3 class="title" id="variablen-auslesen">Variablen in einer Extension auslesen</h3></div></div></div><div class="para">Der Wert einer Variable kann immer in der Syntax
+      <code class="code">${VARIABLENNAME}</code> ausgelesen werden. Es gibt Variablen, die
+      vom Asterisk-System automatisch gesetzt werden. So wird z. B. die
+      angerufene Nummer immer in der Variable <code class="code">EXTEN</code>
+      abgespeichert. Durch Regular Expressions und den Einsatz von Variablen
+      kann man somit einen langen Dialplan häufig stark komprimieren.</div><div class="para">Beispiel vorher:<pre class="programlisting">exten =&gt; 100,1,Dial(SIP/100)
+exten =&gt; 101,1,Dial(SIP/101)
+exten =&gt; 102,1,Dial(SIP/102)
+exten =&gt; 103,1,Dial(SIP/103)
+exten =&gt; 104,1,Dial(SIP/104)
+exten =&gt; 105,1,Dial(SIP/105)
+exten =&gt; 106,1,Dial(SIP/106)
+exten =&gt; 107,1,Dial(SIP/107)
+exten =&gt; 108,1,Dial(SIP/108)
+exten =&gt; 109,1,Dial(SIP/109)</pre></div><div class="para">Beispiel nachher:<pre class="programlisting">exten =&gt; _10X,1,Dial(SIP/${EXTEN})</pre></div></div><div class="section" title="Allgemeines" id="variablen-allgemeines"><div class="titlepage"><div><div><h3 class="title" id="variablen-allgemeines">Allgemeines</h3></div></div></div><div class="para">Variablennamen müssen nicht wie in unseren Beispielen
+      großgeschrieben werden und sind auch nicht an Groß- und Kleinschreibung
+      gebunden. Die Großschreibung von Variablen führt aber meistens zu besser
+      lesbarem Code, da Sie bereits an der Schreibweise erkennen können, dass
+      es sich um eine Variable handelt. Umgekehrt bedeutet das aber auch, dass
+      Groß- und Kleinschreibung nicht für die Unterscheidung von Variablen
+      verwendet werden kann.<div class="important"><h2>Wichtig</h2><div class="para">Die von Asterisk selbst generierten Variablen wie
+          <code class="literal">${EXTEN}</code> müssen immer in Großbuchstaben
+          geschrieben werden.</div></div></div><div class="section" title="Strings" id="var-strings"><div class="titlepage"><div><div><h4 class="title" id="var-strings">Strings</h4></div></div></div><a id="idp7110032" class="indexterm"></a><div class="para">Strings (als Variablen, die keine Zahlen, sondern Text
+        enthalten) sollten immer in Anführungszeichen gesetzt werden. Asterisk
+        akzeptiert sie aber auch ohne diese Markierung. So sind die folgenden
+        zwei Zeilen im Ergebnis gleich:<pre class="programlisting">exten =&gt; 1234,1,Set(OBST=Apfel)
+exten =&gt; 1234,2,Set(OBST="Apfel")</pre></div><div class="para">Sollte der String ein Komma oder ein Leerzeichen enthalten, dann
+        <span class="emphasis"><em>müssen</em></span> Sie Anführungszeichen verwenden, da diese
+        sonst als Kommandos und nicht als Strings interpretiert
+        werden:<pre class="programlisting">exten =&gt; 1234,1,Set(OBSTSORTEN="Apfel, Birne, usw.")</pre></div></div><div class="section" title="Quoting" id="var-quoting"><div class="titlepage"><div><div><h4 class="title" id="var-quoting">Quoting</h4></div></div></div><a id="idp8612560" class="indexterm"></a><div class="para">Bei einer Variablen, die Zeichen oder Zeichenfolgen (Wörter,
+        Text) als Werte enthält, kann es vorkommen, dass man bestimmte Zeichen
+        verwenden möchte, die bereits für andere Funktionen reserviert sind.
+        Wollen Sie zum Beispiel ein Underscore-Zeichen als Bestandteil des
+        Variablenwertes verwenden, müssen Sie es besonders kennzeichnen bzw.
+        maskieren. Diese Kennzeichnung nennt man beim Programmieren
+        <span class="quote">„<span class="quote"><span class="emphasis"><em>escapen</em></span></span>“</span>. Folgende Zeichen müssen
+        auf jeden Fall maskiert (<span class="quote">„<span class="quote">escapt</span>“</span>)
+        werden:<pre class="programlisting">[ ] $ " \</pre></div><div class="para">Das Quoting in der <code class="filename">extensions.conf</code> erfolgt
+        mit einem vorangestellten <code class="code">\</code> (Backslash).</div><div class="para">Beispiel:</div><pre class="programlisting">exten =&gt; 1234,1,Set(BETRAG="10,00 US \$")</pre></div><div class="section" title="Integer" id="var-integer"><div class="titlepage"><div><div><h4 class="title" id="var-integer">Integer</h4></div></div></div><a id="idp8620528" class="indexterm"></a><div class="para">Bestehen Variablen aus einer Ganzzahl
+        (<span class="emphasis"><em>Integer</em></span>), so kann diese maximal 18 Stellen
+        betragen. Bei Zahlen, die größer sind, tritt ein Fehler auf, der im
+        Logfile protokolliert wird.<div class="tip"><h2>Tipp</h2><div class="para">Wenn Sie mit größeren Zahlen oder Kommazahlen
+            (<span class="emphasis"><em>Real</em></span>) arbeiten wollen, können Sie dies mit
+            einem AGI-Skript realisieren (siehe <a class="xref" href="kapitel-agi.html" title="Kapitel 20. Asterisk Gateway Interface (AGI)">Kapitel 20, <i>Asterisk Gateway Interface (AGI)</i></a>).</div></div></div></div></div><div class="section" title="Globale Variablen in der extensions.conf definieren" id="globale-var-globals"><div class="titlepage"><div><div><h3 class="title" id="globale-var-globals">Globale Variablen in der <code class="filename">extensions.conf</code>
+      definieren</h3></div></div></div><a id="idp8627024" class="indexterm"></a><div class="para">Eine globale Variable kann am Anfang der
+      <code class="filename">extensions.conf</code> gesetzt werden. Dies muss im
+      besonderen Context <code class="code">[globals]</code> erfolgen (er folgt dem Context
+      <code class="code">[general]</code>).</div><div class="para">Beispiel:<pre class="programlisting">[general]
+
+[globals]
+KLINGELZEIT=90
+
+[from-intern]
+exten =&gt; _XXX,1,Dial(SIP/${EXTEN},${KLINGELZEIT})
+exten =&gt; _XXX,n,VoiceMail(${EXTEN})
+</pre></div></div><div class="section" title="Variablen mit Set() definieren" id="global-var-set"><div class="titlepage"><div><div><h3 class="title" id="global-var-set">Variablen mit Set() definieren</h3></div></div></div><a id="idp8632976" class="indexterm"></a><div class="para">Die Applikation <code class="code">Set()</code> wird benutzt, um eine Variable
+      in einer Extension zu setzen.<sup>[<a id="idp8635296" href="#ftn.idp8635296" class="footnote">25</a>]</sup></div><div class="section" title="Syntax" id="set-syntax"><div class="titlepage"><div><div><h4 class="title" id="set-syntax">Syntax</h4></div></div></div><pre class="synopsis">Set(<em class="replaceable"><code>Variablenname</code></em>=<em class="replaceable"><code>Wert</code></em>)</pre><div class="para">Beispiel:</div><pre class="programlisting">; Eine Channel-Variable setzen:
+exten =&gt; 10,1,Set(LIEBLINGSOBSTSORTE="Apfel")
+
+; Eine globale Variable setzen:
+exten =&gt; 10,n,Set(GLOBAL(KLINGELZEIT)=90)
+
+; Die Variablen auf dem CLI ausgeben
+exten =&gt; 10,n,NoOp(KLINGELZEIT = ${KLINGELZEIT})
+exten =&gt; 10,n,NoOp(LIEBLINGSOBSTSORTE = ${LIEBLINGSOBSTSORTE})
+exten =&gt; 10,n,NoOp(VAR1 = ${VAR1})
+exten =&gt; 10,n,NoOp(VAR2 = ${VAR2})</pre></div></div><div class="section" title="Vererbung von Channel-Variablen" id="var-vererbung"><div class="titlepage"><div><div><h3 class="title" id="var-vererbung">Vererbung von Channel-Variablen</h3></div></div></div><a id="idp8642144" class="indexterm"></a><div class="para">Wird im Laufe eines Gespräches ein weiterer Channel aufgebaut, so
+      hat dieser natürlich wieder eigene Channel-Variablen.</div><div class="section" title="Einstufige Vererbung" id="var-einstufige-vererbung"><div class="titlepage"><div><div><h4 class="title" id="var-einstufige-vererbung">Einstufige Vererbung</h4></div></div></div><div class="para">Will man eine Channel-Variable übergeben, aber keine globale
+        Variable dafür benutzen, so kann man der Channel-Variable ein
+        <code class="literal">_</code> (Unterstrich) voransetzen. Diese Channel-Variable
+        wird dann an den nächsten Channel vererbt. Dabei wird der Unterstrich
+        entfernt. Die Vererbung kann also nur einmal erfolgen.</div><div class="para">Beispiel:<pre class="programlisting">exten =&gt; 1234,1,Set(_KUCHENSORTE="Marmorkuchen")</pre></div></div><div class="section" title="Mehrstufige Vererbung" id="var-mehrstufige-vererbung"><div class="titlepage"><div><div><h4 class="title" id="var-mehrstufige-vererbung">Mehrstufige Vererbung</h4></div></div></div><div class="para">Will man eine Channel-Variable beliebig oft vererben, so muss
+        man zwei <code class="literal">__</code> (Unterstrich)-Zeichen vor die Variable
+        setzen. Die zwei Unterstrich-Zeichen werden dann immer
+        mitvererbt.</div><div class="warning"><h2>Warnung</h2><div class="para">Asterisk unterscheidet die Namen von Variablen, die mit einem
+          Underscore anfangen, nicht von Variablen, die keinen Underscore
+          haben. So wird im folgenden Beispiel aus der vererbbaren
+          Channel-Variable <code class="code">KUCHENSORTE</code> eine normale (nicht
+          vererbbare) Channel-Variable:<pre class="programlisting">exten =&gt; 1234,1,Set(__KUCHENSORTE="Marmorkuchen")
+exten =&gt; 1234,n,Set(KUCHENSORTE="Marmorkuchen")</pre></div></div><div class="para">Beispiel:<pre class="programlisting">exten =&gt; 1234,1,Set(__KUCHENSORTE="Nusskuchen")</pre></div><div class="para">Die Unterstriche müssen aber nur beim Setzen der Variable
+        vorangestellt werden, nicht beim Auslesen.<pre class="programlisting">exten =&gt; 1234,1,Set(__KUCHENSORTE="Pflaumenkuchen")
+exten =&gt; 1234,n,NoOp(Kuchen: ${KUCHENSORTE})</pre></div></div></div><div class="section" title="Feste Channel-Variablen" id="feste-channel-var"><div class="titlepage"><div><div><h3 class="title" id="feste-channel-var">Feste Channel-Variablen</h3></div></div></div><a id="idp8656064" class="indexterm"></a><div class="para">Die folgende Liste enthält die wichtigsten fest einprogrammierten
+      Channel-Variablen, die nicht in der <code class="filename">extensions.conf</code>
+      überschrieben, aber ausgelesen werden können.<div class="warning"><h2>Warnung</h2><div class="para">Eine komplette Liste aller vordefinierten Variablen finden Sie
+          in der Datei <code class="filename">doc/README.variables</code> (Asterisk
+          1.2) und <code class="filename">doc/channelvariables.txt</code> (Asterisk
+          1.4). In dieser Liste werden nur solche Variablen aufgelistet, die
+          nicht als <span class="emphasis"><em>deprecated</em></span> eingestuft sind. So finden
+          Sie z. B. ein <code class="code">${CALLERIDNUM}</code> nicht in dieser Liste,
+          weil dies deprecated ist. (Sie sollten stattdessen die Funktion
+          <code class="code">${CALLERID(num)}</code> benutzen.)</div></div>Die für das jeweilige Thema relevanten Variablen werden aber
+      im Buch immer in jedem Kapitel extra aufgeführt.<sup>[<a id="idp11001200" href="#ftn.idp11001200" class="footnote">26</a>]</sup></div><div class="note"><h2>Anmerkung</h2><div class="para">Bei einigen der hier aufgeführten Variablen handelt es sich gar
+        nicht um Variablen, sondern um eingebaute Funktionen. Da dies in der
+        Praxis aber oft verschwimmt, werden sie hier trotzdem
+        aufgelistet.</div></div><div class="para"><div class="variablelist"><dl><dt><span class="term"><code class="code">${ANSWEREDTIME}</code></span></dt><dd><div class="para">Die Gesamtzeit (in Sekunden), seitdem das Gespräch
+              zustande gekommen ist.</div></dd><dt><span class="term"><code class="code">${BLINDTRANSFER}</code></span></dt><dd><div class="para">Der Name des Channels auf der anderen Seite eines
+              Blind-Transfers.</div></dd><dt><span class="term"><code class="code">${CHANNEL}</code></span></dt><dd><div class="para">Der Name des aktuellen Channels</div></dd><dt><span class="term"><code class="code">${CONTEXT}</code></span></dt><dd><div class="para">Der Name des aktuellen Contextes</div></dd><dt><span class="term"><code class="code">${EPOCH}</code></span></dt><dd><div class="para">Der aktuelle Unix-<span class="emphasis"><em>Timestamp</em></span>.</div></dd><dt><span class="term"><code class="code">${EXTEN}</code></span></dt><dd><div class="para">Die aktuell angewählte Extension</div></dd><dt><span class="term"><code class="code">${ENV(VARIABLENNAME)}</code></span></dt><dd><div class="para">Die Umgebungsvariable <code class="code">VARIABLENNAME</code></div></dd><dt><span class="term"><code class="code">${HANGUPCAUSE}</code></span></dt><dd><div class="para">Der Grund für das Beenden (<span class="emphasis"><em>hangup</em></span>)
+              eines Gesprächs</div></dd><dt><span class="term"><code class="code">${INVALID_EXTEN}</code></span></dt><dd><div class="para">Wird in der <code class="code">i</code>-Extension benutzt und enthält
+              die gewählte Extension.</div></dd><dt><span class="term"><code class="code">${PRIORITY}</code></span></dt><dd><div class="para">Die aktuelle Priorität innerhalb der Extension</div></dd><dt><span class="term"><code class="code">${TRANSFER_CONTEXT}</code></span></dt><dd><div class="para">Der Context eines weiterverbundenen Gesprächs</div></dd><dt><span class="term"><code class="code">${UNIQUEID}</code></span></dt><dd><div class="para">Der im System einzigartige (<span class="emphasis"><em>unique</em></span>)
+              ID für das aktuelle Gespräch</div></dd><dt><span class="term"><code class="code">${SYSTEMNAME}</code></span></dt><dd><div class="para">In der
+              <code class="filename">/etc/asterisk/asterisk.conf</code>-Datei
+              eingetragene <em class="parameter"><code>systemname</code></em>-Parameter.</div></dd></dl></div></div></div><div class="section" title="Variablenmanipulation" id="variablenmanipulation"><div class="titlepage"><div><div><h3 class="title" id="variablenmanipulation">Variablenmanipulation</h3></div></div></div><a id="idp11034640" class="indexterm"></a><div class="para">Variablen an sich sind erst dann nützlich, wenn man sie zur
+      Laufzeit verändern kann. Mithilfe dieser Variabilität lassen sich
+      komplexe Verhaltensweisen steuern und vorsehen.</div><div class="section" title="Substring" id="var-substring"><div class="titlepage"><div><div><h4 class="title" id="var-substring">Substring</h4></div></div></div><div class="para">In der Regel bezeichnen Strings eine Aneinanderreihung einzelner
+        Zeichen (<span class="emphasis"><em>character</em></span>). Die Größe eines Strings
+        bestimmt sich durch die Anzahl der identifizierbaren einzelnen
+        Zeichen. Zum Beispiel besteht der String <span class="quote">„<span class="quote">Apfelbaum</span>“</span> aus
+        9 Zeichen. Ein String kann grundsätzlich in sogenannte Teilstrings
+        zerlegt werden, also in Strings, die, wenn man sie wieder
+        aneinanderreiht, den ursprünglichen String ergeben. Im genannten
+        Beispiel könnten wir den String <span class="quote">„<span class="quote">Apfelbaum</span>“</span> in die
+        Teilstrings <span class="quote">„<span class="quote">Apfel</span>“</span> und <span class="quote">„<span class="quote">baum</span>“</span> zerlegen,
+        aber auch <span class="quote">„<span class="quote">Apf</span>“</span> und <span class="quote">„<span class="quote">elbaum</span>“</span> sind echte
+        Teilstrings. Ein String hat theoretisch keine begrenzte Größe, er kann
+        beliebig viele Zeichen enthalten; der gesamte Text dieses Buches
+        könnte so als ein String aufgefasst werden. Natürlich wäre das dann
+        nicht mehr sehr handlich. Dennoch ist der Vorgang des Zerlegens eines
+        Strings in Teilstrings eine Standardprozedur beim Programmieren von
+        Anwendungen. In vielen Programmiersprachen heißt die hier beschriebene
+        Funktionalität <span class="emphasis"><em>Substring</em></span>. Mit einer
+        Substring-Funktion kann man Teile eines Strings ausschneiden und das
+        Ergebnis in einer anderen Variablen abspeichern. In Asterisk gibt es
+        keine eigenständige Routine für diese Substring-Funktion, sondern
+        hierfür wird ein <code class="code">:</code> (Doppelpunkt) nach dem Variablennamen
+        eingesetzt. Vom Inhalt der Variablen, also dem String, wird dann eine
+        vorgegebene Anzahl von Zeichen (Länge) als Teilstring
+        abgetrennt.</div><div class="section" title="Syntax" id="var-substring-syntax"><div class="titlepage"><div><div><h5 class="title" id="var-substring-syntax">Syntax</h5></div></div></div><div class="para"><pre class="synopsis">${<em class="replaceable"><code>VARIABLENNAME</code></em>[:<em class="replaceable"><code>Anfang</code></em>[:<em class="replaceable"><code>Laenge</code></em>]]}</pre></div></div><div class="section" title="Beispiele" id="var-substring-beispiel"><div class="titlepage"><div><div><h5 class="title" id="var-substring-beispiel">Beispiele</h5></div></div></div><div class="para">Bei einer Telefonanlage wird traditionell eine führende 0
+          (Null) gewählt, um eine Amtsleitung zu bekommen. Die zu wählende
+          Telefonnummer darf diese 0 aber nicht enthalten. Wird die Nummer
+          <code class="code">0030 227 32320</code> gewählt, so kann man mit folgender Zeile
+          die eigentliche Rufnummer in die Variable
+          <code class="varname">${RUFNUMMER}</code> abspeichern:<sup>[<a id="idp11049696" href="#ftn.idp11049696" class="footnote">27</a>]</sup> <pre class="programlisting">exten =&gt; _0X.,1,Set(RUFNUMMER=${EXTEN:1})</pre></div><div class="para">Wenn die Angabe der Länge fehlt, wird automatisch der Rest des
+          Strings genommen.</div><div class="para">Wenn wir die letzten 5 Ziffern der gewählten Nummer benötigen,
+          dann erreichen wir das mit einer negativen Zahl. Bei der oben
+          gewählten Nummer würde die folgende Zeile den Wert 32320 in der
+          Variablen <code class="varname">${DURCHWAHL}</code>
+          abspeichern:<pre class="programlisting">exten =&gt; _0X.,1,Set(DURCHWAHL=${EXTEN:-5})</pre></div><div class="para">Möchten wir die Vorwahl in einer separaten Variable
+          abspeichern, so erreichen wir dies durch:<pre class="programlisting">exten =&gt; _0X.,1,Set(VORWAHL=${EXTEN:1:3})</pre>Diese
+          Zeile geht davon aus, dass die Vorwahl 3-stellig ist, und speichert
+          sie in der Variable <code class="varname">${VORWAHL}</code>.<sup>[<a id="idp11055184" href="#ftn.idp11055184" class="footnote">28</a>]</sup></div><div class="para">Nehmen wir an, wir möchten bei Telefonaten zur Nummer
+          <code class="code">00012024562121</code> nach Amerika die einzelnen Bestandteile
+          herausfiltern:<sup>[<a id="idp11057904" href="#ftn.idp11057904" class="footnote">29</a>]</sup><pre class="programlisting">exten =&gt; _0001X.,1,Set(INTERNATIONALEVORWAHL=${EXTEN:3:1})
+exten =&gt; _0001X.,n,Set(ORTSVORWAHL=${EXTEN:4:3})
+exten =&gt; _0001X.,n,Set(RUFNUMMER=${EXTEN:7})
+exten =&gt; _0001X.,n,Set(DURCHWAHL=${EXTEN:-4}</pre></div></div></div></div><div class="footnotes"><br /><hr /><div class="footnote"><p><sup>[<a id="ftn.idp8635296" href="#idp8635296" class="para">25</a>] </sup>siehe auch <a class="xref" href="applications-set.html" title="C.149. Set()">Abschnitt C.149, „<code class="literal">Set()</code>“</a></p></div><div class="footnote"><p><sup>[<a id="ftn.idp11001200" href="#idp11001200" class="para">26</a>] </sup>Ein klassisches Henne-Ei-Problem</p></div><div class="footnote"><p><sup>[<a id="ftn.idp11049696" href="#idp11049696" class="para">27</a>] </sup>Für alle neugierigen Leser: Das ist die Telefonnummer des
+              Parlamentsarchivs des Deutschen Bundestages in Berlin.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp11055184" href="#idp11055184" class="para">28</a>] </sup>Leider macht diese Variante in Deutschland wenig Sinn, da
+              es unterschiedlich lange Vorwahlen gibt. Mehr Informationen zur
+              deutschen Vorwahl finden Sie unter <a href="http://de.wikipedia.org/wiki/Telefonvorwahl_%28Deutschland%29">http://de.wikipedia.org/wiki/Telefonvorwahl_%28Deutschland%29</a>.</p></div><div class="footnote"><p><sup>[<a id="ftn.idp11057904" href="#idp11057904" class="para">29</a>] </sup>Um Ihnen das Gespräch nach Amerika zu sparen: Dies ist die
+              Nummer der Besucherzentrale des Weißen Hauses in Washington DC.
+              ;-)</p></div></div></div></div><div class="span3"><div class="well sidebar-nav"><ul xmlns="" xmlns:fo="http://www.w3.org/1999/XSL/Format" class="breadcrumbs"><li class="breadcrumb-first-level level1 breadcrumb-link book"><a href="index.html" title="breadcrumb-first-level level1 breadcrumb-link book">Asterisk 1.4 - 1.6</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link preface"><a href="vorwort.html" title="print-previous-main-loop-first level2 breadcrumb-link preface">Vorwort</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-howto.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Das How-To zu diesem Buch</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="kapitel-hello-world.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter"><span xmlns="http://www.w3.org/1999/xhtml" class="quote">„<span class="quote">Hello World</span>“</span></a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="dialplan-grundlagen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Dialplan – die Grundlagen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="deutsche-anpassungen.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Deutsche Anpassungen</a></li><li class="print-previous-main-loop-first level2 breadcrumb-link chapter"><a href="case-study.html" title="print-previous-main-loop-first level2 breadcrumb-link chapter">Case-Study einer Beispielfirma</a></li><li class="breadcrumb-first-level level2 breadcrumb-link chapter"><a href="kapitel-programmieren.html" title="breadcrumb-first-level level2 breadcrumb-link chapter">Programmieren im Dialplan</a></li><li class="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1"><a href="programmierer-howto.html" title="print-previous-main-breadcrumb-preceding level3 breadcrumb-link section sectlevel1">Kleines Programmierer-Howto</a></li><li class="main-breadcrumb level3 breadcrumb-link section highlight  sectlevel1">Variablen</li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#variablen-auslesen" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Variablen in einer Extension auslesen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#variablen-allgemeines" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Allgemeines</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#globale-var-globals" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Globale Variablen in der <code xmlns="http://www.w3.org/1999/xhtml" class="filename">extensions.conf</code>
+      definieren</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#global-var-set" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Variablen mit Set() definieren</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#var-vererbung" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Vererbung von Channel-Variablen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#feste-channel-var" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Feste Channel-Variablen</a></li><li class="main-breadcrumb-link level4 breadcrumb-link section sectlevel2"><a href="variablen.html#variablenmanipulation" title="main-breadcrumb-link level4 breadcrumb-link section sectlevel2">Variablenmanipulation</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="besondere-extensions.html" title="pfc level3 breadcrumb-link section sectlevel1">Besondere Extensions</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="macro.html" title="pfc level3 breadcrumb-link section sectlevel1">Makro</a></li><li class="pfc level3 breadcrumb-link section sectlevel1"><a href="priority-jumping.html" title="pfc level3 breadcrumb-link section sectlevel1">Priority Jumping ist deprecated!</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="ael.html" title="pfc level2 breadcrumb-link chapter">AEL</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-protokolle.html" title="pfc level2 breadcrumb-link chapter">Protokolle</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="codecs.html" title="pfc level2 breadcrumb-link chapter">Codecs</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-isdn.html" title="pfc level2 breadcrumb-link chapter">ISDN</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="analog.html" title="pfc level2 breadcrumb-link chapter">Analoge Telefonie</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="media-gateways.html" title="pfc level2 breadcrumb-link chapter">Media Gateways</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-voicemail.html" title="pfc level2 breadcrumb-link chapter">Voicemail-System</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-ivr.html" title="pfc level2 breadcrumb-link chapter">Interactive-Voice-Response-Systeme (IVR)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-datenbank.html" title="pfc level2 breadcrumb-link chapter">Die Asterisk-Datenbank (AstDB)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="warteschleifen.html" title="pfc level2 breadcrumb-link chapter">Warteschleifen für Call-Center</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="features.html" title="pfc level2 breadcrumb-link chapter">Features</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefonkonferenzen.html" title="pfc level2 breadcrumb-link chapter">Telefonkonferenzen</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="asterisk-fernsteuern.html" title="pfc level2 breadcrumb-link chapter">Asterisk fernsteuern</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="kapitel-agi.html" title="pfc level2 breadcrumb-link chapter">Asterisk Gateway Interface (AGI)</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="faxserver.html" title="pfc level2 breadcrumb-link chapter">Fax-Server</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="telefone.html" title="pfc level2 breadcrumb-link chapter">SIP-Telefone</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="blf-hints-pickup.html" title="pfc level2 breadcrumb-link chapter">BLF, Hints, Pickup</a></li><li class="pfc level2 breadcrumb-link chapter"><a href="danksagungen.html" title="pfc level2 breadcrumb-link chapter">Danksagungen</a></li><li class="pfc level2 breadcrumb-link glossary"><a href="glossar.html" title="pfc level2 breadcrumb-link glossary">Glossar</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk.html" title="pfc level2 breadcrumb-link appendix">Installationsanleitungen für Asterisk 1.4, 1.6, 1.8 und 10.0</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="installationsanleitungen-asterisk-karten-isdn-analog.html" title="pfc level2 breadcrumb-link appendix">Spezielle Installationsanleitungen für Asterisk mit ISDN- oder
+  Analog-Karten</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="applications.html" title="pfc level2 breadcrumb-link appendix">Applikationen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="functions.html" title="pfc level2 breadcrumb-link appendix">Funktionen im Dialplan</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="agi-commands.html" title="pfc level2 breadcrumb-link appendix">AGI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="ami-commands.html" title="pfc level2 breadcrumb-link appendix">AMI-Befehle</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-conf-templates.html" title="pfc level2 breadcrumb-link appendix">Konfigurations-Templates</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="upgrade-1.4-1.6.html" title="pfc level2 breadcrumb-link appendix">Upgrade von Asterisk 1.4 auf 1.6</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="zaptel-to-dahdi.html" title="pfc level2 breadcrumb-link appendix">Zaptel zu DAHDI</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="anhang-iax-vs-sip.html" title="pfc level2 breadcrumb-link appendix">IAX vs. SIP</a></li><li class="pfc level2 breadcrumb-link appendix"><a href="gnu-fdl.html" title="pfc level2 breadcrumb-link appendix">GNU Free Documentation License</a></li><li class="pfc level2 breadcrumb-link index"><a href="stichwortverzeichnis.html" title="pfc level2 breadcrumb-link index">Stichwortverzeichnis</a></li></ul></div></div></div><div id="row-fluid"><div class="span12"><ul class="docnav bottom"><li class="previous"><a accesskey="p" href="programmierer-howto.html"><strong>Zurück</strong>6.1. Kleines Programmierer-Howto</a></li><li class="up"><a accesskey="u" href="#"><strong>Nach oben</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Zum Anfang</strong></a></li><li class="next"><a accesskey="n" href="besondere-extensions.html"><strong>Weiter</strong>6.3. Besondere Extensions</a></li></ul><ul class="footer"><li class="copyright">
+            Copyright © 2010-2012 <a class="twitter-link" rel="me" href="https://twitter.com/wintermeyer" title="Stefan Wintermeyer"><span>Stefan Wintermeyer</span></a>. <a href="https://plus.google.com/103611530021484137163?    rel=author">Google+</a></li></ul></div></div></div>
+<script xmlns="" type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-774512-3']);
+  _gaq.push(['_setSiteSpeedSampleRate', 50]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body></html>

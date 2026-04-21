@@ -1,0 +1,42 @@
+[[applications-pausemonitor]]
+= `PauseMonitor()`
+
+Stoppt das Monitoring eines Channels.
+
+[source]
+----
+PauseMonitor()
+----
+
+Setzt die Aufzeichnung eines Channels vorübergehend aus, bis die
+Pause mit `UnpauseMonitor()` wieder aufgehoben wird.
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'PauseMonitor' =-
+
+[Synopsis]
+Pause monitoring of a channel
+
+[Description]
+PauseMonitor
+Pauses monitoring of a channel until it is re-enabled by a call to UnpauseMonitor.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,5 +4,5 @@
+Pause monitoring of a channel
+
+[Description]
+- PauseMonitor
++ PauseMonitor():
+Pauses monitoring of a channel until it is re-enabled by a call to UnpauseMonitor.
+
+.Siehe auch
+xref:applications-monitor.adoc[Abschnitt C.100, „`Monitor()`“], xref:applications-unpausemonitor.adoc[Abschnitt C.181, „`UnpauseMonitor()`“], xref:applications-stopmonitor.adoc[Abschnitt C.173, „`StopMonitor()`“], xref:applications-changemonitor.adoc[Abschnitt C.17, „`ChangeMonitor()`“]

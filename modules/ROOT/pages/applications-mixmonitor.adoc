@@ -1,0 +1,81 @@
+[[applications-mixmonitor]]
+= `MixMonitor()`
+
+Schneidet das Gespräch auf dem aktuellen Channel mit (eine
+Datei).
+
+[source]
+----
+MixMonitor(Basisname.Format[,Optionen[,Befehl]])
+----
+
+Startet die Audio-Aufzeichnung des aktuellen Channels. Dabei werden
+anders als bei `Monitor()` direkt beide Kanäle zu einer Datei
+gemischt.
+
+Optionen:
+
+`a`:: Hängt den Audio-Stream an eine bestehende Datei an.
+`b`:: Startet die Aufnahme erst, nachdem der Anruf mit einem anderen Channel verbunden wurde, also nachdem z. B. durch `Dial()` tatsächlich ein Gespräch zustande kommt.
++v(_`x`_)+:: Passt die eingehende Lautstärke um den Faktor `x` an (-4 bis 4).
++V(_`x`_)+:: Passt die ausgehende Lautstärke um den Faktor `x` an (-4 bis 4).
++W(_`x`_)+:: Passt die eingehende und ausgehende Lautstärke um den Faktor `x` an (-4 bis 4).
+
+`Befehl` wird (falls angegeben) nach der Aufzeichnung
+ausgeführt. Die Variable `${MIXMONITOR_FILENAME}` wird auf den
+Namen der aufgezeichneten Datei gesetzt.
+
+Beachten Sie auch die Hinweise bei
+`Monitor()`.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'MixMonitor' =-
+
+[Synopsis]
+Record a call and mix the audio during the recording
+
+[Description]
+MixMonitor(<file>.<ext>[|<options>[|<command>]])
+
+Records the audio on the current channel to the specified file.
+If the filename is an absolute path, uses that path, otherwise
+creates the file in the configured monitoring directory from
+asterisk.conf.
+
+Valid options:
+a - Append to the file instead of overwriting it.
+b - Only save audio to the file while the channel is bridged.
+Note: Does not include conferences or sounds played to each bridged
+party.
+v(<x>) - Adjust the heard volume by a factor of <x> (range -4 to 4)
+V(<x>) - Adjust the spoken volume by a factor of <x> (range -4 to 4)
+W(<x>) - Adjust the both heard and spoken volumes by a factor of <x>
+(range -4 to 4)
+
+<command> will be executed when the recording is over
+Any strings matching ^{X} will be unescaped to ${X}.
+All variables will be evaluated at the time MixMonitor is called.
+The variable MIXMONITOR_FILENAME will contain the filename used to record.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,8 +4,7 @@
+Record a call and mix the audio during the recording
+
+[Description]
+- MixMonitor(<file>.<ext>[|<options>[|<command>]])
+-
++ MixMonitor(<file>.<ext>[,<options>[,<command>]]):
+Records the audio on the current channel to the specified file.
+If the filename is an absolute path, uses that path, otherwise
+creates the file in the configured monitoring directory from
+
+.Siehe auch
+xref:applications-stopmixmonitor.adoc[Abschnitt C.172, „`StopMixMonitor()`“], xref:applications-monitor.adoc[Abschnitt C.100, „`Monitor()`“]

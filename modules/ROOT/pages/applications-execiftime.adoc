@@ -1,0 +1,63 @@
+[[applications-execiftime]]
+= `ExecIfTime()`
+
+Führt eine Applikation unter bestimmten zeitlichen Bedingungen
+aus.
+
+[source]
+----
+ExecIf(Uhrzeit|Wochentag|Monatstag|Monat?Applikation[,Argumente])
+----
+
+Ist das angegebene Zeitmuster zutreffend, wird die angegebene
+`Applikation` mit den Parametern `Argumente`
+ausgeführt, und deren Ergebnis zurückgeliefert. Die Uhrzeit wird wie bei
+`include` (siehe xref:includes-im-dialplan.adoc#include-zeitgesteuert[„Includes zeitgesteuert“]),
+`GotoIfTime()` (siehe xref:applications-gotoiftime.adoc[Abschnitt C.67, „`GotoIfTime()`“])
+oder `IFTIME()` (siehe xref:functions-iftime.adoc[Abschnitt D.51, „`IFTIME()`“])
+angegeben.
+
+Trifft der `Ausdruck` nicht zu, wird die Ausführung mit
+der nächsten Priorität fortgesetzt.
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'ExecIfTime' =-
+
+[Synopsis]
+Conditional application execution based on the current time
+
+[Description]
+ExecIfTime(<times>|<weekdays>|<mdays>|<months>?appname[|appargs]):
+This application will execute the specified dialplan application, with optional
+arguments, if the current time matches the given time specification.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -6,6 +6,4 @@
+[Description]
+ExecIfTime(<times>|<weekdays>|<mdays>|<months>?appname[|appargs]):
+This application will execute the specified dialplan application, with optional
+- arguments, if the current time matches the given time specification. Further
+- information on the time speicification can be found in examples illustrating
+- how to do time-based context includes in the dialplan.
++ arguments, if the current time matches the given time specification.
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,6 +4,6 @@
+Conditional application execution based on the current time
+
+[Description]
+- ExecIfTime(<times>|<weekdays>|<mdays>|<months>?appname[|appargs]):
++ ExecIfTime(<times>,<weekdays>,<mdays>,<months>?appname[(appargs)]):
+This application will execute the specified dialplan application, with optional
+arguments, if the current time matches the given time specification.
+
+.Siehe auch
+xref:applications-exec.adoc[Abschnitt C.50, „`Exec()`“], xref:applications-execif.adoc[Abschnitt C.51, „`ExecIf()`“], xref:applications-gotoiftime.adoc[Abschnitt C.67, „`GotoIfTime()`“], xref:functions-iftime.adoc[Abschnitt D.51, „`IFTIME()`“],
+xref:extensions.ael.adoc#ael-iftime[Abschnitt , „???TITLE???“]

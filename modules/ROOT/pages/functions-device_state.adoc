@@ -1,0 +1,72 @@
+[[functions-device_state]]
+= `DEVICE_STATE()`
+
+[source]
+----
+DEVICE_STATE(geraet)
+----
+
+Gibt den Status eines „Geräts“ zurück. Ein Gerät kann
+z. B. ein SIP-Peer/User
+(+SIP/_`peername`_+), eine
+MeetMe-Konferenz
+(+MeetMe:_`konferenzraum`_+) oder
+ein eigenes Custom-Gerät
+(+Custom:_`name`_+) sein. Der Status
+von `Custom`-Geräten lässt sich mit dieser Funktion auch
+setzen.
+
+[source]
+----
+exten => 123,hint,SIP/lisa
+exten => 123,1,Dial(SIP/lisa)
+
+exten => 456,1,Verbose(1,Status von lisa: ${DEVICE_STATE(SIP/lisa)})
+----
+
+Die Funktion gibt einen der folgenden Werte zurück:
+`UNKNOWN` (unbekannt bzw. nicht angemeldet),
+`NOT_INUSE` (frei), `INUSE` (im Gespräch),
+`BUSY` (im Gespräch bzw. besetzt),
+`INVALID` (ungültig), `UNAVAILABLE` (nicht
+erreichbar), `RINGING` (klingelt),
+`RINGINUSE` (im Gespräch und klingelt bzw. Anklopfen),
+`ONHOLD` (auf Halten).
+
+Für eine ausführliche Beschreibung siehe auch xref:blf-device-state.adoc[Abschnitt 23.6, „Gezielte Ansteuerung der LEDs“].
+
+.Asterisk-Versionen:
+| | | | | *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.6:
+-= Info about function 'DEVICE_STATE' =-
+
+[Syntax]
+DEVICE_STATE(device)
+
+[Synopsis]
+Get or Set a device state
+
+[Description]
+The DEVICE_STATE function can be used to retrieve the device state from any
+device state provider. For example:
+NoOp(SIP/mypeer has state ${DEVICE_STATE(SIP/mypeer)})
+NoOp(Conference number 1234 has state ${DEVICE_STATE(MeetMe:1234)})
+
+The DEVICE_STATE function can also be used to set custom device state from
+the dialplan. The "Custom:" prefix must be used. For example:
+Set(DEVICE_STATE(Custom:lamp1)=BUSY)
+Set(DEVICE_STATE(Custom:lamp2)=NOT_INUSE)
+You can subscribe to the status of a custom device state using a hint in
+the dialplan:
+exten => 1234,hint,Custom:lamp1
+
+The possible values for both uses of this function are:
+UNKNOWN | NOT_INUSE | INUSE | BUSY | INVALID | UNAVAILABLE | RINGING
+RINGINUSE | ONHOLD
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— in Asterisk 1.4 nicht vorhanden —
+
+.Siehe auch
+xref:functions-hint.adoc[Abschnitt D.45, „`HINT()`“], xref:functions-extension_state.adoc[Abschnitt D.34, „`EXTENSION_STATE()`“]

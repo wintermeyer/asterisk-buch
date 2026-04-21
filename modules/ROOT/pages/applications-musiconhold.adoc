@@ -1,0 +1,73 @@
+[[applications-musiconhold]]
+= `MusicOnHold()`
+
+Spielt Wartemusik.
+
+[source]
+----
+MusicOnHold(Klasse[,Dauer])
+----
+
+Spielt die durch _`Klasse`_ spezifizierte
+Wartemusik, wie in `musiconhold.conf` konfiguriert. Wird
+_`Klasse`_ nicht angegeben, wird die
+Standardmusik-Klasse für diesen Channel verwendet. Um die
+Standardmusik-Klasse für einen Channel einzustellen, können Sie die Funktion
+`MUSICCLASS()` verwenden.
+
+Der Parameter _`Dauer`_ wurde in Asterisk
+1.6 hinzugefügt. Ohne diese Angabe wird die Musik unendlich lange gespielt
+(bis aufgelegt wird). Will man in Asterisk 1.4 nach einer bestimmten Dauer
+abbrechen, so geht das mit `WaitMusicOnHold()`.
+
+Liefert -1, falls aufgelegt wird.
+
+[source]
+----
+; auf diese Extension könnte man Telefonverkäufer schicken:
+exten => 123,1,Answer()
+exten => 123,n,Playback(tt-allbusy)
+exten => 123,n,MusicOnHold(default)
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Applikation in Asterisk 1.4:
+-= Info about application 'MusicOnHold' =-
+
+[Synopsis]
+Play Music On Hold indefinitely
+
+[Description]
+MusicOnHold(class): Plays hold music specified by class. If omitted, the default
+music source for the channel will be used. Set the default
+class with the SetMusicOnHold() application.
+Returns -1 on hangup.
+Never returns otherwise.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -4,8 +4,10 @@
+Play Music On Hold indefinitely
+
+[Description]
+- MusicOnHold(class): Plays hold music specified by class. If omitted, the default
+- music source for the channel will be used. Set the default
+- class with the SetMusicOnHold() application.
+- Returns -1 on hangup.
+- Never returns otherwise.
++ MusicOnHold(class[,duration]):
++ Plays hold music specified by class. If omitted, the default
++ music source for the channel will be used. Change the default
++ class with Set(CHANNEL(musicclass)=...).
++ If duration is given, hold music will be played specified number
++ of seconds. If duration is ommited, music plays indefinitely.
++ Returns 0 when done, -1 on hangup.
+
+.Siehe auch
+xref:applications-waitmusiconhold.adoc[Abschnitt C.193, „`WaitMusicOnHold()`“], xref:applications-startmusiconhold.adoc[Abschnitt C.171, „`StartMusicOnHold()`“], xref:applications-stopmusiconhold.adoc[Abschnitt C.174, „`StopMusicOnHold()`“], xref:functions-musicclass.adoc[Abschnitt D.66, „`MUSICCLASS()`“]

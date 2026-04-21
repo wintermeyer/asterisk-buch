@@ -1,0 +1,17 @@
+[[personen-der-apfelmus-gmbh]]
+= Die Apfelmus GmbH
+
+Unsere frei erfundene Firma produziert und verkauft Apfelmus. Im
+neuen Firmensitz – für den wir eine neue Telefonanlage planen sollen
+– gibt es folgende Bereiche:
+
+* Geschäftsführung (2 Personen)
+* Sekretariat (3 Personen)
+* Verkauf National (6 Personen)
+* Verkauf Ausland (4 Personen)
+* Produktion (50 Personen)
+* Versand (10 Personen)
+* IT (2 Personen)
+* Hausmeister (1 Person)
+
+Jeder Mitarbeiter hat sein eigenes Telefon.

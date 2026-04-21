@@ -1,0 +1,50 @@
+[[functions-blacklist]]
+= `BLACKLIST()`
+
+[source]
+----
+BLACKLIST()
+----
+
+Mit dieser Funktion kann geprüft werden, ob die Caller-ID auf der
+Blacklist ist. Dabei wird die Asterisk-interne Datenbank AstDB genutzt. Die
+`Callerid(name)` oder `Callerid(num)`
+müssen dabei als Eintrag in der Databank unter der Family
+`blacklist` stehen, der Wert ist dabei egal. Der Wert wird von
+`BLACKLIST()` nicht ausgewertet, es zählt nur die
+Existenz des Eintrags. Wird ein Eintrag gefunden, gibt die Applikation 1
+zurück, andernfalls 0.
+
+[source]
+----
+; Nachsehen, ob der Anrufer in der Blacklist steht, wenn ja: Affen abspielen
+exten => 123,1,GotoIf(${BLACKLIST()}?black,1)
+exten => 123,n,Dial(SIP/200)
+exten => 123,n,Hangup()
+exten => black,1,Playback(tt-monkeys)
+exten => black,n,Hangup()
+----
+
+.Asterisk-Versionen:
+| | | *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'BLACKLIST' =-
+
+[Syntax]
+BLACKLIST()
+
+[Synopsis]
+Check if the callerid is on the blacklist
+
+[Description]
+Uses astdb to check if the Caller*ID is in family 'blacklist'. Returns 1 or 0.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— in Asterisk 1.2 nicht vorhanden —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:applications-lookupblacklist.adoc[Abschnitt C.79, „`LookupBlacklist()`“],xref:functions-db.adoc[Abschnitt D.17, „`DB()`“]

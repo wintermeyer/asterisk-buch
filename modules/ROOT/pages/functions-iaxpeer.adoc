@@ -1,0 +1,84 @@
+[[functions-iaxpeer]]
+= `IAXPEER()`
+
+[source]
+----
+IAXPEER(Peer-Name[:Feld])
+----
+
+Gibt Daten über einen IAX-Peer zurück. Der `Peer-Name` kann
+auch `CURRENTCHANNEL` für den aktuellen Kanal sein.
+`Feld` ist einer der folgenden Parameter:
+
+`ip`:: (Default) Die IP-Adresse des Peers
+`status`:: Der Status (wenn `qualify=yes` gesetzt ist)
+`mailbox`:: Die eingestellte Mailbox
+`context`:: Der eingestellte Context
+`expire`:: Die Unix-Time (Epoch), zu der die Verbindung das nächste Mal ausläuft.
+`dynamic`:: Gibt an, ob die Verbindung dynamisch (`dynamic`) ist (`yes`|`no`).
+`callerid_name`:: Der eingestellte Caller-ID-Name
+`callerid_num`:: Die eingestellte Caller-ID-Nummer
+`codecs`:: Die verfügbaren Codecs
++codec[_`x`_]+:: Der Codec Nummer `x` (0-basiert) in der Reihenfolge der Präferenz
+
+[source]
+----
+; die IP-Adresse von peer1 abfragen:
+exten => 123,1,Set(foo=${IAXPEER(peer1:ip)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'IAXPEER' =-
+
+[Syntax]
+IAXPEER(<peername|CURRENTCHANNEL>[|item])
+
+[Synopsis]
+Gets IAX peer information
+
+[Description]
+If peername specified, valid items are:
+- ip (default) The IP address.
+- status The peer's status (if qualify=yes)
+- mailbox The configured mailbox.
+- context The configured context.
+- expire The epoch time of the next expire.
+- dynamic Is it dynamic? (yes/no).
+- callerid_name The configured Caller ID name.
+- callerid_num The configured Caller ID number.
+- codecs The configured codecs.
+- codec[x] Preferred codec index number 'x' (beginning with zero).
+
+If CURRENTCHANNEL specified, returns IP address of current channel
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+--- in Asterisk 1.2
++++ in Asterisk 1.4
+@@ -1,7 +1,7 @@
+-= Info about function 'IAXPEER' =-
+
+[Syntax]
+- IAXPEER(<peername|CURRENTCHANNEL>[:item])
++ IAXPEER(<peername|CURRENTCHANNEL>[|item])
+
+[Synopsis]
+Gets IAX peer information
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,7 +1,7 @@
+-= Info about function 'IAXPEER' =-
+
+[Syntax]
+- IAXPEER(<peername|CURRENTCHANNEL>[|item])
++ IAXPEER(<peername|CURRENTCHANNEL>[,item])
+
+[Synopsis]
+Gets IAX peer information
+
+.Siehe auch
+xref:functions-sippeer.adoc[Abschnitt D.91, „`SIPPEER()`“]

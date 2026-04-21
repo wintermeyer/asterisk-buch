@@ -1,0 +1,41 @@
+[[functions-group_count]]
+= `GROUP_COUNT()`
+
+[source]
+----
+GROUP_COUNT([Gruppe[@Kategorie]])
+----
+
+Gibt die Anzahl der Kanäle in der angegebenen Gruppe zurück. Wird
+keine Gruppe angegeben, gilt die aktuelle Gruppe des Kanals.
+
+[source]
+----
+; Anzahl der Kanäle in der Gruppe ausgehende abfragen:
+exten => 123,1,Set(foo=${GROUP_COUNT(ausgehende)})
+----
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu dieser Funktion in Asterisk 1.4:
+-= Info about function 'GROUP_COUNT' =-
+
+[Syntax]
+GROUP_COUNT([groupname][@category])
+
+[Synopsis]
+Counts the number of channels in the specified group
+
+[Description]
+Calculates the group count for the specified group, or uses the
+channel's current group if not specifed (and non-empty).
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+— keine —
+
+.Siehe auch
+xref:functions-group.adoc[Abschnitt D.39, „`GROUP()`“], xref:functions-group_list.adoc[Abschnitt D.41, „`GROUP_LIST()`“], xref:functions-group_match_count.adoc[Abschnitt D.42, „`GROUP_MATCH_COUNT()`“]

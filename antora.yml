@@ -1,0 +1,6 @@
+name: book
+title: Das Asterisk-Buch
+version: ~
+start_page: ROOT:index.adoc
+nav:
+- modules/ROOT/nav.adoc

@@ -1,0 +1,41 @@
+[[agi-command-get-data]]
+= `GET DATA`
+
+[source]
+----
+GET DATA Dateiname [Timeout] [maxZiffern]
+----
+
+Vergleichbar mit der
+`Background()`-Applikation in der
+`extensions.conf`. Spielt die Audiodatei mit dem Namen
+_`Dateiname`_ ab und wartet auf DTMF-Eingaben. Diese
+werden durch _`maxZiffern`_ limitiert. Die maximale
+Zeit wird durch _`Timeout`_ begrenzt.
+
+Ergebniswerte nach Ausführung:
+
+[cols="2*"]
+|===
+| _`Wert`_ | DTMF-Eingaben
+|===
+
+.Asterisk-Versionen:
+————————| *1.2* |————————| *1.4* |————————| *1.6* |————————
+
+.Interner Hilfetext zu diesem AGI-Befehl in Asterisk 1.4:
+Usage: GET DATA <file to be streamed> [timeout] [max digits]
+Stream the given file, and recieve DTMF data. Returns the digits received
+from the channel at the other end.
+
+.Differenz des internen Hilfetexts von Asterisk 1.2 zu 1.4:
+— keine —
+
+.Differenz des internen Hilfetexts von Asterisk 1.4 zu 1.6:
+--- in Asterisk 1.4
++++ in Asterisk 1.6
+@@ -1,3 +1,4 @@
+Usage: GET DATA <file to be streamed> [timeout] [max digits]
+Stream the given file, and recieve DTMF data. Returns the digits received
+from the channel at the other end.
++ Runs Dead : No
