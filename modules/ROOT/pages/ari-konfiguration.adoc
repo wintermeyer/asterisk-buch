@@ -58,7 +58,7 @@ ARI steht *alles* offen.
 
 [source,shell]
 ----
-asterisk -rx 'module reload res_http.so'
+asterisk -rx 'module reload http'
 asterisk -rx 'module reload res_ari.so'
 asterisk -rx 'http show status'
 asterisk -rx 'ari show status'

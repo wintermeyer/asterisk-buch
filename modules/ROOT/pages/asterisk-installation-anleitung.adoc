@@ -99,9 +99,19 @@ benötigt wird):
 # make -j$(nproc)
 # make install
 # make samples           # legt Default-Config in /etc/asterisk/ ab
-# make config            # installiert systemd-Service
+# make config            # installiert Init-Script /etc/init.d/asterisk
 # make install-logrotate
 ----
+
+[NOTE]
+====
+Auf Debian installiert `make config` das klassische SysV-Init-Script
+`/etc/init.d/asterisk`. systemd erzeugt daraus automatisch einen
+Service-Wrapper, sodass `systemctl start asterisk` funktioniert.
+Wenn Sie lieber eine native systemd-Unit verwenden möchten, kopieren
+Sie `contrib/systemd/asterisk.service` aus dem Asterisk-Quellenverzeichnis
+nach `/etc/systemd/system/` und führen `systemctl daemon-reload` aus.
+====
 
 `make menuselect` startet eine TUI, in der Sie Module an- oder
 abschalten können. Default ist ein ausgewogener Satz. Für eine
@@ -118,9 +128,18 @@ schlanke Installation können Sie Legacy-Module (`app_meetme`,
 
 [source,shell]
 ----
-# systemctl enable --now asterisk
+# systemctl start asterisk
+# systemctl enable asterisk
 # asterisk -rvvv
 ----
+
+[NOTE]
+====
+`systemctl enable --now asterisk` funktioniert bei einer native
+systemd-Unit in einem Schritt. Für den über SysV generierten Service
+auf Debian setzt `--now` den Daemon dagegen _nicht_ automatisch in
+Gang — deshalb die zwei getrennten Aufrufe oben.
+====
 
 Wenn alles läuft, sehen Sie einen Prompt wie
 `servername*CLI>` und können per `core show version` die Version

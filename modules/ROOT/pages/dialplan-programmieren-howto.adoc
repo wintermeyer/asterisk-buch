@@ -132,7 +132,7 @@ exten => 1009,1(Ping),Playback(hello-world)
  same => n,Wait(2)
  same => n,Goto(1010,Pong)
 
-exten => 1010,1(Pong),Playback(weasels-eaten-phonesys)
+exten => 1010,1(Pong),Playback(demo-nogo)
  same => n,Wait(2)
  same => n,Goto(1009,Ping)
 ----

@@ -54,7 +54,7 @@ aus:
 [source,shell]
 ----
 big-island*CLI> database get obst apfel
-Value: 20d*CLI>
+Value: 20
 ----
 
 [[datenbank-cli-loeschen]]

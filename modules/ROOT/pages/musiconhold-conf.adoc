@@ -45,9 +45,9 @@ anlegen:
 [source]
 ----
 [default]
-mode=files   ; Dateien direkt in einem Asterisk-kompatiblen Format lesen
+mode=files       ; Dateien direkt in einem Asterisk-kompatiblen Format lesen
 directory=/var/lib/asterisk/moh-native
-random=yes   ; Dateien in zufälliger Reihenfolge abspielen
+sort=random      ; Dateien in zufälliger Reihenfolge abspielen
 ----
 
 Es

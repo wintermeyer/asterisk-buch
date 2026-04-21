@@ -24,10 +24,10 @@ Extension:
 
 [source]
 ----
-exten => 20,n,Wait(2)
-exten => 20,n,Answer()                   ; abheben
-exten => 20,n,Set(MUSICCLASS()=default)  ; Musikklasse "default" setzen
-exten => 20,n,Queue(support)             ; in Warteschlange "support" einreihen
+exten => 20,1,Wait(2)
+ same => n,Answer()                   ; abheben
+ same => n,Set(MUSICCLASS()=default)  ; Musikklasse "default" setzen
+ same => n,Queue(support)             ; in Warteschlange "support" einreihen
 ; setzt QUEUESTATUS =
 ; TIMEOUT | FULL | JOINEMPTY | JOINUNAVAIL | LEAVEEMPTY | LEAVEUNAVAIL
 exten => 20,n,Goto(q-${QUEUESTATUS})     ; je nach QUEUESTATUS springen

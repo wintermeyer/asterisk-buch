@@ -63,6 +63,6 @@ Wenn Sie Video benötigen (z. B. WebRTC-Konferenzen), aktivieren Sie
 ----
 [video-bridge]
 type=bridge
-video_mode=last_marker       ; das Bild des letzten "marked" Teilnehmers
+video_mode=last_marked       ; das Bild des letzten "marked" Teilnehmers
 max_members=20
 ----

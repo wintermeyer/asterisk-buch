@@ -115,11 +115,11 @@ timezone = de
 setvar = x_firma=Amooma GmbH
 
 [philipp@amooma.de](standardwerte@amooma.de)
-fullname = Philipp Kempgem
+fullname = Philipp Kempgen
 ;email = philipp.kempgen@amooma.de  ; ggf. abweichende E-Mail-Adresse
 ;pager = philipp.kempgen@amooma.de  ; ggf. E-Mail-Adr. für Pager-Nachrichten
 
-sw@wintermeyer-consulting.de
+[sw@wintermeyer-consulting.de](standardwerte@amooma.de)
 fullname = Stefan Wintermeyer
 ----
 

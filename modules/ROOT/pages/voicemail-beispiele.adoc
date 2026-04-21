@@ -154,7 +154,7 @@ serveremail = voicemailsystem@apfelmus-gmbh.de
 maxmsg = 200
 
 ; Die maximale Länge einer Sprachnachricht ist 5 Minuten.
-maxmessage = 300
+maxsecs = 300
 
 ; Text für die Benachrichtigungs-E-Mail.
 ; Muss in einer Zeile stehen!
@@ -175,7 +175,7 @@ attach = yes
 803 => 1234,Verkauf Ausland
 201 => 1234,Hans Wichtig,geschaeftsfuehrer1@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
 202 => 1234,Uwe Wichtig,geschaeftsfuehrer2@apfelmus-gmbh.de,,review=yes|callback=interne-gespraeche
-804 => 1234,Sekretariat,sekr@apfelmus-gmbh.de,,,review=yes
+804 => 1234,Sekretariat,sekr@apfelmus-gmbh.de,,review=yes
 ----
 
 Und in der `extensions.conf` wird auf die

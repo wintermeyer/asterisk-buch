@@ -54,7 +54,7 @@ exten => _1XX,1,Dial(PJSIP/${EXTEN})
 
 exten => i,1,NoOp(Undefinierte Nummer ${INVALID_EXTEN} wurde gewaehlt.)
  same => n,Answer()
- same => n,Playback(that-is-not-rec-phn-num)
+ same => n,Playback(cannot-complete-as-dialed)
  same => n,Hangup()
 ----
 
@@ -81,12 +81,12 @@ ruft Asterisk die `t`-Extension auf:
 ----
 [hauptmenue]
 exten => 10,1,Answer()
- same => n,Background(marryme)              ; "Heiraten? 1 fuer ja, 2 fuer nein"
+ same => n,Background(demo-instruct)         ; Ansage: "Drücken Sie 1 oder 2"
 
-exten => 1,1,Playback(thank-you-cooperation)
+exten => 1,1,Playback(demo-thanks)
  same => n,Hangup()
 
-exten => 2,1,Playback(hangup-try-again)
+exten => 2,1,Playback(demo-nogo)
  same => n,Hangup()
 
 exten => t,1,Hangup()                        ; keine Eingabe => auflegen
@@ -116,7 +116,7 @@ exten => 20,1,Answer()
  same => n,Goto(loop)
 
 exten => T,1,Wait(1)
- same => n,Playback(thank-you-for-calling)
+ same => n,Playback(demo-thanks)
  same => n,Wait(1)
  same => n,Hangup()
 ----
@@ -135,7 +135,7 @@ gibt es die `s`-Extension (_start_):
 ----
 exten => s,1,Answer()
  same => n,Wait(1)
- same => n,Playback(carried-away-by-monkeys)
+ same => n,Playback(tt-monkeys)
  same => n,Wait(1)
  same => n,Hangup()
 ----

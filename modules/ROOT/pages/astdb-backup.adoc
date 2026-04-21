@@ -2,9 +2,9 @@
 = Backup der Datenbank
 :description: AstDB sichern und wiederherstellen — SQLite3-Backup-Strategien.
 
-Die Asterisk-Datenbank wird standardmäßig im Verzeichnis
-`/var/lib/asterisk/astdb/` gespeichert. Sobald Asterisk
-gestoppt ist, kann man das Verzeichnis sichern.
+Die Asterisk-Datenbank wird standardmäßig als SQLite3-Datei unter
+`/var/lib/asterisk/astdb.sqlite3` abgelegt. Sobald Asterisk
+gestoppt ist, kann man die Datei einfach kopieren.
 
 Ein Backup im laufenden Betrieb kann auch von der Shell durch
 folgenden Befehl

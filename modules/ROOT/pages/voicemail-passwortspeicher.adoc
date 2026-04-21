@@ -32,8 +32,8 @@ authentifizieren:
 
 [source]
 ----
-exten => 988,n,Read(agentennr,agent-user,10,,3)
-exten => 988,n,VMAuthenticate(${agentennr}@call-center-agenten)
+exten => 988,1,Read(agentennr,agent-user,10,,3)
+ same => n,VMAuthenticate(${agentennr}@call-center-agenten)
 ----
 
 Betrachten Sie das aber nur als Denkanstoß bzw. als Beschreibung

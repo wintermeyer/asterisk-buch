@@ -62,34 +62,35 @@ exten => 1234,1,Set(apfelmenge=${DB(obst/apfel)})
 [[datenbank-loeschen]]
 == Werte aus der Datenbank löschen
 
-Die beiden Applikationen `DBdel()` und
-`DBdeltree()` können zum Löschen von Datenbankeinträgen
-genutzt werden.
+Einzelne Einträge werden über die Funktion `DB_DELETE()`
+gelöscht, ganze Familien über die Applikation `DBdeltree()`.
 
-[[datenbank-dbdel]]
-=== DBdel() und $\{DB_DELETE()}
+[IMPORTANT]
+====
+Die frühere Applikation `DBdel()` ist aus aktuellen
+Asterisk-Versionen entfernt. Benutzen Sie stattdessen die Funktion
+`DB_DELETE()` innerhalb von `NoOp()` oder `Set()`.
+====
 
-In der Asterisk-Version 1.2 löscht `DBdel()` einen
-einzelnen Eintrag in der Datenbank. Soll der Key `apfel` in
-der Family `obst` gelöscht werden, so geschieht das wie
-folgt:
+[[datenbank-db-delete]]
+=== DB_DELETE()
 
-[source]
-----
-exten => 1234,1,DBdel(obst/apfel)
-----
-
-In der Asterisk-Version 1.4 ist DBdel() _deprecated_, und man soll
-die Funktion `DB_DELETE()` benutzen. Der Aufruf
-kann wie folgt erfolgen:
+`DB_DELETE(family/key)` liest den aktuellen Wert und löscht den
+Eintrag in einem Schritt. Der Rückgabewert lässt sich einfach mit
+`NoOp()` verwerfen, wenn er nicht gebraucht wird:
 
 [source]
 ----
 exten => 1234,1,NoOp(${DB_DELETE(obst/apfel)})
 ----
 
-Siehe
-auch Abschnitt C.33, „`DBdel()`“ und Abschnitt D.18, „`DB_DELETE()`“.
+Oder man fängt den gelöschten Wert in einer Variablen auf:
+
+[source]
+----
+exten => 1234,1,Set(ALTER_WERT=${DB_DELETE(obst/apfel)})
+ same => n,NoOp(Geloescht wurde: ${ALTER_WERT})
+----
 
 [[datenbank-dbdeltree]]
 === DBdeltree()
@@ -103,5 +104,3 @@ exten => 1234,1,DBdeltree(obst)
 ----
 
 gelöscht werden.
-
-Siehe auch: Abschnitt C.34, „`DBdeltree()`“

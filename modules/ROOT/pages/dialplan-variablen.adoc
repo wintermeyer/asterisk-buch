@@ -395,5 +395,5 @@ herausfiltern:footnote:[Um Ihnen das Gespräch nach Amerika zu sparen: Dies ist 
 exten => _0001X.,1,Set(INTERNATIONALEVORWAHL=${EXTEN:3:1})
 exten => _0001X.,n,Set(ORTSVORWAHL=${EXTEN:4:3})
 exten => _0001X.,n,Set(RUFNUMMER=${EXTEN:7})
-exten => _0001X.,n,Set(DURCHWAHL=${EXTEN:-4}
+exten => _0001X.,n,Set(DURCHWAHL=${EXTEN:-4})
 ----

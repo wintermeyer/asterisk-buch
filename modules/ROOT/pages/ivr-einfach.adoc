@@ -7,6 +7,19 @@ Bei den Standardsprachbausteinen gibt es eine Datei
 for yes or 2 for no."footnote:[Übersetzung: Möchtest Du mich heiraten? Drücke 1 für Ja und 2 für Nein.] enthält. Um hiermit eine Heiratsantrags-IVR zu realisieren,
 reicht folgender Dialplan:footnote:[Es sollte auch dem größten Geek unter den Lesern klar sein, dass eine solche IVR nur als Beispiel dient und niemals als reale Möglichkeit eines Heiratsantrags in Betracht gezogen werden sollte! ;-)]
 
+[NOTE]
+====
+Einige der klassischen Asterisk-Sprachbausteine wie `marryme`,
+`thank-you-cooperation` oder `hangup-try-again` sind im heute
+mitgelieferten _core-sounds-en_-Paket *nicht mehr enthalten*. Sie
+stehen als historische Dateien im Netz zur Verfügung
+(z. B. https://github.com/InAnyEvent/asterisk-legacy-sounds[asterisk-legacy-sounds]),
+oder Sie ersetzen sie durch existierende Prompts wie `hello-world`,
+`demo-thanks` bzw. `demo-nogo`. Wenn ein Prompt fehlt, schreibt
+Asterisk eine Warnung `Unable to open ...` ins Log — das Dialplan-Gerüst
+selbst ist davon nicht betroffen.
+====
+
 [source]
 ----
 exten => 30,1,Answer()

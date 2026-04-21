@@ -149,11 +149,11 @@ maxmsg = _`[Anzahl Nachrichten]`_:: Definiert die maximale Anzahl an Sprachnachr
 Beispiel:
 +
 `maxmsg = 50`
-maxmessage = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Sprachnachricht in Sekunden. Default: unendlich.
+maxsecs = _`[Länge in Sekunden]`_:: Definiert die maximale Länge einer Sprachnachricht in Sekunden. Default: unendlich. Das frühere Schlüsselwort `maxmessage` gilt als _deprecated_, funktioniert aber noch und provoziert eine Warnung im Log.
 +
 Beispiel:
 +
-`maxmessage = 120`
+`maxsecs = 120`
 minmessage = _`[Länge in Sekunden]`_:: Definiert die minimale Länge einer Sprachnachricht in Sekunden. Default: `0`.
 +
 Beispiel:

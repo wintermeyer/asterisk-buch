@@ -9,14 +9,10 @@ Angriffsfläche wirken:
 ----
 [global]
 type=global
-; Antwortet Asterisk auf unbekannte SIP-Angriffe? Nein.
-endpoint_identifier_order=auth_username,username,ip,anonymous
-
-; Hinter der IP einen Hostnamen ermitteln (langsam, unbedingt aus)
-disable_endpoint_identifier_order=no
-
-; Nicht authentifizierte Anfragen stumm abweisen
-allow_transports_for_aors=no
+; Reihenfolge, in der eingehende Requests einem Endpoint
+; zugeordnet werden. "anonymous" steht absichtlich ganz hinten —
+; wenn Sie keinen Gast-Zugang brauchen, lassen Sie es ganz weg.
+endpoint_identifier_order=auth_username,username,ip
 ----
 
 Am *Endpoint* selbst:
@@ -47,20 +43,14 @@ permit=192.168.0.0/24
 permit=10.0.0.0/8
 ----
 
-== Registrierungsversuche drosseln
+== User-Enumeration erschweren
 
-PJSIP kennt `auth_rejection_permanent=no`, damit Asterisk bei
-falschem Passwort den Request *nicht* sofort dauerhaft ablehnt (das
-würde einem Angreifer "dieser User existiert" verraten):
+Damit Angreifer über unterschiedliche Fehlerantworten nicht
+herausfinden können, welche Nebenstellen existieren, lässt Asterisk
+einige Härtungs-Parameter pro Endpoint zu:
 
 [source]
 ----
-[global]
-type=global
-; 403 Forbidden statt 404 Not Found bei existierenden/nicht existierenden Usern
-;   -- macht es schwerer, User zu enumerieren
-allow_transports_for_aors=no
-
 [2000]
 type=endpoint
 ; ...

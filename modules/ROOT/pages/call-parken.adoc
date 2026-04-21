@@ -61,6 +61,6 @@ Sie stattdessen einen anderen Context anspringen wollen, setzen Sie
 ====
 Die vollständige Referenz aller Parking-Optionen steht in der
 offiziellen Dokumentation unter https://docs.asterisk.org, oder
-direkt im CLI über `config show help res_parking` und
-`parking show parkinglots`.
+direkt im CLI über `config show help res_parking` und `parking show`
+(beziehungsweise `parking show <lot-name>` für einen einzelnen Lot).
 ====

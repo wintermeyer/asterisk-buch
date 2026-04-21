@@ -38,17 +38,17 @@ exten => _44X.,n,Hangup()
 
 ; deaktivieren
 exten => 44,1,Answer()
-exten => 44,n,DBdel(CF/${CALLERID(num)})
+exten => 44,n,NoOp(${DB_DELETE(CF/${CALLERID(num)})})
 exten => 44,n,Playback(auth-thankyou)
 exten => 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.) 
 exten => 44,n,Hangup()
 
 [from-extern]
 exten => _X.,1,NoOp(Anruf von ${CALLERID(num)} fuer ${EXTEN})
-exten => _X.,n,GotoIf($[foo${DB(CF/${EXTEN})} != foo]?normal:forward)
+exten => _X.,n,GotoIf($[foo${DB(CF/${EXTEN})} != foo]?forward:normal)
 exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
 exten => _X.,n(forward),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
-exten => _X.,n,Dial(local/${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})})
 ----
 
 [[komplexes-callforwarding]]
@@ -77,7 +77,7 @@ exten => _44X.,n,Hangup()
 
 ; deaktivieren
 exten => 44,1,Answer()
-exten => 44,n,DBdel(CF/${CALLERID(num)})
+exten => 44,n,NoOp(${DB_DELETE(CF/${CALLERID(num)})})
 exten => 44,n,Playback(auth-thankyou)
 exten => 44,n,NoOp(Weiterleitung fuer ${CALLERID(num)} deaktiviert.)
 exten => 44,n,Hangup()
@@ -93,7 +93,7 @@ exten => _55X.,n,Hangup()
 
 ; deaktivieren
 exten => 55,1,Answer()
-exten => 55,n,DBdel(CF/anlage)
+exten => 55,n,NoOp(${DB_DELETE(CF/anlage)})
 exten => 55,n,Playback(auth-thankyou)
 exten => 55,n,NoOp(Weiterleitung der Anlage deaktiviert.)
 exten => 55,n,Hangup()
@@ -104,7 +104,7 @@ exten => _X.,n,GotoIf($[foo${DB(CF/anlage)} != foo]?cfanlage:zweiteregel)
 exten => _X.,n(zweiteregel),GotoIf($[foo${DB(CF/${EXTEN})} != foo]?cfnormal:normal)
 exten => _X.,n(normal),Dial(PJSIP/${EXTEN})
 exten => _X.,n(cfnormal),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/${EXTEN})})
-exten => _X.,n,Dial(local/${DB(CF/${EXTEN})})
+exten => _X.,n,Dial(Local/${DB(CF/${EXTEN})})
 exten => _X.,n(cfanlage),NoOp(Anruf fuer ${EXTEN} wird verbunden zu ${DB(CF/anlage)})
-exten => _X.,n,Dial(local/${DB(CF/anlage)})
+exten => _X.,n,Dial(Local/${DB(CF/anlage)})
 ----

@@ -126,7 +126,7 @@ am Transport — Details dazu in der offiziellen Asterisk-Doku.
 
 [source,shell]
 ----
-asterisk -rx 'module reload res_http.so'
+asterisk -rx 'module reload http'
 asterisk -rx 'pjsip reload'
 asterisk -rx 'pjsip show transports'
 asterisk -rx 'pjsip show endpoint bob'
