@@ -6,7 +6,6 @@ content:
   sources:
   - url: https://github.com/wintermeyer/asterisk-buch
     branches: main
-    start_path: .
 
 ui:
   bundle:
