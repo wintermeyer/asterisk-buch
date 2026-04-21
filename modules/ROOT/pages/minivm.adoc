@@ -118,7 +118,7 @@ fullname = Philipp Kempgem
 ;email = philipp.kempgen@amooma.de  ; ggf. abweichende E-Mail-Adresse
 ;pager = philipp.kempgen@amooma.de  ; ggf. E-Mail-Adr. für Pager-Nachrichten
 
-[stefan@amooma.de](standardwerte@amooma.de)
+sw@wintermeyer-consulting.de
 fullname = Stefan Wintermeyer
 ----
 

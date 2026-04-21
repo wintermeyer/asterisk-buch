@@ -1,7 +1,7 @@
 # Das Asterisk-Buch
 
-Antora source for _Das Asterisk-Buch_ (Asterisk 1.4 / 1.6) by Stefan
-Wintermeyer. The prose is German. Content lives under
+Antora source for _Das Asterisk-Buch_ by Stefan Wintermeyer. 
+The prose is German. Content lives under
 `modules/ROOT/pages/*.adoc`; navigation is declared in
 `modules/ROOT/nav.adoc`.
 
