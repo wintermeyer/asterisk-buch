@@ -40,6 +40,12 @@ materialised under `/var/www/asterisk-buch/releases/<timestamp>/` and
 the `current` symlink is swapped atomically. Nginx serves the site at
 `/asterisk/book/`.
 
+Before the swap the deploy pre-compresses every text asset
+(`.html`, `.css`, `.js`, `.svg`, `.xml`, `.json`, `.mjs`, `.txt`,
+`.map`) into `.br` (brotli q11) and `.gz` (gzip -9) siblings so
+nginx's `brotli_static` / `gzip_static` can serve them with zero
+CPU on the hot path.
+
 ## Editing
 
 All prose lives in `modules/ROOT/pages/`. Each chapter / section is a

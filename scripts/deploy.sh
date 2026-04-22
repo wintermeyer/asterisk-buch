@@ -29,6 +29,31 @@ LINK="/var/www/asterisk-buch/current"
 mkdir -p "${TARGET}"
 cp -r build/site/. "${TARGET}/"
 
+# Pre-compress text assets so nginx can serve .br / .gz siblings
+# directly via brotli_static / gzip_static with zero CPU per request.
+# Drop any sibling that did not actually shrink the payload.
+echo "[deploy] Pre-compressing text assets..."
+_jobs="$(nproc 2>/dev/null || echo 4)"
+_text=( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.mjs'
+        -o -name '*.svg' -o -name '*.json' -o -name '*.xml'
+        -o -name '*.txt' -o -name '*.map' )
+if command -v brotli >/dev/null 2>&1; then
+  find "${TARGET}" -type f \( "${_text[@]}" \) -print0 \
+    | xargs -0 -r -n 8 -P "${_jobs}" brotli -k -q 11 -f --
+else
+  echo "[deploy] WARN: brotli not installed; skipping .br siblings"
+fi
+find "${TARGET}" -type f \( "${_text[@]}" \) -print0 \
+  | xargs -0 -r -n 8 -P "${_jobs}" gzip -k -9 -n -f --
+find "${TARGET}" -type f \( -name '*.br' -o -name '*.gz' \) -print0 \
+  | while IFS= read -r -d '' _c; do
+      _o="${_c%.*}"
+      [ -f "${_o}" ] || continue
+      _cs=$(stat -c%s "${_c}" 2>/dev/null || echo 0)
+      _os=$(stat -c%s "${_o}" 2>/dev/null || echo 1)
+      [ "${_cs}" -ge "${_os}" ] && rm -f "${_c}"
+    done
+
 ln -sfn "${TARGET}" "${LINK}.new"
 mv -Tf "${LINK}.new" "${LINK}"
 
