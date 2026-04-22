@@ -51,7 +51,7 @@ find "${TARGET}" -type f \( -name '*.br' -o -name '*.gz' \) -print0 \
       [ -f "${_o}" ] || continue
       _cs=$(stat -c%s "${_c}" 2>/dev/null || echo 0)
       _os=$(stat -c%s "${_o}" 2>/dev/null || echo 1)
-      [ "${_cs}" -ge "${_os}" ] && rm -f "${_c}"
+      if [ "${_cs}" -ge "${_os}" ]; then rm -f "${_c}"; fi
     done
 
 ln -sfn "${TARGET}" "${LINK}.new"
